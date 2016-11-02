@@ -23,6 +23,7 @@ Missing features you might expect from a Music Player
  - No folder browser
  - No tag editor
  - No album art fetching from network (supports only built-in album art from MediaStore)
+ - No tablet UI
  
 ##Supported formats
 
