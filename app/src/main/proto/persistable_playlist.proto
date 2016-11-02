@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_package = "com.doctoror.fuckoffmusicplayer.playlist";
+
+message ProtoMedia {
+  int64 id = 1;
+  string data = 2;
+  string title = 3;
+  int64 duration = 4;
+  string artist = 5;
+  string album = 6;
+  string album_art = 7;
+  int32 track = 8;
+}
+
+message ProtoPlaylist {
+  repeated ProtoMedia playlist = 1;
+  int32 index = 2;
+  int64 position = 3;
+}

@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">Fuck Off Music Player</string>
+
+    <string name="Music_library_needs_permission_to_access_media">Music library needs permission to
+        access media
+    </string>
+
+    <string name="Improve_automatic_switching_between_Day_and_Night_">Improve automatic switching
+        between Day and Night theme by allowing this app to access your approximate location
+    </string>
+
+    <string name="Allow">Allow</string>
+    <string name="Later">Later</string>
+    <string name="Settings">Settings</string>
+
+    <string name="Request">Request</string>
+    <string name="Theme">Theme</string>
+    <string name="DayNight">DayNight</string>
+    <string name="Light">Light</string>
+    <string name="Dark">Dark</string>
+
+    <string name="No_tracks_found">No tracks found</string>
+    <string name="No_artists_found">No artists found</string>
+    <string name="No_albums_found">No albums found</string>
+    <string name="No_genres_found">No genres found</string>
+
+    <string name="Failed_to_load_data_s">Failed to load data: %1$s</string>
+    <string name="Search">Search</string>
+
+    <string name="Playlist">Playlist</string>
+    <string name="The_playlist_is_empty">The playlist is empty</string>
+
+    <string name="Previous">Previous</string>
+    <string name="Next">Next</string>
+    <string name="Play">Play</string>
+    <string name="Pause">Pause</string>
+
+    <string name="Failed_to_start_playback">Failed to start playback</string>
+    <string name="Bass_Boost">Bass Boost</string>
+    <string name="Equalizer">Equalizer</string>
+
+    <string name="d_Hz">%1$d Hz</string>
+    <string name="s_kHz">%1$s kHz</string>
+    <string name="Effects">Effects</string>
+
+    <string name="Now_Playing">Now Playing</string>
+    <string name="s_removed_from_playlist">“%1$s” removed from playlist</string>
+    <string name="Delete">Delete</string>
+
+    <string name="Are_you_sure_you_want_to_delete_s">Are you sure you want to delete “%1$s”?
+    </string>
+
+    <string name="Cancel">Cancel</string>
+
+    <plurals name="d_albums">
+        <item quantity="one">%1$d album</item>
+        <item quantity="other">%1$d albums</item>
+    </plurals>
+
+    <string-array name="activity_library_tabs">
+        <item>Artists</item>
+        <item>Albums</item>
+        <item>Genres</item>
+        <item>Recent</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" package="com.doctoror.fuckoffmusicplayer">
+
+    <!-- Location for better accuracy of daynight theme-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- For reporting nowplaying-->
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+
+    <!-- For playback -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- For querying MediaStore -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- For deleting files -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="false"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <activity
+            android:name=".library.LibraryActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".library.artistalbums.ArtistAlbumsActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".library.LibraryActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".library.genrealbums.GenreAlbumsActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".library.LibraryActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".playlist.PlaylistActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/Playlist"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".effects.AudioEffectsActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme"
+            android:label="@string/Effects"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".nowplaying.NowPlayingActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/Playlist"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".library.LibraryActivity"/>
+
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme"
+            android:label="@string/Settings"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".library.LibraryActivity"/>
+
+        <service android:name=".filemanager.FileManagerService"/>
+
+        <service android:name=".playback.PlaybackService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

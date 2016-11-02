@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright 2016 Yaroslav Mytkalyk-->
+
+<!--Licensed under the Apache License, Version 2.0 (the "License");-->
+<!--you may not use this file except in compliance with the License.-->
+<!--You may obtain a copy of the License at-->
+
+<!--http://www.apache.org/licenses/LICENSE-2.0-->
+
+<!--Unless required by applicable law or agreed to in writing, software-->
+<!--distributed under the License is distributed on an "AS IS" BASIS,-->
+<!--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.-->
+<!--See the License for the specific language governing permissions and-->
+<!--limitations under the License.-->
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingFragmentModel"/>
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:imageUri="@{model.art}"
+                app:placeholder="@{@drawable/album_art_placeholder}"
+                tools:ignore="ContentDescription"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:background="@color/translucentBackground">
+
+                <TextView
+                    android:id="@android:id/text1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="12dp"
+                    android:minLines="1"
+                    android:ellipsize="end"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:gravity="center_horizontal"
+                    app:text="@{model.title}"
+                    tools:text="Text 1"
+                    tools:ignore="SelectableText"/>
+
+                <TextView
+                    android:id="@android:id/text2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="12dp"
+                    android:ellipsize="end"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:gravity="center_horizontal"
+                    app:text='@{model.artist + " / " + model.album}'
+                    tools:text="Text 2"
+                    tools:ignore="SelectableText"/>
+
+            </LinearLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/translucentBackground"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp"
+            android:gravity="center">
+
+            <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+                android:id="@+id/btnPrev"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/grey_circle_48dp"
+                android:src="@drawable/ic_fast_rewind_white_24dp"
+                android:contentDescription="@string/Previous"/>
+
+            <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+                android:id="@+id/btnPlay"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_margin="6dp"
+                android:background="@drawable/color_accent_circle"
+                android:contentDescription="@string/Previous"
+                app:srcRes="@{model.btnPlayRes}"
+                tools:src="@drawable/ic_play_arrow_white_36dp"/>
+
+            <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+                android:id="@+id/btnNext"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/grey_circle_48dp"
+                android:src="@drawable/ic_fast_forward_white_24dp"
+                android:contentDescription="@string/Next"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:minEms="2"
+                app:formattedDuration="@{model.elapsedTime / 1000}"/>
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="200"
+                android:progress="@{model.progress}"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:gravity="right|end"
+                android:minEms="2"
+                app:formattedDuration="@{model.duration / 1000}"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

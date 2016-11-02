@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Copyright 2016 Yaroslav Mytkalyk-->
+
+<!--Licensed under the Apache License, Version 2.0 (the "License");-->
+<!--you may not use this file except in compliance with the License.-->
+<!--You may obtain a copy of the License at-->
+
+<!--http://www.apache.org/licenses/LICENSE-2.0-->
+
+<!--Unless required by applicable law or agreed to in writing, software-->
+<!--distributed under the License is distributed on an "AS IS" BASIS,-->
+<!--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.-->
+<!--See the License for the specific language governing permissions and-->
+<!--limitations under the License.-->
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.doctoror.fuckoffmusicplayer.library.LibraryListFragmentModel"/>
+    </data>
+
+    <ViewAnimator
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:displayedChild="@{model.displayedChild}">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="@{model.emptyMessage}"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="@{model.errorText}"
+            tools:ignore="SelectableText"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- The parent ViewGroup must be a CoordinatorLayout, FrameLayout, or RelativeLayout in
+            order for the FastScroller to be properly displayed on top of the RecyclerView.-->
+            <com.l4digital.fastscroll.FastScrollRecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:handleColor="?attr/colorAccent"
+                app:bubbleColor="?attr/colorAccent"
+                app:bubbleTextColor="@android:color/white"
+                app:hideScrollbar="false"
+                app:recyclerAdapter="@{model.recyclerAdapter}"/>
+
+        </FrameLayout>
+
+    </ViewAnimator>
+
+</layout>
