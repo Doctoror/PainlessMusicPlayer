@@ -12,6 +12,7 @@ Min API level 16
  - Recently added tracks
  - Search
  - Remote controls (Headset and other remote buttons)
+ - Seek
  - Themes (Light, Dark and DayNight theme)
  - Equalizer and Bass Boost effects
  - Removing from playlist
@@ -24,6 +25,7 @@ Missing features you might expect from a Music Player
  - No tag editor
  - No album art fetching from network (supports only built-in album art from MediaStore)
  - No tablet UI
+ - No fast-forward/rewind (only seek supported)
  
 ##Supported formats
 
