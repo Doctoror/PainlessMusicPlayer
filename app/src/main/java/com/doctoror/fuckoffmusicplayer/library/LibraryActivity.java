@@ -34,6 +34,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ViewAnimator;
 
 import java.util.List;
@@ -150,6 +151,7 @@ public final class LibraryActivity extends BaseActivity {
 
     private void onPermissionGranted() {
         mViewPager.setAdapter(new LibraryActivityPagerAdapter(getFragmentManager(), this));
+        mTabLayout.setVisibility(View.VISIBLE);
         mTabLayout.setupWithViewPager(mViewPager, false);
         if (mPagerItem >= 0 && mPagerItem < mViewPager.getAdapter().getCount()) {
             mViewPager.setCurrentItem(mPagerItem);
