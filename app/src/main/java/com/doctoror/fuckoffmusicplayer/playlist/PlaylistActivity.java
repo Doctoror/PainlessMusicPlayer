@@ -100,7 +100,7 @@ public final class PlaylistActivity extends BaseActivity implements
         mDeleteSession.permissionRequested = true;
         RxPermissions.getInstance(this).request(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe((result) -> {
+                .subscribe(result -> {
                     if (result) {
                         if (!isFinishing()) {
                             FileManagerService.delete(getApplicationContext(), media);

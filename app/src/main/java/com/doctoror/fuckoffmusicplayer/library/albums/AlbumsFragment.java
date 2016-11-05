@@ -77,7 +77,7 @@ public final class AlbumsFragment extends LibraryListFragment {
     }
 
     private void onAlbumClick(final long album, final String art) {
-        Observable.<List<Media>>create((s) -> s.onNext(PlaylistUtils.fromAlbum(
+        Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbum(
                 getActivity().getContentResolver(), album, art)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

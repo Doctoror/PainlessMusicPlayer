@@ -53,7 +53,7 @@ final class PlaylistPersister {
             @NonNull final Playlist playlist) {
         // Retrieve snapshot now, so that it's immutable when writing
         final PersistablePlaylist.ProtoPlaylist pp = toProtoPlaylist(playlist);
-        Observable.create((s) -> persist(context, pp))
+        Observable.create(s -> persist(context, pp))
                 .subscribeOn(Schedulers.io()).subscribe();
     }
 

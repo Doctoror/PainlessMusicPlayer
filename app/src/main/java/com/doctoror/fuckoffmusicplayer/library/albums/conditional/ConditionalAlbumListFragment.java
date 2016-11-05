@@ -131,7 +131,7 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     protected void onPlayClick(final long[] albums, final String[] arts) {
-        Observable.<List<Media>>create((s) -> s.onNext(PlaylistUtils.fromAlbums(
+        Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbums(
                 getActivity().getContentResolver(), albums, arts, null)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

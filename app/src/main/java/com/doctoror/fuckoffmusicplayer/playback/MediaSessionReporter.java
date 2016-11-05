@@ -102,7 +102,7 @@ final class MediaSessionReporter {
             @NonNull final RequestManager glide,
             @NonNull final MediaSessionCompat mediaSession,
             @NonNull final Media media) {
-        Observable.create((s) -> {
+        Observable.create(s -> {
             final Intent intent = androidMusicMediaIntent("com.android.music.metachanged",
                     media, false);
             sendAndroidMusicPlayerBroadcast(context, intent);

@@ -73,7 +73,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
 
     @Override
     protected void onPlayClick(final long[] albums, final String[] arts) {
-        Observable.<List<Media>>create((s) -> s.onNext(PlaylistUtils.fromAlbums(
+        Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbums(
                 getActivity().getContentResolver(), albums, arts, artistId)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -88,7 +88,7 @@ public final class RecentTracksFragment extends LibraryListFragment {
     }
 
     private void playTrack(final int startPosition, final long trackId) {
-        Observable.<List<Media>>create((s) -> {
+        Observable.<List<Media>>create(s -> {
             final long[] tracks;
             synchronized (CURSOR_LOCK) {
                 final Cursor data = mData;

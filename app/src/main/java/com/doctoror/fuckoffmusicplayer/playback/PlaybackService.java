@@ -326,8 +326,8 @@ public final class PlaybackService extends Service {
         mPlayOnFocusGain = false;
         pause();
         mPauseTimeoutSubscription = Observable.timer(8, TimeUnit.SECONDS)
-                .subscribe((o) -> onActionStop());
-        Observable.create((s) -> showNotification()).subscribeOn(Schedulers.io()).subscribe();
+                .subscribe(o -> onActionStop());
+        Observable.create(s -> showNotification()).subscribeOn(Schedulers.io()).subscribe();
     }
 
     private void onActionStop() {
@@ -407,7 +407,7 @@ public final class PlaybackService extends Service {
     private void showNotification() {
         final Media media = mPlaylist.getMedia();
         if (media != null) {
-            Observable.create((s) -> startForeground(NOTIFICATION_ID,
+            Observable.create(s -> startForeground(NOTIFICATION_ID,
                     PlaybackNotification.create(getApplicationContext(), mGlide, media, mState)))
                     .subscribeOn(Schedulers.io())
                     .subscribe();
@@ -549,7 +549,7 @@ public final class PlaybackService extends Service {
             setState(STATE_PLAYING);
             showNotification();
             mTimerSubscription = Observable.interval(1L, TimeUnit.SECONDS)
-                    .subscribe((o) -> updatePosition());
+                    .subscribe(o -> updatePosition());
         }
 
         @Override
