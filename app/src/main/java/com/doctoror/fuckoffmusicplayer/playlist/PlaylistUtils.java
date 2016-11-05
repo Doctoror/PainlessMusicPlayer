@@ -107,13 +107,13 @@ public final class PlaylistUtils {
             @Nullable final String sortOrder) {
         final List<Media> playlist = new ArrayList<>(trackIds.length);
         final Cursor c = resolver.query(Query.CONTENT_URI,
-                Query.PROJECTION,
+                Query.PROJECTION_WITH_ALBUM_ART,
                 SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, trackIds),
                 null,
                 sortOrder);
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                playlist.add(mediaFromCursor(c, null));
+                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
             }
             c.close();
         }
@@ -124,14 +124,14 @@ public final class PlaylistUtils {
     private static Media mediaFromCursor(@NonNull final Cursor c,
             @Nullable final String albumArt) {
         final Media media = new Media();
-        media.id = c.getLong(0);
-        media.track = c.getInt(1);
-        media.title = c.getString(2);
-        media.artist = c.getString(3);
-        media.album = c.getString(4);
+        media.id = c.getLong(Query.COLUMN_ID);
+        media.track = c.getInt(Query.COLUMN_TRACK);
+        media.title = c.getString(Query.COLUMN_TITLE);
+        media.artist = c.getString(Query.COLUMN_ARTIST);
+        media.album = c.getString(Query.COLUMN_ALBUM);
         media.albumArt = albumArt;
-        media.duration = c.getLong(5);
-        final String path = c.getString(6);
+        media.duration = c.getLong(Query.COLUMN_DURATION);
+        final String path = c.getString(Query.COLUMN_DATA);
         if (!TextUtils.isEmpty(path)) {
             media.data = Uri.parse(new File(path).toURI().toString());
         }
@@ -142,6 +142,15 @@ public final class PlaylistUtils {
 
         static final Uri CONTENT_URI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
 
+        static final int COLUMN_ID = 0;
+        static final int COLUMN_TRACK = 1;
+        static final int COLUMN_TITLE = 2;
+        static final int COLUMN_ARTIST = 3;
+        static final int COLUMN_ALBUM = 4;
+        static final int COLUMN_DURATION = 5;
+        static final int COLUMN_DATA = 6;
+        static final int COLUMN_ALBUM_ART = 7;
+
         static final String[] PROJECTION = {
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.TRACK,
@@ -150,6 +159,18 @@ public final class PlaylistUtils {
                 MediaStore.Audio.Media.ALBUM,
                 MediaStore.Audio.Media.DURATION,
                 MediaStore.Audio.Media.DATA
+        };
+
+        static final String[] PROJECTION_WITH_ALBUM_ART = {
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.TRACK,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DATA,
+                "(SELECT _data FROM album_art WHERE album_art.album_id=audio.album_id) AS"
+                        + MediaStore.Audio.Albums.ALBUM_ART
         };
     }
 }
