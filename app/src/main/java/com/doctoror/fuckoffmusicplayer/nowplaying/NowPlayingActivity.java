@@ -20,7 +20,10 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
+import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.Playlist;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -28,11 +31,19 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Yaroslav Mytkalyk on 21.10.16.
@@ -54,6 +65,52 @@ public final class NowPlayingActivity extends BaseActivity {
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(android.R.id.content,
                     new NowPlayingFragment()).commit();
+        }
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(final Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(@NonNull final Intent intent) {
+        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            rx.Observable.<List<Media>>create(s -> {
+                try {
+                    s.onNext(IntentHandler.playlistFromActionView(getContentResolver(), intent));
+                } catch (IOException e) {
+                    s.onError(e);
+                }
+            })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new ObserverAdapter<List<Media>>() {
+                        @Override
+                        public void onError(final Throwable e) {
+                            if (!isFinishing()) {
+                                Toast.makeText(getApplicationContext(),
+                                        R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        }
+
+                        @Override
+                        public void onNext(final List<Media> playlist) {
+                            if (!isFinishing()) {
+                                if (playlist.isEmpty()) {
+                                    Toast.makeText(getApplicationContext(),
+                                            R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
+                                            .show();
+                                } else {
+                                    PlaylistUtils.play(NowPlayingActivity.this, playlist);
+                                }
+                            }
+                        }
+                    });
         }
     }
 

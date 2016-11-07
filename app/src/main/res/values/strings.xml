@@ -9,6 +9,10 @@
         between Day and Night theme by allowing this app to access your approximate location
     </string>
 
+    <string name="Unknown_artist">Unknown artist</string>
+    <string name="Unknown_album">Unknown album</string>
+    <string name="Untitled">Untitled</string>
+
     <string name="Allow">Allow</string>
     <string name="Later">Later</string>
     <string name="Settings">Settings</string>

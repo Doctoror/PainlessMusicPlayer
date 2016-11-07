@@ -117,8 +117,16 @@ public final class NowPlayingFragment extends Fragment {
             mModel.setArtist(track.getArtist());
             mModel.setAlbum(track.getAlbum());
             mModel.setTitle(track.getTitle());
-            mModel.setDuration(track.getDuration());
             mModel.setProgress(0);
+            mModel.setDuration(track.getDuration());
+            mModel.notifyChange();
+        } else {
+            mModel.setArt(null);
+            mModel.setArtist(getString(R.string.Unknown_artist));
+            mModel.setAlbum(getString(R.string.Unknown_album));
+            mModel.setTitle(getString(R.string.Untitled));
+            mModel.setProgress(0);
+            mModel.setDuration(0);
             mModel.notifyChange();
         }
     }

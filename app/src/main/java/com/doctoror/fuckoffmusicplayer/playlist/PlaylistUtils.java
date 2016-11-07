@@ -17,12 +17,14 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -40,8 +42,18 @@ import java.util.List;
 
 public final class PlaylistUtils {
 
+    private static final String TAG = "PlaylistUtils";
+
     private PlaylistUtils() {
 
+    }
+
+    public static void play(@NonNull final Context context,
+            @NonNull final List<Media> mediaList) {
+        if (mediaList.isEmpty()) {
+            throw new IllegalArgumentException("Will not play empty playlist");
+        }
+        play(context, mediaList, mediaList.get(0), 0);
     }
 
     public static void play(@NonNull final Context context,
@@ -56,7 +68,10 @@ public final class PlaylistUtils {
         playlist.persistAsync();
 
         PlaybackService.play(context);
-        context.startActivity(new Intent(context, NowPlayingActivity.class));
+
+        final Intent intent = new Intent(context, NowPlayingActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
     }
 
     @Nullable
@@ -118,6 +133,67 @@ public final class PlaylistUtils {
             c.close();
         }
         return playlist;
+    }
+
+    @NonNull
+    public static List<Media> forFile(@NonNull final ContentResolver resolver,
+            @NonNull final Uri uri) throws Exception {
+        final List<Media> playlist = new ArrayList<>(1);
+        final Cursor c = resolver.query(Query.CONTENT_URI,
+                Query.PROJECTION_WITH_ALBUM_ART,
+                MediaStore.Audio.Media.DATA.concat("=?"),
+                new String[]{uri.getPath()},
+                null);
+        if (c != null) {
+            if (c.moveToFirst()) {
+                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+
+        if (playlist.isEmpty()) {
+            // Not found in MediaStore. Create Media from file data
+            playlist.add(mediaFromFile(uri));
+        }
+
+        return playlist;
+    }
+
+    @NonNull
+    private static Media mediaFromFile(@NonNull final Uri uri) throws Exception {
+        final MediaMetadataRetriever r = new MediaMetadataRetriever();
+        try {
+            r.setDataSource(uri.getPath());
+
+            final Media media = new Media();
+            media.title = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+            media.artist = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            media.album = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+            media.data = uri;
+
+            final String duration = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            if (!TextUtils.isEmpty(duration)) {
+                try {
+                    media.duration = Long.parseLong(duration);
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "mediaFromFile() duration is not a number: " + duration);
+                }
+            }
+
+            final String trackNumber = r
+                    .extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
+            if (!TextUtils.isEmpty(trackNumber)) {
+                try {
+                    media.track = Integer.parseInt(duration);
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "mediaFromFile() track number is not a number: " + duration);
+                }
+            }
+
+            return media;
+        } finally {
+            r.release();
+        }
     }
 
     @NonNull
