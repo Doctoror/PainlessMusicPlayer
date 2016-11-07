@@ -94,7 +94,7 @@ public final class LibraryActivity extends BaseActivity {
             final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
             RxSearchView
                     .queryTextChanges(searchView)
-                    .debounce(600, TimeUnit.MILLISECONDS)
+                    .debounce(400, TimeUnit.MILLISECONDS)
                     .subscribe(t -> mSearchManager.updateQuery(t.toString()));
 
             menu.findItem(R.id.actionNowPlaying).setVisible(hasPlaylist());
