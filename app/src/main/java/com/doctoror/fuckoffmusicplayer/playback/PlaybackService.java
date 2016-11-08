@@ -32,6 +32,7 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -77,6 +78,7 @@ public final class PlaybackService extends Service {
 
     private static final String ACTION_SEEK = "ACTION_SEEK";
     private static final String EXTRA_POSITION = "EXTRA_POSITION";
+    private static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
     public static void resendState(@NonNull final Context context) {
         LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_RESEND_STATE));
@@ -112,7 +114,15 @@ public final class PlaybackService extends Service {
             final float positionPercent) {
         final Intent intent = new Intent(context, PlaybackService.class);
         intent.setAction(ACTION_SEEK);
-        intent.putExtra(EXTRA_POSITION, positionPercent);
+        intent.putExtra(EXTRA_POSITION_PERCENT, positionPercent);
+        context.startService(intent);
+    }
+
+    public static void seek(@NonNull final Context context,
+            final long position) {
+        final Intent intent = new Intent(context, PlaybackService.class);
+        intent.setAction(ACTION_SEEK);
+        intent.putExtra(EXTRA_POSITION, position);
         context.startService(intent);
     }
 
@@ -195,7 +205,13 @@ public final class PlaybackService extends Service {
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mAudioEffects = AudioEffects.getInstance(this);
 
-        mMediaSession = new MediaSessionCompat(this, TAG);
+        final ComponentName mediaButtonReceiver = new ComponentName(this,
+                MediaButtonReceiver.class);
+
+        mMediaSession = new MediaSessionCompat(this, TAG, mediaButtonReceiver,
+                PendingIntent.getBroadcast(this, 1, new Intent(this, MediaButtonReceiver.class),
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        mMediaSession.setCallback(new MediaSessionCallback(this));
 
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
         mLocalBroadcastManager.registerReceiver(mResendStateReceiver,
@@ -207,8 +223,6 @@ public final class PlaybackService extends Service {
         mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(this);
 
-        mMediaSession.setMediaButtonReceiver(PendingIntent.getBroadcast(this, 1, new Intent(this,
-                MediaButtonReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT));
         mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mMediaSession.setActive(true);
@@ -254,7 +268,7 @@ public final class PlaybackService extends Service {
                     break;
 
                 case ACTION_SEEK:
-                    onActionSeek(intent.getFloatExtra(EXTRA_POSITION, 0f));
+                    onActionSeek(intent);
                     break;
 
                 case Intent.ACTION_MEDIA_BUTTON:
@@ -343,12 +357,30 @@ public final class PlaybackService extends Service {
         playNext();
     }
 
+    private void onActionSeek(final Intent intent) {
+        if (intent.hasExtra(EXTRA_POSITION_PERCENT)) {
+            onActionSeek(intent.getFloatExtra(EXTRA_POSITION_PERCENT, 0f));
+        } else if (intent.hasExtra(EXTRA_POSITION)) {
+            onActionSeek(intent.getLongExtra(EXTRA_POSITION_PERCENT, 0));
+        }
+    }
+
     private void onActionSeek(final float positionPercent) {
         final Media media = mPlaylist.getMedia();
         if (media != null) {
             final long duration = media.getDuration();
             if (duration > 0) {
                 final int position = (int) ((float) duration * positionPercent);
+                mMediaPlayer.seekTo(position);
+            }
+        }
+    }
+
+    private void onActionSeek(final long position) {
+        final Media media = mPlaylist.getMedia();
+        if (media != null) {
+            final long duration = media.getDuration();
+            if (duration > 0 && position < duration) {
                 mMediaPlayer.seekTo(position);
             }
         }
