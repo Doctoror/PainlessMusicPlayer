@@ -333,7 +333,7 @@ public final class PlaybackService extends Service {
             mPauseTimeoutSubscription = null;
         }
         mPlayOnFocusGain = true;
-        playCurrent();
+        playCurrent(true);
     }
 
     private void onActionPause() {
@@ -391,16 +391,18 @@ public final class PlaybackService extends Service {
         setState(STATE_PAUSED);
     }
 
-    private void playCurrent() {
-        play(mPlaylist.getPlaylist(), mPlaylist.getIndex());
+    private void playCurrent(final boolean mayContinueWhereStopped) {
+        play(mPlaylist.getPlaylist(), mPlaylist.getIndex(), mayContinueWhereStopped);
     }
 
     private void playPrev() {
-        play(mPlaylist.getPlaylist(), prevPos(mPlaylist.getPlaylist(), mPlaylist.getIndex()));
+        play(mPlaylist.getPlaylist(), prevPos(mPlaylist.getPlaylist(),
+                mPlaylist.getIndex()), false);
     }
 
     private void playNext() {
-        play(mPlaylist.getPlaylist(), nextPos(mPlaylist.getPlaylist(), mPlaylist.getIndex()));
+        play(mPlaylist.getPlaylist(), nextPos(mPlaylist.getPlaylist(),
+                mPlaylist.getIndex()), false);
     }
 
     private void restart() {
@@ -408,10 +410,11 @@ public final class PlaybackService extends Service {
         if (mState == STATE_PLAYING) {
             mMediaPlayer.stop();
         }
-        playCurrent();
+        playCurrent(false);
     }
 
-    private void play(@NonNull final List<Media> list, final int position) {
+    private void play(@NonNull final List<Media> list, final int position,
+            final boolean mayContinueWhereStopped) {
         ensureFocusRequested();
         if (!mFocusGranted) {
             return;
@@ -422,8 +425,14 @@ public final class PlaybackService extends Service {
                 && media.getId() == mCurrentTrack.getId()) {
             mMediaPlayer.play();
         } else {
+            long seekPosition = 0;
+            // If restoring from stopped state, set seek position to what it was
+            if (mayContinueWhereStopped && mState == STATE_IDLE
+                    && media.equals(mPlaylist.getMedia())) {
+                seekPosition = mPlaylist.getPosition();
+            }
             mPlaylist.setIndex(position);
-            mPlaylist.setPosition(0);
+            mPlaylist.setPosition(seekPosition);
             mPlaylist.setMedia(media);
             mCurrentTrack = media;
             if (mMediaSession != null) {
@@ -432,6 +441,9 @@ public final class PlaybackService extends Service {
 
             mMediaPlayer.stop();
             mMediaPlayer.load(media.getData());
+            if (seekPosition != 0) {
+                mMediaPlayer.seekTo(seekPosition);
+            }
             mMediaPlayer.play();
         }
     }
@@ -463,7 +475,9 @@ public final class PlaybackService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mMediaPlayer.stop();
         mPlaylist.deleteObserver(mPlaylistObserver);
+        mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
         mPlaylist.persistAsync();
         mDestroying = true;
         mPlayOnFocusGain = false;
@@ -476,7 +490,6 @@ public final class PlaybackService extends Service {
             mTimerSubscription = null;
         }
         mAudioEffects.relese();
-        mMediaPlayer.stop();
         mMediaPlayer.release();
         mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         mAudioFocusRequested = false;
@@ -628,16 +641,10 @@ public final class PlaybackService extends Service {
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-                mFocusGranted = true;
-                if (mPlayOnFocusGain) {
-                    playCurrent();
-                }
-                break;
-
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
                 mFocusGranted = true;
                 if (mPlayOnFocusGain) {
-                    playCurrent();
+                    playCurrent(true);
                 }
                 break;
 
