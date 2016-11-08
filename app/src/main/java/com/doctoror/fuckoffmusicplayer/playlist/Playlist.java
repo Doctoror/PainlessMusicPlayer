@@ -96,7 +96,7 @@ public final class Playlist {
     }
 
     public void setMedia(final Media media) {
-        if (!this.media.equals(media)) {
+        if (this.media == null || !this.media.equals(media)) {
             this.media = media;
             notifyMediaChanged(media);
         }

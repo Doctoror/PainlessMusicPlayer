@@ -66,7 +66,7 @@ public final class PlaylistActivity extends BaseActivity implements
             mDeleteSession = state.deleteSession;
             mFinishWhenDialogDismissed = state.finishWhenDialogDismissed;
 
-            if (mDeleteSession.permissionRequested) {
+            if (mDeleteSession != null && mDeleteSession.permissionRequested) {
                 onDeleteClick(mDeleteSession.media);
             }
         }
