@@ -99,7 +99,7 @@ dependencies {
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
 
     // RX
-    compile 'io.reactivex:rxjava:1.2.1'
+    compile 'io.reactivex:rxjava:1.2.2'
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.8.0@aar'
     compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0'

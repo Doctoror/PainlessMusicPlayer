@@ -55,6 +55,9 @@
     </string>
 
     <string name="Cancel">Cancel</string>
+    <string name="Recently_scanned">Recently scanned</string>
+    <string name="Random_50">Random 50</string>
+    <string name="Loading_playlist">Loading playlist</string>
 
     <plurals name="d_albums">
         <item quantity="one">%1$d album</item>
@@ -65,7 +68,7 @@
         <item>Artists</item>
         <item>Albums</item>
         <item>Genres</item>
-        <item>Recent</item>
+        <item>Playlists</item>
     </string-array>
 
 </resources>

@@ -135,6 +135,39 @@ public final class PlaylistUtils {
         return playlist;
     }
 
+    @Nullable
+    @WorkerThread
+    public static List<Media> forSelection(@NonNull final ContentResolver resolver,
+            @Nullable final String selection,
+            @Nullable final String[] selectionArgs,
+            @Nullable final String orderBy,
+            @Nullable final Integer limit) {
+        //noinspection UnnecessaryUnboxing
+        final List<Media> playlist = new ArrayList<>(limit == null ? 50 : limit.intValue());
+        final StringBuilder order = new StringBuilder(128);
+        if (orderBy != null) {
+            order.append(orderBy);
+        }
+        if (limit != null) {
+            if (order.length() == 0) {
+                throw new IllegalArgumentException("Cannot use LIMIT without ORDER BY");
+            }
+            order.append(" LIMIT ").append(limit);
+        }
+        final Cursor c = resolver.query(Query.CONTENT_URI,
+                Query.PROJECTION_WITH_ALBUM_ART,
+                selection,
+                selectionArgs,
+                order.length() == 0 ? null : order.toString());
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
+    }
+
     @NonNull
     public static List<Media> forFile(@NonNull final ContentResolver resolver,
             @NonNull final Uri uri) throws Exception {
@@ -245,8 +278,12 @@ public final class PlaylistUtils {
                 MediaStore.Audio.Media.ALBUM,
                 MediaStore.Audio.Media.DURATION,
                 MediaStore.Audio.Media.DATA,
-                "(SELECT _data FROM album_art WHERE album_art.album_id=audio.album_id) AS"
+                "(SELECT _data FROM album_art WHERE album_art.album_id=audio.album_id) AS "
                         + MediaStore.Audio.Albums.ALBUM_ART
         };
+
+        private Query() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

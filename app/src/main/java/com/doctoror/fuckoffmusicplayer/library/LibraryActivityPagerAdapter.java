@@ -19,7 +19,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
-import com.doctoror.fuckoffmusicplayer.library.recent.RecentTracksFragment;
+import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistsFragment;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -36,7 +36,7 @@ final class LibraryActivityPagerAdapter extends FragmentStatePagerAdapter {
             ArtistsFragment.class.getCanonicalName(),
             AlbumsFragment.class.getCanonicalName(),
             GenresFragment.class.getCanonicalName(),
-            RecentTracksFragment.class.getCanonicalName()
+            LivePlaylistsFragment.class.getCanonicalName()
     };
 
     @NonNull
