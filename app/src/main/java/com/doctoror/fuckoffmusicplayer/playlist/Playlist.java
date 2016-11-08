@@ -96,8 +96,10 @@ public final class Playlist {
     }
 
     public void setMedia(final Media media) {
-        this.media = media;
-        notifyMediaChanged(media);
+        if (!this.media.equals(media)) {
+            this.media = media;
+            notifyMediaChanged(media);
+        }
     }
 
     public void setPosition(final long position) {

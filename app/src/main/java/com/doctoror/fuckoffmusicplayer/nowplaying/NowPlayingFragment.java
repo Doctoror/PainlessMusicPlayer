@@ -61,7 +61,7 @@ public final class NowPlayingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         final Context context = getActivity();
         mPlaylist = Playlist.getInstance(context);
-        bindTrack(mPlaylist.getMedia());
+        bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
         mPlaylist.addObserver(mPlaylistObserver);
         LocalBroadcastManager.getInstance(context).registerReceiver(
                 mReceiver, mReceiver.mIntentFilter);
@@ -111,20 +111,21 @@ public final class NowPlayingFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
     }
 
-    void bindTrack(@Nullable Media track) {
+    void bindTrack(@Nullable Media track, final long position) {
         if (track != null) {
             mModel.setArt(track.getAlbumArt());
             mModel.setArtist(track.getArtist());
             mModel.setAlbum(track.getAlbum());
             mModel.setTitle(track.getTitle());
-            mModel.setProgress(0);
             mModel.setDuration(track.getDuration());
+            bindProgress(position);
             mModel.notifyChange();
         } else {
             mModel.setArt(null);
             mModel.setArtist(getString(R.string.Unknown_artist));
             mModel.setAlbum(getString(R.string.Unknown_album));
             mModel.setTitle(getString(R.string.Untitled));
+            mModel.setElapsedTime(0);
             mModel.setProgress(0);
             mModel.setDuration(0);
             mModel.notifyChange();
@@ -203,7 +204,7 @@ public final class NowPlayingFragment extends Fragment {
 
         @Override
         public void onMediaChanged(final Media media) {
-            bindTrack(media);
+            bindTrack(media, 0);
         }
 
         @Override
