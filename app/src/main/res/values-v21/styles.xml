@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="BaseAppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+
+</resources>
