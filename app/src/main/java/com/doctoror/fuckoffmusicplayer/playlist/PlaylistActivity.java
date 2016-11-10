@@ -151,6 +151,8 @@ public final class PlaylistActivity extends BaseActivity implements
         mCoverUri = pic;
 
         if (TextUtils.isEmpty(pic)) {
+            Glide.clear(mBinding.albumArt);
+            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
             onImageSet();
         } else {
             supportPostponeEnterTransition();

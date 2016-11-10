@@ -147,6 +147,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private void setAlbumArt(@Nullable final String artUri) {
         if (TextUtils.isEmpty(artUri)) {
+            Glide.clear(mBinding.albumArt);
             mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
             onArtProcessed();
         } else {
