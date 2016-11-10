@@ -4,12 +4,15 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -139,11 +142,21 @@ public final class LivePlaylistsFragment extends Fragment {
     }
 
     private void onPlaylistLoaded(@NonNull final List<Media> playlist) {
+        final Activity activity = getActivity();
         if (playlist.isEmpty()) {
-            Toast.makeText(getActivity(), R.string.No_tracks_found, Toast.LENGTH_LONG).show();
+            Toast.makeText(activity, R.string.No_tracks_found, Toast.LENGTH_LONG).show();
         } else {
-            startActivity(Henson.with(getActivity()).gotoPlaylistActivity()
-                    .isNowPlayingPlaylist(false).playlist(playlist).build());
+
+            final Intent intent = Henson.with(activity).gotoPlaylistActivity()
+                    .isNowPlayingPlaylist(false).playlist(playlist).build();
+
+            // If you do not specify any options the foreground fader in playlist activity
+            // won't work
+            //noinspection unchecked
+            final Bundle options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(activity).toBundle();
+
+            startActivity(intent, options);
         }
     }
 }
