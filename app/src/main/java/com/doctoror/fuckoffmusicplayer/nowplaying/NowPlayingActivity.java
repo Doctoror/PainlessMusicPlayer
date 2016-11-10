@@ -155,18 +155,18 @@ public final class NowPlayingActivity extends BaseActivity {
             final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
             if (hasCoverTransition) {
                 b.dontAnimate();
-                b.dontTransform();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .placeholder(R.drawable.album_art_placeholder)
-                    .animate(android.R.anim.fade_in)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(final Exception e, final String model,
                                 final Target<GlideDrawable> target,
                                 final boolean isFirstResource) {
+                            mBinding.albumArt.setAlpha(0f);
+                            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
+                            mBinding.albumArt.animate().alpha(1f).start();
                             onArtProcessed();
-                            return false;
+                            return true;
                         }
 
                         @Override
