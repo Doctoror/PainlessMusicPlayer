@@ -157,6 +157,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 b.dontAnimate();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .dontTransform()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(final Exception e, final String model,

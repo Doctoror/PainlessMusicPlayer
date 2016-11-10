@@ -161,6 +161,7 @@ public final class PlaylistActivity extends BaseActivity implements
                 b.dontAnimate();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .dontTransform()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(final Exception e, final String model,
