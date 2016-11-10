@@ -18,6 +18,9 @@ package com.doctoror.fuckoffmusicplayer.library.albums.conditional;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
@@ -34,13 +37,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,10 +117,16 @@ public class ConditionalAlbumListFragment extends Fragment {
         final FragmentConditionalAlbumListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_conditional_album_list, container, false);
         mBinding = binding;
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        binding.setModel(mModel);
+
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mBinding.toolbar);
+
+        binding.image.setColorFilter(ContextCompat.getColor(
+                activity, R.color.playlistAlbumArtBackground), PorterDuff.Mode.SRC_ATOP);
+
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.setModel(mModel);
+
         return binding.getRoot();
     }
 
@@ -240,12 +251,34 @@ public class ConditionalAlbumListFragment extends Fragment {
                         }
                     }
                 }
-                if (pic == null) {
+                if (TextUtils.isEmpty(pic)) {
                     Glide.clear(mBinding.image);
+                    mBinding.image.setImageResource(R.drawable.album_art_placeholder);
                 } else {
                     mRequestManager.load(pic)
-                            .placeholder(R.drawable.album_art_placeholder)
+                            .dontTransform()
                             .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .listener(new RequestListener<String, GlideDrawable>() {
+                                @Override
+                                public boolean onException(final Exception e, final String model,
+                                        final Target<GlideDrawable> target,
+                                        final boolean isFirstResource) {
+                                    mBinding.image.setAlpha(0f);
+                                    mBinding.image
+                                            .setImageResource(R.drawable.album_art_placeholder);
+                                    mBinding.image.animate().alpha(1f).start();
+                                    return true;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(final GlideDrawable resource,
+                                        final String model,
+                                        final Target<GlideDrawable> target,
+                                        final boolean isFromMemoryCache,
+                                        final boolean isFirstResource) {
+                                    return false;
+                                }
+                            })
                             .into(mBinding.image);
                 }
             }

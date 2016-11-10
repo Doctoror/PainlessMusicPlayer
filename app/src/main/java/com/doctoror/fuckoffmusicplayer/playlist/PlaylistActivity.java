@@ -48,14 +48,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.view.View;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.OnClick;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Yaroslav Mytkalyk on 20.10.16.

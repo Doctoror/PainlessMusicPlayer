@@ -18,6 +18,8 @@ package com.doctoror.fuckoffmusicplayer.util;
 import android.content.res.ColorStateList;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -31,7 +33,24 @@ public final class ThemeUtils {
     }
 
     /**
-     * Returns  {@link ColorStateList} for attr from the {@link Theme}
+     * Returns color for attr from the {@link Theme}
+     *
+     * @param theme {@link Theme} to get int from
+     * @param attr  Attribute of the int
+     * @return dimension for attr from the {@link Theme}
+     */
+    @ColorInt
+    public static int getColor(@NonNull final Theme theme, final int attr) {
+        final TypedArray array = theme.obtainStyledAttributes(new int[]{attr});
+        try {
+            return array.getColor(0, Color.TRANSPARENT);
+        } finally {
+            array.recycle();
+        }
+    }
+
+    /**
+     * Returns {@link ColorStateList} for attr from the {@link Theme}
      *
      * @param theme {@link Theme} to get int from
      * @param attr  Attribute of the int
