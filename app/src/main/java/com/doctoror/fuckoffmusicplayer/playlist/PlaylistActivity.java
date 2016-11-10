@@ -152,7 +152,7 @@ public final class PlaylistActivity extends BaseActivity implements
 
         if (TextUtils.isEmpty(pic)) {
             Glide.clear(mBinding.albumArt);
-            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
+            animateToPlaceholder();
             onImageSet();
         } else {
             supportPostponeEnterTransition();
@@ -168,9 +168,7 @@ public final class PlaylistActivity extends BaseActivity implements
                                 final Target<GlideDrawable> target,
                                 final boolean isFirstResource) {
                             mCoverUri = null;
-                            mBinding.albumArt.setAlpha(0f);
-                            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
-                            mBinding.albumArt.animate().alpha(1f).start();
+                            animateToPlaceholder();
                             onImageSet();
                             return true;
                         }
@@ -186,6 +184,12 @@ public final class PlaylistActivity extends BaseActivity implements
                     })
                     .into(binding.albumArt);
         }
+    }
+
+    private void animateToPlaceholder() {
+        mBinding.albumArt.setAlpha(0f);
+        mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
+        mBinding.albumArt.animate().alpha(1f).start();
     }
 
     private void onImageSet() {

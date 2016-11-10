@@ -52,6 +52,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -253,7 +254,10 @@ public class ConditionalAlbumListFragment extends Fragment {
                 }
                 if (TextUtils.isEmpty(pic)) {
                     Glide.clear(mBinding.image);
-                    mBinding.image.setImageResource(R.drawable.album_art_placeholder);
+                    //Must be a delay of from here. TODO Why?
+                    Observable.timer(300, TimeUnit.MILLISECONDS)
+                            .observeOn(AndroidSchedulers.mainThread()).subscribe((l) ->
+                            animateToPlaceholder());
                 } else {
                     mRequestManager.load(pic)
                             .dontTransform()
@@ -263,10 +267,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                                 public boolean onException(final Exception e, final String model,
                                         final Target<GlideDrawable> target,
                                         final boolean isFirstResource) {
-                                    mBinding.image.setAlpha(0f);
-                                    mBinding.image
-                                            .setImageResource(R.drawable.album_art_placeholder);
-                                    mBinding.image.animate().alpha(1f).start();
+                                    animateToPlaceholder();
                                     return true;
                                 }
 
@@ -285,6 +286,12 @@ public class ConditionalAlbumListFragment extends Fragment {
             mAdapter.swapCursor(cursor);
             mData = cursor;
             showStateContent();
+        }
+
+        private void animateToPlaceholder() {
+            mBinding.image.setAlpha(0f);
+            mBinding.image.setImageResource(R.drawable.album_art_placeholder);
+            mBinding.image.animate().alpha(1f).setDuration(500).start();
         }
     };
 
