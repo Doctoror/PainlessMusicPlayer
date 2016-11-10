@@ -156,6 +156,7 @@ public final class PlaylistActivity extends BaseActivity implements
                         public boolean onException(final Exception e, final String model,
                                 final Target<GlideDrawable> target,
                                 final boolean isFirstResource) {
+                            mHandler.post(() -> supportStartPostponedEnterTransition());
                             return false;
                         }
 
@@ -179,6 +180,11 @@ public final class PlaylistActivity extends BaseActivity implements
                 transition.addListener(new TransitionListenerAdapter() {
                     @Override
                     public void onTransitionEnd(final Transition transition) {
+                        onTransitionEnded();
+                    }
+
+                    @Override
+                    public void onTransitionCancel(final Transition transition) {
                         onTransitionEnded();
                     }
                 });
