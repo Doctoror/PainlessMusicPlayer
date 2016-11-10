@@ -165,14 +165,18 @@ public final class NowPlayingActivity extends BaseActivity {
                     })
                     .into(mBinding.albumArt);
         } else {
-            mBinding.infoContainer.setVisibility(View.VISIBLE);
+            onArtProcessed();
         }
     }
 
     private void onArtProcessed() {
         supportStartPostponedEnterTransition();
-        mBinding.infoContainer.setVisibility(View.VISIBLE);
-        mBinding.toolbar.setVisibility(View.VISIBLE);
+        if (mBinding.infoContainer.getAlpha() != 1f) {
+            mBinding.infoContainer.animate().setStartDelay(500).alpha(1f).start();
+        }
+        if (mBinding.toolbar.getAlpha() != 1f) {
+            mBinding.toolbar.animate().setStartDelay(500).alpha(1f).start();
+        }
     }
 
     @Override

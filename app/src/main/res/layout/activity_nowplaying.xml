@@ -30,9 +30,8 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_weight="1"
             android:layout_height="0dp"
-            android:animateLayoutChanges="true">
+            android:layout_weight="1">
 
             <ImageView
                 android:id="@+id/albumArt"
@@ -47,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:alpha="0"
                 android:background="@color/translucentBackground">
 
                 <TextView
@@ -88,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/translucentBackground"
-                android:visibility="gone"
+                android:alpha="0"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
         </FrameLayout>
