@@ -36,9 +36,11 @@ import org.parceler.Parcels;
 
 import android.Manifest;
 import android.databinding.DataBindingUtil;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -138,6 +140,8 @@ public final class PlaylistActivity extends BaseActivity implements
     private void initAlbumArtAndToolbar(@NonNull final ActivityPlaylistBinding binding) {
         setSupportActionBar(binding.toolbar);
         ViewCompat.setTransitionName(binding.albumArt, PlaylistActivity.VIEW_ALBUM_ART);
+        binding.albumArt.setColorFilter(ContextCompat.getColor(
+                this, R.color.playlistAlbumArtBackground), PorterDuff.Mode.SRC_ATOP);
 
         String pic = null;
         final int size = playlist.size();
@@ -190,9 +194,6 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private void onImageSet() {
         supportStartPostponedEnterTransition();
-        Observable.timer(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((l) -> mBinding.albumArtForeground.setVisibility(View.VISIBLE));
     }
 
     @Override
