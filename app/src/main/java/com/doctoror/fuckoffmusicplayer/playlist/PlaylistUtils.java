@@ -68,10 +68,6 @@ public final class PlaylistUtils {
         playlist.persistAsync();
 
         PlaybackService.play(context);
-
-        final Intent intent = new Intent(context, NowPlayingActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(intent);
     }
 
     @Nullable

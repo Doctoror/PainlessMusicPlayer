@@ -25,6 +25,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.util.TransitionListenerAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -34,11 +35,13 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -85,6 +88,8 @@ public final class PlaylistActivity extends BaseActivity implements
     private boolean mFinishWhenDialogDismissed;
     private DeleteSession mDeleteSession;
 
+    private int mAppbarOffset;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +107,9 @@ public final class PlaylistActivity extends BaseActivity implements
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_playlist);
         mBinding.setModel(mModel);
+        mBinding.appBar.addOnOffsetChangedListener(
+                (appBarLayout, verticalOffset) -> mAppbarOffset = verticalOffset);
+
         initAlbumArtAndToolbar(mBinding);
         initRecyclerView(mBinding);
 
@@ -269,6 +277,9 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private void onPlayClick(final Media media, final int index) {
         PlaylistUtils.play(this, playlist, media, index);
+
+        // Start now playing. Pass cover view only if appbar is expanded
+        NowPlayingActivity.start(this, mAppbarOffset == 0 ? mBinding.albumArt : null);
     }
 
     @Override

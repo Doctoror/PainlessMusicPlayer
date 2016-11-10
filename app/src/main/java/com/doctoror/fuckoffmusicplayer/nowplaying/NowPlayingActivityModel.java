@@ -25,7 +25,7 @@ import android.support.annotation.NonNull;
  * Created by Yaroslav Mytkalyk on 21.10.16.
  */
 
-public final class NowPlayingFragmentModel extends BaseObservable {
+public final class NowPlayingActivityModel extends BaseObservable {
 
     private String mArt;
     private String mTitle;

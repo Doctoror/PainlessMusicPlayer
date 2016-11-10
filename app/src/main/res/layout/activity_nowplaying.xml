@@ -20,7 +20,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingFragmentModel"/>
+            type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityModel"/>
     </data>
 
     <LinearLayout
@@ -31,21 +31,23 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_height="0dp">
+            android:layout_height="0dp"
+            android:animateLayoutChanges="true">
 
             <ImageView
+                android:id="@+id/albumArt"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                app:imageUri="@{model.art}"
-                app:placeholder="@{@drawable/album_art_placeholder}"
                 tools:ignore="ContentDescription"/>
 
             <LinearLayout
+                android:id="@+id/infoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
+                android:visibility="gone"
                 android:background="@color/translucentBackground">
 
                 <TextView
@@ -86,6 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/translucentBackground"
+                android:visibility="gone"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
         </FrameLayout>

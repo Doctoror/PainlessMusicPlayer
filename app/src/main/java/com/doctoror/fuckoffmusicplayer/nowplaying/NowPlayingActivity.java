@@ -15,40 +15,85 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
+import com.jakewharton.rxbinding.widget.RxSeekBar;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by Yaroslav Mytkalyk on 21.10.16.
  */
 public final class NowPlayingActivity extends BaseActivity {
+
+    public static final String VIEW_ALBUM_ART = "VIEW_ALBUM_ART";
+
+    public static void start(@NonNull final Activity activity,
+            @Nullable final View albumArt) {
+        final Intent intent = new Intent(activity, NowPlayingActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (albumArt == null) {
+            activity.startActivity(intent);
+        } else {
+            final ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(activity, albumArt,
+                            PlaylistActivity.VIEW_ALBUM_ART);
+            activity.startActivity(intent, options.toBundle());
+        }
+    }
+
+    private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
+    private final Receiver mReceiver = new Receiver();
+    private PlaylistHolder mPlaylist;
+
+    private int mState = PlaybackService.STATE_IDLE;
+    private ActivityNowplayingBinding mBinding;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -62,12 +107,72 @@ public final class NowPlayingActivity extends BaseActivity {
             return;
         }
 
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().add(android.R.id.content,
-                    new NowPlayingFragment()).commit();
-        }
+        mPlaylist = PlaylistHolder.getInstance(this);
+
+        mBinding = DataBindingUtil.setContentView(this,
+                R.layout.activity_nowplaying);
+        ViewCompat.setTransitionName(mBinding.albumArt, VIEW_ALBUM_ART);
+        ButterKnife.bind(this);
+
+        bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
+        mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);
+        mBinding.setModel(mModel);
+        setSupportActionBar(mBinding.toolbar);
+
+        RxSeekBar.userChanges(mBinding.seekBar).subscribe(new Action1<Integer>() {
+
+            private boolean mFirst = true;
+
+            @Override
+            public void call(final Integer progress) {
+                if (mFirst) {
+                    mFirst = false;
+                } else {
+                    PlaybackService.seek(NowPlayingActivity.this, (float) progress / 200f);
+                }
+            }
+        });
 
         handleIntent(getIntent());
+    }
+
+    private void setAlbumArt(@Nullable final String artUri) {
+        if (!TextUtils.isEmpty(artUri)) {
+            supportPostponeEnterTransition();
+            Glide.with(this)
+                    .load(artUri)
+                    .dontTransform()
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .placeholder(R.drawable.album_art_placeholder)
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(final Exception e, final String model,
+                                final Target<GlideDrawable> target,
+                                final boolean isFirstResource) {
+                            onArtProcessed();
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(final GlideDrawable resource,
+                                final String model,
+                                final Target<GlideDrawable> target, final boolean isFromMemoryCache,
+                                final boolean isFirstResource) {
+                            onArtProcessed();
+                            return false;
+                        }
+                    })
+                    .into(mBinding.albumArt);
+        } else {
+            mBinding.infoContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void onArtProcessed() {
+        supportStartPostponedEnterTransition();
+        mBinding.infoContainer.setVisibility(View.VISIBLE);
+        mBinding.toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -150,6 +255,148 @@ public final class NowPlayingActivity extends BaseActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPlaylist.addObserver(mPlaylistObserver);
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mReceiver, mReceiver.mIntentFilter);
+        PlaybackService.resendState(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        PlaylistHolder.getInstance(this).deleteObserver(mPlaylistObserver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    void bindTrack(@Nullable Media track, final long position) {
+        if (track != null) {
+            setAlbumArt(track.getAlbumArt());
+            mModel.setArtist(track.getArtist());
+            mModel.setAlbum(track.getAlbum());
+            mModel.setTitle(track.getTitle());
+            mModel.setDuration(track.getDuration());
+            bindProgress(position);
+            mModel.notifyChange();
+        } else {
+            setAlbumArt(null);
+            mModel.setArtist(getString(R.string.Unknown_artist));
+            mModel.setAlbum(getString(R.string.Unknown_album));
+            mModel.setTitle(getString(R.string.Untitled));
+            mModel.setElapsedTime(0);
+            mModel.setProgress(0);
+            mModel.setDuration(0);
+            mModel.notifyChange();
+        }
+    }
+
+    void bindProgress(final long progress) {
+        mModel.setElapsedTime(progress);
+        final long duration = mModel.getDuration();
+        if (duration > 0) {
+            // Max is 200 so progress is a fraction of 200
+            mModel.setProgress((int) (((double) progress / (double) duration) * 200f));
+        }
+    }
+
+    void bindState(final int state) {
+        mState = state;
+        final int playBtnRes;
+        switch (state) {
+            case PlaybackService.STATE_IDLE:
+                playBtnRes = R.drawable.ic_play_arrow_white_36dp;
+                break;
+
+            case PlaybackService.STATE_LOADING:
+                playBtnRes = R.drawable.ic_pause_white_36dp;
+                break;
+
+            case PlaybackService.STATE_PLAYING:
+                playBtnRes = R.drawable.ic_pause_white_36dp;
+                break;
+
+            case PlaybackService.STATE_PAUSED:
+                playBtnRes = R.drawable.ic_play_arrow_white_36dp;
+                break;
+
+            default:
+                playBtnRes = R.drawable.ic_play_arrow_white_36dp;
+                break;
+        }
+        mModel.setBtnPlayRes(playBtnRes);
+    }
+
+    @OnClick(R.id.btnPlay)
+    public void onPlayClick() {
+        switch (mState) {
+            case PlaybackService.STATE_IDLE:
+                PlaybackService.play(this);
+                break;
+
+            case PlaybackService.STATE_PAUSED:
+                PlaybackService.play(this);
+                break;
+
+            case PlaybackService.STATE_PLAYING:
+                PlaybackService.pause(this);
+                break;
+        }
+    }
+
+    @OnClick(R.id.btnPrev)
+    public void onPrevClick() {
+        PlaybackService.prev(this);
+    }
+
+    @OnClick(R.id.btnNext)
+    public void onNextClick() {
+        PlaybackService.next(this);
+    }
+
+    private final PlaylistHolder.PlaylistObserver mPlaylistObserver
+            = new PlaylistHolder.PlaylistObserver() {
+
+        @Override
+        public void onPositionChanged(final long position) {
+            bindProgress(position);
+        }
+
+        @Override
+        public void onMediaChanged(final Media media) {
+            bindTrack(media, 0);
+        }
+
+        @Override
+        public void onMediaRemoved(final Media media) {
+            final List<Media> playlist = mPlaylist.getPlaylist();
+            if (playlist == null || playlist.isEmpty()) {
+                if (!isFinishing()) {
+                    finish();
+                }
+            }
+        }
+    };
+
+    private final class Receiver extends BroadcastReceiver {
+
+        final IntentFilter mIntentFilter = new IntentFilter();
+
+        Receiver() {
+            mIntentFilter.addAction(PlaybackService.ACTION_STATE_CHANGED);
+        }
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            switch (intent.getAction()) {
+                case PlaybackService.ACTION_STATE_CHANGED:
+                    bindState(intent.getIntExtra(PlaybackService.EXTRA_STATE, 0));
+                    break;
+            }
         }
     }
 }
