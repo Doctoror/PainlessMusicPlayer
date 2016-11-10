@@ -22,18 +22,23 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -95,8 +100,8 @@ public class ConditionalAlbumListFragment extends Fragment {
         mRequestManager = Glide.with(this);
 
         mAdapter = new ConditionalAlbumsRecyclerAdapter(getActivity(), mRequestManager);
-        mAdapter.setOnAlbumClickListener((id, album, art) ->
-                onPlayClick(new long[]{id}, new String[]{art}));
+        mAdapter.setOnAlbumClickListener((artView, id, album, art) ->
+                onPlayClick(artView, album, new long[]{id}, new String[]{art}));
         mModel.setRecyclerAdpter(mAdapter);
     }
 
@@ -130,20 +135,36 @@ public class ConditionalAlbumListFragment extends Fragment {
         }
     }
 
-    protected void onPlayClick(final long[] albums, final String[] arts) {
+    protected void onPlayClick(@Nullable final View albumArtView,
+            @Nullable final String playlistName,
+            @NonNull final long[] albumIds,
+            @NonNull final String[] arts) {
         Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbums(
-                getActivity().getContentResolver(), albums, arts, null)))
+                getActivity().getContentResolver(), albumIds, arts, null)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {
                     if (isAdded()) {
+                        final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
-                            startActivity(Henson.with(getActivity()).gotoPlaylistActivity()
+                            final Intent intent = Henson.with(activity).gotoPlaylistActivity()
                                     .isNowPlayingPlaylist(false)
                                     .playlist(playlist)
-                                    .build());
+                                    .title(playlistName)
+                                    .build();
+
+                            if (albumArtView != null) {
+                                //noinspection unchecked
+                                final ActivityOptionsCompat options = ActivityOptionsCompat
+                                        .makeSceneTransitionAnimation(activity, albumArtView,
+                                                PlaylistActivity.VIEW_ALBUM_ART);
+
+                                startActivity(intent, options.toBundle());
+                            } else {
+                                startActivity(intent);
+                            }
                         } else {
-                            Toast.makeText(getActivity(), R.string.The_playlist_is_empty,
+                            Toast.makeText(activity, R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)
                                     .show();
                         }
@@ -186,7 +207,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                 ids[i] = mData.getLong(ConditionalAlbumListQuery.COLUMN_ID);
                 arts[i] = mData.getString(ConditionalAlbumListQuery.COLUMN_ALBUM_ART);
             }
-            onPlayClick(ids, arts);
+            onPlayClick(null, null, ids, arts);
         }
     }
 

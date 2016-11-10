@@ -60,7 +60,7 @@ public final class PlaylistUtils {
             @NonNull final List<Media> mediaList,
             @NonNull final Media media,
             final int position) {
-        final Playlist playlist = Playlist.getInstance(context);
+        final PlaylistHolder playlist = PlaylistHolder.getInstance(context);
         playlist.setPlaylist(mediaList);
         playlist.setMedia(media);
         playlist.setIndex(position);

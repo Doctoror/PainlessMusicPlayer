@@ -20,7 +20,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowplayingBinding;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.Playlist;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
 import com.jakewharton.rxbinding.widget.RxSeekBar;
 
@@ -52,7 +52,7 @@ public final class NowPlayingFragment extends Fragment {
 
     private final NowPlayingFragmentModel mModel = new NowPlayingFragmentModel();
     private final Receiver mReceiver = new Receiver();
-    private Playlist mPlaylist;
+    private PlaylistHolder mPlaylist;
 
     private int mState = PlaybackService.STATE_IDLE;
 
@@ -60,7 +60,7 @@ public final class NowPlayingFragment extends Fragment {
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final Context context = getActivity();
-        mPlaylist = Playlist.getInstance(context);
+        mPlaylist = PlaylistHolder.getInstance(context);
         bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
         mPlaylist.addObserver(mPlaylistObserver);
         LocalBroadcastManager.getInstance(context).registerReceiver(
@@ -107,7 +107,7 @@ public final class NowPlayingFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Playlist.getInstance(getActivity()).deleteObserver(mPlaylistObserver);
+        PlaylistHolder.getInstance(getActivity()).deleteObserver(mPlaylistObserver);
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
     }
 
@@ -195,7 +195,7 @@ public final class NowPlayingFragment extends Fragment {
         PlaybackService.next(getActivity());
     }
 
-    private final Playlist.PlaylistObserver mPlaylistObserver = new Playlist.PlaylistObserver() {
+    private final PlaylistHolder.PlaylistObserver mPlaylistObserver = new PlaylistHolder.PlaylistObserver() {
 
         @Override
         public void onPositionChanged(final long position) {

@@ -50,7 +50,7 @@ final class PlaylistPersister {
     private static final String FILE_NAME = "playlist";
 
     static void persistAsync(@NonNull final Context context,
-            @NonNull final Playlist playlist) {
+            @NonNull final PlaylistHolder playlist) {
         // Retrieve snapshot now, so that it's immutable when writing
         final PersistablePlaylist.ProtoPlaylist pp = toProtoPlaylist(playlist);
         Observable.create(s -> persist(context, pp))
@@ -80,7 +80,7 @@ final class PlaylistPersister {
     }
 
     static void read(@NonNull final Context context,
-            @NonNull final Playlist playlist) {
+            @NonNull final PlaylistHolder playlist) {
         InputStream is = null;
         PersistablePlaylist.ProtoPlaylist protoPlaylist = null;
         try {
@@ -105,7 +105,7 @@ final class PlaylistPersister {
     }
 
     private static void readFromProtoPlaylist(@NonNull final PersistablePlaylist.ProtoPlaylist pp,
-            @NonNull final Playlist playlist) {
+            @NonNull final PlaylistHolder playlist) {
         playlist.index = pp.index;
         playlist.position = pp.position;
         if (pp.playlist != null) {
@@ -140,7 +140,7 @@ final class PlaylistPersister {
     }
 
     @NonNull
-    private static PersistablePlaylist.ProtoPlaylist toProtoPlaylist(@NonNull final Playlist playlist) {
+    private static PersistablePlaylist.ProtoPlaylist toProtoPlaylist(@NonNull final PlaylistHolder playlist) {
         final PersistablePlaylist.ProtoPlaylist pp = new PersistablePlaylist.ProtoPlaylist();
         pp.playlist = toProtoMediaList(playlist.playlist);
         pp.index = playlist.index;

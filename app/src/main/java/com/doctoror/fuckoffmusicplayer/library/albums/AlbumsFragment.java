@@ -20,16 +20,21 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
+import com.doctoror.rxcursorloader.RxCursorLoader;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
@@ -49,7 +54,7 @@ public final class AlbumsFragment extends LibraryListFragment {
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAdapter = new AlbumsRecyclerAdapter(getActivity(), Glide.with(this));
-        mAdapter.setOnAlbumClickListener((id, album, art) -> onAlbumClick(id, art));
+        mAdapter.setOnAlbumClickListener(this::onAlbumClick);
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_albums_found));
     }
@@ -76,18 +81,28 @@ public final class AlbumsFragment extends LibraryListFragment {
         mAdapter.swapCursor(null);
     }
 
-    private void onAlbumClick(final long album, final String art) {
+    private void onAlbumClick(@NonNull final View view,
+            final long albumId,
+            @Nullable final String albumName,
+            final String art) {
         Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbum(
-                getActivity().getContentResolver(), album, art)))
+                getActivity().getContentResolver(), albumId, art)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {
                     if (isAdded()) {
                         if (playlist != null && !playlist.isEmpty()) {
-                            startActivity(Henson.with(getActivity()).gotoPlaylistActivity()
+                            final Activity activity = getActivity();
+                            final Intent intent = Henson.with(activity).gotoPlaylistActivity()
                                     .isNowPlayingPlaylist(false)
                                     .playlist(playlist)
-                                    .build());
+                                    .title(albumName)
+                                    .build();
+
+                            final ActivityOptionsCompat options = ActivityOptionsCompat
+                                    .makeSceneTransitionAnimation(activity, view,
+                                            PlaylistActivity.VIEW_ALBUM_ART);
+                            startActivity(intent, options.toBundle());
                         } else {
                             Toast.makeText(getActivity(), R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)

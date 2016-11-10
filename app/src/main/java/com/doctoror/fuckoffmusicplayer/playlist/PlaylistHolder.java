@@ -26,18 +26,18 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 21.10.16.
  */
 
-public final class Playlist {
+public final class PlaylistHolder {
 
     // Is not a leak since it's an application context
     @SuppressLint("StaticFieldLeak")
-    private static Playlist sInstance;
+    private static PlaylistHolder sInstance;
 
     @NonNull
-    public static Playlist getInstance(@NonNull final Context context) {
+    public static PlaylistHolder getInstance(@NonNull final Context context) {
         if (sInstance == null) {
-            synchronized (Playlist.class) {
+            synchronized (PlaylistHolder.class) {
                 if (sInstance == null) {
-                    sInstance = new Playlist(context.getApplicationContext());
+                    sInstance = new PlaylistHolder(context.getApplicationContext());
                 }
             }
         }
@@ -54,7 +54,7 @@ public final class Playlist {
     Media media;
     long position;
 
-    private Playlist(@NonNull final Context context) {
+    private PlaylistHolder(@NonNull final Context context) {
         mContext = context;
         PlaylistPersister.read(context, this);
     }

@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -37,7 +38,10 @@ final class ConditionalAlbumsRecyclerAdapter
 
     interface OnAlbumClickListener {
 
-        void onAlbumClick(long id, String album, String art);
+        void onAlbumClick(@NonNull View albumArtView,
+                long albumId,
+                @Nullable String albumName,
+                @Nullable String albumArt);
     }
 
     @NonNull
@@ -59,10 +63,12 @@ final class ConditionalAlbumsRecyclerAdapter
         mOnAlbumClickListener = onAlbumClickListener;
     }
 
-    private void onAlbumClick(final long id, @NonNull final String album,
+    private void onAlbumClick(@NonNull final View albumArtView,
+            final long id,
+            @NonNull final String album,
             @NonNull final String art) {
         if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(id, album, art);
+            mOnAlbumClickListener.onAlbumClick(albumArtView, id, album, art);
         }
     }
 
@@ -90,7 +96,8 @@ final class ConditionalAlbumsRecyclerAdapter
         vh.itemView.setOnClickListener(v -> {
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onAlbumClick(item.getLong(ConditionalAlbumListQuery.COLUMN_ID),
+                onAlbumClick(vh.image,
+                        item.getLong(ConditionalAlbumListQuery.COLUMN_ID),
                         item.getString(ConditionalAlbumListQuery.COLUMN_ALBUM),
                         item.getString(ConditionalAlbumListQuery.COLUMN_ALBUM_ART));
             }

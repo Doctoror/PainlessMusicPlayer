@@ -20,7 +20,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.playlist.PlaylistFragmentModel"/>
+            type="com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivityModel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -36,22 +36,25 @@
             <android.support.design.widget.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
                 app:contentScrim="?attr/colorPrimary"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <ImageView
+                    android:id="@+id/albumArt"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    app:imageUri="@{model.imageUri}"
-                    app:placeholder="@{@drawable/album_art_placeholder}"
+                    android:src="@drawable/album_art_placeholder"
                     app:layout_collapseMode="parallax"
                     tools:ignore="ContentDescription"/>
 
                 <View
+                    android:id="@+id/albumArtForeground"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#60000000"/>
+                    android:visibility="gone"
+                    android:background="#6A000000"/>
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"

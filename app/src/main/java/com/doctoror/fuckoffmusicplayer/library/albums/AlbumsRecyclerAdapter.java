@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -44,7 +45,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
     private final RequestManager mRequestManager;
 
     interface OnAlbumClickListener {
-        void onAlbumClick(long id, String album, String art);
+        void onAlbumClick(View albumArtView, long id, String album, String art);
     }
 
     private OnAlbumClickListener mOnAlbumClickListener;
@@ -59,10 +60,10 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
         mOnAlbumClickListener = onAlbumClickListener;
     }
 
-    private void onAlbumClick(final long id, @NonNull final String album,
+    private void onAlbumClick(@NonNull final View view, final long id, @NonNull final String album,
             @NonNull final String art) {
         if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(id, album, art);
+            mOnAlbumClickListener.onAlbumClick(view, id, album, art);
         }
     }
 
@@ -78,6 +79,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
                     .load(artLocation)
                     .placeholder(R.drawable.album_art_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .dontTransform()
                     .into(viewHolder.image);
         }
     }
@@ -89,7 +91,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
         vh.itemView.setOnClickListener(v -> {
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onAlbumClick(item.getLong(AlbumsQuery.COLUMN_ID),
+                onAlbumClick(vh.image,
+                        item.getLong(AlbumsQuery.COLUMN_ID),
                         item.getString(AlbumsQuery.COLUMN_ALBUM),
                         item.getString(AlbumsQuery.COLUMN_ALBUM_ART));
             }

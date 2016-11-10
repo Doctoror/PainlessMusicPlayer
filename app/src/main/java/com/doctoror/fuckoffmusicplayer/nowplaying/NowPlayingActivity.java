@@ -21,7 +21,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.Playlist;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
@@ -142,7 +142,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 final Intent playlistActivity = Henson.with(this)
                         .gotoPlaylistActivity()
                         .isNowPlayingPlaylist(Boolean.TRUE)
-                        .playlist(Playlist.getInstance(this).getPlaylist())
+                        .playlist(PlaylistHolder.getInstance(this).getPlaylist())
                         .build();
                 playlistActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(playlistActivity);

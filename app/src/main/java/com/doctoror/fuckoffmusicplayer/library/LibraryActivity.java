@@ -19,7 +19,7 @@ import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.Playlist;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -106,7 +106,7 @@ public final class LibraryActivity extends BaseActivity {
     }
 
     private boolean hasPlaylist() {
-        final List<Media> playlist = Playlist.getInstance(this).getPlaylist();
+        final List<Media> playlist = PlaylistHolder.getInstance(this).getPlaylist();
         return playlist != null && !playlist.isEmpty();
     }
 

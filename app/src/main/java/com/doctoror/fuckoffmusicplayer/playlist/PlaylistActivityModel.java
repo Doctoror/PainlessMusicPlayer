@@ -24,7 +24,7 @@ import android.support.v7.widget.RecyclerView;
  * Created by Yaroslav Mytkalyk on 20.10.16.
  */
 
-public final class PlaylistFragmentModel {
+public final class PlaylistActivityModel {
 
     private final ObservableField<RecyclerView.Adapter> mRecyclerAdpter = new ObservableField<>();
     private final ObservableField<String> mImageUri = new ObservableField<>();

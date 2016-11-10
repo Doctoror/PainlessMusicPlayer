@@ -20,16 +20,22 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
@@ -72,7 +78,10 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     }
 
     @Override
-    protected void onPlayClick(final long[] albums, final String[] arts) {
+    protected void onPlayClick(@Nullable final View albumArtView,
+            @Nullable final String playlsitName,
+            @NonNull final long[] albums,
+            @NonNull final String[] arts) {
         Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbums(
                 getActivity().getContentResolver(), albums, arts, artistId)))
                 .subscribeOn(Schedulers.io())
@@ -80,10 +89,23 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
                 .subscribe((playlist) -> {
                     if (isAdded()) {
                         if (playlist != null && !playlist.isEmpty()) {
-                            startActivity(Henson.with(getActivity()).gotoPlaylistActivity()
+                            final Activity activity = getActivity();
+                            final Intent intent = Henson.with(activity).gotoPlaylistActivity()
                                     .isNowPlayingPlaylist(false)
                                     .playlist(playlist)
-                                    .build());
+                                    .title(playlsitName)
+                                    .build();
+
+                            if (albumArtView != null) {
+                                //noinspection unchecked
+                                final ActivityOptionsCompat options = ActivityOptionsCompat
+                                        .makeSceneTransitionAnimation(activity, albumArtView,
+                                                PlaylistActivity.VIEW_ALBUM_ART);
+
+                                startActivity(intent, options.toBundle());
+                            } else {
+                                startActivity(intent);
+                            }
                         } else {
                             Toast.makeText(getActivity(), R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)

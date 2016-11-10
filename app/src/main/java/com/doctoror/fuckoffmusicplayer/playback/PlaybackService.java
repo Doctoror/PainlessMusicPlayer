@@ -25,7 +25,7 @@ import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.Playlist;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
@@ -168,7 +168,7 @@ public final class PlaybackService extends Service {
             = new AudioBecomingNoisyReceiver();
     private final MediaPlayer mMediaPlayer = MediaPlayerFactory.newMediaPlayer();
 
-    private Playlist mPlaylist;
+    private PlaylistHolder mPlaylist;
 
     private AudioEffects mAudioEffects;
 
@@ -195,7 +195,7 @@ public final class PlaybackService extends Service {
     public void onCreate() {
         super.onCreate();
         mDestroying = false;
-        mPlaylist = Playlist.getInstance(this);
+        mPlaylist = PlaylistHolder.getInstance(this);
         mPlaylist.addObserver(mPlaylistObserver);
 
         final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -544,7 +544,7 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final Playlist.PlaylistObserver mPlaylistObserver = new Playlist.PlaylistObserver() {
+    private final PlaylistHolder.PlaylistObserver mPlaylistObserver = new PlaylistHolder.PlaylistObserver() {
 
         @Override
         public void onPositionChanged(final long position) {
