@@ -37,8 +37,6 @@ import android.Manifest;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -66,8 +64,6 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private static final String EXTRA_STATE = "EXTRA_STATE";
     private static final String TAG_DIALOG_DELETE = "TAG_DIALOG_DELETE";
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private final PlaylistActivityModel mModel = new PlaylistActivityModel();
     private PlaylistRecyclerAdapter mAdapter;
@@ -156,7 +152,7 @@ public final class PlaylistActivity extends BaseActivity implements
                         public boolean onException(final Exception e, final String model,
                                 final Target<GlideDrawable> target,
                                 final boolean isFirstResource) {
-                            mHandler.post(() -> supportStartPostponedEnterTransition());
+                            supportStartPostponedEnterTransition();
                             return false;
                         }
 
@@ -165,7 +161,7 @@ public final class PlaylistActivity extends BaseActivity implements
                                 final String model,
                                 final Target<GlideDrawable> target, final boolean isFromMemoryCache,
                                 final boolean isFirstResource) {
-                            mHandler.post(() -> supportStartPostponedEnterTransition());
+                            supportStartPostponedEnterTransition();
                             return false;
                         }
                     })
