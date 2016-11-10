@@ -39,6 +39,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -48,6 +49,8 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -162,6 +165,19 @@ public final class PlaybackService extends Service {
     public static final int STATE_PAUSED = 3;
     public static final int STATE_ERROR = 4;
 
+    @IntDef({
+            STATE_IDLE,
+            STATE_LOADING,
+            STATE_PLAYING,
+            STATE_PAUSED,
+            STATE_ERROR
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface State {
+
+    }
+
+    @State
     private int mState = STATE_IDLE;
 
     private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
@@ -518,7 +534,7 @@ public final class PlaybackService extends Service {
         }
     }
 
-    private void setState(final int state) {
+    private void setState(@State final int state) {
         mState = state;
         setMediaSessionPlaybackState(state);
         broadcastState();
@@ -544,7 +560,8 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final PlaylistHolder.PlaylistObserver mPlaylistObserver = new PlaylistHolder.PlaylistObserver() {
+    private final PlaylistHolder.PlaylistObserver mPlaylistObserver
+            = new PlaylistHolder.PlaylistObserver() {
 
         @Override
         public void onPositionChanged(final long position) {

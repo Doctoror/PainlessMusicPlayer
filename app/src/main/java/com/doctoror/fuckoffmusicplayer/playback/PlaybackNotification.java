@@ -49,7 +49,7 @@ final class PlaybackNotification {
     public static Notification create(@NonNull final Context context,
             @NonNull final RequestManager glide,
             @NonNull final Media media,
-            final int state) {
+            @PlaybackService.State final int state) {
         final PendingIntent prevIntent = PendingIntent.getService(context, 1,
                 PlaybackService.prevIntent(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -90,7 +90,8 @@ final class PlaybackNotification {
                         PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_stat_play)
+                .setSmallIcon(state == PlaybackService.STATE_PLAYING ? R.drawable.ic_stat_play
+                        : R.drawable.ic_stat_pause)
                 .setLargeIcon(art)
                 .addAction(R.drawable.ic_fast_rewind_white_24dp,
                         context.getText(R.string.Previous), prevIntent);
