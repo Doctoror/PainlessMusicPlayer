@@ -161,6 +161,7 @@ public final class PlaylistActivity extends BaseActivity implements
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.album_art_placeholder)
+                    .animate(android.R.anim.fade_in)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(final Exception e, final String model,

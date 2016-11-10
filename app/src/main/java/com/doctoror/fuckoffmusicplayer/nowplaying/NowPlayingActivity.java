@@ -158,6 +158,7 @@ public final class NowPlayingActivity extends BaseActivity {
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.album_art_placeholder)
+                    .animate(android.R.anim.fade_in)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(final Exception e, final String model,
