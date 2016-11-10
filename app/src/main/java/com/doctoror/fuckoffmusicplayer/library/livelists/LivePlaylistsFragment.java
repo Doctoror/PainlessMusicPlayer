@@ -146,17 +146,13 @@ public final class LivePlaylistsFragment extends Fragment {
         if (playlist.isEmpty()) {
             Toast.makeText(activity, R.string.No_tracks_found, Toast.LENGTH_LONG).show();
         } else {
-
-            final Intent intent = Henson.with(activity).gotoPlaylistActivity()
-                    .isNowPlayingPlaylist(false).playlist(playlist).build();
-
-            // If you do not specify any options the foreground fader in playlist activity
-            // won't work
-            //noinspection unchecked
-            final Bundle options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity).toBundle();
-
-            startActivity(intent, options);
+            final Intent intent = Henson.with(activity)
+                    .gotoPlaylistActivity()
+                    .hasCoverTransition(false)
+                    .isNowPlayingPlaylist(false)
+                    .playlist(playlist)
+                    .build();
+            startActivity(intent);
         }
     }
 }

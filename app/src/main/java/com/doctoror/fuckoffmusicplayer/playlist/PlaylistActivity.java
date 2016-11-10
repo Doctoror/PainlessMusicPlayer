@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -26,7 +27,6 @@ import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.util.TransitionListenerAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -35,13 +35,10 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,12 +46,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.transition.Transition;
 import android.view.View;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.OnClick;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Yaroslav Mytkalyk on 20.10.16.
@@ -83,11 +82,15 @@ public final class PlaylistActivity extends BaseActivity implements
     @InjectExtra
     String title;
 
+    @InjectExtra
+    boolean hasCoverTransition;
+
     private ActivityPlaylistBinding mBinding;
 
     private boolean mFinishWhenDialogDismissed;
     private DeleteSession mDeleteSession;
 
+    private String mCoverUri;
     private int mAppbarOffset;
 
     @Override
@@ -145,22 +148,26 @@ public final class PlaylistActivity extends BaseActivity implements
                 break;
             }
         }
+        mCoverUri = pic;
 
-        listenForTransitionEnd();
-        if (!TextUtils.isEmpty(pic)) {
+        if (TextUtils.isEmpty(pic)) {
+            onImageSet();
+        } else {
             supportPostponeEnterTransition();
-            Glide.with(this)
-                    .load(pic)
-                    .dontTransform()
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+            final DrawableRequestBuilder<String> b = Glide.with(this).load(pic);
+            if (hasCoverTransition) {
+                b.dontAnimate();
+                b.dontTransform();
+            }
+            b.diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.album_art_placeholder)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(final Exception e, final String model,
                                 final Target<GlideDrawable> target,
                                 final boolean isFirstResource) {
-                            supportStartPostponedEnterTransition();
+                            mCoverUri = null;
+                            onImageSet();
                             return false;
                         }
 
@@ -169,7 +176,7 @@ public final class PlaylistActivity extends BaseActivity implements
                                 final String model,
                                 final Target<GlideDrawable> target, final boolean isFromMemoryCache,
                                 final boolean isFirstResource) {
-                            supportStartPostponedEnterTransition();
+                            onImageSet();
                             return false;
                         }
                     })
@@ -177,31 +184,11 @@ public final class PlaylistActivity extends BaseActivity implements
         }
     }
 
-    private void listenForTransitionEnd() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final Transition transition = getWindow().getEnterTransition();
-            if (transition != null) {
-                transition.addListener(new TransitionListenerAdapter() {
-                    @Override
-                    public void onTransitionEnd(final Transition transition) {
-                        onTransitionEnded();
-                    }
-
-                    @Override
-                    public void onTransitionCancel(final Transition transition) {
-                        onTransitionEnded();
-                    }
-                });
-            } else {
-                onTransitionEnded();
-            }
-        } else {
-            onTransitionEnded();
-        }
-    }
-
-    private void onTransitionEnded() {
-        mBinding.albumArtForeground.setVisibility(View.VISIBLE);
+    private void onImageSet() {
+        supportStartPostponedEnterTransition();
+        Observable.timer(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((l) -> mBinding.albumArtForeground.setVisibility(View.VISIBLE));
     }
 
     @Override
@@ -278,8 +265,9 @@ public final class PlaylistActivity extends BaseActivity implements
     private void onPlayClick(final Media media, final int index) {
         PlaylistUtils.play(this, playlist, media, index);
 
-        // Start now playing. Pass cover view only if appbar is expanded
-        NowPlayingActivity.start(this, mAppbarOffset == 0 ? mBinding.albumArt : null);
+        final boolean shouldPassCoverView = mAppbarOffset == 0
+                && TextUtils.equals(mCoverUri, media.getAlbumArt());
+        NowPlayingActivity.start(this, shouldPassCoverView ? mBinding.albumArt : null);
     }
 
     @Override

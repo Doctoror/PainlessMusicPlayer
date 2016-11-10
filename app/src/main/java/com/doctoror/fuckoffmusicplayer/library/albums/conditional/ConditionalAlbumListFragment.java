@@ -148,6 +148,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                         final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
                             final Intent intent = Henson.with(activity).gotoPlaylistActivity()
+                                    .hasCoverTransition(true)
                                     .isNowPlayingPlaylist(false)
                                     .playlist(playlist)
                                     .title(playlistName)

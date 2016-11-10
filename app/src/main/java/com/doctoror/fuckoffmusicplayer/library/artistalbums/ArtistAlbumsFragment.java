@@ -91,6 +91,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
                         if (playlist != null && !playlist.isEmpty()) {
                             final Activity activity = getActivity();
                             final Intent intent = Henson.with(activity).gotoPlaylistActivity()
+                                    .hasCoverTransition(true)
                                     .isNowPlayingPlaylist(false)
                                     .playlist(playlist)
                                     .title(playlsitName)

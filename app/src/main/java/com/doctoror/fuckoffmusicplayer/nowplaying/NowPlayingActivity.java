@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -33,6 +34,7 @@ import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.jakewharton.rxbinding.widget.RxSeekBar;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -76,7 +78,10 @@ public final class NowPlayingActivity extends BaseActivity {
 
     public static void start(@NonNull final Activity activity,
             @Nullable final View albumArt) {
-        final Intent intent = new Intent(activity, NowPlayingActivity.class);
+        final Intent intent = Henson.with(activity)
+                .gotoNowPlayingActivity()
+                .hasCoverTransition(albumArt != null)
+                .build();
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (albumArt == null) {
             activity.startActivity(intent);
@@ -94,6 +99,10 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private int mState = PlaybackService.STATE_IDLE;
     private ActivityNowplayingBinding mBinding;
+
+    @InjectExtra
+    @Nullable
+    boolean hasCoverTransition;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -137,13 +146,17 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void setAlbumArt(@Nullable final String artUri) {
-        if (!TextUtils.isEmpty(artUri)) {
+        if (TextUtils.isEmpty(artUri)) {
+            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
+            onArtProcessed();
+        } else {
             supportPostponeEnterTransition();
-            Glide.with(this)
-                    .load(artUri)
-                    .dontTransform()
-                    .dontAnimate()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+            final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
+            if (hasCoverTransition) {
+                b.dontAnimate();
+                b.dontTransform();
+            }
+            b.diskCacheStrategy(DiskCacheStrategy.NONE)
                     .placeholder(R.drawable.album_art_placeholder)
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
@@ -164,8 +177,6 @@ public final class NowPlayingActivity extends BaseActivity {
                         }
                     })
                     .into(mBinding.albumArt);
-        } else {
-            onArtProcessed();
         }
     }
 
@@ -250,6 +261,7 @@ public final class NowPlayingActivity extends BaseActivity {
             case R.id.actionPlaylist:
                 final Intent playlistActivity = Henson.with(this)
                         .gotoPlaylistActivity()
+                        .hasCoverTransition(false)
                         .isNowPlayingPlaylist(Boolean.TRUE)
                         .playlist(PlaylistHolder.getInstance(this).getPlaylist())
                         .build();
