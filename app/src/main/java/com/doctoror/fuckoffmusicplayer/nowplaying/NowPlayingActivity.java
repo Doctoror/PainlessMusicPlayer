@@ -122,7 +122,6 @@ public final class NowPlayingActivity extends BaseActivity {
         ViewCompat.setTransitionName(mBinding.albumArt, VIEW_ALBUM_ART);
         ButterKnife.bind(this);
 
-        bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
         mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);
         mBinding.setModel(mModel);
         setSupportActionBar(mBinding.toolbar);
@@ -279,6 +278,7 @@ public final class NowPlayingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
         mPlaylist.addObserver(mPlaylistObserver);
         registerReceiver(mReceiver, mReceiver.mIntentFilter);
         PlaybackService.resendState(this);
