@@ -18,7 +18,9 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public final class PlaylistHolder {
 
     // Is not a leak since it's an application context
     @SuppressLint("StaticFieldLeak")
-    private static PlaylistHolder sInstance;
+    private static volatile PlaylistHolder sInstance;
 
     @NonNull
     public static PlaylistHolder getInstance(@NonNull final Context context) {
@@ -62,19 +64,24 @@ public final class PlaylistHolder {
     void remove(@NonNull final Media media) {
         if (playlist != null) {
             if (playlist.remove(media)) {
+                if (media.equals(this.media)) {
+                    this.media = null;
+                }
                 notifyMediaRemoved(media);
             }
         }
     }
 
+    @Nullable
     public List<Media> getPlaylist() {
-        return playlist;
+        return playlist == null ? null : new ArrayList<>(playlist);
     }
 
     public int getIndex() {
         return index;
     }
 
+    @Nullable
     public Media getMedia() {
         return media;
     }
@@ -83,7 +90,7 @@ public final class PlaylistHolder {
         return position;
     }
 
-    public void setPlaylist(final List<Media> playlist) {
+    public void setPlaylist(@Nullable final List<Media> playlist) {
         this.playlist = playlist;
     }
 
@@ -136,7 +143,9 @@ public final class PlaylistHolder {
     public interface PlaylistObserver {
 
         void onPositionChanged(long position);
+
         void onMediaChanged(Media media);
+
         void onMediaRemoved(Media media);
     }
 }

@@ -50,7 +50,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -102,7 +101,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
     @InjectExtra
     @Nullable
-    boolean hasCoverTransition;
+    Boolean hasCoverTransition;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -153,7 +152,7 @@ public final class NowPlayingActivity extends BaseActivity {
         } else {
             supportPostponeEnterTransition();
             final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
-            if (hasCoverTransition) {
+            if (hasCoverTransition != null && hasCoverTransition) {
                 b.dontAnimate();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -281,8 +280,7 @@ public final class NowPlayingActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         mPlaylist.addObserver(mPlaylistObserver);
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                mReceiver, mReceiver.mIntentFilter);
+        registerReceiver(mReceiver, mReceiver.mIntentFilter);
         PlaybackService.resendState(this);
     }
 
@@ -290,7 +288,7 @@ public final class NowPlayingActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         PlaylistHolder.getInstance(this).deleteObserver(mPlaylistObserver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+        unregisterReceiver(mReceiver);
     }
 
     void bindTrack(@Nullable Media track, final long position) {
@@ -403,11 +401,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private final class Receiver extends BroadcastReceiver {
 
-        final IntentFilter mIntentFilter = new IntentFilter();
-
-        Receiver() {
-            mIntentFilter.addAction(PlaybackService.ACTION_STATE_CHANGED);
-        }
+        final IntentFilter mIntentFilter = new IntentFilter(PlaybackService.ACTION_STATE_CHANGED);
 
         @Override
         public void onReceive(final Context context, final Intent intent) {

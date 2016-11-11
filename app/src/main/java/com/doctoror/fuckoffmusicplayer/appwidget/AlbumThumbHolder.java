@@ -1,0 +1,128 @@
+package com.doctoror.fuckoffmusicplayer.appwidget;
+
+import com.doctoror.fuckoffmusicplayer.util.Log;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import rx.Observable;
+import rx.schedulers.Schedulers;
+
+/**
+ * Created by Yaroslav Mytkalyk on 11.11.16.
+ *
+ * Holds album art thumb for appwidget
+ */
+
+public final class AlbumThumbHolder {
+
+    private static final String TAG = "AlbumThumbHolder";
+
+    // Is not a leak since it's an application context
+    @SuppressLint("StaticFieldLeak")
+    private static volatile AlbumThumbHolder sInstance;
+
+    @NonNull
+    public static AlbumThumbHolder getInstance(@NonNull final Context context) {
+        if (sInstance == null) {
+            synchronized (AlbumThumbHolder.class) {
+                if (sInstance == null) {
+                    sInstance = new AlbumThumbHolder(context.getApplicationContext());
+                }
+            }
+        }
+        return sInstance;
+    }
+
+    private static final String FILE_NAME = "art_thumb.png";
+
+    private static final Object THUMB_LOCK = new Object();
+
+    @NonNull
+    private final Context mContext;
+
+    @Nullable
+    private Bitmap mAlbumThumb;
+
+    private AlbumThumbHolder(@NonNull final Context context) {
+        mContext = context;
+        read();
+    }
+
+    @Nullable
+    public Bitmap getAlbumThumb() {
+        synchronized (THUMB_LOCK) {
+            return mAlbumThumb;
+        }
+    }
+
+    public void setAlbumThumb(@Nullable final Bitmap albumThumb) {
+        synchronized (THUMB_LOCK) {
+            mAlbumThumb = albumThumb;
+        }
+        writeAsync();
+    }
+
+    private void read() {
+        InputStream is = null;
+        try {
+            is = mContext.openFileInput(FILE_NAME);
+            final Bitmap albumThumb = BitmapFactory.decodeStream(is);
+            synchronized (THUMB_LOCK) {
+                mAlbumThumb = albumThumb;
+            }
+        } catch (IOException e) {
+            Log.w(TAG, e);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    Log.w(TAG, e);
+                }
+            }
+        }
+    }
+
+    private void write() {
+        final Bitmap bitmap;
+        synchronized (THUMB_LOCK) {
+            bitmap = mAlbumThumb;
+        }
+        if (bitmap == null) {
+            mContext.deleteFile(FILE_NAME);
+            return;
+        }
+        OutputStream os = null;
+        try {
+            os = mContext.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            os.flush();
+            os.close();
+        } catch (IOException e) {
+            Log.w(TAG, e);
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    Log.w(TAG, e);
+                }
+            }
+        }
+    }
+
+    private void writeAsync() {
+        Observable.create((s) -> write())
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+    }
+}

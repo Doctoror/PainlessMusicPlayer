@@ -3,19 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools" package="com.doctoror.fuckoffmusicplayer">
 
     <!-- Location for better accuracy of daynight theme-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <!-- For reporting nowplaying-->
-    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
 
     <!-- For playback -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <!-- For querying MediaStore -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <!-- For deleting files -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <permission
+        android:name="com.doctoror.fuckoffmusicplayer.permission.RECEIVE_PLAYBACK_STATE"
+        android:protectionLevel="signature"/>
+
+    <uses-permission
+        android:name="com.doctoror.fuckoffmusicplayer.permission.RECEIVE_PLAYBACK_STATE"/>
 
     <application
         android:name=".App"
@@ -75,8 +82,8 @@
             android:parentActivityName=".library.LibraryActivity">
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
                 <data android:scheme="file"/>
                 <data android:mimeType="audio/*"/>
                 <data android:mimeType="application/ogg"/>
@@ -99,14 +106,25 @@
         <service android:name=".playback.PlaybackService"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </service>
 
         <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
+        </receiver>
+
+        <receiver android:name=".appwidget.SingleRowAppWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/appwidget_info_single_row"/>
         </receiver>
 
     </application>

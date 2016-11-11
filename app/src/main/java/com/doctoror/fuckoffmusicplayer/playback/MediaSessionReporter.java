@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.util.Log;
 
@@ -26,6 +27,7 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -43,6 +45,8 @@ import rx.schedulers.Schedulers;
  */
 
 final class MediaSessionReporter {
+
+    private static final String ACTION_PLAYSTATE_CHANGED = "com.android.music.playstatechanged";
 
     private static final String TAG = "MediaSessionReporter";
 
@@ -94,56 +98,69 @@ final class MediaSessionReporter {
                 .setState(playbackState, 0, isPlaying ? 1 : 0)
                 .build());
 
-        final Intent i = androidMusicMediaIntent("com.android.music.playstatechanged", media,
-                isPlaying);
+        final Intent i = androidMusicMediaIntent(ACTION_PLAYSTATE_CHANGED, media, isPlaying);
         sendAndroidMusicPlayerBroadcast(context, i);
     }
 
+    @WorkerThread
     static void reportTrackChanged(@NonNull final Context context,
             @NonNull final RequestManager glide,
             @NonNull final MediaSessionCompat mediaSession,
             @NonNull final Media media) {
-        Observable.create(s -> {
-            final Intent intent = androidMusicMediaIntent("com.android.music.metachanged",
-                    media, false);
-            sendAndroidMusicPlayerBroadcast(context, intent);
+        final MediaMetadataCompat.Builder b = new MediaMetadataCompat.Builder()
+                .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
+                        Long.toString(media.getId()))
+                .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, media.getData().toString())
+                .putText(MediaMetadataCompat.METADATA_KEY_TITLE, media.getTitle())
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, media.getDuration())
+                .putText(MediaMetadataCompat.METADATA_KEY_ARTIST, media.getArtist())
+                .putText(MediaMetadataCompat.METADATA_KEY_ALBUM, media.getAlbum())
+                .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, media.getTrack());
 
-            final MediaMetadataCompat.Builder b = new MediaMetadataCompat.Builder()
-                    .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
-                            Long.toString(media.getId()))
-                    .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, media.getData().toString())
-                    .putText(MediaMetadataCompat.METADATA_KEY_TITLE, media.getTitle())
-                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, media.getDuration())
-                    .putText(MediaMetadataCompat.METADATA_KEY_ARTIST, media.getArtist())
-                    .putText(MediaMetadataCompat.METADATA_KEY_ALBUM, media.getAlbum())
-                    .putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, media.getTrack());
-
-            final String art = media.getAlbumArt();
-            if (!TextUtils.isEmpty(art)) {
-                // Load bitmap because of https://code.google.com/p/android/issues/detail?id=194874
-                Bitmap artBitmap = null;
-                try {
-                    final DisplayMetrics dm = context.getResources().getDisplayMetrics();
-                    //noinspection SuspiciousNameCombination
-                    artBitmap = glide.load(art)
-                            .asBitmap()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            // Optimized for JellyBean lock screen
-                            .into(dm.widthPixels, dm.widthPixels)
-                            .get();
-                } catch (ExecutionException | InterruptedException e) {
-                    Log.w(TAG, "Failed loading art image", e);
-                }
-                if (artBitmap != null) {
-                    b.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artBitmap);
-                }
-                b.putText(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
-                        new File(media.getAlbumArt()).toURI().toString());
+        final String art = media.getAlbumArt();
+        Bitmap artBitmapSmall = null;
+        if (!TextUtils.isEmpty(art)) {
+            Bitmap artBitmapLarge = null;
+            final DisplayMetrics dm = context.getResources().getDisplayMetrics();
+            // Load bitmap because of https://code.google.com/p/android/issues/detail?id=194874
+            try {
+                //noinspection SuspiciousNameCombination
+                artBitmapLarge = glide.load(art)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        // Optimized for lock screen
+                        .into(dm.widthPixels, dm.widthPixels)
+                        .get();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.w(TAG, "Failed loading art image", e);
             }
-            mediaSession.setMetadata(b.build());
-        })
-                .subscribeOn(Schedulers.io())
-                .subscribe();
+            // Small bitmap for app widget, if any
+            final int dp84 = (int) (84f * dm.density);
+
+            try {
+                artBitmapSmall = glide.load(art)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .centerCrop()
+                        // Optimized for medium appwidget
+                        .into(dp84, dp84)
+                        .get();
+            } catch (ExecutionException | InterruptedException e) {
+                Log.w(TAG, "Failed loading art image", e);
+            }
+            if (artBitmapLarge != null) {
+                b.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artBitmapLarge);
+            }
+            b.putText(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
+                    new File(media.getAlbumArt()).toURI().toString());
+        }
+
+        AlbumThumbHolder.getInstance(context).setAlbumThumb(artBitmapSmall);
+        mediaSession.setMetadata(b.build());
+
+        final Intent intent = androidMusicMediaIntent("com.android.music.metachanged",
+                media, false);
+        sendAndroidMusicPlayerBroadcast(context, intent);
     }
 
     @NonNull

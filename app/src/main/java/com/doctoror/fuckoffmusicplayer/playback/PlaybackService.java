@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.audio.AudioTrack;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
@@ -42,7 +43,6 @@ import android.os.PowerManager;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
@@ -64,11 +64,15 @@ import rx.schedulers.Schedulers;
 
 public final class PlaybackService extends Service {
 
+    public static final String PERMISSION_RECEIVE_PLAYBACK_STATE
+            = "com.doctoror.fuckoffmusicplayer.permission.RECEIVE_PLAYBACK_STATE";
+
     private static final String TAG = "PlaybackService";
     private static final int NOTIFICATION_ID = 666;
 
     private static final String ACTION_RESEND_STATE = "ACTION_RESEND_STATE";
-    public static final String ACTION_STATE_CHANGED = "ACTION_STATE_CHANGED";
+    public static final String ACTION_STATE_CHANGED
+            = "com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED";
     public static final String EXTRA_STATE = "EXTRA_STATE";
 
     private static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
@@ -84,7 +88,7 @@ public final class PlaybackService extends Service {
     private static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
     public static void resendState(@NonNull final Context context) {
-        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(ACTION_RESEND_STATE));
+        context.sendBroadcast(new Intent(ACTION_RESEND_STATE));
     }
 
     public static void playPause(@NonNull final Context context) {
@@ -129,6 +133,13 @@ public final class PlaybackService extends Service {
         context.startService(intent);
     }
 
+    @NonNull
+    public static Intent playPauseIntent(@NonNull final Context context) {
+        final Intent intent = new Intent(context, PlaybackService.class);
+        intent.setAction(ACTION_PLAY_PAUSE);
+        return intent;
+    }
+
     static Intent playIntent(@NonNull final Context context) {
         final Intent intent = new Intent(context, PlaybackService.class);
         intent.setAction(ACTION_PLAY);
@@ -147,13 +158,13 @@ public final class PlaybackService extends Service {
         return intent;
     }
 
-    static Intent prevIntent(@NonNull final Context context) {
+    public static Intent prevIntent(@NonNull final Context context) {
         final Intent intent = new Intent(context, PlaybackService.class);
         intent.setAction(ACTION_PREV);
         return intent;
     }
 
-    static Intent nextIntent(@NonNull final Context context) {
+    public static Intent nextIntent(@NonNull final Context context) {
         final Intent intent = new Intent(context, PlaybackService.class);
         intent.setAction(ACTION_NEXT);
         return intent;
@@ -196,7 +207,6 @@ public final class PlaybackService extends Service {
     private boolean mFocusGranted;
     private boolean mPlayOnFocusGain;
 
-    private LocalBroadcastManager mLocalBroadcastManager;
     private Media mCurrentTrack;
 
     private Subscription mTimerSubscription;
@@ -229,9 +239,7 @@ public final class PlaybackService extends Service {
                         PendingIntent.FLAG_UPDATE_CURRENT));
         mMediaSession.setCallback(new MediaSessionCallback(this));
 
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
-        mLocalBroadcastManager.registerReceiver(mResendStateReceiver,
-                new IntentFilter(ACTION_RESEND_STATE));
+        registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
         registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
 
         mGlide = Glide.with(this);
@@ -332,13 +340,12 @@ public final class PlaybackService extends Service {
 
     private void onActionPlayPause() {
         switch (mState) {
-            case STATE_IDLE:
-            case STATE_PAUSED:
-                onActionPlay();
-                break;
-
             case STATE_PLAYING:
                 onActionPause();
+                break;
+
+            default:
+                onActionPlay();
                 break;
         }
     }
@@ -429,8 +436,12 @@ public final class PlaybackService extends Service {
         playCurrent(false);
     }
 
-    private void play(@NonNull final List<Media> list, final int position,
+    private void play(@Nullable final List<Media> list, final int position,
             final boolean mayContinueWhereStopped) {
+        if (list == null) {
+            throw new IllegalArgumentException("Playlist is null");
+        }
+
         ensureFocusRequested();
         if (!mFocusGranted) {
             return;
@@ -441,26 +452,30 @@ public final class PlaybackService extends Service {
                 && media.getId() == mCurrentTrack.getId()) {
             mMediaPlayer.play();
         } else {
-            long seekPosition = 0;
-            // If restoring from stopped state, set seek position to what it was
-            if (mayContinueWhereStopped && mState == STATE_IDLE
-                    && media.equals(mPlaylist.getMedia())) {
-                seekPosition = mPlaylist.getPosition();
-            }
-            mPlaylist.setIndex(position);
-            mPlaylist.setPosition(seekPosition);
-            mPlaylist.setMedia(media);
-            mCurrentTrack = media;
-            if (mMediaSession != null) {
-                MediaSessionReporter.reportTrackChanged(this, mGlide, mMediaSession, media);
-            }
+            Observable.create((s) -> {
+                long seekPosition = 0;
+                // If restoring from stopped state, set seek position to what it was
+                if (mayContinueWhereStopped && mState == STATE_IDLE
+                        && media.equals(mPlaylist.getMedia())) {
+                    seekPosition = mPlaylist.getPosition();
+                }
+                mPlaylist.setIndex(position);
+                mPlaylist.setPosition(seekPosition);
+                mPlaylist.setMedia(media);
+                mCurrentTrack = media;
+                if (mMediaSession != null) {
+                    MediaSessionReporter.reportTrackChanged(this, mGlide, mMediaSession, media);
+                }
 
-            mMediaPlayer.stop();
-            mMediaPlayer.load(media.getData());
-            if (seekPosition != 0) {
-                mMediaPlayer.seekTo(seekPosition);
-            }
-            mMediaPlayer.play();
+                mMediaPlayer.stop();
+                mMediaPlayer.load(media.getData());
+                if (seekPosition != 0) {
+                    mMediaPlayer.seekTo(seekPosition);
+                }
+                mMediaPlayer.play();
+            })
+                    .subscribeOn(Schedulers.io())
+                    .subscribe();
         }
     }
 
@@ -474,14 +489,20 @@ public final class PlaybackService extends Service {
         }
     }
 
-    private static int prevPos(@NonNull final List<Media> list, final int position) {
+    private static int prevPos(@Nullable final List<Media> list, final int position) {
+        if (list == null) {
+            throw new IllegalArgumentException("Playlist is null");
+        }
         if (position - 1 < 0) {
             return list.size() - 1;
         }
         return position - 1;
     }
 
-    private static int nextPos(@NonNull final List<Media> list, final int position) {
+    private static int nextPos(@Nullable final List<Media> list, final int position) {
+        if (list == null) {
+            throw new IllegalArgumentException("Playlist is null");
+        }
         if (position + 1 >= list.size()) {
             return 0;
         }
@@ -499,7 +520,7 @@ public final class PlaybackService extends Service {
         mPlayOnFocusGain = false;
         mMediaSession.setActive(false);
         unregisterReceiver(mBecomingNoisyReceiver);
-        mLocalBroadcastManager.unregisterReceiver(mResendStateReceiver);
+        unregisterReceiver(mResendStateReceiver);
         setState(STATE_IDLE);
         if (mTimerSubscription != null) {
             mTimerSubscription.unsubscribe();
@@ -549,7 +570,7 @@ public final class PlaybackService extends Service {
     private void broadcastState() {
         final Intent intent = new Intent(ACTION_STATE_CHANGED);
         intent.putExtra(EXTRA_STATE, mState);
-        mLocalBroadcastManager.sendBroadcast(intent);
+        sendBroadcast(intent, PERMISSION_RECEIVE_PLAYBACK_STATE);
     }
 
     private final BroadcastReceiver mResendStateReceiver = new BroadcastReceiver() {
@@ -581,6 +602,8 @@ public final class PlaybackService extends Service {
                     // Stop current and play the other track from playlist
                     restart();
                 } else {
+                    mCurrentTrack = null;
+                    AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
                     stopSelf();
                 }
             }
