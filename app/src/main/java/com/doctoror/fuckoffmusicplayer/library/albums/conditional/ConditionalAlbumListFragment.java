@@ -27,6 +27,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListB
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -41,6 +42,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -92,6 +94,8 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private RequestManager mRequestManager;
     private Cursor mData;
+
+    private String mHeaderArtUri;
 
     @InjectExtra
     String title;
@@ -147,12 +151,18 @@ public class ConditionalAlbumListFragment extends Fragment {
         }
     }
 
-    protected void onPlayClick(@Nullable final View albumArtView,
+    @Nullable
+    @WorkerThread
+    protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds,
+            @NonNull final String[] arts) {
+        return PlaylistUtils.fromAlbums(getActivity().getContentResolver(), albumIds, arts, null);
+    }
+
+    private void onPlayClick(@Nullable final View albumArtView,
             @Nullable final String playlistName,
             @NonNull final long[] albumIds,
             @NonNull final String[] arts) {
-        Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbums(
-                getActivity().getContentResolver(), albumIds, arts, null)))
+        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbums(albumIds, arts)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {
@@ -166,7 +176,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                                     .title(playlistName)
                                     .build();
 
-                            if (albumArtView != null) {
+                            if (albumArtView != null && !isTheSameArtOnNextScreen(arts)) {
                                 //noinspection unchecked
                                 final ActivityOptionsCompat options = ActivityOptionsCompat
                                         .makeSceneTransitionAnimation(activity, albumArtView,
@@ -183,6 +193,14 @@ public class ConditionalAlbumListFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    private boolean isTheSameArtOnNextScreen(@NonNull final String[] arts) {
+        if (arts.length == 0) {
+            return TextUtils.isEmpty(mHeaderArtUri);
+        }
+        final String art = StringUtils.firstNonEmptyString(arts);
+        return art == null && mHeaderArtUri == null || TextUtils.equals(art, mHeaderArtUri);
     }
 
     private void restartLoader() {
@@ -252,6 +270,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                         }
                     }
                 }
+                mHeaderArtUri = pic;
                 if (TextUtils.isEmpty(pic)) {
                     Glide.clear(mBinding.image);
                     //Must be a delay of from here. TODO Why?

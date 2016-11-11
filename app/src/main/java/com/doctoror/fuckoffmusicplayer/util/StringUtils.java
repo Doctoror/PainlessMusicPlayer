@@ -16,6 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import java.util.Locale;
 
@@ -26,6 +28,17 @@ public final class StringUtils {
 
     private StringUtils() {
 
+    }
+
+    @Nullable
+    public static String firstNonEmptyString(@NonNull final String[] array) {
+        for (int i = 0; i < array.length; i++) {
+            final String item = array[i];
+            if (!TextUtils.isEmpty(item)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     /**
