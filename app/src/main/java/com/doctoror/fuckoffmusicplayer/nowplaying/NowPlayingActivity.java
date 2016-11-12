@@ -385,7 +385,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
         @Override
         public void onMediaChanged(final Media media) {
-            bindTrack(media, 0);
+            runOnUiThread(() -> bindTrack(media, 0));
         }
 
         @Override
