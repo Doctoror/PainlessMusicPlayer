@@ -182,7 +182,18 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void onArtProcessed() {
-        supportStartPostponedEnterTransition();
+        try {
+            supportStartPostponedEnterTransition();
+        } catch (NullPointerException e) {
+            // TODO sometimes get NPE. WTF?
+            //java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.app.ActivityOptions.isReturning()' on a null object reference
+            //at android.app.ActivityTransitionState.startEnter(ActivityTransitionState.java:203)
+            //at android.app.ActivityTransitionState.startPostponedEnterTransition(ActivityTransitionState.java:197)
+            //at android.app.Activity.startPostponedEnterTransition(Activity.java:6213)
+            //at android.support.v4.app.ActivityCompatApi21.startPostponedEnterTransition(ActivityCompatApi21.java:58)
+            //at android.support.v4.app.ActivityCompat.startPostponedEnterTransition(ActivityCompat.java:298)
+            //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
+        }
         if (mBinding.infoContainer.getAlpha() != 1f) {
             mBinding.infoContainer.animate().setStartDelay(500).alpha(1f).start();
         }
