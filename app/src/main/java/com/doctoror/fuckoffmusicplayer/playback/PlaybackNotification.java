@@ -88,10 +88,11 @@ final class PlaybackNotification {
         final NotificationCompat.Style style = new android.support.v7.app.NotificationCompat
                 .MediaStyle()
                 .setMediaSession(mediaSession.getSessionToken())
-                .setShowActionsInCompactView(0, 1, 2);
+                .setShowActionsInCompactView(1);
 
         final NotificationCompat.Builder b = new NotificationCompat.Builder(context)
                 .setStyle(style)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setContentTitle(media.getTitle())
                 .setContentText(media.getArtist())
