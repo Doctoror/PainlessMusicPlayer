@@ -17,6 +17,7 @@ Min API level 16
  - Equalizer and Bass Boost effects
  - Removing from playlist
  - Deleting files (remove from playlist to see a delete button)
+ - Home screen widget
  - Notifies now playing as Android Music player ([works with Simple Last.fm Scrobbler](https://play.google.com/store/apps/details?id=com.adam.aslfms))
  
 Missing features you might expect from a Music Player
