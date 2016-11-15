@@ -27,8 +27,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.session.MediaSession;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 
 import java.util.concurrent.ExecutionException;
@@ -49,7 +51,8 @@ final class PlaybackNotification {
     public static Notification create(@NonNull final Context context,
             @NonNull final RequestManager glide,
             @NonNull final Media media,
-            @PlaybackService.State final int state) {
+            @PlaybackService.State final int state,
+            @NonNull final MediaSessionCompat mediaSession) {
         final PendingIntent prevIntent = PendingIntent.getService(context, 1,
                 PlaybackService.prevIntent(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -82,7 +85,13 @@ final class PlaybackNotification {
         final Intent contentIntent = new Intent(context, NowPlayingActivity.class);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
+        final NotificationCompat.Style style = new android.support.v7.app.NotificationCompat
+                .MediaStyle()
+                .setMediaSession(mediaSession.getSessionToken())
+                .setShowActionsInCompactView(0, 1, 2);
+
         final NotificationCompat.Builder b = new NotificationCompat.Builder(context)
+                .setStyle(style)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setContentTitle(media.getTitle())
                 .setContentText(media.getArtist())

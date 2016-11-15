@@ -483,7 +483,8 @@ public final class PlaybackService extends Service {
         final Media media = mPlaylist.getMedia();
         if (media != null) {
             Observable.create(s -> startForeground(NOTIFICATION_ID,
-                    PlaybackNotification.create(getApplicationContext(), mGlide, media, mState)))
+                    PlaybackNotification
+                            .create(getApplicationContext(), mGlide, media, mState, mMediaSession)))
                     .subscribeOn(Schedulers.io())
                     .subscribe();
         }
