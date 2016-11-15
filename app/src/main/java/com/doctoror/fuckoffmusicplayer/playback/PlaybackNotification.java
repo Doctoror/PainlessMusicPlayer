@@ -27,9 +27,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.session.MediaSession;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 
@@ -70,12 +69,12 @@ final class PlaybackNotification {
         Bitmap art = null;
         final String artLocation = media.getAlbumArt();
         if (!TextUtils.isEmpty(artLocation)) {
-            final int dp40 = (int) (context.getResources().getDisplayMetrics().density * 40);
+            final int dp128 = (int) (context.getResources().getDisplayMetrics().density * 128);
             try {
                 art = glide.load(artLocation)
                         .asBitmap()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(dp40, dp40)
+                        .into(dp128, dp128)
                         .get();
             } catch (InterruptedException | ExecutionException e) {
                 Log.w(TAG, e);
@@ -85,12 +84,12 @@ final class PlaybackNotification {
         final Intent contentIntent = new Intent(context, NowPlayingActivity.class);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        final NotificationCompat.Style style = new android.support.v7.app.NotificationCompat
-                .MediaStyle()
+        final NotificationCompat.Style style = new NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.getSessionToken())
                 .setShowActionsInCompactView(1);
 
-        final NotificationCompat.Builder b = new NotificationCompat.Builder(context)
+        final android.support.v4.app.NotificationCompat.Builder b
+                = new NotificationCompat.Builder(context)
                 .setStyle(style)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
