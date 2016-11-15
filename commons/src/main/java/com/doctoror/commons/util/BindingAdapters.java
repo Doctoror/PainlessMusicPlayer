@@ -16,7 +16,9 @@
 package com.doctoror.commons.util;
 
 import android.databinding.BindingAdapter;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.widget.ImageView;
 import android.widget.ViewAnimator;
 
 public final class BindingAdapters {
@@ -31,5 +33,11 @@ public final class BindingAdapters {
         if (viewAnimator.getDisplayedChild() != child) {
             viewAnimator.setDisplayedChild(child);
         }
+    }
+
+    @BindingAdapter("srcRes")
+    public static void setImageResource(@NonNull final ImageView imageView,
+            @DrawableRes final int src) {
+        imageView.setImageResource(src);
     }
 }

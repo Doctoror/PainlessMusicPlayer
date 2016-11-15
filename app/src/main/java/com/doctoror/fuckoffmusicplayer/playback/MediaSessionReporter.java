@@ -54,36 +54,33 @@ final class MediaSessionReporter {
 
     }
 
+    @PlaybackStateCompat.State
+    static int toPlaybackStateCompat(@PlaybackService.State final int state) {
+        switch (state) {
+            case PlaybackService.STATE_LOADING:
+                return PlaybackStateCompat.STATE_BUFFERING;
+
+            case PlaybackService.STATE_PLAYING:
+                return PlaybackStateCompat.STATE_PLAYING;
+
+            case PlaybackService.STATE_PAUSED:
+                return PlaybackStateCompat.STATE_PAUSED;
+
+            case PlaybackService.STATE_ERROR:
+                return PlaybackStateCompat.STATE_ERROR;
+
+            case PlaybackService.STATE_IDLE:
+            default:
+                return PlaybackStateCompat.STATE_NONE;
+        }
+    }
+
     static void reportStateChanged(@NonNull final Context context,
             @NonNull final MediaSessionCompat mediaSession,
             @NonNull final Media media,
-            final int state,
+            @PlaybackService.State final int state,
             @Nullable final CharSequence errorMessage) {
-        final int playbackState;
-        switch (state) {
-            case PlaybackService.STATE_IDLE:
-                playbackState = PlaybackStateCompat.STATE_NONE;
-                break;
-
-            case PlaybackService.STATE_LOADING:
-                playbackState = PlaybackStateCompat.STATE_BUFFERING;
-                break;
-
-            case PlaybackService.STATE_PLAYING:
-                playbackState = PlaybackStateCompat.STATE_PLAYING;
-                break;
-
-            case PlaybackService.STATE_PAUSED:
-                playbackState = PlaybackStateCompat.STATE_PAUSED;
-                break;
-
-            case PlaybackService.STATE_ERROR:
-                playbackState = PlaybackStateCompat.STATE_ERROR;
-                break;
-
-            default:
-                return;
-        }
+        @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
 
         final boolean isPlaying = playbackState == PlaybackStateCompat.STATE_PLAYING;
         mediaSession.setPlaybackState(new PlaybackStateCompat.Builder()

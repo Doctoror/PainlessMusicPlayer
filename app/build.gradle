@@ -89,6 +89,7 @@ android {
 
 dependencies {
     def supportVersion = '25.0.1'
+    def gpsVersion = '9.8.0'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':commons')
@@ -98,6 +99,9 @@ dependencies {
     compile "com.android.support:appcompat-v7:$supportVersion"
     compile "com.android.support:recyclerview-v7:$supportVersion"
     compile "com.android.support:design:$supportVersion"
+
+    // Google Play Services
+    compile "com.google.android.gms:play-services-wearable:$gpsVersion"
 
     //Views
     compile 'com.github.doctoror.aspectratiolayout:library:1.0.3'

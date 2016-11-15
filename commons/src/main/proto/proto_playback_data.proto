@@ -9,12 +9,9 @@ message PlaybackState {
 }
 
 message Media {
-  int64 id = 1;
-  string data = 2;
-  string title = 3;
-  int64 duration = 4;
-  string artist = 5;
-  string album = 6;
-  int32 track = 7;
-  int32 progress = 8;
+  string title = 1;
+  int64 duration = 2;
+  string artist = 3;
+  string album = 4;
+  int64 progress = 5;
 }

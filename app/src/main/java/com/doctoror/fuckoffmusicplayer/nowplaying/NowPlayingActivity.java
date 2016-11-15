@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.doctoror.commons.util.StringUtils;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
@@ -305,16 +306,16 @@ public final class NowPlayingActivity extends BaseActivity {
     void bindTrack(@Nullable Media track, final long position) {
         if (track != null) {
             setAlbumArt(track.getAlbumArt());
-            mModel.setArtist(track.getArtist());
-            mModel.setAlbum(track.getAlbum());
+            mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
+                    track.getArtist(), track.getAlbum()));
             mModel.setTitle(track.getTitle());
             mModel.setDuration(track.getDuration());
             bindProgress(position);
             mModel.notifyChange();
         } else {
             setAlbumArt(null);
-            mModel.setArtist(getString(R.string.Unknown_artist));
-            mModel.setAlbum(getString(R.string.Unknown_album));
+            mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
+                    null, null));
             mModel.setTitle(getString(R.string.Untitled));
             mModel.setElapsedTime(0);
             mModel.setProgress(0);

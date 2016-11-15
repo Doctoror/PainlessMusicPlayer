@@ -29,8 +29,7 @@ public final class NowPlayingActivityModel extends BaseObservable {
 
     private String mArt;
     private String mTitle;
-    private String mArtist;
-    private String mAlbum;
+    private String mArtistAndAlbum;
     private Drawable mStateIcon;
     private long mDuration;
 
@@ -55,20 +54,12 @@ public final class NowPlayingActivityModel extends BaseObservable {
         mTitle = title;
     }
 
-    public String getArtist() {
-        return mArtist;
+    public String getArtistAndAlbum() {
+        return mArtistAndAlbum;
     }
 
-    public void setArtist(final String artist) {
-        mArtist = artist;
-    }
-
-    public String getAlbum() {
-        return mAlbum;
-    }
-
-    public void setAlbum(final String album) {
-        mAlbum = album;
+    public void setArtistAndAlbum(final String artistAndAlbum) {
+        mArtistAndAlbum = artistAndAlbum;
     }
 
     public Drawable getStateIcon() {

@@ -136,43 +136,31 @@ public interface ProtoPlaybackData {
       return _emptyArray;
     }
 
-    // optional int64 id = 1;
-    public long id;
-
-    // optional string data = 2;
-    public java.lang.String data;
-
-    // optional string title = 3;
+    // optional string title = 1;
     public java.lang.String title;
 
-    // optional int64 duration = 4;
+    // optional int64 duration = 2;
     public long duration;
 
-    // optional string artist = 5;
+    // optional string artist = 3;
     public java.lang.String artist;
 
-    // optional string album = 6;
+    // optional string album = 4;
     public java.lang.String album;
 
-    // optional int32 track = 7;
-    public int track;
-
-    // optional int32 progress = 8;
-    public int progress;
+    // optional int64 progress = 5;
+    public long progress;
 
     public Media() {
       clear();
     }
 
     public Media clear() {
-      id = 0L;
-      data = "";
       title = "";
       duration = 0L;
       artist = "";
       album = "";
-      track = 0;
-      progress = 0;
+      progress = 0L;
       cachedSize = -1;
       return this;
     }
@@ -180,29 +168,20 @@ public interface ProtoPlaybackData {
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
         throws java.io.IOException {
-      if (this.id != 0L) {
-        output.writeInt64(1, this.id);
-      }
-      if (!this.data.equals("")) {
-        output.writeString(2, this.data);
-      }
       if (!this.title.equals("")) {
-        output.writeString(3, this.title);
+        output.writeString(1, this.title);
       }
       if (this.duration != 0L) {
-        output.writeInt64(4, this.duration);
+        output.writeInt64(2, this.duration);
       }
       if (!this.artist.equals("")) {
-        output.writeString(5, this.artist);
+        output.writeString(3, this.artist);
       }
       if (!this.album.equals("")) {
-        output.writeString(6, this.album);
+        output.writeString(4, this.album);
       }
-      if (this.track != 0) {
-        output.writeInt32(7, this.track);
-      }
-      if (this.progress != 0) {
-        output.writeInt32(8, this.progress);
+      if (this.progress != 0L) {
+        output.writeInt64(5, this.progress);
       }
       super.writeTo(output);
     }
@@ -210,37 +189,25 @@ public interface ProtoPlaybackData {
     @Override
     protected int computeSerializedSize() {
       int size = super.computeSerializedSize();
-      if (this.id != 0L) {
-        size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt64Size(1, this.id);
-      }
-      if (!this.data.equals("")) {
-        size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeStringSize(2, this.data);
-      }
       if (!this.title.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeStringSize(3, this.title);
+            .computeStringSize(1, this.title);
       }
       if (this.duration != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt64Size(4, this.duration);
+            .computeInt64Size(2, this.duration);
       }
       if (!this.artist.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeStringSize(5, this.artist);
+            .computeStringSize(3, this.artist);
       }
       if (!this.album.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeStringSize(6, this.album);
+            .computeStringSize(4, this.album);
       }
-      if (this.track != 0) {
+      if (this.progress != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt32Size(7, this.track);
-      }
-      if (this.progress != 0) {
-        size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt32Size(8, this.progress);
+            .computeInt64Size(5, this.progress);
       }
       return size;
     }
@@ -260,36 +227,24 @@ public interface ProtoPlaybackData {
             }
             break;
           }
-          case 8: {
-            this.id = input.readInt64();
-            break;
-          }
-          case 18: {
-            this.data = input.readString();
-            break;
-          }
-          case 26: {
+          case 10: {
             this.title = input.readString();
             break;
           }
-          case 32: {
+          case 16: {
             this.duration = input.readInt64();
             break;
           }
-          case 42: {
+          case 26: {
             this.artist = input.readString();
             break;
           }
-          case 50: {
+          case 34: {
             this.album = input.readString();
             break;
           }
-          case 56: {
-            this.track = input.readInt32();
-            break;
-          }
-          case 64: {
-            this.progress = input.readInt32();
+          case 40: {
+            this.progress = input.readInt64();
             break;
           }
         }

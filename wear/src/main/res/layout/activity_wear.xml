@@ -88,6 +88,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintVertical_bias="0.6"
+                    android:visibility="@{model.navigationButtonsVisible ? View.VISIBLE : View.GONE}"
                     android:id="@+id/seekBar"/>
 
                 <TextView
@@ -100,6 +101,8 @@
                     android:gravity="center"
                     android:textSize="13sp"
                     android:textIsSelectable="false"
+                    android:lines="1"
+                    android:text="@{model.artistAndAlbum}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     tools:text="Artist / Album"
@@ -114,6 +117,8 @@
                     android:gravity="center"
                     android:textSize="12sp"
                     android:textIsSelectable="false"
+                    android:lines="1"
+                    android:text="@{model.title}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textArtistAlbum"
@@ -125,6 +130,7 @@
                     android:layout_height="0dp"
                     android:layout_marginTop="6dp"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
+                    app:srcRes="@{model.btnPlayRes}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textTitle"
@@ -140,6 +146,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_fast_rewind_white_24dp"
                     android:contentDescription="@string/Previous"
+                    android:visibility="@{model.navigationButtonsVisible ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toStartOf="@id/btnPlayPause"
                     app:layout_constraintTop_toTopOf="@+id/btnPlayPause"/>
 
@@ -152,6 +159,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_fast_forward_white_24dp"
                     android:contentDescription="@string/Next"
+                    android:visibility="@{model.navigationButtonsVisible ? View.VISIBLE : View.GONE}"
                     app:layout_constraintStart_toEndOf="@id/btnPlayPause"
                     app:layout_constraintTop_toTopOf="@+id/btnPlayPause"/>
 

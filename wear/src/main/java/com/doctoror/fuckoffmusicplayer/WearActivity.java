@@ -7,6 +7,7 @@ import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.Wearable;
 import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 
+import com.doctoror.commons.util.StringUtils;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityWearBinding;
@@ -78,14 +79,16 @@ public final class WearActivity extends Activity {
 
     private void bindMedia(@Nullable final ProtoPlaybackData.Media media) {
         if (media != null) {
-            mModel.setArtist(media.artist);
-            mModel.setAlbum(media.album);
+            mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
+                    media.artist, media.album));
             mModel.setTitle(media.title);
+            mModel.setNavigationButtonsVisible(true);
             bindProgress(media.duration, media.progress);
         } else {
-            mModel.setArtist(getText(R.string.Unknown_artist));
-            mModel.setAlbum(getText(R.string.Unknown_album));
-            mModel.setTitle(getText(R.string.Untitled));
+            mModel.setArtistAndAlbum(null);
+            mModel.setTitle(getText(R.string.Start_playing));
+            mModel.setNavigationButtonsVisible(false);
+            mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_24dp);
             bindProgress(0, 0);
         }
         mModel.setArt(getDrawable(R.drawable.album_art_placeholder));
@@ -157,6 +160,7 @@ public final class WearActivity extends Activity {
         public void onConnected(@Nullable final Bundle bundle) {
             mModel.setFixButtonVisible(false);
             mModel.setMessage(getText(R.string.Waiting_for_data));
+            bindMedia(null);
             Wearable.DataApi.addListener(mGoogleApiClient, mDataListener);
         }
 

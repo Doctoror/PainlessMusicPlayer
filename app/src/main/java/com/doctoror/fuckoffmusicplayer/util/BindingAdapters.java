@@ -80,14 +80,6 @@ public final class BindingAdapters {
         }
     }
 
-    @BindingAdapter("displayedChild")
-    public static void setDisplayedChild(@NonNull final ViewAnimator viewAnimator,
-            final int child) {
-        if (viewAnimator.getDisplayedChild() != child) {
-            viewAnimator.setDisplayedChild(child);
-        }
-    }
-
     @BindingAdapter("recyclerAdapter")
     public static void setRecyclerAdapter(@NonNull final RecyclerView recyclerView,
             @Nullable final RecyclerView.Adapter<?> adapter) {
@@ -111,11 +103,5 @@ public final class BindingAdapters {
                     seconds % 60);
         }
         textView.setText(time);
-    }
-
-    @BindingAdapter("srcRes")
-    public static void setImageResource(@NonNull final ImageView imageView,
-            @DrawableRes final int src) {
-        imageView.setImageResource(src);
     }
 }

@@ -16,6 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.google.android.exoplayer2.audio.AudioTrack;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Wearable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -38,11 +40,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
@@ -217,6 +221,8 @@ public final class PlaybackService extends Service {
 
     private CharSequence mErrorMessage;
 
+    private GoogleApiClient mGoogleApiClient;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -250,6 +256,12 @@ public final class PlaybackService extends Service {
         mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mMediaSession.setActive(true);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(mGoogleApiClientCallbacks)
+                .build();
+        mGoogleApiClient.connect();
     }
 
     @Nullable
@@ -451,6 +463,7 @@ public final class PlaybackService extends Service {
         if (mState == STATE_PAUSED && mCurrentTrack != null
                 && media.getId() == mCurrentTrack.getId()) {
             mMediaPlayer.play();
+            syncWearableMediaAsync();
         } else {
             Observable.create((s) -> {
                 long seekPosition = 0;
@@ -466,6 +479,7 @@ public final class PlaybackService extends Service {
                 if (mMediaSession != null) {
                     MediaSessionReporter.reportTrackChanged(this, mGlide, mMediaSession, media);
                 }
+                syncWearableMedia();
 
                 mMediaPlayer.stop();
                 mMediaPlayer.load(media.getData());
@@ -513,6 +527,7 @@ public final class PlaybackService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mGoogleApiClient.disconnect();
         mMediaPlayer.stop();
         mPlaylist.deleteObserver(mPlaylistObserver);
         mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
@@ -559,6 +574,7 @@ public final class PlaybackService extends Service {
     private void setState(@State final int state) {
         mState = state;
         setMediaSessionPlaybackState(state);
+        syncWearableStateAsync();
         broadcastState();
     }
 
@@ -573,6 +589,54 @@ public final class PlaybackService extends Service {
         intent.putExtra(EXTRA_STATE, mState);
         sendBroadcast(intent, PERMISSION_RECEIVE_PLAYBACK_STATE);
     }
+
+    private void syncWearableMediaAsync() {
+        Observable.create(s -> syncWearableMedia()).subscribeOn(Schedulers.io()).subscribe();
+    }
+
+    private void syncWearableStateAsync() {
+        Observable.create(s -> syncWearableState()).subscribeOn(Schedulers.io()).subscribe();
+    }
+
+    @WorkerThread
+    private void syncWearableMedia() {
+        if (mGoogleApiClient.isConnected()) {
+            final Media media = mPlaylist.getMedia();
+            if (media != null) {
+                WearableMediaReporter.reportMedia(mGoogleApiClient, media, mPlaylist.getPosition());
+            }
+        }
+    }
+
+    @WorkerThread
+    private void syncWearableState() {
+        if (mGoogleApiClient.isConnected()) {
+            final Media media = mPlaylist.getMedia();
+            final long duration = media != null ? media.getDuration() : 0;
+            final long position = media != null ? mPlaylist.getPosition() : 0;
+            WearableMediaReporter.reportState(mGoogleApiClient, mState,
+                    duration, position);
+        }
+    }
+
+    private final GoogleApiClient.ConnectionCallbacks mGoogleApiClientCallbacks
+            = new GoogleApiClient.ConnectionCallbacks() {
+
+        @Override
+        public void onConnected(@Nullable final Bundle bundle) {
+            Observable.create(s -> {
+                syncWearableMedia();
+                syncWearableState();
+            })
+                    .subscribeOn(Schedulers.io())
+                    .subscribe();
+        }
+
+        @Override
+        public void onConnectionSuspended(final int i) {
+            // ignored
+        }
+    };
 
     private final BroadcastReceiver mResendStateReceiver = new BroadcastReceiver() {
 

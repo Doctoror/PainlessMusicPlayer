@@ -5,7 +5,6 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableLong;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,8 +17,7 @@ public final class WearActivityModel extends BaseObservable {
 
     private Drawable mArt;
     private CharSequence mTitle;
-    private CharSequence mArtist;
-    private CharSequence mAlbum;
+    private CharSequence mArtistAndAlbum;
     private Drawable mStateIcon;
     private long mDuration;
 
@@ -29,9 +27,19 @@ public final class WearActivityModel extends BaseObservable {
     private final ObservableInt mBtnPlayRes = new ObservableInt();
 
     private final ObservableInt mAnimatorChild = new ObservableInt();
-    private final ObservableBoolean mProgressVisible = new ObservableBoolean();
     private final ObservableField<CharSequence> mMessage = new ObservableField<>();
+
+    private final ObservableBoolean mProgressVisible = new ObservableBoolean();
     private final ObservableBoolean mFixButtonVisible = new ObservableBoolean();
+    private final ObservableBoolean mNavigationButtonsVisible = new ObservableBoolean();
+
+    public ObservableBoolean navigationButtonsVisible() {
+        return mNavigationButtonsVisible;
+    }
+
+    public void setNavigationButtonsVisible(final boolean visible) {
+        mNavigationButtonsVisible.set(visible);
+    }
 
     public ObservableBoolean isFixButtonVisible() {
         return mFixButtonVisible;
@@ -81,20 +89,12 @@ public final class WearActivityModel extends BaseObservable {
         mTitle = title;
     }
 
-    public CharSequence getArtist() {
-        return mArtist;
+    public CharSequence getArtistAndAlbum() {
+        return mArtistAndAlbum;
     }
 
-    public void setArtist(final CharSequence artist) {
-        mArtist = artist;
-    }
-
-    public CharSequence getAlbum() {
-        return mAlbum;
-    }
-
-    public void setAlbum(final CharSequence album) {
-        mAlbum = album;
+    public void setArtistAndAlbum(final CharSequence artistAndAlbum) {
+        mArtistAndAlbum = artistAndAlbum;
     }
 
     public Drawable getStateIcon() {

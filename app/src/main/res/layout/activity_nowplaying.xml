@@ -76,7 +76,7 @@
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     android:gravity="center_horizontal"
-                    app:text='@{model.artist + " / " + model.album}'
+                    app:text='@{model.artistAndAlbum}'
                     tools:text="Text 2"
                     tools:ignore="SelectableText"/>
 

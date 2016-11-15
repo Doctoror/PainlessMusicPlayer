@@ -9,5 +9,6 @@
     <string name="Unknown_artist">Unknown artist</string>
     <string name="Unknown_album">Unknown album</string>
     <string name="Untitled">Untitled</string>
+    <string name="artist_album_separator"><![CDATA[ / ]]></string>
 
 </resources>
