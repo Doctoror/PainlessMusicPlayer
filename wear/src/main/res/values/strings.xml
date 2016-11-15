@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Fuck Off Music Player</string>
+    <string name="Connecting">Connecting</string>
+    <string name="Waiting_for_data">Waiting for data</string>
+    <string name="Failed_to_parse_data">Failed to parse data</string>
+    <string name="Could_not_fix_this_issue">Could not fix this issue</string>
+
+    <!-- Google play services -->
+
+    <string name="Google_Play_Services_are_missing">Google Play Services are missing</string>
+    <string name="Google_Play_Services_are_disabled">Google Play Services are disabled</string>
+    <string name="Google_Play_Services_are_invalid">Google Play Services are invalid</string>
+    <string name="Google_Play_Services_update_required">Google Play Services update required
+    </string>
+    <string name="Google_Play_Services_are_updating_">Google Play Services are updating. Please try
+        again later
+    </string>
+
+    <string name="Fix">Fix</string>
+
+</resources>

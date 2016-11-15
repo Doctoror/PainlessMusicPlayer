@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.doctoror.fuckoffmusicplayer.WearActivityModel"/>
+
+        <import type="android.view.View"/>
+
+    </data>
+
+    <android.support.wearable.view.BoxInsetLayout
+        android:id="@+id/watch_view_stub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.doctoror.fuckoffmusicplayer.WearActivity"
+        tools:deviceIds="wear">
+
+        <ViewAnimator
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:displayedChild="@{model.animatorChild}">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:animateLayoutChanges="true"
+                android:gravity="center">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{model.progressVisible ? View.VISIBLE : View.GONE}"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:gravity="center"
+                    android:text="@{model.message}"
+                    tools:text="@string/Connecting"/>
+
+                <Button
+                    android:id="@+id/btnFix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/Fix"
+                    android:visibility="@{model.fixButtonVisible ? View.VISIBLE : View.GONE}"/>
+
+            </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.constraint.Guideline
+                    android:id="@+id/guideline60percent"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.6"/>
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    android:src="@{model.art}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/guideline60percent"
+                    tools:src="@drawable/album_art_placeholder"
+                    tools:ignore="ContentDescription"/>
+
+                <SeekBar
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintVertical_bias="0.6"
+                    android:id="@+id/seekBar"/>
+
+                <TextView
+                    android:id="@+id/textArtistAlbum"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:gravity="center"
+                    android:textSize="13sp"
+                    android:textIsSelectable="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="Artist / Album"
+                    app:layout_constraintTop_toTopOf="@+id/guideline60percent"/>
+
+                <TextView
+                    android:id="@+id/textTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:gravity="center"
+                    android:textSize="12sp"
+                    android:textIsSelectable="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textArtistAlbum"
+                    tools:text="Title"/>
+
+                <ImageButton
+                    android:id="@+id/btnPlayPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="6dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textTitle"
+                    tools:src="@drawable/ic_play_arrow_white_24dp"
+                    tools:ignore="ContentDescription"/>
+
+                <ImageButton
+                    android:id="@+id/btnPrev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_fast_rewind_white_24dp"
+                    android:contentDescription="@string/Previous"
+                    app:layout_constraintEnd_toStartOf="@id/btnPlayPause"
+                    app:layout_constraintTop_toTopOf="@+id/btnPlayPause"/>
+
+                <ImageButton
+                    android:id="@+id/btnNext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_fast_forward_white_24dp"
+                    android:contentDescription="@string/Next"
+                    app:layout_constraintStart_toEndOf="@id/btnPlayPause"
+                    app:layout_constraintTop_toTopOf="@+id/btnPlayPause"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+        </ViewAnimator>
+
+    </android.support.wearable.view.BoxInsetLayout>
+
+</layout>

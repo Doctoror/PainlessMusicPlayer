@@ -19,8 +19,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.util.Locale;
-
 /**
  * Created by Yaroslav Mytkalyk on 7/8/16.
  */
@@ -28,6 +26,11 @@ public final class StringUtils {
 
     private StringUtils() {
 
+    }
+
+    @NonNull
+    public static String notNullString(@Nullable final String string) {
+        return string != null ? string : "";
     }
 
     @Nullable

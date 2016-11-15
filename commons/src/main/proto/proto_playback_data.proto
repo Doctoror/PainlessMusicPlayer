@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_package = "com.doctoror.commons.wear";
+
+message PlaybackState {
+  int32 state = 1;
+  int64 progress = 2;
+  int64 duration = 3;
+}
+
+message Media {
+  int64 id = 1;
+  string data = 2;
+  string title = 3;
+  int64 duration = 4;
+  string artist = 5;
+  string album = 6;
+  int32 track = 7;
+  int32 progress = 8;
+}

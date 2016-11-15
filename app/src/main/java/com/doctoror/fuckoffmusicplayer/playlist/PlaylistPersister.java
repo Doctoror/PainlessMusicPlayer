@@ -20,11 +20,11 @@ import com.google.protobuf.nano.CodedOutputByteBufferNano;
 import com.doctoror.fuckoffmusicplayer.playlist.nano.PersistablePlaylist;
 import com.doctoror.fuckoffmusicplayer.util.ByteStreams;
 import com.doctoror.fuckoffmusicplayer.util.Log;
+import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -153,17 +153,12 @@ final class PlaylistPersister {
         final PersistablePlaylist.ProtoMedia pm = new PersistablePlaylist.ProtoMedia();
         pm.id = media.id;
         pm.data = media.data != null ? media.data.toString() : null;
-        pm.title = notNullString(media.title);
+        pm.title = StringUtils.notNullString(media.title);
         pm.duration = media.duration;
-        pm.artist = notNullString(media.artist);
-        pm.album = notNullString(media.album);
-        pm.albumArt = notNullString(media.albumArt);
+        pm.artist = StringUtils.notNullString(media.artist);
+        pm.album = StringUtils.notNullString(media.album);
+        pm.albumArt = StringUtils.notNullString(media.albumArt);
         return pm;
-    }
-
-    @NonNull
-    private static String notNullString(@Nullable final String string) {
-        return string != null ? string : "";
     }
 
     @NonNull
