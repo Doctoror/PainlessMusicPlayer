@@ -1,4 +1,7 @@
 <resources>
+
+    <string translatable="false" name="wear_capability_playback_control">playback_control</string>
+
     <string name="app_name">Commons</string>
 
     <string name="Previous">Previous</string>

@@ -10,12 +10,21 @@ public final class DataPaths {
         throw new UnsupportedOperationException();
     }
 
-    public static final String PATH_MEDIA = "/playback/media";
-    public static final String PATH_PLAYBACK_STATE = "/playback/state";
-    public static final String ASSET_ALBUM_ART = "/assets/album/art";
+    public static final class Assets {
+        public static final String ALBUM_ART = "/assets/album/art";
+    }
 
-    public static final String PATH_MESSAGE_PLAY_PAUSE = "/message/playpause";
-    public static final String PATH_MESSAGE_PREV = "/message/prev";
-    public static final String PATH_MESSAGE_NEXT = "/message/next";
+    public static final class Paths {
+
+        public static final String MEDIA = "/playback/media";
+        public static final String PLAYBACK_STATE = "/playback/state";
+    }
+
+    public static final class Messages {
+        public static final String PLAY_PAUSE = "/message/playpause";
+        public static final String SEEK = "/message/seek";
+        public static final String PREV = "/message/prev";
+        public static final String NEXT = "/message/next";
+    }
 
 }

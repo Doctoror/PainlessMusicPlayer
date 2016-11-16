@@ -59,12 +59,12 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 if (item != null) {
                     final String path = item.getUri().getPath();
                     switch (path) {
-                        case DataPaths.PATH_MEDIA:
+                        case DataPaths.Paths.MEDIA:
                             onMediaItemChanged(item);
                             readAlbumArt(item);
                             break;
 
-                        case DataPaths.PATH_PLAYBACK_STATE:
+                        case DataPaths.Paths.PLAYBACK_STATE:
                             onPlaybackStateItemChanged(item);
                             break;
                     }
@@ -91,7 +91,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
     private void readAlbumArt(@NonNull final DataItem mediaItem) {
         final Map<String, DataItemAsset> assets = mediaItem.getAssets();
         if (assets != null) {
-            readAlbumArt(assets.get(DataPaths.ASSET_ALBUM_ART));
+            readAlbumArt(assets.get(DataPaths.Assets.ALBUM_ART));
         }
     }
 

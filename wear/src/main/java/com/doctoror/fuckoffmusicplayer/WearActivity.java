@@ -1,6 +1,7 @@
 package com.doctoror.fuckoffmusicplayer;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.CapabilityApi;
 import com.google.android.gms.wearable.Wearable;
 
 import com.doctoror.commons.util.StringUtils;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 public final class WearActivity extends Activity {
@@ -34,6 +36,8 @@ public final class WearActivity extends Activity {
     private final WearActivityModelViewState mModelViewState = new WearActivityModelViewState();
     private final WearActivityModelMedia mModelMedia = new WearActivityModelMedia();
 
+    private final RemoteControl mRemoteControl = new RemoteControl();
+
     private MediaHolder mMediaHolder;
 
     private GoogleApiClient mGoogleApiClient;
@@ -49,6 +53,10 @@ public final class WearActivity extends Activity {
         binding.setPlaybackState(mModelPlaybackState);
         binding.setViewState(mModelViewState);
         binding.setMedia(mModelMedia);
+        binding.seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListenerImpl());
+        binding.btnPrev.setOnClickListener(v -> mRemoteControl.prev(mGoogleApiClient));
+        binding.btnNext.setOnClickListener(v -> mRemoteControl.next(mGoogleApiClient));
+        binding.btnPlayPause.setOnClickListener(v -> mRemoteControl.playPause(mGoogleApiClient));
         mBtnFix = binding.btnFix;
         mMediaHolder = MediaHolder.getInstance(this);
 
@@ -75,6 +83,7 @@ public final class WearActivity extends Activity {
     protected void onStop() {
         super.onStop();
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
+        Wearable.CapabilityApi.removeListener(mGoogleApiClient, mCapabilityListener);
         mGoogleApiClient.disconnect();
     }
 
@@ -137,6 +146,32 @@ public final class WearActivity extends Activity {
         }
     }
 
+    private final class OnSeekBarChangeListenerImpl implements SeekBar.OnSeekBarChangeListener {
+
+        private boolean mFirst = true;
+
+        @Override
+        public void onProgressChanged(final SeekBar seekBar, final int i, final boolean fromUser) {
+            if (fromUser) {
+                if (mFirst) {
+                    mFirst = false;
+                } else {
+                    mRemoteControl.seek(mGoogleApiClient, (float) i / 200f);
+                }
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(final SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(final SeekBar seekBar) {
+
+        }
+    }
+
     private final MediaHolder.PlaybackInfoObserver mPlaybackInfoObserver
             = new MediaHolder.PlaybackInfoObserver() {
 
@@ -163,6 +198,10 @@ public final class WearActivity extends Activity {
         @Override
         public void onConnected(@Nullable final Bundle bundle) {
             setViewConnected();
+            Wearable.CapabilityApi.addCapabilityListener(
+                    mGoogleApiClient,
+                    mCapabilityListener,
+                    getString(R.string.wear_capability_playback_control));
         }
 
         @Override
@@ -170,6 +209,9 @@ public final class WearActivity extends Activity {
             setViewConnecting();
         }
     };
+
+    private final CapabilityApi.CapabilityListener mCapabilityListener
+            = mRemoteControl::updateRemoteControlCapability;
 
     private final GoogleApiClient.OnConnectionFailedListener mOnConnectionFailedListener
             = connectionResult -> {

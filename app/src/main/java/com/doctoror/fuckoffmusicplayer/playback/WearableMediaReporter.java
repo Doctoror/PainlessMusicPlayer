@@ -72,7 +72,7 @@ final class WearableMediaReporter {
                 albumArt = new byte[0];
             }
 
-            request.putAsset(DataPaths.ASSET_ALBUM_ART, Asset.createFromBytes(albumArt));
+            request.putAsset(DataPaths.Assets.ALBUM_ART, Asset.createFromBytes(albumArt));
             Wearable.DataApi.putDataItem(googleApiClient, request).await();
         }
     }
@@ -98,7 +98,7 @@ final class WearableMediaReporter {
     @NonNull
     private static PutDataRequest newPutMediaRequest(@NonNull final Media media,
             final long position) throws IOException {
-        final PutDataRequest request = PutDataRequest.create(DataPaths.PATH_MEDIA);
+        final PutDataRequest request = PutDataRequest.create(DataPaths.Paths.MEDIA);
         request.setData(messageNanoToBytes(toWearableData(media, position)));
         return request;
     }
@@ -108,7 +108,7 @@ final class WearableMediaReporter {
             @PlaybackService.State final int state,
             final long duration,
             final long position) throws IOException {
-        final PutDataRequest request = PutDataRequest.create(DataPaths.PATH_PLAYBACK_STATE);
+        final PutDataRequest request = PutDataRequest.create(DataPaths.Paths.PLAYBACK_STATE);
         request.setData(messageNanoToBytes(toPlaybackState(state, duration, position)));
         return request;
     }
