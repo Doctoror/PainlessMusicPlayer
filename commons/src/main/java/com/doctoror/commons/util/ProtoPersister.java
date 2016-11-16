@@ -39,8 +39,8 @@ public final class ProtoPersister {
 
     @Nullable
     public static <T extends MessageNano> T readFromFile(@NonNull final Context context,
-            @NonNull final T obj,
-            @NonNull final String fileName) {
+            @NonNull final String fileName,
+            @NonNull final T obj) {
         T message = null;
         try {
             final byte[] bytes = readPrivateFile(context, fileName);

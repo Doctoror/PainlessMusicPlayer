@@ -60,14 +60,13 @@ final class MediaPersister {
 
     @Nullable
     static ProtoPlaybackData.PlaybackState readPlaybackState(@NonNull final Context context) {
-        return ProtoPersister.readFromFile(context, new ProtoPlaybackData.PlaybackState(),
-                FILE_NAME_PLAYBACK_STATE);
+        return ProtoPersister.readFromFile(context, FILE_NAME_PLAYBACK_STATE,
+                new ProtoPlaybackData.PlaybackState());
     }
 
     @Nullable
     static ProtoPlaybackData.Media readMedia(@NonNull final Context context) {
-        return ProtoPersister.readFromFile(context, new ProtoPlaybackData.Media(),
-                FILE_NAME_MEDIA);
+        return ProtoPersister.readFromFile(context, FILE_NAME_MEDIA, new ProtoPlaybackData.Media());
     }
 
     static void persistAlbumArt(@NonNull final Context context,

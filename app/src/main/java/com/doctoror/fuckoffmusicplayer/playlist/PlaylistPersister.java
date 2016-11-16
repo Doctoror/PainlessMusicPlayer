@@ -15,20 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.google.protobuf.nano.CodedOutputByteBufferNano;
-
+import com.doctoror.commons.util.ProtoPersister;
 import com.doctoror.fuckoffmusicplayer.playlist.nano.PersistablePlaylist;
-import com.doctoror.commons.util.ByteStreams;
-import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,46 +55,13 @@ final class PlaylistPersister {
 
     private static void persist(@NonNull final Context context,
             @NonNull final PersistablePlaylist.ProtoPlaylist pp) {
-        OutputStream os = null;
-        try {
-            os = context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
-            final byte[] output = new byte[pp.getCachedSize()];
-            pp.writeTo(CodedOutputByteBufferNano.newInstance(output));
-            os.write(output);
-            os.close();
-        } catch (IOException e) {
-            Log.w(TAG, e);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    Log.w(TAG, e);
-                }
-            }
-        }
+        ProtoPersister.writeToFile(context, FILE_NAME, pp);
     }
 
     static void read(@NonNull final Context context,
             @NonNull final PlaylistHolder playlist) {
-        InputStream is = null;
-        PersistablePlaylist.ProtoPlaylist protoPlaylist = null;
-        try {
-            is = context.openFileInput(FILE_NAME);
-            final byte[] bytes = ByteStreams.toByteArray(is);
-            protoPlaylist = PersistablePlaylist.ProtoPlaylist.parseFrom(bytes);
-        } catch (IOException e) {
-            Log.w(TAG, e);
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    Log.w(TAG, e);
-                }
-            }
-        }
-
+        final PersistablePlaylist.ProtoPlaylist protoPlaylist = ProtoPersister
+                .readFromFile(context, FILE_NAME, new PersistablePlaylist.ProtoPlaylist());
         if (protoPlaylist != null) {
             readFromProtoPlaylist(protoPlaylist, playlist);
         }
@@ -142,7 +103,8 @@ final class PlaylistPersister {
     }
 
     @NonNull
-    private static PersistablePlaylist.ProtoPlaylist toProtoPlaylist(@NonNull final PlaylistHolder playlist) {
+    private static PersistablePlaylist.ProtoPlaylist toProtoPlaylist(
+            @NonNull final PlaylistHolder playlist) {
         final PersistablePlaylist.ProtoPlaylist pp = new PersistablePlaylist.ProtoPlaylist();
         pp.playlist = toProtoMediaList(playlist.playlist);
         pp.index = playlist.index;
@@ -164,8 +126,10 @@ final class PlaylistPersister {
     }
 
     @NonNull
-    private static PersistablePlaylist.ProtoMedia[] toProtoMediaList(@NonNull final List<Media> media) {
-        final PersistablePlaylist.ProtoMedia[] result = new PersistablePlaylist.ProtoMedia[media.size()];
+    private static PersistablePlaylist.ProtoMedia[] toProtoMediaList(
+            @NonNull final List<Media> media) {
+        final PersistablePlaylist.ProtoMedia[] result = new PersistablePlaylist.ProtoMedia[media
+                .size()];
         final int size = media.size();
         for (int i = 0; i < size; i++) {
             result[i] = toProtoMedia(media.get(i));
