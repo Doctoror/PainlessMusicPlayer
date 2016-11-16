@@ -18,7 +18,7 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 import com.google.protobuf.nano.CodedOutputByteBufferNano;
 
 import com.doctoror.fuckoffmusicplayer.playlist.nano.PersistablePlaylist;
-import com.doctoror.fuckoffmusicplayer.util.ByteStreams;
+import com.doctoror.commons.util.ByteStreams;
 import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 

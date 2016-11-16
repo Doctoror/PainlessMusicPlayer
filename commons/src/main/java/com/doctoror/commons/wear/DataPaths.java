@@ -10,7 +10,11 @@ public final class DataPaths {
         throw new UnsupportedOperationException();
     }
 
-    public static final String PATH_MEDIA = "/media";
-    public static final String PATH_PLAYBACK_STATE = "/playback_state";
+    public static final String PATH_MEDIA = "/playback/media";
+    public static final String PATH_PLAYBACK_STATE = "/playback/state";
+
+    public static final String PATH_MESSAGE_PLAY_PAUSE = "/message/playpause";
+    public static final String PATH_MESSAGE_PREV = "/message/prev";
+    public static final String PATH_MESSAGE_NEXT = "/message/next";
 
 }

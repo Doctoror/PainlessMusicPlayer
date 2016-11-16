@@ -40,7 +40,9 @@ final class WearableMediaReporter {
                 Log.w(TAG, e);
                 return;
             }
-            Wearable.DataApi.putDataItem(googleApiClient, request);
+            request.setUrgent();
+
+            Wearable.DataApi.putDataItem(googleApiClient, request).await();
         }
     }
 
@@ -57,7 +59,8 @@ final class WearableMediaReporter {
                 Log.w(TAG, e);
                 return;
             }
-            Wearable.DataApi.putDataItem(googleApiClient, request);
+            request.setUrgent();
+            Wearable.DataApi.putDataItem(googleApiClient, request).await();
         }
     }
 

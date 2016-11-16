@@ -33,6 +33,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
         <activity
             android:name=".library.LibraryActivity"
             android:launchMode="singleTop"
@@ -119,13 +122,22 @@
         <receiver android:name=".appwidget.SingleRowAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED"/>
+                <action
+                    android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/appwidget_info_single_row"/>
         </receiver>
+
+        <service android:name=".wear.WearableListenerServiceImpl">
+            <intent-filter>
+                <!-- listeners receive events that match the action and data filters -->
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED"/>
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/message"/>
+            </intent-filter>
+        </service>
 
     </application>
 

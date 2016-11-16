@@ -1,31 +1,22 @@
 package com.doctoror.fuckoffmusicplayer;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.Wearable;
-import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 
 import com.doctoror.commons.util.StringUtils;
-import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityWearBinding;
+import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.util.GooglePlayServicesUtil;
 
 import android.app.Activity;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 public final class WearActivity extends Activity {
 
@@ -38,35 +29,44 @@ public final class WearActivity extends Activity {
 
     private final WearActivityModel mModel = new WearActivityModel();
 
+    private MediaHolder mMediaHolder;
+
     private GoogleApiClient mGoogleApiClient;
     private View mBtnFix;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_24dp);
+
         final ActivityWearBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_wear);
         binding.setModel(mModel);
         mBtnFix = binding.btnFix;
+        mMediaHolder = MediaHolder.getInstance(this);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .addConnectionCallbacks(mConnectionCallbacks)
                 .addOnConnectionFailedListener(mOnConnectionFailedListener)
                 .build();
+
+        setViewConnecting();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        setViewConnecting();
+        bindMedia(mMediaHolder.getMedia());
+        bindPlaybackState(mMediaHolder.getPlaybackState());
+        mMediaHolder.addObserver(mPlaybackInfoObserver);
         mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Wearable.DataApi.removeListener(mGoogleApiClient, mDataListener);
+        mMediaHolder.deleteObserver(mPlaybackInfoObserver);
         mGoogleApiClient.disconnect();
     }
 
@@ -75,6 +75,12 @@ public final class WearActivity extends Activity {
         mModel.setProgressVisible(true);
         mModel.setMessage(getText(R.string.Connecting));
         mModel.setAnimatorChild(ANIMATOR_CHILD_PRGORESS);
+    }
+
+    private void setViewConnected() {
+        mModel.setFixButtonVisible(false);
+        mModel.setProgressVisible(false);
+        mModel.setAnimatorChild(ANIMATOR_CHILD_CONTENT);
     }
 
     private void bindMedia(@Nullable final ProtoPlaybackData.Media media) {
@@ -88,11 +94,9 @@ public final class WearActivity extends Activity {
             mModel.setArtistAndAlbum(null);
             mModel.setTitle(getText(R.string.Start_playing));
             mModel.setNavigationButtonsVisible(false);
-            mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_24dp);
             bindProgress(0, 0);
         }
         mModel.setArt(getDrawable(R.drawable.album_art_placeholder));
-        mModel.setAnimatorChild(ANIMATOR_CHILD_CONTENT);
         mModel.notifyChange();
     }
 
@@ -115,53 +119,27 @@ public final class WearActivity extends Activity {
         }
     }
 
-    private void onMediaItemChanged(@NonNull final DataItem mediaItem) {
-        final byte[] data = mediaItem.getData();
-        if (data == null) {
-            bindMedia(null);
-        } else {
-            Observable.create(s -> {
-                try {
-                    final ProtoPlaybackData.Media media = ProtoPlaybackData.Media.parseFrom(data);
-                    bindMedia(media);
-                } catch (InvalidProtocolBufferNanoException e) {
-                    Log.w(TAG, e);
-                    mModel.setMessage(getText(R.string.Failed_to_parse_data));
-                }
-            })
-                    .subscribeOn(Schedulers.io())
-                    .subscribe();
-        }
-    }
+    private final MediaHolder.PlaybackInfoObserver mPlaybackInfoObserver
+            = new MediaHolder.PlaybackInfoObserver() {
 
-    private void onPlaybackStateItemChanged(@NonNull final DataItem stateItem) {
-        final byte[] data = stateItem.getData();
-        if (data == null) {
-            bindPlaybackState(null);
-        } else {
-            Observable.create(s -> {
-                try {
-                    final ProtoPlaybackData.PlaybackState media = ProtoPlaybackData.PlaybackState
-                            .parseFrom(data);
-                    bindPlaybackState(media);
-                } catch (InvalidProtocolBufferNanoException e) {
-                    Log.w(TAG, e);
-                }
-            })
-                    .subscribeOn(Schedulers.io())
-                    .subscribe();
+        @Override
+        public void onMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
+            bindMedia(media);
         }
-    }
+
+        @Override
+        public void onPlaybackStateChanged(
+                @Nullable final ProtoPlaybackData.PlaybackState playbackState) {
+            bindPlaybackState(playbackState);
+        }
+    };
 
     private final GoogleApiClient.ConnectionCallbacks mConnectionCallbacks
             = new GoogleApiClient.ConnectionCallbacks() {
 
         @Override
         public void onConnected(@Nullable final Bundle bundle) {
-            mModel.setFixButtonVisible(false);
-            mModel.setMessage(getText(R.string.Waiting_for_data));
-            bindMedia(null);
-            Wearable.DataApi.addListener(mGoogleApiClient, mDataListener);
+            setViewConnected();
         }
 
         @Override
@@ -188,26 +166,5 @@ public final class WearActivity extends Activity {
             });
         }
         mModel.setAnimatorChild(ANIMATOR_CHILD_PRGORESS);
-    };
-
-    private final DataApi.DataListener mDataListener = dataEventBuffer -> {
-        for (final DataEvent event : dataEventBuffer) {
-            if (event.getType() == DataEvent.TYPE_CHANGED) {
-                // DataItem changed
-                final DataItem item = event.getDataItem();
-                final String path = item.getUri().getPath();
-                switch (path) {
-                    case DataPaths.PATH_MEDIA:
-                        onMediaItemChanged(item);
-                        break;
-
-                    case DataPaths.PATH_PLAYBACK_STATE:
-                        onPlaybackStateItemChanged(item);
-                        break;
-                }
-            } else if (event.getType() == DataEvent.TYPE_DELETED) {
-                bindMedia(null);
-            }
-        }
     };
 }
