@@ -12,6 +12,7 @@ public final class DataPaths {
 
     public static final String PATH_MEDIA = "/playback/media";
     public static final String PATH_PLAYBACK_STATE = "/playback/state";
+    public static final String ASSET_ALBUM_ART = "/assets/album/art";
 
     public static final String PATH_MESSAGE_PLAY_PAUSE = "/message/playpause";
     public static final String PATH_MESSAGE_PREV = "/message/prev";

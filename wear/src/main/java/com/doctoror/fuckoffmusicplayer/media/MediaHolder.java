@@ -15,10 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.media;
 
+import com.google.android.gms.wearable.Asset;
+
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
@@ -53,16 +57,31 @@ public final class MediaHolder {
     @NonNull
     private final Context mContext;
 
+    private Bitmap mAlbumArt;
     private ProtoPlaybackData.Media mMedia;
     private ProtoPlaybackData.PlaybackState mPlaybackState;
 
     private MediaHolder(@NonNull final Context context) {
         mContext = context;
         mMedia = MediaPersister.readMedia(context);
+        mAlbumArt = MediaPersister.readAlbumArt(context);
         mPlaybackState = MediaPersister.readPlaybackState(context);
     }
 
-    public void setMedia(@Nullable final ProtoPlaybackData.Media media) {
+    @WorkerThread
+    public synchronized void setAlbumArt(@Nullable final byte[] albumArt) {
+        // Empty array means there is no art for current media
+        mAlbumArt = albumArt == null || albumArt.length == 0
+                ? null : BitmapFactory.decodeByteArray(albumArt, 0, albumArt.length);
+        notifyAlbumArtChanged(mAlbumArt);
+
+        // Empty array means the art must be erased
+        MediaPersister.persistAlbumArt(mContext,
+                albumArt == null || albumArt.length == 0 ? null : albumArt);
+    }
+
+    @WorkerThread
+    public synchronized void setMedia(@Nullable final ProtoPlaybackData.Media media) {
         if (mMedia != media) {
             mMedia = media;
             if (media == null) {
@@ -74,7 +93,8 @@ public final class MediaHolder {
         }
     }
 
-    public void setPlaybackState(@Nullable final ProtoPlaybackData.PlaybackState state) {
+    @WorkerThread
+    public synchronized void setPlaybackState(@Nullable final ProtoPlaybackData.PlaybackState state) {
         if (mPlaybackState != state) {
             mPlaybackState = state;
             if (state == null) {
@@ -104,6 +124,12 @@ public final class MediaHolder {
         mObservers.remove(observer);
     }
 
+    private void notifyAlbumArtChanged(@Nullable final Bitmap albumArt) {
+        for (final PlaybackInfoObserver observer : mObservers) {
+            observer.onAlbumArtChanged(albumArt);
+        }
+    }
+
     private void notifyMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
         for (final PlaybackInfoObserver observer : mObservers) {
             observer.onMediaChanged(media);
@@ -123,5 +149,8 @@ public final class MediaHolder {
 
         @WorkerThread
         void onPlaybackStateChanged(@Nullable ProtoPlaybackData.PlaybackState playbackState);
+
+        @WorkerThread
+        void onAlbumArtChanged(@Nullable Bitmap albumArt);
     }
 }

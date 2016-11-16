@@ -603,7 +603,8 @@ public final class PlaybackService extends Service {
         if (mGoogleApiClient.isConnected()) {
             final Media media = mPlaylist.getMedia();
             if (media != null) {
-                WearableMediaReporter.reportMedia(mGoogleApiClient, media, mPlaylist.getPosition());
+                WearableMediaReporter
+                        .reportMedia(mGoogleApiClient, mGlide, media, mPlaylist.getPosition());
             }
         }
     }

@@ -5,6 +5,8 @@ import com.doctoror.commons.util.ProtoPersister;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -23,6 +25,7 @@ final class MediaPersister {
 
     private static final String TAG = "MediaPersister";
 
+    private static final String FILE_NAME_MEDIA_ART = "media_art";
     private static final String FILE_NAME_MEDIA = "media";
     private static final String FILE_NAME_PLAYBACK_STATE = "playback_state";
 
@@ -30,23 +33,9 @@ final class MediaPersister {
         throw new UnsupportedOperationException();
     }
 
-    static void persistPlaybackStateAsync(@NonNull final Context context,
-            @NonNull final ProtoPlaybackData.PlaybackState playbackState) {
-        // Retrieve snapshot now, so that it's immutable when writing
-        Observable.create(s -> persistPlaybackState(context, playbackState))
-                .subscribeOn(Schedulers.io()).subscribe();
-    }
-
     static void persistPlaybackState(@NonNull final Context context,
             @NonNull final ProtoPlaybackData.PlaybackState ps) {
         ProtoPersister.writeToFile(context, FILE_NAME_PLAYBACK_STATE, ps);
-    }
-
-    static void persistMediaAsync(@NonNull final Context context,
-            @NonNull final ProtoPlaybackData.Media media) {
-        // Retrieve snapshot now, so that it's immutable when writing
-        Observable.create(s -> persistMedia(context, media))
-                .subscribeOn(Schedulers.io()).subscribe();
     }
 
     static void deleteMedia(@NonNull final Context context) {
@@ -72,5 +61,16 @@ final class MediaPersister {
     static ProtoPlaybackData.Media readMedia(@NonNull final Context context) {
         return ProtoPersister.readFromFile(context, new ProtoPlaybackData.Media(),
                 FILE_NAME_MEDIA);
+    }
+
+    static void persistAlbumArt(@NonNull final Context context,
+            @Nullable final byte[] albumArt) {
+        ProtoPersister.writeOrDeletePrivateFile(context, FILE_NAME_MEDIA_ART, albumArt);
+    }
+
+    @Nullable
+    static Bitmap readAlbumArt(@NonNull final Context context) {
+        return BitmapFactory.decodeFile(context.getFileStreamPath(FILE_NAME_MEDIA_ART)
+                .getAbsolutePath());
     }
 }

@@ -12,6 +12,8 @@ import com.doctoror.fuckoffmusicplayer.util.GooglePlayServicesUtil;
 import android.app.Activity;
 import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -100,6 +102,14 @@ public final class WearActivity extends Activity {
         mModel.notifyChange();
     }
 
+    private void bindArt(@Nullable final Bitmap albumArt) {
+        if (albumArt == null) {
+            mModel.setArt(null);
+        } else {
+            mModel.setArt(new BitmapDrawable(getResources(), albumArt));
+        }
+    }
+
     private void bindPlaybackState(@Nullable final ProtoPlaybackData.PlaybackState playbackState) {
         if (playbackState != null) {
             bindProgress(playbackState.duration, playbackState.progress);
@@ -125,6 +135,11 @@ public final class WearActivity extends Activity {
         @Override
         public void onMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
             bindMedia(media);
+        }
+
+        @Override
+        public void onAlbumArtChanged(@Nullable final Bitmap albumArt) {
+            bindArt(albumArt);
         }
 
         @Override

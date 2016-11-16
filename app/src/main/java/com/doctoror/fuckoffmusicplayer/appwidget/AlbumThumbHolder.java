@@ -104,9 +104,12 @@ public final class AlbumThumbHolder {
         OutputStream os = null;
         try {
             os = mContext.openFileOutput(FILE_NAME, Context.MODE_PRIVATE);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            final boolean result = bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
             os.flush();
             os.close();
+            if (!result) {
+                mContext.deleteFile(FILE_NAME);
+            }
         } catch (IOException e) {
             Log.w(TAG, e);
         } finally {
