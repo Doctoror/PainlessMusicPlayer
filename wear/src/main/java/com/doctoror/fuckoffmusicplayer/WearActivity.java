@@ -43,6 +43,8 @@ public final class WearActivity extends Activity {
     private GoogleApiClient mGoogleApiClient;
     private View mBtnFix;
 
+    private volatile boolean mSeekBarTracking;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +141,7 @@ public final class WearActivity extends Activity {
     private void bindProgress(final long duration, final long elapsedTime) {
         mModelPlaybackState.setDuration(duration);
         mModelPlaybackState.setElapsedTime(elapsedTime);
-        if (duration > 0 && elapsedTime <= duration) {
+        if (!mSeekBarTracking && duration > 0 && elapsedTime <= duration) {
             // Max is 200 so progress is a fraction of 200
             mModelPlaybackState
                     .setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
@@ -148,27 +150,21 @@ public final class WearActivity extends Activity {
 
     private final class OnSeekBarChangeListenerImpl implements SeekBar.OnSeekBarChangeListener {
 
-        private boolean mFirst = true;
-
         @Override
         public void onProgressChanged(final SeekBar seekBar, final int i, final boolean fromUser) {
-            if (fromUser) {
-                if (mFirst) {
-                    mFirst = false;
-                } else {
-                    mRemoteControl.seek(mGoogleApiClient, (float) i / 200f);
-                }
-            }
+            // stub
         }
 
         @Override
         public void onStartTrackingTouch(final SeekBar seekBar) {
-
+            mSeekBarTracking = true;
         }
 
         @Override
         public void onStopTrackingTouch(final SeekBar seekBar) {
-
+            mSeekBarTracking = false;
+            mRemoteControl.seek(mGoogleApiClient,
+                    (float) seekBar.getProgress() / (float) seekBar.getMax());
         }
     }
 
