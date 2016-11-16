@@ -1,9 +1,21 @@
+/*
+ * Copyright (C) 2016 Yaroslav Mytkalyk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.doctoror.fuckoffmusicplayer;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResolvingResultCallbacks;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.wearable.CapabilityApi;
 import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.Node;
@@ -16,20 +28,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Set;
 
 /**
  * Created by Yaroslav Mytkalyk on 16.11.16.
  */
 
-final class RemoteControl {
+public final class RemoteControl {
 
     private final Object mCapabilityLock = new Object();
 
     private String mPlaybackControlNodeId;
 
-    void onGoogleApiClientConnected(@NonNull final Context context,
+    public void onGoogleApiClientConnected(@NonNull final Context context,
             @NonNull final GoogleApiClient googleApiClient) {
         final String capability = context.getString(R.string.wear_capability_playback_control);
         Wearable.CapabilityApi.getCapability(googleApiClient, capability,
@@ -42,11 +53,11 @@ final class RemoteControl {
                 capability);
     }
 
-    void onGoogleApiClientDisconnected(@NonNull final GoogleApiClient googleApiClient) {
+    public void onGoogleApiClientDisconnected(@NonNull final GoogleApiClient googleApiClient) {
         Wearable.CapabilityApi.removeListener(googleApiClient, mCapabilityListener);
     }
 
-    void playPause(@NonNull final GoogleApiClient googleApiClient) {
+    public void playPause(@NonNull final GoogleApiClient googleApiClient) {
         synchronized (mCapabilityLock) {
             if (googleApiClient.isConnected() && mPlaybackControlNodeId != null) {
                 Wearable.MessageApi.sendMessage(googleApiClient, mPlaybackControlNodeId,
@@ -55,7 +66,7 @@ final class RemoteControl {
         }
     }
 
-    void prev(@NonNull final GoogleApiClient googleApiClient) {
+    public void prev(@NonNull final GoogleApiClient googleApiClient) {
         synchronized (mCapabilityLock) {
             if (googleApiClient.isConnected() && mPlaybackControlNodeId != null) {
                 Wearable.MessageApi.sendMessage(googleApiClient, mPlaybackControlNodeId,
@@ -64,7 +75,7 @@ final class RemoteControl {
         }
     }
 
-    void next(@NonNull final GoogleApiClient googleApiClient) {
+    public void next(@NonNull final GoogleApiClient googleApiClient) {
         synchronized (mCapabilityLock) {
             if (googleApiClient.isConnected() && mPlaybackControlNodeId != null) {
                 Wearable.MessageApi.sendMessage(googleApiClient, mPlaybackControlNodeId,
@@ -73,7 +84,7 @@ final class RemoteControl {
         }
     }
 
-    void seek(@NonNull final GoogleApiClient googleApiClient,
+    public void seek(@NonNull final GoogleApiClient googleApiClient,
             final float seekPercent) {
         synchronized (mCapabilityLock) {
             if (googleApiClient.isConnected() && mPlaybackControlNodeId != null) {
@@ -84,7 +95,7 @@ final class RemoteControl {
         }
     }
 
-    void updateRemoteControlCapability(@Nullable final CapabilityInfo capabilityInfo) {
+    private void updateRemoteControlCapability(@Nullable final CapabilityInfo capabilityInfo) {
         if (capabilityInfo != null) {
             synchronized (mCapabilityLock) {
                 mPlaybackControlNodeId = pickBestNodeId(capabilityInfo.getNodes());

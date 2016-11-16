@@ -1,12 +1,28 @@
-package com.doctoror.fuckoffmusicplayer;
+/*
+ * Copyright (C) 2016 Yaroslav Mytkalyk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.doctoror.fuckoffmusicplayer.ui;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.CapabilityApi;
 import com.google.android.gms.wearable.Wearable;
 
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
-import com.doctoror.fuckoffmusicplayer.databinding.ActivityWearBinding;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.RemoteControl;
+import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowPlayingBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.util.GooglePlayServicesUtil;
 
@@ -22,7 +38,7 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-public final class WearActivity extends Activity {
+public final class NowPlayingActivity extends Activity {
 
     private static final String TAG = "WearActivity";
 
@@ -31,10 +47,11 @@ public final class WearActivity extends Activity {
     private static final int ANIMATOR_CHILD_PRGORESS = 0;
     private static final int ANIMATOR_CHILD_CONTENT = 1;
 
-    private final WearActivityModelPlaybackState mModelPlaybackState
-            = new WearActivityModelPlaybackState();
-    private final WearActivityModelViewState mModelViewState = new WearActivityModelViewState();
-    private final WearActivityModelMedia mModelMedia = new WearActivityModelMedia();
+    private final NowPlayingActivityModelPlaybackState mModelPlaybackState
+            = new NowPlayingActivityModelPlaybackState();
+    private final NowPlayingActivityModelViewState
+            mModelViewState = new NowPlayingActivityModelViewState();
+    private final NowPlayingActivityModelMedia mModelMedia = new NowPlayingActivityModelMedia();
 
     private final RemoteControl mRemoteControl = new RemoteControl();
 
@@ -50,8 +67,8 @@ public final class WearActivity extends Activity {
         super.onCreate(savedInstanceState);
         mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_24dp);
 
-        final ActivityWearBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_wear);
+        final ActivityNowPlayingBinding binding = DataBindingUtil
+                .setContentView(this, R.layout.activity_now_playing);
         binding.setPlaybackState(mModelPlaybackState);
         binding.setViewState(mModelViewState);
         binding.setMedia(mModelMedia);
@@ -194,7 +211,7 @@ public final class WearActivity extends Activity {
         @Override
         public void onConnected(@Nullable final Bundle bundle) {
             setViewConnected();
-            mRemoteControl.onGoogleApiClientConnected(WearActivity.this, mGoogleApiClient);
+            mRemoteControl.onGoogleApiClientConnected(NowPlayingActivity.this, mGoogleApiClient);
         }
 
         @Override
@@ -202,9 +219,6 @@ public final class WearActivity extends Activity {
             setViewConnecting();
         }
     };
-
-    private final CapabilityApi.CapabilityListener mCapabilityListener
-            = mRemoteControl::updateRemoteControlCapability;
 
     private final GoogleApiClient.OnConnectionFailedListener mOnConnectionFailedListener
             = connectionResult -> {

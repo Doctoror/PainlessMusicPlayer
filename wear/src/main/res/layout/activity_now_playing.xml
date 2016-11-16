@@ -7,15 +7,15 @@
     <data>
         <variable
             name="playbackState"
-            type="com.doctoror.fuckoffmusicplayer.WearActivityModelPlaybackState"/>
+            type="com.doctoror.fuckoffmusicplayer.ui.NowPlayingActivityModelPlaybackState"/>
 
         <variable
             name="media"
-            type="com.doctoror.fuckoffmusicplayer.WearActivityModelMedia"/>
+            type="com.doctoror.fuckoffmusicplayer.ui.NowPlayingActivityModelMedia"/>
 
         <variable
             name="viewState"
-            type="com.doctoror.fuckoffmusicplayer.WearActivityModelViewState"/>
+            type="com.doctoror.fuckoffmusicplayer.ui.NowPlayingActivityModelViewState"/>
 
         <import type="android.view.View"/>
 
@@ -25,7 +25,7 @@
         android:id="@+id/watch_view_stub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.doctoror.fuckoffmusicplayer.WearActivity"
+        tools:context="com.doctoror.fuckoffmusicplayer.ui.NowPlayingActivity"
         tools:deviceIds="wear">
 
         <ViewAnimator
