@@ -113,6 +113,11 @@ public final class MediaHolder {
     }
 
     @Nullable
+    public Bitmap getAlbumArt() {
+        return mAlbumArt;
+    }
+
+    @Nullable
     public ProtoPlaybackData.PlaybackState getPlaybackState() {
         return mPlaybackState;
     }

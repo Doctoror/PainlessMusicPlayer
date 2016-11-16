@@ -1,29 +1,16 @@
 package com.doctoror.fuckoffmusicplayer;
 
-import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
-import android.databinding.ObservableLong;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ * Created by Yaroslav Mytkalyk on 16.11.16.
  */
 
-public final class WearActivityModel extends BaseObservable {
-
-    private CharSequence mTitle;
-    private CharSequence mArtistAndAlbum;
-    private Drawable mStateIcon;
-    private long mDuration;
-
-    private final ObservableField<Drawable> mArt = new ObservableField<>();
-
-    private final ObservableLong mElapsedTime = new ObservableLong();
-    private final ObservableInt mProgress = new ObservableInt();
+public final class WearActivityModelViewState {
 
     private final ObservableInt mBtnPlayRes = new ObservableInt();
 
@@ -50,10 +37,6 @@ public final class WearActivityModel extends BaseObservable {
         mFixButtonVisible.set(visible);
     }
 
-    public ObservableField<Drawable> getArt() {
-        return mArt;
-    }
-
     public ObservableBoolean isProgressVisible() {
         return mProgressVisible;
     }
@@ -78,59 +61,6 @@ public final class WearActivityModel extends BaseObservable {
         mMessage.set(message);
     }
 
-    public void setArt(final Drawable art) {
-        mArt.set(art);
-    }
-
-    public CharSequence getTitle() {
-        return mTitle;
-    }
-
-    public void setTitle(final CharSequence title) {
-        mTitle = title;
-    }
-
-    public CharSequence getArtistAndAlbum() {
-        return mArtistAndAlbum;
-    }
-
-    public void setArtistAndAlbum(final CharSequence artistAndAlbum) {
-        mArtistAndAlbum = artistAndAlbum;
-    }
-
-    public Drawable getStateIcon() {
-        return mStateIcon;
-    }
-
-    public void setStateIcon(final Drawable stateIcon) {
-        mStateIcon = stateIcon;
-    }
-
-    public ObservableInt getProgress() {
-        return mProgress;
-    }
-
-    public void setProgress(final int progress) {
-        mProgress.set(progress);
-    }
-
-    public long getDuration() {
-        return mDuration;
-    }
-
-    public void setDuration(final long duration) {
-        mDuration = duration;
-    }
-
-    @NonNull
-    public ObservableLong getElapsedTime() {
-        return mElapsedTime;
-    }
-
-    public void setElapsedTime(final long elapsedTime) {
-        mElapsedTime.set(elapsedTime);
-    }
-
     @NonNull
     public ObservableInt getBtnPlayRes() {
         return mBtnPlayRes;
@@ -139,5 +69,4 @@ public final class WearActivityModel extends BaseObservable {
     public void setBtnPlayRes(final int btnPlayRes) {
         mBtnPlayRes.set(btnPlayRes);
     }
-
 }
