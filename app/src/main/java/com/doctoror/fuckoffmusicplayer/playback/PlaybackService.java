@@ -411,7 +411,7 @@ public final class PlaybackService extends Service {
         if (intent.hasExtra(EXTRA_POSITION_PERCENT)) {
             onActionSeek(intent.getFloatExtra(EXTRA_POSITION_PERCENT, 0f));
         } else if (intent.hasExtra(EXTRA_POSITION)) {
-            onActionSeek(intent.getLongExtra(EXTRA_POSITION_PERCENT, 0));
+            onActionSeek(intent.getLongExtra(EXTRA_POSITION, 0));
         }
     }
 
@@ -421,6 +421,7 @@ public final class PlaybackService extends Service {
             final long duration = media.getDuration();
             if (duration > 0) {
                 final int position = (int) ((float) duration * positionPercent);
+                mPlaylist.setPosition(position);
                 mMediaPlayer.seekTo(position);
             }
         }
