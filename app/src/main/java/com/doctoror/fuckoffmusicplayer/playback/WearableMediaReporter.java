@@ -55,12 +55,11 @@ final class WearableMediaReporter {
                 try {
                     final Bitmap artBitmap = glide.load(art).asBitmap().into(320, 320).get();
                     if (artBitmap != null) {
-                        final ByteArrayOutputStream baos = new ByteArrayOutputStream(128000);
+                        final ByteArrayOutputStream baos = new ByteArrayOutputStream(409600);
                         if (!artBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)) {
                             throw new IOException("Failed compressing bitmap");
                         }
 
-                        System.out.println("pic size is " + baos.size());// TODO remove
                         albumArt = baos.toByteArray();
                     }
                 } catch (InterruptedException | ExecutionException | IOException e) {
