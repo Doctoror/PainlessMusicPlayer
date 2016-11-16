@@ -16,11 +16,11 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 08.11.16.
  */
 
-final class LivePlaylistRecent50 implements LivePlaylist {
+public final class LivePlaylistRecent50 implements LivePlaylist {
 
     private final CharSequence mTitle;
 
-    LivePlaylistRecent50(@NonNull final Resources resources) {
+    public LivePlaylistRecent50(@NonNull final Resources resources) {
         mTitle = resources.getText(R.string.Recently_scanned);
     }
 

@@ -24,11 +24,13 @@ import com.bumptech.glide.RequestManager;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
+import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecent50;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
@@ -359,8 +361,18 @@ public final class PlaybackService extends Service {
                 onActionPause();
                 break;
 
-            default:
+            case STATE_PAUSED:
                 onActionPlay();
+                break;
+
+            case STATE_IDLE:
+            case STATE_ERROR:
+                playCurrentOrNewPlaylist();
+                break;
+
+            case STATE_LOADING:
+            default:
+                // Do nothing
                 break;
         }
     }
@@ -427,6 +439,15 @@ public final class PlaybackService extends Service {
     private void pause() {
         mMediaPlayer.pause();
         setState(STATE_PAUSED);
+    }
+
+    private void playCurrentOrNewPlaylist() {
+        final List<Media> playlist = mPlaylist.getPlaylist();
+        if (playlist != null && !playlist.isEmpty()) {
+            play(playlist, mPlaylist.getIndex(), true);
+        } else {
+            PlaylistUtils.play(this, new LivePlaylistRecent50(getResources()).create(this));
+        }
     }
 
     private void playCurrent(final boolean mayContinueWhereStopped) {

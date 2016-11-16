@@ -52,9 +52,11 @@ final class PlaylistPersister {
     static void persistAsync(@NonNull final Context context,
             @NonNull final PlaylistHolder playlist) {
         // Retrieve snapshot now, so that it's immutable when writing
-        final PersistablePlaylist.ProtoPlaylist pp = toProtoPlaylist(playlist);
-        Observable.create(s -> persist(context, pp))
-                .subscribeOn(Schedulers.io()).subscribe();
+        if (playlist.playlist != null) {
+            final PersistablePlaylist.ProtoPlaylist pp = toProtoPlaylist(playlist);
+            Observable.create(s -> persist(context, pp))
+                    .subscribeOn(Schedulers.io()).subscribe();
+        }
     }
 
     private static void persist(@NonNull final Context context,

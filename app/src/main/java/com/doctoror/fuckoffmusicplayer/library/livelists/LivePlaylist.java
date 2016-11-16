@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 08.11.16.
  */
 
-interface LivePlaylist {
+public interface LivePlaylist {
 
     CharSequence getTitle();
 
