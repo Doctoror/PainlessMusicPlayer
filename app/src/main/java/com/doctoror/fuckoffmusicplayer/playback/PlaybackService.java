@@ -525,6 +525,7 @@ public final class PlaybackService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stopForeground(true);
         mGoogleApiClient.disconnect();
         mMediaPlayer.stop();
         mPlaylist.deleteObserver(mPlaylistObserver);
