@@ -56,11 +56,12 @@ import android.widget.Toast;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscription;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Yaroslav Mytkalyk on 21.10.16.
@@ -194,6 +195,8 @@ public final class PlaybackService extends Service {
 
     @State
     private int mState = STATE_IDLE;
+
+    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
             = new AudioBecomingNoisyReceiver();
@@ -376,7 +379,7 @@ public final class PlaybackService extends Service {
         pause();
         mPauseTimeoutSubscription = Observable.timer(8, TimeUnit.SECONDS)
                 .subscribe(o -> onActionStop());
-        Observable.create(s -> showNotification()).subscribeOn(Schedulers.io()).subscribe();
+        mExecutor.submit(this::showNotification);
     }
 
     private void onActionStop() {
@@ -465,7 +468,7 @@ public final class PlaybackService extends Service {
             mMediaPlayer.play();
             syncWearableMediaAsync();
         } else {
-            Observable.create((s) -> {
+            mExecutor.submit(() -> {
                 long seekPosition = 0;
                 // If restoring from stopped state, set seek position to what it was
                 if (mayContinueWhereStopped && mState == STATE_IDLE
@@ -487,20 +490,15 @@ public final class PlaybackService extends Service {
                     mMediaPlayer.seekTo(seekPosition);
                 }
                 mMediaPlayer.play();
-            })
-                    .subscribeOn(Schedulers.io())
-                    .subscribe();
+            });
         }
     }
 
     private void showNotification() {
         final Media media = mPlaylist.getMedia();
         if (media != null) {
-            Observable.create(s -> startForeground(NOTIFICATION_ID,
-                    PlaybackNotification
-                            .create(getApplicationContext(), mGlide, media, mState, mMediaSession)))
-                    .subscribeOn(Schedulers.io())
-                    .subscribe();
+            mExecutor.submit(() -> startForeground(NOTIFICATION_ID, PlaybackNotification
+                    .create(getApplicationContext(), mGlide, media, mState, mMediaSession)));
         }
     }
 
@@ -581,6 +579,7 @@ public final class PlaybackService extends Service {
     private void updatePosition() {
         if (mState == STATE_PLAYING) {
             mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
+            syncWearableStateAsync();
         }
     }
 
@@ -591,11 +590,11 @@ public final class PlaybackService extends Service {
     }
 
     private void syncWearableMediaAsync() {
-        Observable.create(s -> syncWearableMedia()).subscribeOn(Schedulers.io()).subscribe();
+        mExecutor.submit(this::syncWearableMedia);
     }
 
     private void syncWearableStateAsync() {
-        Observable.create(s -> syncWearableState()).subscribeOn(Schedulers.io()).subscribe();
+        mExecutor.submit(mRunnableSyncWarableState);
     }
 
     @WorkerThread
@@ -625,12 +624,10 @@ public final class PlaybackService extends Service {
 
         @Override
         public void onConnected(@Nullable final Bundle bundle) {
-            Observable.create(s -> {
+            mExecutor.submit(() -> {
                 syncWearableMedia();
                 syncWearableState();
-            })
-                    .subscribeOn(Schedulers.io())
-                    .subscribe();
+            });
         }
 
         @Override
@@ -761,6 +758,8 @@ public final class PlaybackService extends Service {
                 break;
         }
     };
+
+    private final Runnable mRunnableSyncWarableState = () -> syncWearableState();
 
     private final class AudioBecomingNoisyReceiver extends BroadcastReceiver {
 

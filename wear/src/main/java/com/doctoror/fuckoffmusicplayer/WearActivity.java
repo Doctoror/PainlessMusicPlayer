@@ -83,7 +83,7 @@ public final class WearActivity extends Activity {
     protected void onStop() {
         super.onStop();
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
-        Wearable.CapabilityApi.removeListener(mGoogleApiClient, mCapabilityListener);
+        mRemoteControl.onGoogleApiClientDisconnected(mGoogleApiClient);
         mGoogleApiClient.disconnect();
     }
 
@@ -198,10 +198,7 @@ public final class WearActivity extends Activity {
         @Override
         public void onConnected(@Nullable final Bundle bundle) {
             setViewConnected();
-            Wearable.CapabilityApi.addCapabilityListener(
-                    mGoogleApiClient,
-                    mCapabilityListener,
-                    getString(R.string.wear_capability_playback_control));
+            mRemoteControl.onGoogleApiClientConnected(WearActivity.this, mGoogleApiClient);
         }
 
         @Override

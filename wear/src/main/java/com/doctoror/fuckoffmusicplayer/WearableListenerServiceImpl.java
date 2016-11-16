@@ -34,8 +34,6 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
 
     private static final String TAG = "WearableListenerService";
 
-    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
-
     private GoogleApiClient mGoogleApiClient;
 
     private MediaHolder mMediaHolder;
@@ -131,15 +129,13 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
             mMediaHolder.setPlaybackState(null);
             return;
         }
-        mExecutor.submit(() -> {
-            try {
-                final ProtoPlaybackData.PlaybackState s = ProtoPlaybackData.PlaybackState
-                        .parseFrom(data);
-                mMediaHolder.setPlaybackState(s);
-            } catch (InvalidProtocolBufferNanoException e) {
-                Log.w(TAG, e);
-            }
-        });
+        try {
+            final ProtoPlaybackData.PlaybackState s = ProtoPlaybackData.PlaybackState
+                    .parseFrom(data);
+            mMediaHolder.setPlaybackState(s);
+        } catch (InvalidProtocolBufferNanoException e) {
+            Log.w(TAG, e);
+        }
     }
 
     @Override
