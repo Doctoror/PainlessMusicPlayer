@@ -29,7 +29,8 @@ public final class WearActivity extends Activity {
     private static final int ANIMATOR_CHILD_PRGORESS = 0;
     private static final int ANIMATOR_CHILD_CONTENT = 1;
 
-    private final WearActivityModelPlaybackState mModelPlaybackState = new WearActivityModelPlaybackState();
+    private final WearActivityModelPlaybackState mModelPlaybackState
+            = new WearActivityModelPlaybackState();
     private final WearActivityModelViewState mModelViewState = new WearActivityModelViewState();
     private final WearActivityModelMedia mModelMedia = new WearActivityModelMedia();
 
@@ -131,7 +132,8 @@ public final class WearActivity extends Activity {
         mModelPlaybackState.setElapsedTime(elapsedTime);
         if (duration > 0 && elapsedTime <= duration) {
             // Max is 200 so progress is a fraction of 200
-            mModelPlaybackState.setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
+            mModelPlaybackState
+                    .setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
         }
     }
 

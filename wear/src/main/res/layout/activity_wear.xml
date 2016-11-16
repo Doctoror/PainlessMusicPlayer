@@ -89,15 +89,17 @@
                     tools:ignore="ContentDescription"/>
 
                 <SeekBar
+                    android:id="@+id/seekBar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:max="200"
+                    android:progress="@{playbackState.progress}"
+                    android:visibility="@{viewState.navigationButtonsVisible ? View.VISIBLE : View.GONE}"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintVertical_bias="0.6"
-                    android:visibility="@{viewState.navigationButtonsVisible ? View.VISIBLE : View.GONE}"
-                    android:id="@+id/seekBar"/>
+                    app:layout_constraintVertical_bias="0.6"/>
 
                 <TextView
                     android:id="@+id/textArtistAlbum"
