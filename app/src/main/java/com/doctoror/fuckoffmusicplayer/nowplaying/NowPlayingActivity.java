@@ -36,7 +36,6 @@ import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.jakewharton.rxbinding.widget.RxSeekBar;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
@@ -58,6 +57,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -66,7 +66,6 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -104,6 +103,8 @@ public final class NowPlayingActivity extends BaseActivity {
     @Nullable
     Boolean hasCoverTransition;
 
+    private volatile boolean mSeekBarTracking;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,17 +128,23 @@ public final class NowPlayingActivity extends BaseActivity {
         mBinding.setModel(mModel);
         setSupportActionBar(mBinding.toolbar);
 
-        RxSeekBar.userChanges(mBinding.seekBar).subscribe(new Action1<Integer>() {
-
-            private boolean mFirst = true;
+        mBinding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
-            public void call(final Integer progress) {
-                if (mFirst) {
-                    mFirst = false;
-                } else {
-                    PlaybackService.seek(NowPlayingActivity.this, (float) progress / 200f);
-                }
+            public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(final SeekBar seekBar) {
+                mSeekBarTracking = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(final SeekBar seekBar) {
+                PlaybackService.seek(NowPlayingActivity.this,
+                        (float) seekBar.getProgress() / (float) seekBar.getMax());
+                mSeekBarTracking = false;
             }
         });
 
@@ -327,7 +334,7 @@ public final class NowPlayingActivity extends BaseActivity {
     void bindProgress(final long progress) {
         mModel.setElapsedTime(progress);
         final long duration = mModel.getDuration();
-        if (duration > 0) {
+        if (!mSeekBarTracking && duration > 0) {
             // Max is 200 so progress is a fraction of 200
             mModel.setProgress((int) (((double) progress / (double) duration) * 200f));
         }
