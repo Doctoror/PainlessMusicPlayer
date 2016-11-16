@@ -94,7 +94,8 @@ public final class MediaHolder {
     }
 
     @WorkerThread
-    public synchronized void setPlaybackState(@Nullable final ProtoPlaybackData.PlaybackState state) {
+    public synchronized void setPlaybackState(
+            @Nullable final ProtoPlaybackData.PlaybackState state) {
         if (mPlaybackState != state) {
             mPlaybackState = state;
             if (state == null) {

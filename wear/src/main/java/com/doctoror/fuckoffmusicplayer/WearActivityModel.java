@@ -15,11 +15,12 @@ import android.support.annotation.Nullable;
 
 public final class WearActivityModel extends BaseObservable {
 
-    private Drawable mArt;
     private CharSequence mTitle;
     private CharSequence mArtistAndAlbum;
     private Drawable mStateIcon;
     private long mDuration;
+
+    private final ObservableField<Drawable> mArt = new ObservableField<>();
 
     private final ObservableLong mElapsedTime = new ObservableLong();
     private final ObservableInt mProgress = new ObservableInt();
@@ -49,7 +50,7 @@ public final class WearActivityModel extends BaseObservable {
         mFixButtonVisible.set(visible);
     }
 
-    public Drawable getArt() {
+    public ObservableField<Drawable> getArt() {
         return mArt;
     }
 
@@ -78,7 +79,7 @@ public final class WearActivityModel extends BaseObservable {
     }
 
     public void setArt(final Drawable art) {
-        mArt = art;
+        mArt.set(art);
     }
 
     public CharSequence getTitle() {
