@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.media;
 
-import com.google.android.gms.wearable.Asset;
-
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 
 import android.annotation.SuppressLint;
