@@ -27,9 +27,6 @@
     <string name="Failed_to_load_data_s">Failed to load data: %1$s</string>
     <string name="Search">Search</string>
 
-    <string name="Playlist">Playlist</string>
-    <string name="The_playlist_is_empty">The playlist is empty</string>
-
     <string name="Failed_to_start_playback">Failed to start playback</string>
     <string name="Bass_Boost">Bass Boost</string>
     <string name="Equalizer">Equalizer</string>
@@ -38,7 +35,6 @@
     <string name="s_kHz">%1$s kHz</string>
     <string name="Effects">Effects</string>
 
-    <string name="Now_Playing">Now Playing</string>
     <string name="s_removed_from_playlist">“%1$s” removed from playlist</string>
     <string name="Delete">Delete</string>
 

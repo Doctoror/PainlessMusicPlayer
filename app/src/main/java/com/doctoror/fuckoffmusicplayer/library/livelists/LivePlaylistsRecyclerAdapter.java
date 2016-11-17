@@ -3,7 +3,7 @@ package com.doctoror.fuckoffmusicplayer.library.livelists;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
-import com.doctoror.commons.view.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.SingleLineWithIconItemViewHolder;
 
 import android.content.Context;

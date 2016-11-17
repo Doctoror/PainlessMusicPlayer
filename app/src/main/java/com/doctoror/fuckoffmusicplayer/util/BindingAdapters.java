@@ -22,14 +22,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingComponent;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import java.util.Locale;
 
@@ -80,12 +77,6 @@ public final class BindingAdapters {
         }
     }
 
-    @BindingAdapter("recyclerAdapter")
-    public static void setRecyclerAdapter(@NonNull final RecyclerView recyclerView,
-            @Nullable final RecyclerView.Adapter<?> adapter) {
-        recyclerView.setAdapter(adapter);
-    }
-
     @BindingAdapter("formattedDuration")
     public static void setFormattedDuration(@NonNull final TextView textView,
             final long seconds) {
@@ -103,5 +94,11 @@ public final class BindingAdapters {
                     seconds % 60);
         }
         textView.setText(time);
+    }
+
+    @BindingAdapter("recyclerAdapter")
+    public static void setRecyclerAdapter(@NonNull final RecyclerView recyclerView,
+            @Nullable final RecyclerView.Adapter<?> adapter) {
+        recyclerView.setAdapter(adapter);
     }
 }

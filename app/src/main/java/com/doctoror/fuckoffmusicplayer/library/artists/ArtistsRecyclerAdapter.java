@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.library.artists;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.commons.view.TwoLineItemViewHolder;
+import com.doctoror.fuckoffmusicplayer.widget.TwoLineItemViewHolder;
 import com.l4digital.fastscroll.FastScroller;
 
 import android.content.Context;

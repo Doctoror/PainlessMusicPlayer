@@ -16,6 +16,8 @@
 package com.doctoror.commons.util;
 
 import android.databinding.BindingAdapter;
+import android.graphics.PorterDuff;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.widget.ImageView;
@@ -39,5 +41,11 @@ public final class BindingAdapters {
     public static void setImageResource(@NonNull final ImageView imageView,
             @DrawableRes final int src) {
         imageView.setImageResource(src);
+    }
+
+    @BindingAdapter("colorFilter")
+    public static void setColorFiler(@NonNull final ImageView imageView,
+            @ColorInt final int color) {
+        imageView.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 }
