@@ -9,9 +9,14 @@ message PlaybackState {
 }
 
 message Media {
-  string title = 1;
-  int64 duration = 2;
-  string artist = 3;
-  string album = 4;
-  int64 progress = 5;
+  int32 playlistPosition = 1;
+  string title = 2;
+  int64 duration = 3;
+  string artist = 4;
+  string album = 5;
+  int64 progress = 6;
+}
+
+message Playlist {
+  repeated Media media = 2;
 }

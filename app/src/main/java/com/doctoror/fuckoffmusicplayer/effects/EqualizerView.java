@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.effects;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
+import com.doctoror.commons.view.BaseRecyclerAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.OnSeekBarChangeListenerAdapter;
 
 import android.content.Context;

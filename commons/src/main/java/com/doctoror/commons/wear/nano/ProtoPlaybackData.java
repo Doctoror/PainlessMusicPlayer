@@ -136,19 +136,22 @@ public interface ProtoPlaybackData {
       return _emptyArray;
     }
 
-    // optional string title = 1;
+    // optional int32 playlistPosition = 1;
+    public int playlistPosition;
+
+    // optional string title = 2;
     public java.lang.String title;
 
-    // optional int64 duration = 2;
+    // optional int64 duration = 3;
     public long duration;
 
-    // optional string artist = 3;
+    // optional string artist = 4;
     public java.lang.String artist;
 
-    // optional string album = 4;
+    // optional string album = 5;
     public java.lang.String album;
 
-    // optional int64 progress = 5;
+    // optional int64 progress = 6;
     public long progress;
 
     public Media() {
@@ -156,6 +159,7 @@ public interface ProtoPlaybackData {
     }
 
     public Media clear() {
+      playlistPosition = 0;
       title = "";
       duration = 0L;
       artist = "";
@@ -168,20 +172,23 @@ public interface ProtoPlaybackData {
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
         throws java.io.IOException {
+      if (this.playlistPosition != 0) {
+        output.writeInt32(1, this.playlistPosition);
+      }
       if (!this.title.equals("")) {
-        output.writeString(1, this.title);
+        output.writeString(2, this.title);
       }
       if (this.duration != 0L) {
-        output.writeInt64(2, this.duration);
+        output.writeInt64(3, this.duration);
       }
       if (!this.artist.equals("")) {
-        output.writeString(3, this.artist);
+        output.writeString(4, this.artist);
       }
       if (!this.album.equals("")) {
-        output.writeString(4, this.album);
+        output.writeString(5, this.album);
       }
       if (this.progress != 0L) {
-        output.writeInt64(5, this.progress);
+        output.writeInt64(6, this.progress);
       }
       super.writeTo(output);
     }
@@ -189,25 +196,29 @@ public interface ProtoPlaybackData {
     @Override
     protected int computeSerializedSize() {
       int size = super.computeSerializedSize();
+      if (this.playlistPosition != 0) {
+        size += com.google.protobuf.nano.CodedOutputByteBufferNano
+            .computeInt32Size(1, this.playlistPosition);
+      }
       if (!this.title.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeStringSize(1, this.title);
+            .computeStringSize(2, this.title);
       }
       if (this.duration != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt64Size(2, this.duration);
+            .computeInt64Size(3, this.duration);
       }
       if (!this.artist.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeStringSize(3, this.artist);
+            .computeStringSize(4, this.artist);
       }
       if (!this.album.equals("")) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeStringSize(4, this.album);
+            .computeStringSize(5, this.album);
       }
       if (this.progress != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt64Size(5, this.progress);
+            .computeInt64Size(6, this.progress);
       }
       return size;
     }
@@ -227,23 +238,27 @@ public interface ProtoPlaybackData {
             }
             break;
           }
-          case 10: {
+          case 8: {
+            this.playlistPosition = input.readInt32();
+            break;
+          }
+          case 18: {
             this.title = input.readString();
             break;
           }
-          case 16: {
+          case 24: {
             this.duration = input.readInt64();
             break;
           }
-          case 26: {
+          case 34: {
             this.artist = input.readString();
             break;
           }
-          case 34: {
+          case 42: {
             this.album = input.readString();
             break;
           }
-          case 40: {
+          case 48: {
             this.progress = input.readInt64();
             break;
           }
@@ -260,6 +275,116 @@ public interface ProtoPlaybackData {
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       return new Media().mergeFrom(input);
+    }
+  }
+
+  public static final class Playlist extends
+      com.google.protobuf.nano.MessageNano {
+
+    private static volatile Playlist[] _emptyArray;
+    public static Playlist[] emptyArray() {
+      // Lazily initializes the empty array
+      if (_emptyArray == null) {
+        synchronized (
+            com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
+          if (_emptyArray == null) {
+            _emptyArray = new Playlist[0];
+          }
+        }
+      }
+      return _emptyArray;
+    }
+
+    // repeated .Media media = 2;
+    public com.doctoror.commons.wear.nano.ProtoPlaybackData.Media[] media;
+
+    public Playlist() {
+      clear();
+    }
+
+    public Playlist clear() {
+      media = com.doctoror.commons.wear.nano.ProtoPlaybackData.Media.emptyArray();
+      cachedSize = -1;
+      return this;
+    }
+
+    @Override
+    public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
+        throws java.io.IOException {
+      if (this.media != null && this.media.length > 0) {
+        for (int i = 0; i < this.media.length; i++) {
+          com.doctoror.commons.wear.nano.ProtoPlaybackData.Media element = this.media[i];
+          if (element != null) {
+            output.writeMessage(2, element);
+          }
+        }
+      }
+      super.writeTo(output);
+    }
+
+    @Override
+    protected int computeSerializedSize() {
+      int size = super.computeSerializedSize();
+      if (this.media != null && this.media.length > 0) {
+        for (int i = 0; i < this.media.length; i++) {
+          com.doctoror.commons.wear.nano.ProtoPlaybackData.Media element = this.media[i];
+          if (element != null) {
+            size += com.google.protobuf.nano.CodedOutputByteBufferNano
+              .computeMessageSize(2, element);
+          }
+        }
+      }
+      return size;
+    }
+
+    @Override
+    public Playlist mergeFrom(
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
+        throws java.io.IOException {
+      while (true) {
+        int tag = input.readTag();
+        switch (tag) {
+          case 0:
+            return this;
+          default: {
+            if (!com.google.protobuf.nano.WireFormatNano.parseUnknownField(input, tag)) {
+              return this;
+            }
+            break;
+          }
+          case 18: {
+            int arrayLength = com.google.protobuf.nano.WireFormatNano
+                .getRepeatedFieldArrayLength(input, 18);
+            int i = this.media == null ? 0 : this.media.length;
+            com.doctoror.commons.wear.nano.ProtoPlaybackData.Media[] newArray =
+                new com.doctoror.commons.wear.nano.ProtoPlaybackData.Media[i + arrayLength];
+            if (i != 0) {
+              java.lang.System.arraycopy(this.media, 0, newArray, 0, i);
+            }
+            for (; i < newArray.length - 1; i++) {
+              newArray[i] = new com.doctoror.commons.wear.nano.ProtoPlaybackData.Media();
+              input.readMessage(newArray[i]);
+              input.readTag();
+            }
+            // Last one without readTag.
+            newArray[i] = new com.doctoror.commons.wear.nano.ProtoPlaybackData.Media();
+            input.readMessage(newArray[i]);
+            this.media = newArray;
+            break;
+          }
+        }
+      }
+    }
+
+    public static Playlist parseFrom(byte[] data)
+        throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
+      return com.google.protobuf.nano.MessageNano.mergeFrom(new Playlist(), data);
+    }
+
+    public static Playlist parseFrom(
+            com.google.protobuf.nano.CodedInputByteBufferNano input)
+        throws java.io.IOException {
+      return new Playlist().mergeFrom(input);
     }
   }
 }
