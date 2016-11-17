@@ -19,6 +19,7 @@ Min API level 16
  - Deleting files (remove from playlist to see a delete button)
  - Home screen widget
  - Notifies now playing as Android Music player ([works with Simple Last.fm Scrobbler](https://play.google.com/store/apps/details?id=com.adam.aslfms))
+ - Has Android Wear app
  
 Missing features you might expect from a Music Player
  - No shuffle, repeat track mode
@@ -41,6 +42,7 @@ All formats that are supported by [ExoPlayer](https://google.github.io/ExoPlayer
 ![screenshot](/screenshots/06.png?raw=true)
 ![screenshot](/screenshots/07.png?raw=true)
 ![screenshot](/screenshots/08.png?raw=true)
+![screenshot](/screenshots/wear_1.png?raw=true)
 
 ##License
 
