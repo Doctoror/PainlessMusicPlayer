@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.commons.view;
+package com.doctoror.fuckoffmusicplayer.base;
 
-import android.support.v7.widget.RecyclerView;
+import android.support.wearable.view.WearableListView;
 import android.view.View;
 import android.widget.TextView;
 
 /**
  * Created by Yaroslav Mytkalyk on 17.10.16.
  */
-public final class TwoLineItemViewHolder extends RecyclerView.ViewHolder {
+public final class TwoLineItemViewHolder extends WearableListView.ViewHolder {
 
     public final TextView text1;
     public final TextView text2;

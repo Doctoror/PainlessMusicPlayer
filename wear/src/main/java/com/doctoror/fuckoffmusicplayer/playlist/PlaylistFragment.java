@@ -2,19 +2,22 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.LifecycleNotifierFragment;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 
-import android.app.Activity;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.wearable.view.WearableListView;
-import android.widget.ImageView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,45 +27,50 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 17.11.16.
  */
 
-public final class PlaylistActivity extends Activity {
+public final class PlaylistFragment extends LifecycleNotifierFragment {
+
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+
+    private final PlaylistFragmentModel mModel = new PlaylistFragmentModel();
 
     private MediaHolder mMediaHolder;
     private PlaylistHolder mPlaylistHolder;
 
-    private ImageView mBackground;
     private PlaylistListAdapter mAdapter;
 
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMediaHolder = MediaHolder.getInstance(this);
-        mPlaylistHolder = PlaylistHolder.getInstance(this);
-        setContentView(R.layout.activity_playlist);
-        initView();
+        mMediaHolder = MediaHolder.getInstance(getActivity());
+        mPlaylistHolder = PlaylistHolder.getInstance(getActivity());
+
+        mAdapter = new PlaylistListAdapter(getActivity());
+        mModel.setAdapter(mAdapter);
+        mModel.setIsEmpty(true);
     }
 
-    private void initView() {
-        mBackground = (ImageView) findViewById(R.id.background);
-        mBackground.setColorFilter(ContextCompat.getColor(this, R.color.translucentBackground),
-                PorterDuff.Mode.SRC_ATOP);
-
-        mAdapter = new PlaylistListAdapter(this);
-
-        final WearableListView listView = (WearableListView) findViewById(android.R.id.list);
-        listView.setAdapter(mAdapter);
+    @Nullable
+    @Override
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+            final Bundle savedInstanceState) {
+        final FragmentPlaylistBinding binding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_playlist, container, false);
+        binding.setModel(mModel);
+        return binding.getRoot();
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
-        mBackground.setImageDrawable(albumArtOrStub(mMediaHolder.getAlbumArt()));
+        mModel.setBackground(albumArtOrStub(mMediaHolder.getAlbumArt()));
         mAdapter.setItems(makePlaylist(mPlaylistHolder.getPlaylist(), mMediaHolder.getMedia()));
+        mModel.setIsEmpty(mAdapter.getItemCount() == 0);
         mMediaHolder.addObserver(mPlaybackInfoObserver);
         mPlaylistHolder.addObserver(mPlaylistObserver);
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         mPlaylistHolder.deleteObserver(mPlaylistObserver);
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
@@ -90,7 +98,7 @@ public final class PlaylistActivity extends Activity {
 
     private Drawable albumArtOrStub(@Nullable final Bitmap art) {
         if (art == null) {
-            return getDrawable(R.drawable.album_art_placeholder);
+            return getActivity().getDrawable(R.drawable.album_art_placeholder);
         }
         return new BitmapDrawable(getResources(), art);
     }
@@ -100,7 +108,11 @@ public final class PlaylistActivity extends Activity {
 
         @Override
         public void onPlaylistChanged(@Nullable final ProtoPlaybackData.Playlist playlist) {
-            runOnUiThread(() -> mAdapter.setItems(makePlaylist(playlist, mMediaHolder.getMedia())));
+            mHandler.post(() -> {
+                mAdapter.setItems(makePlaylist(playlist, mMediaHolder.getMedia()));
+                mModel.setIsEmpty(mAdapter.getItemCount() == 0);
+                albumArtOrStub(mMediaHolder.getAlbumArt());
+            });
         }
     };
 
@@ -111,8 +123,10 @@ public final class PlaylistActivity extends Activity {
         public void onMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
             // If playlist is a fake list of single media, update it
             if (mAdapter.getItemCount() == 1) {
-                runOnUiThread(() -> mAdapter.setItems(
-                        makePlaylist(mPlaylistHolder.getPlaylist(), media)));
+                mHandler.post(() -> {
+                    mAdapter.setItems(makePlaylist(mPlaylistHolder.getPlaylist(), media));
+                    mModel.setIsEmpty(mAdapter.getItemCount() == 0);
+                });
             }
         }
 
@@ -124,8 +138,7 @@ public final class PlaylistActivity extends Activity {
 
         @Override
         public void onAlbumArtChanged(@Nullable final Bitmap albumArt) {
-            //noinspection WrongThread
-            runOnUiThread(() -> mBackground.setImageDrawable(albumArtOrStub(albumArt)));
+            mModel.setBackground(albumArtOrStub(albumArt));
         }
     };
 }

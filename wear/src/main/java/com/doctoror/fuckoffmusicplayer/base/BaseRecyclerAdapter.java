@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.commons.view;
+package com.doctoror.fuckoffmusicplayer.base;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -38,15 +38,16 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
     private final List<T> mItems;
 
     public BaseRecyclerAdapter(@NonNull final Context context) {
-        this(context, (List<T>) null);
+        this(context, null);
     }
 
     public BaseRecyclerAdapter(@NonNull final Context context, @Nullable final List<T> items) {
-        this(context, items, false);
-    }
-
-    public BaseRecyclerAdapter(@NonNull final Context context, @Nullable final T[] items) {
-        this(context, items == null ? null : Arrays.asList(items), true);
+        mLayoutInflater = LayoutInflater.from(context);
+        if (items == null) {
+            mItems = new ArrayList<>();
+        } else {
+            mItems = new ArrayList<>(items);
+        }
     }
 
     /**
@@ -104,9 +105,5 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
             mItems.addAll(items);
         }
         notifyDataSetChanged();
-    }
-
-    public final void setItems(@Nullable final T[] items) {
-        setItems(items == null ? null : Arrays.asList(items));
     }
 }

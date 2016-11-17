@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.doctoror.fuckoffmusicplayer.playlist.PlaylistFragmentModel"/>
+
+        <import type="android.view.View"/>
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@{model.background}"
+            app:colorFilter="@{@color/translucentBackground}"
+            tools:ignore="ContentDescription"/>
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:text="@string/The_playlist_is_empty"
+            android:visibility="@{model.isEmpty ? View.VISIBLE : View.GONE}"/>
+
+        <android.support.wearable.view.WearableListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{model.isEmpty ? View.GONE : View.VISIBLE}"
+            app:recyclerAdapter="@{model.adapter}"/>
+
+    </FrameLayout>
+
+</layout>

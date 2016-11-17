@@ -16,107 +16,81 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.Wearable;
 
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.RemoteControl;
-import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowPlayingBinding;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowPlayingBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
-import com.doctoror.fuckoffmusicplayer.util.GooglePlayServicesUtil;
+import com.doctoror.fuckoffmusicplayer.base.GoogleApiFragment;
 
-import android.app.Activity;
-import android.content.IntentSender;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
-public final class NowPlayingActivity extends Activity {
+public final class NowPlayingFragment extends GoogleApiFragment {
 
-    private static final String TAG = "WearActivity";
+    private final NowPlayingFragmentModelPlaybackState mModelPlaybackState
+            = new NowPlayingFragmentModelPlaybackState();
 
-    private static final int REQUEST_CODE_GOOGLE_API = 1;
+    private final NowPlayingFragmentModelViewState mModelViewState
+            = new NowPlayingFragmentModelViewState();
 
-    private static final int ANIMATOR_CHILD_PRGORESS = 0;
-    private static final int ANIMATOR_CHILD_CONTENT = 1;
-
-    private final NowPlayingActivityModelPlaybackState mModelPlaybackState
-            = new NowPlayingActivityModelPlaybackState();
-    private final NowPlayingActivityModelViewState
-            mModelViewState = new NowPlayingActivityModelViewState();
-    private final NowPlayingActivityModelMedia mModelMedia = new NowPlayingActivityModelMedia();
+    private final NowPlayingFragmentModelMedia mModelMedia
+            = new NowPlayingFragmentModelMedia();
 
     private final RemoteControl mRemoteControl = new RemoteControl();
 
     private MediaHolder mMediaHolder;
 
-    private GoogleApiClient mGoogleApiClient;
-    private View mBtnFix;
-
     private volatile boolean mSeekBarTracking;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_24dp);
+        mMediaHolder = MediaHolder.getInstance(getActivity());
+    }
 
-        final ActivityNowPlayingBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_now_playing);
+    @Nullable
+    @Override
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+            final Bundle savedInstanceState) {
+        final FragmentNowPlayingBinding binding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_now_playing, container, false);
         binding.setPlaybackState(mModelPlaybackState);
         binding.setViewState(mModelViewState);
         binding.setMedia(mModelMedia);
         binding.seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListenerImpl());
-        binding.btnPrev.setOnClickListener(v -> mRemoteControl.prev(mGoogleApiClient));
-        binding.btnNext.setOnClickListener(v -> mRemoteControl.next(mGoogleApiClient));
-        binding.btnPlayPause.setOnClickListener(v -> mRemoteControl.playPause(mGoogleApiClient));
-        mBtnFix = binding.btnFix;
-        mMediaHolder = MediaHolder.getInstance(this);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(mConnectionCallbacks)
-                .addOnConnectionFailedListener(mOnConnectionFailedListener)
-                .build();
-
-        setViewConnecting();
+        binding.btnPrev.setOnClickListener(v -> mRemoteControl.prev());
+        binding.btnNext.setOnClickListener(v -> mRemoteControl.next());
+        binding.btnPlayPause.setOnClickListener(v -> mRemoteControl.playPause());
+        return binding.getRoot();
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         bindArt(mMediaHolder.getAlbumArt());
         bindMedia(mMediaHolder.getMedia());
         bindPlaybackState(mMediaHolder.getPlaybackState());
         mMediaHolder.addObserver(mPlaybackInfoObserver);
-        mGoogleApiClient.connect();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
+        onGoogleApiClientDisconnected();
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
-        mRemoteControl.onGoogleApiClientDisconnected(mGoogleApiClient);
-        mGoogleApiClient.disconnect();
-    }
-
-    private void setViewConnecting() {
-        mModelViewState.setFixButtonVisible(false);
-        mModelViewState.setProgressVisible(true);
-        mModelViewState.setMessage(getText(R.string.Connecting));
-        mModelViewState.setAnimatorChild(ANIMATOR_CHILD_PRGORESS);
-    }
-
-    private void setViewConnected() {
-        mModelViewState.setFixButtonVisible(false);
-        mModelViewState.setProgressVisible(false);
-        mModelViewState.setAnimatorChild(ANIMATOR_CHILD_CONTENT);
     }
 
     private void bindMedia(@Nullable final ProtoPlaybackData.Media media) {
@@ -139,7 +113,7 @@ public final class NowPlayingActivity extends Activity {
 
     private void bindArt(@Nullable final Bitmap albumArt) {
         if (albumArt == null) {
-            mModelMedia.setArt(getDrawable(R.drawable.album_art_placeholder));
+            mModelMedia.setArt(getActivity().getDrawable(R.drawable.album_art_placeholder));
         } else {
             mModelMedia.setArt(new BitmapDrawable(getResources(), albumArt));
         }
@@ -156,13 +130,21 @@ public final class NowPlayingActivity extends Activity {
     }
 
     private void bindProgress(final long duration, final long elapsedTime) {
-        mModelPlaybackState.setDuration(duration);
-        mModelPlaybackState.setElapsedTime(elapsedTime);
         if (!mSeekBarTracking && duration > 0 && elapsedTime <= duration) {
             // Max is 200 so progress is a fraction of 200
             mModelPlaybackState
                     .setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
         }
+    }
+
+    @Override
+    public void onGoogleApiClientConnected(@NonNull final GoogleApiClient client) {
+        mRemoteControl.onGoogleApiClientConnected(getActivity(), client);
+    }
+
+    @Override
+    public void onGoogleApiClientDisconnected() {
+        mRemoteControl.onGoogleApiClientDisconnected();
     }
 
     private final class OnSeekBarChangeListenerImpl implements SeekBar.OnSeekBarChangeListener {
@@ -180,8 +162,7 @@ public final class NowPlayingActivity extends Activity {
         @Override
         public void onStopTrackingTouch(final SeekBar seekBar) {
             mSeekBarTracking = false;
-            mRemoteControl.seek(mGoogleApiClient,
-                    (float) seekBar.getProgress() / (float) seekBar.getMax());
+            mRemoteControl.seek((float) seekBar.getProgress() / (float) seekBar.getMax());
         }
     }
 
@@ -203,40 +184,5 @@ public final class NowPlayingActivity extends Activity {
                 @Nullable final ProtoPlaybackData.PlaybackState playbackState) {
             bindPlaybackState(playbackState);
         }
-    };
-
-    private final GoogleApiClient.ConnectionCallbacks mConnectionCallbacks
-            = new GoogleApiClient.ConnectionCallbacks() {
-
-        @Override
-        public void onConnected(@Nullable final Bundle bundle) {
-            setViewConnected();
-            mRemoteControl.onGoogleApiClientConnected(NowPlayingActivity.this, mGoogleApiClient);
-        }
-
-        @Override
-        public void onConnectionSuspended(final int i) {
-            setViewConnecting();
-        }
-    };
-
-    private final GoogleApiClient.OnConnectionFailedListener mOnConnectionFailedListener
-            = connectionResult -> {
-        mModelViewState.setProgressVisible(false);
-        mModelViewState.setMessage(GooglePlayServicesUtil
-                .toHumanReadableMessage(getResources(), connectionResult.getErrorCode()));
-        mModelViewState.setFixButtonVisible(connectionResult.hasResolution());
-        if (connectionResult.hasResolution()) {
-            mBtnFix.setOnClickListener(v -> {
-                try {
-                    connectionResult.startResolutionForResult(this, REQUEST_CODE_GOOGLE_API);
-                } catch (IntentSender.SendIntentException e) {
-                    Toast.makeText(this, R.string.Could_not_fix_this_issue, Toast.LENGTH_LONG)
-                            .show();
-                    mModelViewState.setFixButtonVisible(false);
-                }
-            });
-        }
-        mModelViewState.setAnimatorChild(ANIMATOR_CHILD_PRGORESS);
     };
 }

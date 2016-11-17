@@ -22,7 +22,7 @@ import android.graphics.drawable.Drawable;
  * Created by Yaroslav Mytkalyk on 16.11.16.
  */
 
-public final class NowPlayingActivityModelMedia {
+public final class NowPlayingFragmentModelMedia {
 
     private final ObservableField<CharSequence> mTitle = new ObservableField<>();
     private final ObservableField<CharSequence> mArtistAndAlbum = new ObservableField<>();
@@ -32,7 +32,7 @@ public final class NowPlayingActivityModelMedia {
         return mArt;
     }
 
-    public void setArt(final Drawable art) {
+    void setArt(final Drawable art) {
         mArt.set(art);
     }
 
@@ -40,7 +40,7 @@ public final class NowPlayingActivityModelMedia {
         return mTitle;
     }
 
-    public void setTitle(final CharSequence title) {
+    void setTitle(final CharSequence title) {
         mTitle.set(title);
     }
 
@@ -48,7 +48,7 @@ public final class NowPlayingActivityModelMedia {
         return mArtistAndAlbum;
     }
 
-    public void setArtistAndAlbum(final CharSequence artistAndAlbum) {
+    void setArtistAndAlbum(final CharSequence artistAndAlbum) {
         mArtistAndAlbum.set(artistAndAlbum);
     }
 }

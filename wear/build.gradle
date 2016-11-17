@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
@@ -13,6 +12,10 @@ android {
         versionCode 1
         versionName "1.0.0"
         resConfigs "en"
+    }
+
+    retrolambda {
+        jvmArgs '-noverify'
     }
 
     lintOptions {
@@ -46,7 +49,7 @@ dependencies {
 
     compile 'com.google.android.support:wearable:2.0.0-alpha3'
     compile 'com.google.android.gms:play-services-wearable:9.8.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta3'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     compile 'io.reactivex:rxjava:1.2.2'
 }
