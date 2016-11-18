@@ -33,6 +33,7 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -73,6 +74,8 @@ import rx.schedulers.Schedulers;
  */
 public final class NowPlayingActivity extends BaseActivity {
 
+    private static final String TAG = "NowPlayingActivity";
+
     public static final String VIEW_ALBUM_ART = "VIEW_ALBUM_ART";
 
     public static void start(@NonNull final Activity activity,
@@ -99,6 +102,9 @@ public final class NowPlayingActivity extends BaseActivity {
     private int mState = PlaybackService.STATE_IDLE;
     private ActivityNowplayingBinding mBinding;
 
+    private boolean mTransitionPostponed;
+    private boolean mTransitionStarted;
+
     @InjectExtra
     @Nullable
     Boolean hasCoverTransition;
@@ -117,6 +123,8 @@ public final class NowPlayingActivity extends BaseActivity {
             return;
         }
 
+        mTransitionPostponed = false;
+        mTransitionStarted = false;
         mPlaylist = PlaylistHolder.getInstance(this);
 
         mBinding = DataBindingUtil.setContentView(this,
@@ -151,15 +159,22 @@ public final class NowPlayingActivity extends BaseActivity {
         handleIntent(getIntent());
     }
 
+    private boolean hasCoverTransition() {
+        return hasCoverTransition != null && hasCoverTransition;
+    }
+
     private void setAlbumArt(@Nullable final String artUri) {
+        if (!mTransitionPostponed && hasCoverTransition()) {
+            mTransitionPostponed = true;
+            supportPostponeEnterTransition();
+        }
         if (TextUtils.isEmpty(artUri)) {
             Glide.clear(mBinding.albumArt);
             mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
             onArtProcessed();
         } else {
-            supportPostponeEnterTransition();
             final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
-            if (hasCoverTransition != null && hasCoverTransition) {
+            if (hasCoverTransition()) {
                 b.dontAnimate();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -190,17 +205,21 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void onArtProcessed() {
-        try {
-            supportStartPostponedEnterTransition();
-        } catch (NullPointerException e) {
-            // TODO sometimes get NPE. WTF?
-            //java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.app.ActivityOptions.isReturning()' on a null object reference
-            //at android.app.ActivityTransitionState.startEnter(ActivityTransitionState.java:203)
-            //at android.app.ActivityTransitionState.startPostponedEnterTransition(ActivityTransitionState.java:197)
-            //at android.app.Activity.startPostponedEnterTransition(Activity.java:6213)
-            //at android.support.v4.app.ActivityCompatApi21.startPostponedEnterTransition(ActivityCompatApi21.java:58)
-            //at android.support.v4.app.ActivityCompat.startPostponedEnterTransition(ActivityCompat.java:298)
-            //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
+        if (!mTransitionStarted && hasCoverTransition()) {
+            mTransitionStarted = true;
+            try {
+                supportStartPostponedEnterTransition();
+            } catch (NullPointerException e) {
+                Log.wtf(TAG, "While starting postponed transition", e);
+                // TODO sometimes get NPE. WTF?
+                //java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.app.ActivityOptions.isReturning()' on a null object reference
+                //at android.app.ActivityTransitionState.startEnter(ActivityTransitionState.java:203)
+                //at android.app.ActivityTransitionState.startPostponedEnterTransition(ActivityTransitionState.java:197)
+                //at android.app.Activity.startPostponedEnterTransition(Activity.java:6213)
+                //at android.support.v4.app.ActivityCompatApi21.startPostponedEnterTransition(ActivityCompatApi21.java:58)
+                //at android.support.v4.app.ActivityCompat.startPostponedEnterTransition(ActivityCompat.java:298)
+                //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
+            }
         }
         if (mBinding.infoContainer.getAlpha() != 1f) {
             mBinding.infoContainer.animate().setStartDelay(500).alpha(1f).start();
