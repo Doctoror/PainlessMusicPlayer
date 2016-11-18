@@ -22,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
