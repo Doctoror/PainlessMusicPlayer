@@ -15,34 +15,63 @@ import com.doctoror.fuckoffmusicplayer.util.Log;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Yaroslav Mytkalyk on 15.11.16.
  */
 
-final class WearableMediaReporter {
+final class WearableReporter {
 
     private static final String TAG = "WearableMediaReporter";
 
-    private WearableMediaReporter() {
+    private WearableReporter() {
 
+    }
+
+    static void reportPlaylist(@NonNull final GoogleApiClient googleApiClient,
+            @Nullable final List<Media> playlist) {
+        if (googleApiClient.isConnected() && playlist != null && !playlist.isEmpty()) {
+            final int size = playlist.size();
+            final ProtoPlaybackData.Media[] wMedias = new ProtoPlaybackData
+                    .Media[playlist.size()];
+            for (int i = 0; i < size; i++) {
+                wMedias[i] = toWearableData(playlist.get(i), 0, 0);
+            }
+
+            final PutDataRequest request;
+            try {
+                request = PutDataRequest.create(DataPaths.Paths.PLAYLIST);
+                final ProtoPlaybackData.Playlist wPlaylist = new ProtoPlaybackData.Playlist();
+                wPlaylist.media = wMedias;
+                request.setData(messageNanoToBytes(wPlaylist));
+            } catch (IOException e) {
+                Log.w(TAG, e);
+                return;
+            }
+            request.setUrgent();
+
+            Wearable.DataApi.putDataItem(googleApiClient, request).await();
+        }
     }
 
     @WorkerThread
     static void reportMedia(@NonNull final GoogleApiClient googleApiClient,
             @NonNull final RequestManager glide,
             @NonNull final Media media,
+            final int positionInPlaylist,
             final long position) {
         if (googleApiClient.isConnected()) {
             final PutDataRequest request;
             try {
-                request = newPutMediaRequest(media, position);
+                request = newPutMediaRequest(media, positionInPlaylist, position);
             } catch (IOException e) {
                 Log.w(TAG, e);
                 return;
@@ -97,9 +126,10 @@ final class WearableMediaReporter {
 
     @NonNull
     private static PutDataRequest newPutMediaRequest(@NonNull final Media media,
+            final int playlistPosition,
             final long position) throws IOException {
         final PutDataRequest request = PutDataRequest.create(DataPaths.Paths.MEDIA);
-        request.setData(messageNanoToBytes(toWearableData(media, position)));
+        request.setData(messageNanoToBytes(toWearableData(media, playlistPosition, position)));
         return request;
     }
 
@@ -113,6 +143,7 @@ final class WearableMediaReporter {
         return request;
     }
 
+    @NonNull
     private static byte[] messageNanoToBytes(@NonNull final MessageNano nano) throws
             IOException {
         final byte[] output = new byte[nano.getCachedSize()];
@@ -122,6 +153,7 @@ final class WearableMediaReporter {
 
     @NonNull
     private static ProtoPlaybackData.Media toWearableData(@NonNull final Media media,
+            final int playlistPosition,
             final long position) {
         final ProtoPlaybackData.Media m = new ProtoPlaybackData.Media();
         m.album = media.getAlbum();
@@ -129,6 +161,7 @@ final class WearableMediaReporter {
         m.title = media.getTitle();
         m.duration = media.getDuration();
         m.progress = position;
+        m.playlistPosition = playlistPosition;
         return m;
     }
 

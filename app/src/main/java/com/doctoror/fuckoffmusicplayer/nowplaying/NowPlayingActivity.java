@@ -398,6 +398,11 @@ public final class NowPlayingActivity extends BaseActivity {
             = new PlaylistHolder.PlaylistObserver() {
 
         @Override
+        public void onPlaylistChanged(@Nullable final List<Media> playlist) {
+            // Nothing
+        }
+
+        @Override
         public void onPositionChanged(final long position) {
             bindProgress(position);
         }

@@ -37,9 +37,6 @@ import android.util.DisplayMetrics;
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
-
 /**
  * Created by Yaroslav Mytkalyk on 24.10.16.
  */

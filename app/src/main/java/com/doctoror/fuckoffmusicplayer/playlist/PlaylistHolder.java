@@ -92,6 +92,7 @@ public final class PlaylistHolder {
 
     public void setPlaylist(@Nullable final List<Media> playlist) {
         this.playlist = playlist;
+        notifyPlaylistChanged(playlist);
     }
 
     public void setIndex(final int index) {
@@ -140,7 +141,15 @@ public final class PlaylistHolder {
         }
     }
 
+    private void notifyPlaylistChanged(@Nullable final List<Media> playlist) {
+        for (final PlaylistObserver observer : mObservers) {
+            observer.onPlaylistChanged(playlist);
+        }
+    }
+
     public interface PlaylistObserver {
+
+        void onPlaylistChanged(@Nullable List<Media> playlist);
 
         void onPositionChanged(long position);
 

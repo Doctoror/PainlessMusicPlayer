@@ -29,6 +29,7 @@ import com.doctoror.commons.util.ByteStreams;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -49,13 +50,9 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
 
     private GoogleApiClient mGoogleApiClient;
 
-    private MediaHolder mMediaHolder;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        mMediaHolder = MediaHolder.getInstance(this);
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .build();
@@ -78,6 +75,10 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                         case DataPaths.Paths.PLAYBACK_STATE:
                             onPlaybackStateItemChanged(item);
                             break;
+
+                        case DataPaths.Paths.PLAYLIST:
+                            onPlaylistChanged(item);
+                            break;
                     }
                 }
             }
@@ -87,13 +88,13 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
     private void onMediaItemChanged(@NonNull final DataItem mediaItem) {
         final byte[] data = mediaItem.getData();
         if (data == null) {
-            mMediaHolder.setMedia(null);
+            MediaHolder.getInstance(this).setMedia(null);
             return;
         }
 
         try {
             final ProtoPlaybackData.Media media = ProtoPlaybackData.Media.parseFrom(data);
-            mMediaHolder.setMedia(media);
+            MediaHolder.getInstance(this).setMedia(media);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, e);
         }
@@ -131,7 +132,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                         Log.w(TAG, e);
                     }
                 }
-                mMediaHolder.setAlbumArt(albumArt);
+                MediaHolder.getInstance(this).setAlbumArt(albumArt);
             }
         }
     }
@@ -139,13 +140,27 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
     private void onPlaybackStateItemChanged(@NonNull final DataItem stateItem) {
         final byte[] data = stateItem.getData();
         if (data == null) {
-            mMediaHolder.setPlaybackState(null);
+            MediaHolder.getInstance(this).setPlaybackState(null);
             return;
         }
         try {
             final ProtoPlaybackData.PlaybackState s = ProtoPlaybackData.PlaybackState
                     .parseFrom(data);
-            mMediaHolder.setPlaybackState(s);
+            MediaHolder.getInstance(this).setPlaybackState(s);
+        } catch (InvalidProtocolBufferNanoException e) {
+            Log.w(TAG, e);
+        }
+    }
+
+    private void onPlaylistChanged(@NonNull final DataItem stateItem) {
+        final byte[] data = stateItem.getData();
+        if (data == null) {
+            PlaylistHolder.getInstance(this).setPlaylist(null);
+            return;
+        }
+        try {
+            final ProtoPlaybackData.Playlist p = ProtoPlaybackData.Playlist.parseFrom(data);
+            PlaylistHolder.getInstance(this).setPlaylist(p);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, e);
         }

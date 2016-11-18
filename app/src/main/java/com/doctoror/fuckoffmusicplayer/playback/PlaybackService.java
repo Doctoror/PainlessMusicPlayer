@@ -625,8 +625,8 @@ public final class PlaybackService extends Service {
         if (mGoogleApiClient.isConnected()) {
             final Media media = mPlaylist.getMedia();
             if (media != null) {
-                WearableMediaReporter
-                        .reportMedia(mGoogleApiClient, mGlide, media, mPlaylist.getPosition());
+                WearableReporter.reportMedia(mGoogleApiClient, mGlide, media, mPlaylist.getIndex(),
+                        mPlaylist.getPosition());
             }
         }
     }
@@ -637,8 +637,18 @@ public final class PlaybackService extends Service {
             final Media media = mPlaylist.getMedia();
             final long duration = media != null ? media.getDuration() : 0;
             final long position = media != null ? mPlaylist.getPosition() : 0;
-            WearableMediaReporter.reportState(mGoogleApiClient, mState,
+            WearableReporter.reportState(mGoogleApiClient, mState,
                     duration, position);
+        }
+    }
+
+    @WorkerThread
+    private void syncWearablePlaylist() {
+        if (mGoogleApiClient.isConnected()) {
+            final List<Media> playlist = mPlaylist.getPlaylist();
+            if (playlist != null) {
+                WearableReporter.reportPlaylist(mGoogleApiClient, playlist);
+            }
         }
     }
 
@@ -650,6 +660,7 @@ public final class PlaybackService extends Service {
             mExecutor.submit(() -> {
                 syncWearableMedia();
                 syncWearableState();
+                syncWearablePlaylist();
             });
         }
 
@@ -687,12 +698,18 @@ public final class PlaybackService extends Service {
                 if (playlist != null && !playlist.isEmpty()) {
                     // Stop current and play the other track from playlist
                     restart();
+                    mExecutor.submit(() -> syncWearablePlaylist());
                 } else {
                     mCurrentTrack = null;
                     AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
                     stopSelf();
                 }
             }
+        }
+
+        @Override
+        public void onPlaylistChanged(@Nullable final List<Media> playlist) {
+            mExecutor.submit(() -> syncWearablePlaylist());
         }
     };
 
@@ -782,7 +799,7 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final Runnable mRunnableSyncWarableState = () -> syncWearableState();
+    private final Runnable mRunnableSyncWarableState = this::syncWearableState;
 
     private final class AudioBecomingNoisyReceiver extends BroadcastReceiver {
 
