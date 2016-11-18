@@ -18,12 +18,17 @@ package com.doctoror.fuckoffmusicplayer.library.artists;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
+import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsActivity;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
+import android.view.View;
 
 /**
  * Created by Yaroslav Mytkalyk on 17.10.16.
@@ -56,10 +61,16 @@ public final class ArtistsFragment extends LibraryListFragment {
         mAdapter.swapCursor(null);
     }
 
-    private void openArtist(final long artistId, @NonNull final String artist) {
-        startActivity(Henson.with(getActivity()).gotoArtistAlbumsActivity()
+    private void openArtist(@NonNull final View itemView, final long artistId,
+            @NonNull final String artist) {
+        final Intent intent = Henson.with(getActivity()).gotoArtistAlbumsActivity()
                 .artist(artist)
                 .artistId(artistId)
-                .build());
+                .build();
+
+        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                getActivity(), itemView, ArtistAlbumsActivity.TRANSITION_NAME_ROOT);
+
+        startActivity(intent, options.toBundle());
     }
 }

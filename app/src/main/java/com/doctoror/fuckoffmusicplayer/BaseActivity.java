@@ -18,17 +18,13 @@ package com.doctoror.fuckoffmusicplayer;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
 import com.f2prateek.dart.InjectExtra;
 
-import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-
-import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
 

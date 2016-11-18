@@ -26,6 +26,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -35,7 +36,8 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
         implements FastScroller.SectionIndexer {
 
     interface OnArtistClickListener {
-        void onArtistClick(long id, String artist);
+
+        void onArtistClick(@NonNull View itemView, long id, String artist);
     }
 
     @NonNull
@@ -56,9 +58,10 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
         mClickListener = clickListener;
     }
 
-    private void onArtistClick(final long id, @NonNull final String artist) {
+    private void onArtistClick(@NonNull final View itemView,
+            final long id, @NonNull final String artist) {
         if (mClickListener != null) {
-            mClickListener.onArtistClick(id, artist);
+            mClickListener.onArtistClick(itemView, id, artist);
         }
     }
 
@@ -77,7 +80,8 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
         vh.itemView.setOnClickListener(v -> {
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onArtistClick(item.getLong(ArtistsQuery.COLUMN_ID),
+                onArtistClick(vh.itemView,
+                        item.getLong(ArtistsQuery.COLUMN_ID),
                         item.getString(ArtistsQuery.COLUMN_ARTIST));
             }
         });
