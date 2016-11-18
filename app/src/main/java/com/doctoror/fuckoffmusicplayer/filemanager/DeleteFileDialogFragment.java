@@ -15,11 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.filemanager;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.InjectExtra;
+
+import org.parceler.Parcels;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -37,30 +36,45 @@ import android.support.v7.app.AlertDialog;
 
 public final class DeleteFileDialogFragment extends DialogFragment {
 
+    private static final String EXTRA_MEDIA = "EXTRA_MEDIA";
+
     public interface Callback {
+
         void onDeleteClick(@NonNull Media media);
+
         void onDeleteCancel();
+
         void onDeleteDialogDismiss();
     }
 
-    public static void show(@NonNull final Context context,
-            @NonNull final Media media,
+    public static void show(@NonNull final Media media,
             @NonNull final FragmentManager fragmentManager,
             @NonNull final String tag) {
-        final Bundle args = Henson.with(context).gotoDeleteFileDialogFragment()
-                .media(media).build().getExtras();
+        final Bundle args = new Bundle();
+        args.putParcelable(EXTRA_MEDIA, Parcels.wrap(media));
 
         final DeleteFileDialogFragment f = new DeleteFileDialogFragment();
         f.setArguments(args);
         f.show(fragmentManager, tag);
     }
 
-    @InjectExtra
-    Media media;
+    private Media media;
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        final Bundle args = getArguments();
+        if (args == null) {
+            throw new IllegalArgumentException("Arguments must contain EXTRA_MEDIA");
+        }
+        media = Parcels.unwrap(args.getParcelable(EXTRA_MEDIA));
+        if (media == null) {
+            throw new IllegalArgumentException("Arguments must contain EXTRA_MEDIA");
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        Dart.inject(this);
         return new AlertDialog.Builder(getActivity())
                 .setMessage(getString(R.string.Are_you_sure_you_want_to_delete_s, media.getTitle()))
                 .setPositiveButton(R.string.Delete, (d, w) -> onDeleteClick())

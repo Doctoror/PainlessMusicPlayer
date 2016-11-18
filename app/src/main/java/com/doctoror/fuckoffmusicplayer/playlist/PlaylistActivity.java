@@ -247,7 +247,7 @@ public final class PlaylistActivity extends BaseActivity implements
 
     void onDeleteClickFromList(@NonNull final Media media) {
         mDeleteSession = new DeleteSession(media);
-        DeleteFileDialogFragment.show(this, media, getFragmentManager(), TAG_DIALOG_DELETE);
+        DeleteFileDialogFragment.show(media, getFragmentManager(), TAG_DIALOG_DELETE);
     }
 
     void onPlaylistEmpty() {
