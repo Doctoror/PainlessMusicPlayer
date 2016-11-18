@@ -32,6 +32,7 @@ public final class Log {
     private static final boolean LOG_D = BuildConfig.DEBUG;
     private static final boolean LOG_I = BuildConfig.DEBUG;
     private static final boolean LOG_W = BuildConfig.DEBUG;
+    private static final boolean LOG_WTF = BuildConfig.DEBUG;
 
     @NonNull
     private static String tag(@NonNull final String tag) {
@@ -107,6 +108,14 @@ public final class Log {
             @Nullable final Throwable tr) {
         if (LOG_W) {
             return android.util.Log.w(tag(tag), msg, tr);
+        }
+        return 0;
+    }
+
+    public static int wtf(@NonNull final String tag, @Nullable final String msg,
+            @Nullable final Throwable tr) {
+        if (LOG_W) {
+            return android.util.Log.wtf(tag(tag), msg, tr);
         }
         return 0;
     }
