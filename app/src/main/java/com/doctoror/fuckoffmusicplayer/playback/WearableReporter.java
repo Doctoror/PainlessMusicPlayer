@@ -11,7 +11,7 @@ import com.bumptech.glide.RequestManager;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.util.Log;
+import com.doctoror.commons.util.Log;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;

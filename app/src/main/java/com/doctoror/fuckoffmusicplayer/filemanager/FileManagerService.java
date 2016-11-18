@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.filemanager;
 
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.util.FileUtils;
-import com.doctoror.fuckoffmusicplayer.util.Log;
+import com.doctoror.commons.util.Log;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.parceler.Parcels;

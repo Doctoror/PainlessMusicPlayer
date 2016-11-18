@@ -15,18 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer;
 
-import com.google.android.exoplayer2.audio.AudioTrack;
-
 import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.settings.Theme;
 
 import android.app.Application;
-import android.os.Build;
-import android.support.v7.app.AppCompatDelegate;
 
 /**
- * Created by Yaroslav Mytkalyk on 18.10.16.
+ * Created by Yaroslav Mytkalyk on 18.11.16.
  */
+
 public final class App extends Application {
 
     @Override
@@ -37,10 +33,5 @@ public final class App extends Application {
         Log.setLogI(BuildConfig.DEBUG);
         Log.setLogW(BuildConfig.DEBUG);
         Log.setLogWtf(BuildConfig.DEBUG);
-
-        AppCompatDelegate.setDefaultNightMode(Theme.getInstance(this).getDayNightMode());
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            AudioTrack.enablePreV21AudioSessionWorkaround = true;
-        }
     }
 }

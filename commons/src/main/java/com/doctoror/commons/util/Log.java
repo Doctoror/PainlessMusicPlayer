@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.util;
-
-import com.doctoror.fuckoffmusicplayer.BuildConfig;
+package com.doctoror.commons.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,11 +26,31 @@ public final class Log {
 
     private static final int TAG_MAX = 23;
 
-    private static final boolean LOG_V = false;
-    private static final boolean LOG_D = BuildConfig.DEBUG;
-    private static final boolean LOG_I = BuildConfig.DEBUG;
-    private static final boolean LOG_W = BuildConfig.DEBUG;
-    private static final boolean LOG_WTF = BuildConfig.DEBUG;
+    private static boolean LOG_V = false;
+    private static boolean LOG_D = false;
+    private static boolean LOG_I = false;
+    private static boolean LOG_W = false;
+    private static boolean LOG_WTF = true;
+
+    public static void setLogV(final boolean logV) {
+        LOG_V = logV;
+    }
+
+    public static void setLogD(final boolean logD) {
+        LOG_D = logD;
+    }
+
+    public static void setLogI(final boolean logI) {
+        LOG_I = logI;
+    }
+
+    public static void setLogW(final boolean logW) {
+        LOG_W = logW;
+    }
+
+    public static void setLogWtf(final boolean logWtf) {
+        LOG_WTF = logWtf;
+    }
 
     @NonNull
     private static String tag(@NonNull final String tag) {
@@ -114,7 +132,7 @@ public final class Log {
 
     public static int wtf(@NonNull final String tag, @Nullable final String msg,
             @Nullable final Throwable tr) {
-        if (LOG_W) {
+        if (LOG_WTF) {
             return android.util.Log.wtf(tag(tag), msg, tr);
         }
         return 0;

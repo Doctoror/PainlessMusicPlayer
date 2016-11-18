@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
-import com.doctoror.fuckoffmusicplayer.util.Log;
+import com.doctoror.commons.util.Log;
 
 import android.content.ContentResolver;
 import android.content.Intent;

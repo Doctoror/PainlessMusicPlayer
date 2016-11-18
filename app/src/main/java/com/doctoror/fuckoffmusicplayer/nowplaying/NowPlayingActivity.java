@@ -33,7 +33,7 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
-import com.doctoror.fuckoffmusicplayer.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;

@@ -26,6 +26,7 @@ import com.google.android.gms.wearable.WearableListenerService;
 import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 
 import com.doctoror.commons.util.ByteStreams;
+import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
@@ -33,7 +34,6 @@ import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
