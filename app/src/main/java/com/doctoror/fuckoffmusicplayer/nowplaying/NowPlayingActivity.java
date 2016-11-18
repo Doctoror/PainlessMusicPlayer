@@ -127,8 +127,7 @@ public final class NowPlayingActivity extends BaseActivity {
         mTransitionStarted = false;
         mPlaylist = PlaylistHolder.getInstance(this);
 
-        mBinding = DataBindingUtil.setContentView(this,
-                R.layout.activity_nowplaying);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_nowplaying);
         ViewCompat.setTransitionName(mBinding.albumArt, VIEW_ALBUM_ART);
         ButterKnife.bind(this);
 

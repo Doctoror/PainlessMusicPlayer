@@ -10,4 +10,10 @@
             @transition/change_image_transform</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.TranslucentStatus">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
 </resources>
