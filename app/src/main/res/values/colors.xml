@@ -5,5 +5,6 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="playlistAlbumArtBackground">#6A000000</color>
+    <color name="translucentBackground">#88000000</color>
     <color name="dividerBackground">#1f000000</color>
 </resources>

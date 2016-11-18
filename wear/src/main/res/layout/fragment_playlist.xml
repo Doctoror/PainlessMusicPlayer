@@ -25,7 +25,6 @@
             tools:ignore="ContentDescription"/>
 
         <TextView
-            android:id="@android:id/empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="8dp"
@@ -33,7 +32,7 @@
             android:visibility="@{model.isEmpty ? View.VISIBLE : View.GONE}"/>
 
         <android.support.wearable.view.WearableListView
-            android:id="@android:id/list"
+            android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="@{model.isEmpty ? View.GONE : View.VISIBLE}"

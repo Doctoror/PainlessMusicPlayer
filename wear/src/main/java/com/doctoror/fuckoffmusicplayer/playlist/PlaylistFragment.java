@@ -13,8 +13,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
     private PlaylistHolder mPlaylistHolder;
 
     private PlaylistListAdapter mAdapter;
+    private RecyclerView mRecyclerView;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
         final FragmentPlaylistBinding binding = DataBindingUtil
                 .inflate(inflater, R.layout.fragment_playlist, container, false);
         binding.setModel(mModel);
+        mRecyclerView = binding.list;
         return binding.getRoot();
     }
 
@@ -63,8 +67,7 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
     public void onStart() {
         super.onStart();
         mModel.setBackground(albumArtOrStub(mMediaHolder.getAlbumArt()));
-        mAdapter.setItems(makePlaylist(mPlaylistHolder.getPlaylist(), mMediaHolder.getMedia()));
-        mModel.setIsEmpty(mAdapter.getItemCount() == 0);
+        bindPlaylist(mPlaylistHolder.getPlaylist(), mMediaHolder.getMedia());
         mMediaHolder.addObserver(mPlaybackInfoObserver);
         mPlaylistHolder.addObserver(mPlaylistObserver);
     }
@@ -74,6 +77,16 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
         super.onStop();
         mPlaylistHolder.deleteObserver(mPlaylistObserver);
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
+    }
+
+    @MainThread
+    private void bindPlaylist(@Nullable final ProtoPlaybackData.Playlist playlist,
+            @Nullable final ProtoPlaybackData.Media media) {
+        mAdapter.setItems(makePlaylist(playlist, media));
+        mModel.setIsEmpty(mAdapter.getItemCount() == 0);
+        if (mRecyclerView != null && media != null && playlist != null) {
+            mRecyclerView.scrollToPosition(media.playlistPosition);
+        }
     }
 
     @NonNull
@@ -108,11 +121,8 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
 
         @Override
         public void onPlaylistChanged(@Nullable final ProtoPlaybackData.Playlist playlist) {
-            mHandler.post(() -> {
-                mAdapter.setItems(makePlaylist(playlist, mMediaHolder.getMedia()));
-                mModel.setIsEmpty(mAdapter.getItemCount() == 0);
-                albumArtOrStub(mMediaHolder.getAlbumArt());
-            });
+            //noinspection WrongThread
+            mHandler.post(() -> bindPlaylist(playlist, mMediaHolder.getMedia()));
         }
     };
 
@@ -123,10 +133,8 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
         public void onMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
             // If playlist is a fake list of single media, update it
             if (mAdapter.getItemCount() == 1) {
-                mHandler.post(() -> {
-                    mAdapter.setItems(makePlaylist(mPlaylistHolder.getPlaylist(), media));
-                    mModel.setIsEmpty(mAdapter.getItemCount() == 0);
-                });
+                //noinspection WrongThread
+                mHandler.post(() -> bindPlaylist(mPlaylistHolder.getPlaylist(), media));
             }
         }
 
