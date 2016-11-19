@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item format="float" type="dimen" name="alpha_list_item_unselected">0.7</item>
+    <item format="float" type="dimen" name="alpha_list_item_selected">1</item>
+</resources>

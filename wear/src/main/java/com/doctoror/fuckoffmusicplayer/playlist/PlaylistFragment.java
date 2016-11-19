@@ -23,7 +23,9 @@ import com.doctoror.fuckoffmusicplayer.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.base.GoogleApiFragment;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
+import com.doctoror.fuckoffmusicplayer.root.RootActivity;
 
+import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -68,7 +70,7 @@ public final class PlaylistFragment extends GoogleApiFragment {
         mPlaylistHolder = PlaylistHolder.getInstance(getActivity());
 
         mAdapter = new PlaylistListAdapter(getActivity());
-        mAdapter.setOnMediaClickListener(mRemoteControl::playMediaFromPlaylist);
+        mAdapter.setOnMediaClickListener(this::playMediaFromPlaylist);
         mModel.setAdapter(mAdapter);
         mModel.setIsEmpty(true);
     }
@@ -108,6 +110,14 @@ public final class PlaylistFragment extends GoogleApiFragment {
     @Override
     public void onGoogleApiClientDisconnected() {
         mRemoteControl.onGoogleApiClientDisconnected();
+    }
+
+    private void playMediaFromPlaylist(final long mediaId) {
+        mRemoteControl.playMediaFromPlaylist(mediaId);
+        final Activity activity = getActivity();
+        if (activity instanceof RootActivity) {
+            ((RootActivity) activity).goToNowPlaying();
+        }
     }
 
     @MainThread

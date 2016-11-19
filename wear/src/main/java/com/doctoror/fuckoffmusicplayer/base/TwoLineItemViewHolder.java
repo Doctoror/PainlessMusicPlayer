@@ -15,7 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.base;
 
+import com.doctoror.fuckoffmusicplayer.R;
+
 import android.support.wearable.view.WearableListView;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -24,6 +27,9 @@ import android.widget.TextView;
  */
 public final class TwoLineItemViewHolder extends WearableListView.ViewHolder {
 
+    private final float mAlphaUnselected;
+    private final float mAlphaSelected;
+
     public final TextView text1;
     public final TextView text2;
 
@@ -31,5 +37,27 @@ public final class TwoLineItemViewHolder extends WearableListView.ViewHolder {
         super(itemView);
         text1 = (TextView) itemView.findViewById(android.R.id.text1);
         text2 = (TextView) itemView.findViewById(android.R.id.text2);
+
+        final TypedValue tv = new TypedValue();
+        itemView.getResources().getValue(R.dimen.alpha_list_item_unselected, tv, false);
+        mAlphaUnselected = tv.getFloat();
+
+        itemView.getResources().getValue(R.dimen.alpha_list_item_selected, tv, false);
+        mAlphaSelected = tv.getFloat();
+    }
+
+    @Override
+    protected void onCenterProximity(final boolean isCentralItem, final boolean animate) {
+        setAlpha(isCentralItem ? mAlphaSelected : mAlphaUnselected, animate);
+    }
+
+    private void setAlpha(final float alpha, final boolean animate) {
+        if (animate) {
+            text1.animate().alpha(alpha).start();
+            text2.animate().alpha(alpha).start();
+        } else {
+            text1.setAlpha(alpha);
+            text2.setAlpha(alpha);
+        }
     }
 }

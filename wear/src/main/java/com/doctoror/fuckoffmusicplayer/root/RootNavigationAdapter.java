@@ -43,7 +43,7 @@ final class RootNavigationAdapter
     @NonNull
     private final OnItemSelectedListener mOnItemSelectedListener;
 
-    public RootNavigationAdapter(@NonNull final Context context,
+    RootNavigationAdapter(@NonNull final Context context,
             @NonNull final OnItemSelectedListener listener) {
         mItems[0] = new Item(ID_NOW_PLAYING, context.getString(R.string.Now_Playing),
                 context.getDrawable(R.drawable.ic_play_arrow_white_24dp));

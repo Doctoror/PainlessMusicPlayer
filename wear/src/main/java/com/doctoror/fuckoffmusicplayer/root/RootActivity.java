@@ -100,6 +100,12 @@ public final class RootActivity extends FragmentAwareActivity {
         mGoogleApiClient.disconnect();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBinding = null;
+    }
+
     private void setViewConnecting() {
         mModelViewState.setFixButtonVisible(false);
         mModelViewState.setProgressVisible(true);
@@ -134,6 +140,12 @@ public final class RootActivity extends FragmentAwareActivity {
 
             default:
                 break;
+        }
+    }
+
+    public void goToNowPlaying() {
+        if (mBinding != null) {
+            mBinding.navigationDrawer.setCurrentItem(0, true);
         }
     }
 
