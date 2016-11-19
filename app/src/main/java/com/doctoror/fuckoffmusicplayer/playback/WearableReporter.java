@@ -40,8 +40,7 @@ final class WearableReporter {
             @Nullable final List<Media> playlist) {
         if (googleApiClient.isConnected() && playlist != null && !playlist.isEmpty()) {
             final int size = playlist.size();
-            final ProtoPlaybackData.Media[] wMedias = new ProtoPlaybackData
-                    .Media[playlist.size()];
+            final ProtoPlaybackData.Media[] wMedias = new ProtoPlaybackData.Media[playlist.size()];
             for (int i = 0; i < size; i++) {
                 wMedias[i] = toWearableData(playlist.get(i), 0, 0);
             }
@@ -156,6 +155,7 @@ final class WearableReporter {
             final int playlistPosition,
             final long position) {
         final ProtoPlaybackData.Media m = new ProtoPlaybackData.Media();
+        m.id = media.getId();
         m.album = media.getAlbum();
         m.artist = media.getArtist();
         m.title = media.getTitle();

@@ -136,6 +136,9 @@ public interface ProtoPlaybackData {
       return _emptyArray;
     }
 
+    // optional int64 id = 7;
+    public long id;
+
     // optional int32 playlistPosition = 1;
     public int playlistPosition;
 
@@ -159,6 +162,7 @@ public interface ProtoPlaybackData {
     }
 
     public Media clear() {
+      id = 0L;
       playlistPosition = 0;
       title = "";
       duration = 0L;
@@ -190,6 +194,9 @@ public interface ProtoPlaybackData {
       if (this.progress != 0L) {
         output.writeInt64(6, this.progress);
       }
+      if (this.id != 0L) {
+        output.writeInt64(7, this.id);
+      }
       super.writeTo(output);
     }
 
@@ -219,6 +226,10 @@ public interface ProtoPlaybackData {
       if (this.progress != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeInt64Size(6, this.progress);
+      }
+      if (this.id != 0L) {
+        size += com.google.protobuf.nano.CodedOutputByteBufferNano
+            .computeInt64Size(7, this.id);
       }
       return size;
     }
@@ -260,6 +271,10 @@ public interface ProtoPlaybackData {
           }
           case 48: {
             this.progress = input.readInt64();
+            break;
+          }
+          case 56: {
+            this.id = input.readInt64();
             break;
           }
         }

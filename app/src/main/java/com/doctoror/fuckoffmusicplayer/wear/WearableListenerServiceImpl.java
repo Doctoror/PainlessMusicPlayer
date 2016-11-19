@@ -31,13 +31,23 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 PlaybackService.next(this);
                 break;
 
-            case DataPaths.Messages.SEEK:
+            case DataPaths.Messages.SEEK: {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 4) {
                     final float positionPercent = ByteBuffer.wrap(data).getFloat();
                     PlaybackService.seek(this, positionPercent);
                 }
                 break;
+            }
+
+            case DataPaths.Messages.PLAY_FROM_PLAYLIST: {
+                final byte[] data = messageEvent.getData();
+                if (data != null && data.length == 8) {
+                    final long mediaId = ByteBuffer.wrap(data).getLong();
+                    PlaybackService.playMediaFromPlaylist(this, mediaId);
+                }
+                break;
+            }
         }
     }
 }

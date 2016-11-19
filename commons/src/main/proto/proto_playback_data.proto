@@ -9,6 +9,7 @@ message PlaybackState {
 }
 
 message Media {
+  int64 id = 7;
   int32 playlistPosition = 1;
   string title = 2;
   int64 duration = 3;

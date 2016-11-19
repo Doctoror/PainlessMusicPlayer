@@ -15,9 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.LifecycleNotifierFragment;
+import com.doctoror.fuckoffmusicplayer.RemoteControl;
+import com.doctoror.fuckoffmusicplayer.base.GoogleApiFragment;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 
@@ -44,11 +47,13 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 17.11.16.
  */
 
-public final class PlaylistFragment extends LifecycleNotifierFragment {
+public final class PlaylistFragment extends GoogleApiFragment {
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private final PlaylistFragmentModel mModel = new PlaylistFragmentModel();
+
+    private final RemoteControl mRemoteControl = new RemoteControl();
 
     private MediaHolder mMediaHolder;
     private PlaylistHolder mPlaylistHolder;
@@ -63,6 +68,7 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
         mPlaylistHolder = PlaylistHolder.getInstance(getActivity());
 
         mAdapter = new PlaylistListAdapter(getActivity());
+        mAdapter.setOnMediaClickListener(mRemoteControl::playMediaFromPlaylist);
         mModel.setAdapter(mAdapter);
         mModel.setIsEmpty(true);
     }
@@ -92,6 +98,16 @@ public final class PlaylistFragment extends LifecycleNotifierFragment {
         super.onStop();
         mPlaylistHolder.deleteObserver(mPlaylistObserver);
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
+    }
+
+    @Override
+    public void onGoogleApiClientConnected(@NonNull final GoogleApiClient client) {
+        mRemoteControl.onGoogleApiClientConnected(getActivity(), client);
+    }
+
+    @Override
+    public void onGoogleApiClientDisconnected() {
+        mRemoteControl.onGoogleApiClientDisconnected();
     }
 
     @MainThread

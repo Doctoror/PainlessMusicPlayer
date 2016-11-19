@@ -37,10 +37,11 @@ public final class DataPaths {
     }
 
     public static final class Messages {
+        public static final String PLAY_FROM_PLAYLIST = "/message/play/from_playlist";
         public static final String PLAY_PAUSE = "/message/playpause";
-        public static final String SEEK = "/message/seek";
         public static final String PREV = "/message/prev";
         public static final String NEXT = "/message/next";
+        public static final String SEEK = "/message/seek";
     }
 
 }

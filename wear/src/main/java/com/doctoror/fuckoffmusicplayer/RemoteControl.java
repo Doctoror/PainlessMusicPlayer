@@ -64,46 +64,35 @@ public final class RemoteControl {
     }
 
     public void playPause() {
-        synchronized (mCapabilityLock) {
-            final GoogleApiClient googleApiClient = mGoogleApiClient;
-            if (googleApiClient != null && googleApiClient.isConnected()
-                    && mPlaybackControlNodeId != null) {
-                Wearable.MessageApi.sendMessage(googleApiClient, mPlaybackControlNodeId,
-                        DataPaths.Messages.PLAY_PAUSE, null);
-            }
-        }
+        sendMessageIfPossible(DataPaths.Messages.PLAY_PAUSE, null);
     }
 
     public void prev() {
-        synchronized (mCapabilityLock) {
-            final GoogleApiClient googleApiClient = mGoogleApiClient;
-            if (googleApiClient != null && googleApiClient.isConnected()
-                    && mPlaybackControlNodeId != null) {
-                Wearable.MessageApi.sendMessage(googleApiClient, mPlaybackControlNodeId,
-                        DataPaths.Messages.PREV, null);
-            }
-        }
+        sendMessageIfPossible(DataPaths.Messages.PREV, null);
     }
 
     public void next() {
-        synchronized (mCapabilityLock) {
-            final GoogleApiClient googleApiClient = mGoogleApiClient;
-            if (googleApiClient != null && googleApiClient.isConnected()
-                    && mPlaybackControlNodeId != null) {
-                Wearable.MessageApi.sendMessage(googleApiClient, mPlaybackControlNodeId,
-                        DataPaths.Messages.NEXT, null);
-            }
-        }
+        sendMessageIfPossible(DataPaths.Messages.NEXT, null);
     }
 
     public void seek(final float seekPercent) {
+        sendMessageIfPossible(DataPaths.Messages.SEEK,
+                ByteBuffer.allocate(4).putFloat(seekPercent).array());
+    }
+
+    public void playMediaFromPlaylist(final long mediaId) {
+        sendMessageIfPossible(DataPaths.Messages.PLAY_FROM_PLAYLIST,
+                ByteBuffer.allocate(8).putLong(mediaId).array());
+    }
+
+    private void sendMessageIfPossible(@NonNull final String path,
+            @Nullable final byte[] data) {
         synchronized (mCapabilityLock) {
             final GoogleApiClient googleApiClient = mGoogleApiClient;
             if (googleApiClient != null && googleApiClient.isConnected()
                     && mPlaybackControlNodeId != null) {
                 Wearable.MessageApi.sendMessage(googleApiClient, mPlaybackControlNodeId,
-                        DataPaths.Messages.SEEK,
-                        ByteBuffer.allocate(4).putFloat(seekPercent).array());
+                        path, data);
             }
         }
     }

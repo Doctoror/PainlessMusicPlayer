@@ -21,6 +21,7 @@ import com.google.android.gms.wearable.Wearable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
@@ -82,6 +83,7 @@ public final class PlaybackService extends Service {
             = "com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED";
     public static final String EXTRA_STATE = "EXTRA_STATE";
 
+    private static final String ACTION_PLAY_MEDIA_FROM_PLAYLIST = "ACTION_PLAY_MEDIA_FROM_PLAYLIST";
     private static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
     private static final String ACTION_PLAY = "ACTION_PLAY";
     private static final String ACTION_PAUSE = "ACTION_PAUSE";
@@ -91,6 +93,7 @@ public final class PlaybackService extends Service {
     private static final String ACTION_NEXT = "ACTION_NEXT";
 
     private static final String ACTION_SEEK = "ACTION_SEEK";
+    private static final String EXTRA_MEDIA_ID = "EXTRA_MEDIA_ID";
     private static final String EXTRA_POSITION = "EXTRA_POSITION";
     private static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
@@ -137,6 +140,14 @@ public final class PlaybackService extends Service {
         final Intent intent = new Intent(context, PlaybackService.class);
         intent.setAction(ACTION_SEEK);
         intent.putExtra(EXTRA_POSITION, position);
+        context.startService(intent);
+    }
+
+    public static void playMediaFromPlaylist(@NonNull final Context context,
+            final long mediaId) {
+        final Intent intent = new Intent(context, PlaybackService.class);
+        intent.setAction(ACTION_PLAY_MEDIA_FROM_PLAYLIST);
+        intent.putExtra(EXTRA_MEDIA_ID, mediaId);
         context.startService(intent);
     }
 
@@ -312,6 +323,10 @@ public final class PlaybackService extends Service {
                     onActionSeek(intent);
                     break;
 
+                case ACTION_PLAY_MEDIA_FROM_PLAYLIST:
+                    onActionPlayMediaFromPlaylist(intent);
+                    break;
+
                 case Intent.ACTION_MEDIA_BUTTON:
                     onActionMediaButton(intent);
                     break;
@@ -433,6 +448,26 @@ public final class PlaybackService extends Service {
             final long duration = media.getDuration();
             if (duration > 0 && position < duration) {
                 mMediaPlayer.seekTo(position);
+            }
+        }
+    }
+
+    private void onActionPlayMediaFromPlaylist(final Intent intent) {
+        final long mediaId = intent.getLongExtra(EXTRA_MEDIA_ID, 0);
+        final List<Media> playlist = mPlaylist.getPlaylist();
+        if (playlist != null) {
+            int mediaPosition = -1;
+            for (int i = 0; i < playlist.size(); i++) {
+                final Media m = playlist.get(i);
+                if (m.getId() == mediaId) {
+                    mediaPosition = i;
+                    break;
+                }
+            }
+            if (mediaPosition == -1) {
+                Log.w(TAG, "Media with id " + mediaId + " not found in current playlist");
+            } else {
+                play(playlist, mediaPosition, false);
             }
         }
     }

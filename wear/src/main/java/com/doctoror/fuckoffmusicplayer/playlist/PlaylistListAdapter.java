@@ -22,6 +22,7 @@ import com.doctoror.fuckoffmusicplayer.base.TwoLineItemViewHolder;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
 /**
@@ -31,19 +32,31 @@ import android.view.ViewGroup;
 final class PlaylistListAdapter extends BaseRecyclerAdapter
         <ProtoPlaybackData.Media, TwoLineItemViewHolder> {
 
+    interface OnMediaClickListener {
+        void onMediaClick(long id);
+    }
+
+    private OnMediaClickListener mListener;
+
     PlaylistListAdapter(@NonNull final Context context) {
         super(context);
     }
 
-    private void onTrackClick(final int position) {
-        // TODO
+    void setOnMediaClickListener(@Nullable final OnMediaClickListener listener) {
+        mListener = listener;
+    }
+
+    private void onMediaClick(final long mediaId) {
+        if (mListener != null) {
+            mListener.onMediaClick(mediaId);
+        }
     }
 
     @Override
     public TwoLineItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final TwoLineItemViewHolder vh = new TwoLineItemViewHolder(
                 getLayoutInflater().inflate(R.layout.list_item_two_line, parent, false));
-        vh.itemView.setOnClickListener(v -> onTrackClick(vh.getAdapterPosition()));
+        vh.itemView.setOnClickListener(v -> onMediaClick(getItem(vh.getAdapterPosition()).id));
         return vh;
     }
 
