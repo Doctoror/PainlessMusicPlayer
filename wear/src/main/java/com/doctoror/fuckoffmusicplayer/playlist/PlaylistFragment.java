@@ -15,17 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.RemoteControl;
-import com.doctoror.fuckoffmusicplayer.base.GoogleApiFragment;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.root.RootActivity;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -49,13 +47,11 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 17.11.16.
  */
 
-public final class PlaylistFragment extends GoogleApiFragment {
+public final class PlaylistFragment extends Fragment {
 
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private final PlaylistFragmentModel mModel = new PlaylistFragmentModel();
-
-    private final RemoteControl mRemoteControl = new RemoteControl();
 
     private MediaHolder mMediaHolder;
     private PlaylistHolder mPlaylistHolder;
@@ -102,18 +98,8 @@ public final class PlaylistFragment extends GoogleApiFragment {
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
     }
 
-    @Override
-    public void onGoogleApiClientConnected(@NonNull final GoogleApiClient client) {
-        mRemoteControl.onGoogleApiClientConnected(getActivity(), client);
-    }
-
-    @Override
-    public void onGoogleApiClientDisconnected() {
-        mRemoteControl.onGoogleApiClientDisconnected();
-    }
-
     private void playMediaFromPlaylist(final long mediaId) {
-        mRemoteControl.playMediaFromPlaylist(mediaId);
+        RemoteControl.getInstance().playMediaFromPlaylist(mediaId);
         final Activity activity = getActivity();
         if (activity instanceof RootActivity) {
             ((RootActivity) activity).goToNowPlaying();

@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.root;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 
 /**
@@ -26,11 +26,11 @@ import android.support.annotation.Nullable;
 
 public final class RootActivityModel {
 
-    private final ObservableInt mAnimatorChild = new ObservableInt();
     private final ObservableField<CharSequence> mMessage = new ObservableField<>();
+    private final ObservableField<Drawable> mMessageDrawableTop = new ObservableField<>();
 
-    private final ObservableBoolean mProgressVisible = new ObservableBoolean();
     private final ObservableBoolean mFixButtonVisible = new ObservableBoolean();
+    private final ObservableBoolean mHandheldConnected = new ObservableBoolean();
 
     public ObservableBoolean isFixButtonVisible() {
         return mFixButtonVisible;
@@ -38,22 +38,6 @@ public final class RootActivityModel {
 
     public void setFixButtonVisible(final boolean visible) {
         mFixButtonVisible.set(visible);
-    }
-
-    public ObservableBoolean isProgressVisible() {
-        return mProgressVisible;
-    }
-
-    public void setProgressVisible(final boolean visible) {
-        mProgressVisible.set(visible);
-    }
-
-    public ObservableInt getAnimatorChild() {
-        return mAnimatorChild;
-    }
-
-    public void setAnimatorChild(final int child) {
-        mAnimatorChild.set(child);
     }
 
     public ObservableField<CharSequence> getMessage() {
@@ -64,4 +48,19 @@ public final class RootActivityModel {
         mMessage.set(message);
     }
 
+    public ObservableBoolean isHandheldConnected() {
+        return mHandheldConnected;
+    }
+
+    public void setHandheldConnected(final boolean connected) {
+        mHandheldConnected.set(connected);
+    }
+
+    public ObservableField<Drawable> getMessageDrawableTop() {
+        return mMessageDrawableTop;
+    }
+
+    void setMessageDrawableTop(@Nullable final Drawable drawable) {
+        mMessageDrawableTop.set(drawable);
+    }
 }

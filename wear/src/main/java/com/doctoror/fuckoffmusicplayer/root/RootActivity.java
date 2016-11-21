@@ -19,9 +19,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.FragmentAwareActivity;
-import com.doctoror.fuckoffmusicplayer.base.GoogleApiFragment;
-import com.doctoror.fuckoffmusicplayer.base.LifecycleNotifierFragment;
+import com.doctoror.fuckoffmusicplayer.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityRootBinding;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingFragment;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFragment;
@@ -36,26 +34,31 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.wearable.activity.WearableActivity;
 import android.view.Gravity;
 import android.widget.Toast;
 
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscription;
 
 /**
  * Created by Yaroslav Mytkalyk on 17.11.16.
  */
 
-public final class RootActivity extends FragmentAwareActivity {
+public final class RootActivity extends WearableActivity {
 
     private static final int REQUEST_CODE_GOOGLE_API = 1;
 
-    private static final int ANIMATOR_CHILD_PRGORESS = 0;
-    private static final int ANIMATOR_CHILD_CONTENT = 1;
-
+    private final RemoteControl mRemoteControl = RemoteControl.getInstance();
     private final RootActivityModel mModelViewState = new RootActivityModel();
     private final Map<String, SoftReference<? extends Fragment>> mFragmentRefs = new HashMap<>();
+
+    private Subscription mHandheldTimeoutSubscription;
 
     private GoogleApiClient mGoogleApiClient;
     private ActivityRootBinding mBinding;
@@ -75,6 +78,14 @@ public final class RootActivity extends FragmentAwareActivity {
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_root);
         mBinding.setViewState(mModelViewState);
+
+        mBinding.navigationDrawer.setAdapter(new RootNavigationAdapter(this,
+                this::onNavigationItemSelected));
+        mBinding.drawerLayout.peekDrawer(Gravity.TOP);
+
+        if (savedInstanceState == null) {
+            showFragmentNowPlaying();
+        }
     }
 
     @Override
@@ -86,46 +97,43 @@ public final class RootActivity extends FragmentAwareActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mModelViewState.setHandheldConnected(false);
+        mModelViewState.setFixButtonVisible(false);
+        mModelViewState.setMessageDrawableTop(null);
+        mModelViewState.setMessage(null);
+
         mFragmentTransactionsAllowed = true;
+        mRemoteControl.setPlaybackNodeListener(c -> {
+            if (c) {
+                cancelHandheldConnectionTimer();
+            }
+            mModelViewState.setHandheldConnected(c);
+            mModelViewState.setMessageDrawableTop(null);
+            mModelViewState.setMessage(null);
+        });
         mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        final Fragment fragment = getCurrentFragment();
-        if (fragment instanceof GoogleApiFragment) {
-            ((GoogleApiFragment) fragment).onGoogleApiClientDisconnected();
-        }
+        mRemoteControl.onGoogleApiClientDisconnected();
+        mRemoteControl.setPlaybackNodeListener(null);
         mGoogleApiClient.disconnect();
+        cancelHandheldConnectionTimer();
+    }
+
+    private void cancelHandheldConnectionTimer() {
+        if (mHandheldTimeoutSubscription != null) {
+            mHandheldTimeoutSubscription.unsubscribe();
+            mHandheldTimeoutSubscription = null;
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mBinding = null;
-    }
-
-    private void setViewConnecting() {
-        mModelViewState.setFixButtonVisible(false);
-        mModelViewState.setProgressVisible(true);
-        mModelViewState.setMessage(getText(R.string.Connecting));
-        mModelViewState.setAnimatorChild(ANIMATOR_CHILD_PRGORESS);
-
-        mBinding.navigationDrawer.setAdapter(null);
-    }
-
-    private void setViewConnected() {
-        mModelViewState.setFixButtonVisible(false);
-        mModelViewState.setProgressVisible(false);
-
-        if (mModelViewState.getAnimatorChild().get() != ANIMATOR_CHILD_CONTENT) {
-            mModelViewState.setAnimatorChild(ANIMATOR_CHILD_CONTENT);
-
-            mBinding.navigationDrawer.setAdapter(new RootNavigationAdapter(this,
-                    this::onNavigationItemSelected));
-            mBinding.drawerLayout.peekDrawer(Gravity.TOP);
-        }
     }
 
     private void onNavigationItemSelected(final int id) {
@@ -146,12 +154,6 @@ public final class RootActivity extends FragmentAwareActivity {
     public void goToNowPlaying() {
         if (mBinding != null) {
             mBinding.navigationDrawer.setCurrentItem(0, true);
-        }
-    }
-
-    private void showFragmentIfNone() {
-        if (getCurrentFragment() == null) {
-            showFragmentNowPlaying();
         }
     }
 
@@ -186,23 +188,13 @@ public final class RootActivity extends FragmentAwareActivity {
     }
 
     @Override
-    public void onFragmentStart(@NonNull final LifecycleNotifierFragment fragment) {
-        super.onFragmentStart(fragment);
-        if (mGoogleApiClient.isConnected() && fragment instanceof GoogleApiFragment) {
-            ((GoogleApiFragment) fragment).onGoogleApiClientConnected(mGoogleApiClient);
-        }
-    }
-
-    @Nullable
-    private Fragment getCurrentFragment() {
-        return getFragmentManager().findFragmentById(R.id.content);
-    }
-
-    @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
             final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_GOOGLE_API && resultCode == RESULT_OK) {
+            mModelViewState.setFixButtonVisible(false);
+            mModelViewState.setMessage(null);
+            mModelViewState.setMessageDrawableTop(null);
             mGoogleApiClient.connect();
         }
     }
@@ -212,23 +204,29 @@ public final class RootActivity extends FragmentAwareActivity {
 
         @Override
         public void onConnected(@Nullable final Bundle bundle) {
-            final Fragment f = getCurrentFragment();
-            if (f instanceof GoogleApiFragment) {
-                ((GoogleApiFragment) f).onGoogleApiClientConnected(mGoogleApiClient);
-            }
-            setViewConnected();
-            showFragmentIfNone();
+            mModelViewState.setHandheldConnected(false);
+            mModelViewState.setFixButtonVisible(false);
+            mModelViewState.setMessageDrawableTop(null);
+            mHandheldTimeoutSubscription = Observable.timer(3, TimeUnit.SECONDS).subscribe(l -> {
+                mModelViewState.setMessage(getText(R.string.Handheld_not_connected));
+                mModelViewState.setMessageDrawableTop(
+                        getDrawable(R.drawable.ic_bluetooth_disabled_white_24dp));
+            });
+            mRemoteControl.onGoogleApiClientConnected(getApplicationContext(), mGoogleApiClient);
         }
 
         @Override
         public void onConnectionSuspended(final int i) {
-            setViewConnecting();
+            mRemoteControl.onGoogleApiClientDisconnected();
+            mModelViewState.setHandheldConnected(false);
+            mModelViewState.setMessageDrawableTop(null);
         }
     };
 
     private final GoogleApiClient.OnConnectionFailedListener mOnConnectionFailedListener
             = connectionResult -> {
-        mModelViewState.setProgressVisible(false);
+        mModelViewState.setMessageDrawableTop(getDrawable(R.drawable.ic_gms_white_48));
+        mModelViewState.setHandheldConnected(false);
         mModelViewState.setMessage(GooglePlayServicesUtil
                 .toHumanReadableMessage(getResources(), connectionResult.getErrorCode()));
         mModelViewState.setFixButtonVisible(connectionResult.hasResolution());
@@ -244,6 +242,5 @@ public final class RootActivity extends FragmentAwareActivity {
                 }
             });
         }
-        mModelViewState.setAnimatorChild(ANIMATOR_CHILD_PRGORESS);
     };
 }

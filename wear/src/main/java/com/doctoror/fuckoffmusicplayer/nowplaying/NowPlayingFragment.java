@@ -15,21 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowPlayingBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
-import com.doctoror.fuckoffmusicplayer.base.GoogleApiFragment;
 
+import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
@@ -37,7 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
-public final class NowPlayingFragment extends GoogleApiFragment {
+public final class NowPlayingFragment extends Fragment {
 
     private final NowPlayingFragmentModelPlaybackState mModelPlaybackState
             = new NowPlayingFragmentModelPlaybackState();
@@ -48,7 +45,7 @@ public final class NowPlayingFragment extends GoogleApiFragment {
     private final NowPlayingFragmentModelMedia mModelMedia
             = new NowPlayingFragmentModelMedia();
 
-    private final RemoteControl mRemoteControl = new RemoteControl();
+    private final RemoteControl mRemoteControl = RemoteControl.getInstance();
 
     private MediaHolder mMediaHolder;
 
@@ -89,7 +86,6 @@ public final class NowPlayingFragment extends GoogleApiFragment {
     @Override
     public void onStop() {
         super.onStop();
-        onGoogleApiClientDisconnected();
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
     }
 
@@ -135,16 +131,6 @@ public final class NowPlayingFragment extends GoogleApiFragment {
             mModelPlaybackState
                     .setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
         }
-    }
-
-    @Override
-    public void onGoogleApiClientConnected(@NonNull final GoogleApiClient client) {
-        mRemoteControl.onGoogleApiClientConnected(getActivity(), client);
-    }
-
-    @Override
-    public void onGoogleApiClientDisconnected() {
-        mRemoteControl.onGoogleApiClientDisconnected();
     }
 
     private final class OnSeekBarChangeListenerImpl implements SeekBar.OnSeekBarChangeListener {

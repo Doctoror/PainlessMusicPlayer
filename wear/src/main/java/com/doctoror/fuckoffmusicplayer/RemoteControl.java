@@ -36,10 +36,31 @@ import java.util.Set;
 
 public final class RemoteControl {
 
+    private static final RemoteControl INSTANCE = new RemoteControl();
+
+    @NonNull
+    public static RemoteControl getInstance() {
+        return INSTANCE;
+    }
+
     private final Object mCapabilityLock = new Object();
+
+    public interface PlaybackNodeListener {
+        void onNodeConnectionStateChanged(boolean nodeConnected);
+    }
 
     private String mPlaybackControlNodeId;
     private GoogleApiClient mGoogleApiClient;
+
+    private PlaybackNodeListener mPlaybackNodeListener;
+
+    private RemoteControl() {
+
+    }
+
+    public void setPlaybackNodeListener(@Nullable final PlaybackNodeListener playbackNodeListener) {
+        mPlaybackNodeListener = playbackNodeListener;
+    }
 
     public void onGoogleApiClientConnected(@NonNull final Context context,
             @NonNull final GoogleApiClient googleApiClient) {
@@ -60,6 +81,12 @@ public final class RemoteControl {
         if (mGoogleApiClient != null) {
             Wearable.CapabilityApi.removeListener(mGoogleApiClient, mCapabilityListener);
             mGoogleApiClient = null;
+        }
+        if (mPlaybackControlNodeId != null && mPlaybackNodeListener != null) {
+            mPlaybackNodeListener.onNodeConnectionStateChanged(false);
+        }
+        synchronized (mCapabilityLock) {
+            mPlaybackControlNodeId = null;
         }
     }
 
@@ -99,8 +126,12 @@ public final class RemoteControl {
 
     private void updateRemoteControlCapability(@Nullable final CapabilityInfo capabilityInfo) {
         if (capabilityInfo != null) {
+            final String playbackNodeId = pickBestNodeId(capabilityInfo.getNodes());
+            if (playbackNodeId != null && mPlaybackControlNodeId == null) {
+                mPlaybackNodeListener.onNodeConnectionStateChanged(true);
+            }
             synchronized (mCapabilityLock) {
-                mPlaybackControlNodeId = pickBestNodeId(capabilityInfo.getNodes());
+                mPlaybackControlNodeId = playbackNodeId;
             }
         }
     }

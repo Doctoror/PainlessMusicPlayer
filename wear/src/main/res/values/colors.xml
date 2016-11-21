@@ -2,5 +2,6 @@
 <resources>
 
     <color name="translucentBackground">#A0000000</color>
+    <color name="translucentBackgroundDarker">#CC000000</color>
 
 </resources>

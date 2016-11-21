@@ -16,5 +16,6 @@
 
     <string name="Fix">Fix</string>
     <string name="Start_playing">Start playing</string>
+    <string name="Handheld_not_connected">Handheld not connected</string>
 
 </resources>
