@@ -41,10 +41,6 @@ import android.widget.Toast;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import rx.Observable;
-import rx.Subscription;
 
 /**
  * Created by Yaroslav Mytkalyk on 17.11.16.
@@ -57,8 +53,6 @@ public final class RootActivity extends WearableActivity {
     private final RemoteControl mRemoteControl = RemoteControl.getInstance();
     private final RootActivityModel mModelViewState = new RootActivityModel();
     private final Map<String, SoftReference<? extends Fragment>> mFragmentRefs = new HashMap<>();
-
-    private Subscription mHandheldTimeoutSubscription;
 
     private GoogleApiClient mGoogleApiClient;
     private ActivityRootBinding mBinding;
@@ -104,12 +98,15 @@ public final class RootActivity extends WearableActivity {
 
         mFragmentTransactionsAllowed = true;
         mRemoteControl.setPlaybackNodeListener(c -> {
-            if (c) {
-                cancelHandheldConnectionTimer();
-            }
             mModelViewState.setHandheldConnected(c);
-            mModelViewState.setMessageDrawableTop(null);
-            mModelViewState.setMessage(null);
+            if (c) {
+                mModelViewState.setMessageDrawableTop(null);
+                mModelViewState.setMessage(null);
+            } else {
+                mModelViewState.setMessageDrawableTop(
+                        getDrawable(R.drawable.ic_bluetooth_disabled_white_24dp));
+                mModelViewState.setMessage(getText(R.string.Handheld_not_connected));
+            }
         });
         mGoogleApiClient.connect();
     }
@@ -120,14 +117,6 @@ public final class RootActivity extends WearableActivity {
         mRemoteControl.onGoogleApiClientDisconnected();
         mRemoteControl.setPlaybackNodeListener(null);
         mGoogleApiClient.disconnect();
-        cancelHandheldConnectionTimer();
-    }
-
-    private void cancelHandheldConnectionTimer() {
-        if (mHandheldTimeoutSubscription != null) {
-            mHandheldTimeoutSubscription.unsubscribe();
-            mHandheldTimeoutSubscription = null;
-        }
     }
 
     @Override
@@ -207,11 +196,6 @@ public final class RootActivity extends WearableActivity {
             mModelViewState.setHandheldConnected(false);
             mModelViewState.setFixButtonVisible(false);
             mModelViewState.setMessageDrawableTop(null);
-            mHandheldTimeoutSubscription = Observable.timer(3, TimeUnit.SECONDS).subscribe(l -> {
-                mModelViewState.setMessage(getText(R.string.Handheld_not_connected));
-                mModelViewState.setMessageDrawableTop(
-                        getDrawable(R.drawable.ic_bluetooth_disabled_white_24dp));
-            });
             mRemoteControl.onGoogleApiClientConnected(getApplicationContext(), mGoogleApiClient);
         }
 

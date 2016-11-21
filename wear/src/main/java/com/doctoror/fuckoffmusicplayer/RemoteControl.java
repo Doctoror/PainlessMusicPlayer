@@ -127,9 +127,7 @@ public final class RemoteControl {
     private void updateRemoteControlCapability(@Nullable final CapabilityInfo capabilityInfo) {
         if (capabilityInfo != null) {
             final String playbackNodeId = pickBestNodeId(capabilityInfo.getNodes());
-            if (playbackNodeId != null && mPlaybackControlNodeId == null) {
-                mPlaybackNodeListener.onNodeConnectionStateChanged(true);
-            }
+            mPlaybackNodeListener.onNodeConnectionStateChanged(playbackNodeId != null);
             synchronized (mCapabilityLock) {
                 mPlaybackControlNodeId = playbackNodeId;
             }
