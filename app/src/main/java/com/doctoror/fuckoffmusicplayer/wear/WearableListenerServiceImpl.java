@@ -8,6 +8,7 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 
 /**
  * Created by Yaroslav Mytkalyk on 15.11.16.
@@ -45,6 +46,15 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 if (data != null && data.length == 8) {
                     final long mediaId = ByteBuffer.wrap(data).getLong();
                     PlaybackService.playMediaFromPlaylist(this, mediaId);
+                }
+                break;
+            }
+
+            case DataPaths.Messages.SEARCH: {
+                final byte[] data = messageEvent.getData();
+                if (data != null) {
+                    final String query = new String(data, Charset.forName("UTF-8"));
+                    WearSearchProviderService.search(this, query);
                 }
                 break;
             }

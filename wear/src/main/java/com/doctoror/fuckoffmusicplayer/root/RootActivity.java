@@ -19,10 +19,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.RemoteControl;
+import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityRootBinding;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingFragment;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFragment;
+import com.doctoror.fuckoffmusicplayer.search.SearchFragment;
 import com.doctoror.fuckoffmusicplayer.util.GooglePlayServicesUtil;
 
 import android.app.Fragment;
@@ -104,7 +105,7 @@ public final class RootActivity extends WearableActivity {
                 mModelViewState.setMessage(null);
             } else {
                 mModelViewState.setMessageDrawableTop(
-                        getDrawable(R.drawable.ic_bluetooth_disabled_white_24dp));
+                        getDrawable(R.drawable.ic_bluetooth_disabled_white_48dp));
                 mModelViewState.setMessage(getText(R.string.Handheld_not_connected));
             }
         });
@@ -135,6 +136,10 @@ public final class RootActivity extends WearableActivity {
                 showFragmentPlaylist();
                 break;
 
+            case RootNavigationAdapter.ID_SEARCH:
+                showFragmentSearch();
+                break;
+
             default:
                 break;
         }
@@ -152,6 +157,10 @@ public final class RootActivity extends WearableActivity {
 
     private void showFragmentPlaylist() {
         showFragment(PlaylistFragment.class.getCanonicalName());
+    }
+
+    private void showFragmentSearch() {
+        showFragment(SearchFragment.class.getCanonicalName());
     }
 
     private void showFragment(@NonNull final String fname) {

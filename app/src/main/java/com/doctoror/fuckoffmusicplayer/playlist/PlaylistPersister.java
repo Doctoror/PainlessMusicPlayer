@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.commons.util.ProtoPersister;
+import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.playlist.nano.PersistablePlaylist;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
@@ -55,12 +55,12 @@ final class PlaylistPersister {
 
     private static void persist(@NonNull final Context context,
             @NonNull final PersistablePlaylist.ProtoPlaylist pp) {
-        ProtoPersister.writeToFile(context, FILE_NAME, pp);
+        ProtoUtils.writeToFile(context, FILE_NAME, pp);
     }
 
     static void read(@NonNull final Context context,
             @NonNull final PlaylistHolder playlist) {
-        final PersistablePlaylist.ProtoPlaylist protoPlaylist = ProtoPersister
+        final PersistablePlaylist.ProtoPlaylist protoPlaylist = ProtoUtils
                 .readFromFile(context, FILE_NAME, new PersistablePlaylist.ProtoPlaylist());
         if (protoPlaylist != null) {
             readFromProtoPlaylist(protoPlaylist, playlist);

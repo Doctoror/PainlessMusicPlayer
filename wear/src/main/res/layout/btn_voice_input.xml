@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/btnInput"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:background="@drawable/bg_action_button_48dp"
+    android:src="@drawable/ic_keyboard_voice_white_24dp"
+    tools:layout_gravity="center"
+    tools:ignore="ContentDescription"/>

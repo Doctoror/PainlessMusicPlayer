@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer;
+package com.doctoror.fuckoffmusicplayer.remote;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,6 +21,7 @@ import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.DataItemAsset;
+import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
 import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
@@ -29,6 +30,7 @@ import com.doctoror.commons.util.ByteStreams;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 
@@ -56,6 +58,26 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .build();
+    }
+
+    @Override
+    public void onMessageReceived(final MessageEvent messageEvent) {
+        super.onMessageReceived(messageEvent);
+        switch (messageEvent.getPath()) {
+            case DataPaths.Messages.SEARCH_RESULT:
+                final byte[] data = messageEvent.getData();
+                if (data != null && data.length != 0) {
+                    final WearSearchData.Results searchResults;
+                    try {
+                        searchResults = WearSearchData.Results.parseFrom(data);
+                    } catch (InvalidProtocolBufferNanoException e) {
+                        Log.w(TAG, e);
+                        break;
+                    }
+                    SearchResultsObservable.getInstance().onSearchResultsReceived(searchResults);
+                }
+                break;
+        }
     }
 
     @Override

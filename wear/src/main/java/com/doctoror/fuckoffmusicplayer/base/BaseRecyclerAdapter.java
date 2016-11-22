@@ -105,4 +105,9 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         }
         notifyDataSetChanged();
     }
+
+    @NonNull
+    protected final List<T> getMutableItems() {
+        return mItems;
+    }
 }

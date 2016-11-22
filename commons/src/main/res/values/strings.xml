@@ -1,6 +1,11 @@
 <resources>
 
-    <string translatable="false" name="wear_capability_playback_control">playback_control</string>
+    <string translatable="false" name="wear_capability_playback_control">
+        fomp_wear_playback_control
+    </string>
+
+    <string translatable="false" name="wear_capability_search_receiver">fomp_wear_search_receiver
+    </string>
 
     <string name="app_name">Commons</string>
 

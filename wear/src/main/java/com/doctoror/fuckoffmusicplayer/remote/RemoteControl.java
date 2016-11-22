@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer;
+package com.doctoror.fuckoffmusicplayer.remote;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.CapabilityApi;
@@ -22,12 +22,14 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 
 import com.doctoror.commons.wear.DataPaths;
+import com.doctoror.fuckoffmusicplayer.R;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Set;
 
 /**
@@ -110,6 +112,11 @@ public final class RemoteControl {
     public void playMediaFromPlaylist(final long mediaId) {
         sendMessageIfPossible(DataPaths.Messages.PLAY_FROM_PLAYLIST,
                 ByteBuffer.allocate(8).putLong(mediaId).array());
+    }
+
+    public void search(@NonNull final String query) {
+        sendMessageIfPossible(DataPaths.Messages.SEARCH,
+                query.getBytes(Charset.forName("UTF-8")));
     }
 
     private void sendMessageIfPossible(@NonNull final String path,

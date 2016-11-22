@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.media;
 
-import com.doctoror.commons.util.ProtoPersister;
+import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 
 import android.content.Context;
@@ -42,7 +42,7 @@ final class MediaPersister {
 
     static void persistPlaybackState(@NonNull final Context context,
             @NonNull final ProtoPlaybackData.PlaybackState ps) {
-        ProtoPersister.writeToFile(context, FILE_NAME_PLAYBACK_STATE, ps);
+        ProtoUtils.writeToFile(context, FILE_NAME_PLAYBACK_STATE, ps);
     }
 
     static void deleteMedia(@NonNull final Context context) {
@@ -55,23 +55,23 @@ final class MediaPersister {
 
     static void persistMedia(@NonNull final Context context,
             @NonNull final ProtoPlaybackData.Media ps) {
-        ProtoPersister.writeToFile(context, FILE_NAME_MEDIA, ps);
+        ProtoUtils.writeToFile(context, FILE_NAME_MEDIA, ps);
     }
 
     @Nullable
     static ProtoPlaybackData.PlaybackState readPlaybackState(@NonNull final Context context) {
-        return ProtoPersister.readFromFile(context, FILE_NAME_PLAYBACK_STATE,
+        return ProtoUtils.readFromFile(context, FILE_NAME_PLAYBACK_STATE,
                 new ProtoPlaybackData.PlaybackState());
     }
 
     @Nullable
     static ProtoPlaybackData.Media readMedia(@NonNull final Context context) {
-        return ProtoPersister.readFromFile(context, FILE_NAME_MEDIA, new ProtoPlaybackData.Media());
+        return ProtoUtils.readFromFile(context, FILE_NAME_MEDIA, new ProtoPlaybackData.Media());
     }
 
     static void persistAlbumArt(@NonNull final Context context,
             @Nullable final byte[] albumArt) {
-        ProtoPersister.writeOrDeletePrivateFile(context, FILE_NAME_MEDIA_ART, albumArt);
+        ProtoUtils.writeOrDeletePrivateFile(context, FILE_NAME_MEDIA_ART, albumArt);
     }
 
     @Nullable

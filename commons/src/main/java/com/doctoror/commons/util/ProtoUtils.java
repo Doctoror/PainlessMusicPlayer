@@ -31,20 +31,26 @@ import java.io.OutputStream;
  * Created by Yaroslav Mytkalyk on 15.11.16.
  */
 
-public final class ProtoPersister {
+public final class ProtoUtils {
 
     private static final String TAG = "ProtoPersister";
 
-    private ProtoPersister() {
+    private ProtoUtils() {
         throw new UnsupportedOperationException();
+    }
+
+    public static byte[] toByteArray( @NonNull final MessageNano messageNano) throws IOException {
+        final byte[] output = new byte[messageNano.getCachedSize()];
+        messageNano.writeTo(CodedOutputByteBufferNano.newInstance(output));
+        return output;
     }
 
     public static void writeToFile(@NonNull final Context context,
             @NonNull final String fileName,
             @NonNull final MessageNano messageNano) {
-        final byte[] output = new byte[messageNano.getCachedSize()];
+        final byte[] output;
         try {
-            messageNano.writeTo(CodedOutputByteBufferNano.newInstance(output));
+            output = toByteArray(messageNano);
         } catch (IOException e) {
             Log.w(TAG, e);
             return;

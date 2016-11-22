@@ -18,4 +18,14 @@
     <string name="Start_playing">Start playing</string>
     <string name="Handheld_not_connected">Handheld not connected</string>
 
+    <string name="Search_for_artists_albums_and_songs">Search for artists, albums and songs</string>
+    <string name="No_media_found_for_s">No media found for “%1$s”</string>
+    <string name="Speech_recognition_not_supported">Speech recognition not supported</string>
+    <string name="Search">Search</string>
+    <string name="Searching">Searching</string>
+
+    <string name="Albums">Albums</string>
+    <string name="Artists">Artists</string>
+    <string name="Tracks">Tracks</string>
+
 </resources>

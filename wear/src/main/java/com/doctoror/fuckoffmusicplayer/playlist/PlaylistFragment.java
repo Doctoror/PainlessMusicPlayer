@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.wear.nano.ProtoPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.RemoteControl;
+import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.root.RootActivity;

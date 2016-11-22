@@ -42,6 +42,8 @@ public final class DataPaths {
         public static final String PREV = "/message/prev";
         public static final String NEXT = "/message/next";
         public static final String SEEK = "/message/seek";
+        public static final String SEARCH = "/message/search";
+        public static final String SEARCH_RESULT = "/message/search_result";
     }
 
 }

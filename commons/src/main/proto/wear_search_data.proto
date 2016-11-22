@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option java_package = "com.doctoror.commons.wear";
+
+message Results {
+  repeated Album albums = 1;
+  repeated Artist artists = 2;
+  repeated Track tracks = 3;
+}
+
+message Artist {
+  int64 id = 1;
+  string title = 2;
+}
+
+message Album {
+  int64 id = 1;
+  string title = 2;
+}
+
+message Track {
+  int64 id = 1;
+  string title = 2;
+}

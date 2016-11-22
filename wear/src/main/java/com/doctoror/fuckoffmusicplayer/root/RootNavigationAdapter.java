@@ -36,9 +36,10 @@ final class RootNavigationAdapter
 
     static final int ID_NOW_PLAYING = 0;
     static final int ID_PLAYLIST = 1;
+    static final int ID_SEARCH = 2;
 
     @NonNull
-    private final Item[] mItems = new Item[2];
+    private final Item[] mItems = new Item[3];
 
     @NonNull
     private final OnItemSelectedListener mOnItemSelectedListener;
@@ -50,6 +51,9 @@ final class RootNavigationAdapter
 
         mItems[1] = new Item(ID_PLAYLIST, context.getString(R.string.Playlist),
                 context.getDrawable(R.drawable.ic_playlist_play_white_24dp));
+
+        mItems[2] = new Item(ID_SEARCH, context.getString(R.string.Search),
+                context.getDrawable(R.drawable.ic_search_white_24dp));
 
         mOnItemSelectedListener = listener;
     }
