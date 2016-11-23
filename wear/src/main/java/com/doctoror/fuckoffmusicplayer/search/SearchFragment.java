@@ -12,7 +12,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -24,7 +23,6 @@ import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -102,6 +100,14 @@ public final class SearchFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mBtnInput != null) {
+            mBtnInput.setClickable(true);
+        }
+    }
+
     private void findViews() {
         mBtnInput = mSceneRoot.findViewById(R.id.btnInput);
         mListView = (RecyclerView) mSceneRoot.findViewById(android.R.id.list);
@@ -109,6 +115,7 @@ public final class SearchFragment extends Fragment {
     }
 
     private void bindViews() {
+        mBtnInput.setClickable(true);
         mBtnInput.setOnClickListener(mOnInputClickListener);
         if (mListView != null) {
             mListView.clearOnScrollListeners();
@@ -181,6 +188,7 @@ public final class SearchFragment extends Fragment {
                 .queryIntentActivities(intent, 0);
         if (resolveInfos != null && !resolveInfos.isEmpty()) {
             mSearchQuery = null;
+            mBtnInput.setClickable(false);
             startActivityForResult(intent, REQUEST_CODE_SPEECH);
         } else {
             if (mToastSpeechNotSupported == null) {
