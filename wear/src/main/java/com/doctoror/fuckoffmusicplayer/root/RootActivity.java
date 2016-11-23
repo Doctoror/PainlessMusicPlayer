@@ -113,6 +113,12 @@ public final class RootActivity extends WearableActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mFragmentTransactionsAllowed = true;
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         mRemoteControl.onGoogleApiClientDisconnected();

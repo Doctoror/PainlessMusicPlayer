@@ -2,6 +2,7 @@ package com.doctoror.fuckoffmusicplayer.search;
 
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.remote.SearchResultsObservable;
 
 import android.app.Activity;
@@ -166,6 +167,7 @@ public final class SearchFragment extends Fragment {
         final List<ResolveInfo> resolveInfos = getActivity().getPackageManager()
                 .queryIntentActivities(intent, 0);
         if (resolveInfos != null && !resolveInfos.isEmpty()) {
+            mSearchQuery = null;
             startActivityForResult(intent, REQUEST_CODE_SPEECH);
         } else {
             if (mToastSpeechNotSupported == null) {
@@ -183,8 +185,20 @@ public final class SearchFragment extends Fragment {
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_SPEECH && resultCode == Activity.RESULT_OK) {
+            final List<String> results = data
+                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (results != null && !results.isEmpty()) {
+                mSearchQuery = results.get(0);
+            }
+            RemoteControl.getInstance().search(mSearchQuery);
             mSearchResults = null;
             mSearching = true;
+            bindScene();
+        } else if (requestCode == REQUEST_CODE_SPEECH) {
+            // TODO REMOVE THIS IF ABOVE
+            mSearchQuery = "Death";
+            mSearching = true;
+            RemoteControl.getInstance().search(mSearchQuery);
             bindScene();
         }
     }
@@ -193,9 +207,11 @@ public final class SearchFragment extends Fragment {
 
         @Override
         public void update(final Observable observable, final Object o) {
-            mSearchResults = (WearSearchData.Results) o;
-            mSearching = false;
-            bindScene();
+            getActivity().runOnUiThread(() -> {
+                mSearchResults = (WearSearchData.Results) o;
+                mSearching = false;
+                bindScene();
+            });
         }
     };
 
