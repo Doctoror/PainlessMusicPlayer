@@ -10,7 +10,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -53,6 +52,7 @@ public final class SearchFragment extends Fragment {
     private RecyclerView mListView;
     private SearchResultsAdapter mAdapter;
 
+    private boolean mBtnSearchVisible = true;
     private boolean mSearching;
     private String mSearchQuery;
 
@@ -212,6 +212,21 @@ public final class SearchFragment extends Fragment {
         }
     }
 
+    private void showBtnSearch() {
+        if (!mBtnSearchVisible) {
+            mBtnSearchVisible = true;
+            mBtnInput.animate().scaleX(1f).scaleY(1f).start();
+
+        }
+    }
+
+    private void hideBtnSearch() {
+        if (mBtnSearchVisible) {
+            mBtnSearchVisible = false;
+            mBtnInput.animate().scaleX(0f).scaleY(0f).start();
+        }
+    }
+
     private final Observer mSearchResultsObserver = new Observer() {
 
         @Override
@@ -248,10 +263,12 @@ public final class SearchFragment extends Fragment {
                 } else if (-dy > mThreshold) {
                     targetVisibility = View.VISIBLE;
                 }
-                //noinspection WrongConstant
-                if (targetVisibility != -1 && mBtnInput.getVisibility() != targetVisibility) {
-                    //noinspection WrongConstant
-                    mBtnInput.setVisibility(targetVisibility);
+                if (targetVisibility != -1) {
+                    if (targetVisibility == View.VISIBLE) {
+                        showBtnSearch();
+                    } else {
+                        hideBtnSearch();
+                    }
                 }
             }
         }
