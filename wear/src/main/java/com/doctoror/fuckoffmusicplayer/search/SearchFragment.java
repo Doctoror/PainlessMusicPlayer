@@ -5,11 +5,14 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.remote.SearchResultsObservable;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -21,6 +24,7 @@ import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -215,7 +219,9 @@ public final class SearchFragment extends Fragment {
     private void showBtnSearch() {
         if (!mBtnSearchVisible) {
             mBtnSearchVisible = true;
-            mBtnInput.animate().scaleX(1f).scaleY(1f).start();
+            mBtnInput.animate().scaleX(1f).scaleY(1f)
+                    .setListener(mAnimatorListenerBtnInputReveal)
+                    .start();
 
         }
     }
@@ -223,9 +229,33 @@ public final class SearchFragment extends Fragment {
     private void hideBtnSearch() {
         if (mBtnSearchVisible) {
             mBtnSearchVisible = false;
-            mBtnInput.animate().scaleX(0f).scaleY(0f).start();
+            mBtnInput.animate().scaleX(0f).scaleY(0f)
+                    .setListener(mAnimatorListenerBtnInputHide)
+                    .start();
         }
     }
+
+    private final Animator.AnimatorListener mAnimatorListenerBtnInputReveal
+            = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationStart(final Animator animation) {
+            super.onAnimationStart(animation);
+            if (mBtnInput != null) {
+                mBtnInput.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+    private final Animator.AnimatorListener mAnimatorListenerBtnInputHide
+            = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(final Animator animation) {
+            super.onAnimationEnd(animation);
+            if (mBtnInput != null) {
+                mBtnInput.setVisibility(View.GONE);
+            }
+        }
+    };
 
     private final Observer mSearchResultsObserver = new Observer() {
 

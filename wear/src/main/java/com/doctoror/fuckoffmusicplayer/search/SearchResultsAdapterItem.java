@@ -8,7 +8,7 @@ abstract class SearchResultsAdapterItem {
 
     private CharSequence mTitle;
 
-    public SearchResultsAdapterItem(final CharSequence title) {
+    SearchResultsAdapterItem(final CharSequence title) {
         mTitle = title;
     }
 

@@ -4,7 +4,7 @@
     android:id="@+id/btnInput"
     android:layout_width="48dp"
     android:layout_height="48dp"
-    android:background="@drawable/bg_action_button_48dp"
+    android:background="@drawable/bg_action_button_ripple"
     android:src="@drawable/ic_keyboard_voice_white_24dp"
     tools:layout_gravity="center"
     tools:ignore="ContentDescription"/>

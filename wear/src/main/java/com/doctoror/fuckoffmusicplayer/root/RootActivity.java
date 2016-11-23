@@ -107,6 +107,11 @@ public final class RootActivity extends WearableActivity {
                 mModelViewState.setMessageDrawableTop(
                         getDrawable(R.drawable.ic_bluetooth_disabled_white_48dp));
                 mModelViewState.setMessage(getText(R.string.Handheld_not_connected));
+
+                // Do not allow search when disconnected
+                if (getCurrentFragment() instanceof SearchFragment) {
+                    showFragmentNowPlaying();
+                }
             }
         });
         mGoogleApiClient.connect();
@@ -130,6 +135,10 @@ public final class RootActivity extends WearableActivity {
     protected void onDestroy() {
         super.onDestroy();
         mBinding = null;
+    }
+
+    private Fragment getCurrentFragment() {
+        return getFragmentManager().findFragmentById(android.R.id.content);
     }
 
     private void onNavigationItemSelected(final int id) {

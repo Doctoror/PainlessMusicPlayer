@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -31,6 +32,14 @@ final class SearchResultsAdapter
 
     private WearSearchData.Results mResults;
 
+    interface OnItemClickListener {
+        void onAlbumClick(@NonNull WearSearchData.Album album);
+        void onArtistClick(@NonNull WearSearchData.Artist artist);
+        void onTrackClick(@NonNull WearSearchData.Track track);
+    }
+
+    private OnItemClickListener mOnItemClickListener;
+
     SearchResultsAdapter(@NonNull final Context context,
             @Nullable final WearSearchData.Results results) {
         super(context);
@@ -46,6 +55,26 @@ final class SearchResultsAdapter
         if (mResults != results) {
             mResults = results;
             flattenResults(results);
+        }
+    }
+
+    @UiThread
+    public void setOnItemClickListener(@Nullable final OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    private void onItemClick(@NonNull final SearchResultsAdapterItem item) {
+        if (mOnItemClickListener != null) {
+            if (item instanceof SearchResultsAdapterItemAlbum) {
+                mOnItemClickListener.onAlbumClick(
+                        ((SearchResultsAdapterItemAlbum) item).getAlbum());
+            } else if (item instanceof SearchResultsAdapterItemArtist) {
+                mOnItemClickListener.onArtistClick(
+                        ((SearchResultsAdapterItemArtist) item).getArtist());
+            } else if (item instanceof SearchResultsAdapterItemTrack) {
+                mOnItemClickListener.onTrackClick(
+                        ((SearchResultsAdapterItemTrack) item).getTrack());
+            }
         }
     }
 
@@ -96,8 +125,10 @@ final class SearchResultsAdapter
 
     @Override
     public SearchResultsViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        return new SearchResultsViewHolder(getLayoutInflater()
+        final SearchResultsViewHolder vh = new SearchResultsViewHolder(getLayoutInflater()
                 .inflate(R.layout.list_item_search_result, parent, false));
+        vh.itemView.setOnClickListener(v -> onItemClick(getItem(vh.getAdapterPosition())));
+        return vh;
     }
 
     @Override
