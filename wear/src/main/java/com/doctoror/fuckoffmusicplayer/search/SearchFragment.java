@@ -9,6 +9,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
@@ -104,6 +106,10 @@ public final class SearchFragment extends Fragment {
 
     private void bindViews() {
         mBtnInput.setOnClickListener(mOnInputClickListener);
+        if (mListView != null) {
+            mListView.clearOnScrollListeners();
+            mListView.addOnScrollListener(mOnScrollListener);
+        }
     }
 
     private void bindScene() {
@@ -156,6 +162,9 @@ public final class SearchFragment extends Fragment {
     private void goToScene(@NonNull final Scene scene) {
         if (mSceneCurrent != scene) {
             mSceneCurrent = scene;
+            if (mListView != null) {
+                mListView.clearOnScrollListeners();
+            }
             TransitionManager.go(scene, mDefaultTransition);
         }
     }
@@ -212,6 +221,39 @@ public final class SearchFragment extends Fragment {
                 mSearching = false;
                 bindScene();
             });
+        }
+    };
+
+    private final RecyclerView.OnScrollListener mOnScrollListener
+            = new RecyclerView.OnScrollListener() {
+
+        private final int mThreshold = (int) (1f * Resources.getSystem()
+                .getDisplayMetrics().density);
+
+        private int mScrollState;
+
+        @Override
+        public void onScrollStateChanged(final RecyclerView recyclerView, final int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            mScrollState = newState;
+        }
+
+        @Override
+        public void onScrolled(final RecyclerView recyclerView, final int dx, final int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (mBtnInput != null && mScrollState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                int targetVisibility = -1; // -1 for unchanged
+                if (dy > mThreshold) {
+                    targetVisibility = View.GONE;
+                } else if (-dy > mThreshold) {
+                    targetVisibility = View.VISIBLE;
+                }
+                //noinspection WrongConstant
+                if (targetVisibility != -1 && mBtnInput.getVisibility() != targetVisibility) {
+                    //noinspection WrongConstant
+                    mBtnInput.setVisibility(targetVisibility);
+                }
+            }
         }
     };
 
