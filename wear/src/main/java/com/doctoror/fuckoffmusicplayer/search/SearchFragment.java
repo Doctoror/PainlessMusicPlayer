@@ -82,8 +82,7 @@ public final class SearchFragment extends Fragment {
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_search, container, false);
         mSceneRoot = (ViewGroup) view.findViewById(R.id.sceneRoot);
-        mSceneMessage = Scene.getSceneForLayout(mSceneRoot, R.layout.fragment_search_message,
-                getActivity());
+        mSceneMessage = new Scene(mSceneRoot, mSceneRoot.getChildAt(0));
         mSceneResults = Scene.getSceneForLayout(mSceneRoot, R.layout.fragment_search_results,
                 getActivity());
         mSceneSearching = Scene.getSceneForLayout(mSceneRoot, R.layout.fragment_search_searching,
@@ -120,6 +119,9 @@ public final class SearchFragment extends Fragment {
         if (mListView != null) {
             mListView.clearOnScrollListeners();
             mListView.addOnScrollListener(mOnScrollListener);
+            if (mAdapter != null) {
+                mListView.setAdapter(mAdapter);
+            }
         }
     }
 
@@ -211,13 +213,14 @@ public final class SearchFragment extends Fragment {
             if (results != null && !results.isEmpty()) {
                 mSearchQuery = results.get(0);
             }
-            RemoteControl.getInstance().search(mSearchQuery);
             mSearchResults = null;
             mSearching = true;
+            RemoteControl.getInstance().search(mSearchQuery);
             bindScene();
         } else if (requestCode == REQUEST_CODE_SPEECH) {
             // TODO REMOVE THIS IF ABOVE
             mSearchQuery = "Death";
+            mSearchResults = null;
             mSearching = true;
             RemoteControl.getInstance().search(mSearchQuery);
             bindScene();
