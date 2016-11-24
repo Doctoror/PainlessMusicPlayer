@@ -82,7 +82,7 @@ public final class SearchFragment extends Fragment {
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_search, container, false);
         mSceneRoot = (ViewGroup) view.findViewById(R.id.sceneRoot);
-        mSceneMessage = new Scene(mSceneRoot, mSceneRoot.getChildAt(0));
+        mSceneMessage = new Scene(mSceneRoot, mSceneRoot.findViewById(R.id.container));
         mSceneResults = Scene.getSceneForLayout(mSceneRoot, R.layout.fragment_search_results,
                 getActivity());
         mSceneSearching = Scene.getSceneForLayout(mSceneRoot, R.layout.fragment_search_searching,
