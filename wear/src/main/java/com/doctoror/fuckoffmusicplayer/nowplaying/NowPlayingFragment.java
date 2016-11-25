@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.commons.util.StringUtils;
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowPlayingBinding;
@@ -89,7 +89,7 @@ public final class NowPlayingFragment extends Fragment {
         mMediaHolder.deleteObserver(mPlaybackInfoObserver);
     }
 
-    private void bindMedia(@Nullable final ProtoPlaybackData.Media media) {
+    private void bindMedia(@Nullable final WearPlaybackData.Media media) {
         if (media != null) {
             mModelMedia.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
                     media.artist, media.album));
@@ -115,7 +115,7 @@ public final class NowPlayingFragment extends Fragment {
         }
     }
 
-    private void bindPlaybackState(@Nullable final ProtoPlaybackData.PlaybackState playbackState) {
+    private void bindPlaybackState(@Nullable final WearPlaybackData.PlaybackState playbackState) {
         if (playbackState != null) {
             bindProgress(playbackState.duration, playbackState.progress);
             mModelViewState.setBtnPlayRes(playbackState.state == PlaybackStateCompat.STATE_PLAYING
@@ -156,7 +156,7 @@ public final class NowPlayingFragment extends Fragment {
             = new MediaHolder.PlaybackInfoObserver() {
 
         @Override
-        public void onMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
+        public void onMediaChanged(@Nullable final WearPlaybackData.Media media) {
             bindMedia(media);
         }
 
@@ -167,7 +167,7 @@ public final class NowPlayingFragment extends Fragment {
 
         @Override
         public void onPlaybackStateChanged(
-                @Nullable final ProtoPlaybackData.PlaybackState playbackState) {
+                @Nullable final WearPlaybackData.PlaybackState playbackState) {
             bindPlaybackState(playbackState);
         }
     };

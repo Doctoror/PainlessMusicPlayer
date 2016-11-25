@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.media;
 
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -56,8 +56,8 @@ public final class MediaHolder {
     private final Context mContext;
 
     private Bitmap mAlbumArt;
-    private ProtoPlaybackData.Media mMedia;
-    private ProtoPlaybackData.PlaybackState mPlaybackState;
+    private WearPlaybackData.Media mMedia;
+    private WearPlaybackData.PlaybackState mPlaybackState;
 
     private MediaHolder(@NonNull final Context context) {
         mContext = context;
@@ -79,7 +79,7 @@ public final class MediaHolder {
     }
 
     @WorkerThread
-    public synchronized void setMedia(@Nullable final ProtoPlaybackData.Media media) {
+    public synchronized void setMedia(@Nullable final WearPlaybackData.Media media) {
         if (mMedia != media) {
             mMedia = media;
             if (media == null) {
@@ -93,7 +93,7 @@ public final class MediaHolder {
 
     @WorkerThread
     public synchronized void setPlaybackState(
-            @Nullable final ProtoPlaybackData.PlaybackState state) {
+            @Nullable final WearPlaybackData.PlaybackState state) {
         if (mPlaybackState != state) {
             mPlaybackState = state;
             if (state == null) {
@@ -106,7 +106,7 @@ public final class MediaHolder {
     }
 
     @Nullable
-    public ProtoPlaybackData.Media getMedia() {
+    public WearPlaybackData.Media getMedia() {
         return mMedia;
     }
 
@@ -116,7 +116,7 @@ public final class MediaHolder {
     }
 
     @Nullable
-    public ProtoPlaybackData.PlaybackState getPlaybackState() {
+    public WearPlaybackData.PlaybackState getPlaybackState() {
         return mPlaybackState;
     }
 
@@ -134,13 +134,13 @@ public final class MediaHolder {
         }
     }
 
-    private void notifyMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
+    private void notifyMediaChanged(@Nullable final WearPlaybackData.Media media) {
         for (final PlaybackInfoObserver observer : mObservers) {
             observer.onMediaChanged(media);
         }
     }
 
-    private void notifyPlaybackStateChanged(@Nullable final ProtoPlaybackData.PlaybackState ps) {
+    private void notifyPlaybackStateChanged(@Nullable final WearPlaybackData.PlaybackState ps) {
         for (final PlaybackInfoObserver observer : mObservers) {
             observer.onPlaybackStateChanged(ps);
         }
@@ -149,10 +149,10 @@ public final class MediaHolder {
     public interface PlaybackInfoObserver {
 
         @WorkerThread
-        void onMediaChanged(@Nullable ProtoPlaybackData.Media media);
+        void onMediaChanged(@Nullable WearPlaybackData.Media media);
 
         @WorkerThread
-        void onPlaybackStateChanged(@Nullable ProtoPlaybackData.PlaybackState playbackState);
+        void onPlaybackStateChanged(@Nullable WearPlaybackData.PlaybackState playbackState);
 
         @WorkerThread
         void onAlbumArtChanged(@Nullable Bitmap albumArt);

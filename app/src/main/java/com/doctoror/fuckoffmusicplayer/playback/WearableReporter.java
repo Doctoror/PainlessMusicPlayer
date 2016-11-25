@@ -9,7 +9,7 @@ import com.google.protobuf.nano.MessageNano;
 
 import com.bumptech.glide.RequestManager;
 import com.doctoror.commons.wear.DataPaths;
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.commons.util.Log;
 
@@ -40,7 +40,7 @@ final class WearableReporter {
             @Nullable final List<Media> playlist) {
         if (googleApiClient.isConnected() && playlist != null && !playlist.isEmpty()) {
             final int size = playlist.size();
-            final ProtoPlaybackData.Media[] wMedias = new ProtoPlaybackData.Media[playlist.size()];
+            final WearPlaybackData.Media[] wMedias = new WearPlaybackData.Media[playlist.size()];
             for (int i = 0; i < size; i++) {
                 wMedias[i] = toWearableData(playlist.get(i), 0, 0);
             }
@@ -48,7 +48,7 @@ final class WearableReporter {
             final PutDataRequest request;
             try {
                 request = PutDataRequest.create(DataPaths.Paths.PLAYLIST);
-                final ProtoPlaybackData.Playlist wPlaylist = new ProtoPlaybackData.Playlist();
+                final WearPlaybackData.Playlist wPlaylist = new WearPlaybackData.Playlist();
                 wPlaylist.media = wMedias;
                 request.setData(messageNanoToBytes(wPlaylist));
             } catch (IOException e) {
@@ -151,10 +151,10 @@ final class WearableReporter {
     }
 
     @NonNull
-    private static ProtoPlaybackData.Media toWearableData(@NonNull final Media media,
+    private static WearPlaybackData.Media toWearableData(@NonNull final Media media,
             final int playlistPosition,
             final long position) {
-        final ProtoPlaybackData.Media m = new ProtoPlaybackData.Media();
+        final WearPlaybackData.Media m = new WearPlaybackData.Media();
         m.id = media.getId();
         m.album = media.getAlbum();
         m.artist = media.getArtist();
@@ -166,11 +166,11 @@ final class WearableReporter {
     }
 
     @NonNull
-    private static ProtoPlaybackData.PlaybackState toPlaybackState(
+    private static WearPlaybackData.PlaybackState toPlaybackState(
             @PlaybackService.State final int state,
             final long duration,
             final long position) {
-        final ProtoPlaybackData.PlaybackState m = new ProtoPlaybackData.PlaybackState();
+        final WearPlaybackData.PlaybackState m = new WearPlaybackData.PlaybackState();
         m.state = MediaSessionReporter.toPlaybackStateCompat(state);
         m.duration = duration;
         m.progress = position;

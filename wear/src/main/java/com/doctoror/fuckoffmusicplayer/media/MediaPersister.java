@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.media;
 
 import com.doctoror.commons.util.ProtoUtils;
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -41,7 +41,7 @@ final class MediaPersister {
     }
 
     static void persistPlaybackState(@NonNull final Context context,
-            @NonNull final ProtoPlaybackData.PlaybackState ps) {
+            @NonNull final WearPlaybackData.PlaybackState ps) {
         ProtoUtils.writeToFile(context, FILE_NAME_PLAYBACK_STATE, ps);
     }
 
@@ -54,19 +54,19 @@ final class MediaPersister {
     }
 
     static void persistMedia(@NonNull final Context context,
-            @NonNull final ProtoPlaybackData.Media ps) {
+            @NonNull final WearPlaybackData.Media ps) {
         ProtoUtils.writeToFile(context, FILE_NAME_MEDIA, ps);
     }
 
     @Nullable
-    static ProtoPlaybackData.PlaybackState readPlaybackState(@NonNull final Context context) {
+    static WearPlaybackData.PlaybackState readPlaybackState(@NonNull final Context context) {
         return ProtoUtils.readFromFile(context, FILE_NAME_PLAYBACK_STATE,
-                new ProtoPlaybackData.PlaybackState());
+                new WearPlaybackData.PlaybackState());
     }
 
     @Nullable
-    static ProtoPlaybackData.Media readMedia(@NonNull final Context context) {
-        return ProtoUtils.readFromFile(context, FILE_NAME_MEDIA, new ProtoPlaybackData.Media());
+    static WearPlaybackData.Media readMedia(@NonNull final Context context) {
+        return ProtoUtils.readFromFile(context, FILE_NAME_MEDIA, new WearPlaybackData.Media());
     }
 
     static void persistAlbumArt(@NonNull final Context context,

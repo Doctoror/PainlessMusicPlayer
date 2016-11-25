@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.base.BaseRecyclerAdapter;
 import com.doctoror.fuckoffmusicplayer.base.TwoLineItemViewHolder;
@@ -30,7 +30,7 @@ import android.view.ViewGroup;
  */
 
 final class PlaylistListAdapter extends BaseRecyclerAdapter
-        <ProtoPlaybackData.Media, TwoLineItemViewHolder> {
+        <WearPlaybackData.Media, TwoLineItemViewHolder> {
 
     interface OnMediaClickListener {
         void onMediaClick(long id);
@@ -62,7 +62,7 @@ final class PlaylistListAdapter extends BaseRecyclerAdapter
 
     @Override
     public void onBindViewHolder(final TwoLineItemViewHolder holder, final int position) {
-        final ProtoPlaybackData.Media item = getItem(position);
+        final WearPlaybackData.Media item = getItem(position);
         holder.text1.setText(item.title);
         holder.text2.setText(item.artist);
     }

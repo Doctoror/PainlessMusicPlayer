@@ -3,7 +3,7 @@
 package com.doctoror.commons.wear.nano;
 
 @SuppressWarnings("hiding")
-public interface ProtoPlaybackData {
+public interface WearPlaybackData {
 
   public static final class PlaybackState extends
       com.google.protobuf.nano.MessageNano {
@@ -311,14 +311,14 @@ public interface ProtoPlaybackData {
     }
 
     // repeated .Media media = 2;
-    public com.doctoror.commons.wear.nano.ProtoPlaybackData.Media[] media;
+    public com.doctoror.commons.wear.nano.WearPlaybackData.Media[] media;
 
     public Playlist() {
       clear();
     }
 
     public Playlist clear() {
-      media = com.doctoror.commons.wear.nano.ProtoPlaybackData.Media.emptyArray();
+      media = com.doctoror.commons.wear.nano.WearPlaybackData.Media.emptyArray();
       cachedSize = -1;
       return this;
     }
@@ -328,7 +328,7 @@ public interface ProtoPlaybackData {
         throws java.io.IOException {
       if (this.media != null && this.media.length > 0) {
         for (int i = 0; i < this.media.length; i++) {
-          com.doctoror.commons.wear.nano.ProtoPlaybackData.Media element = this.media[i];
+          com.doctoror.commons.wear.nano.WearPlaybackData.Media element = this.media[i];
           if (element != null) {
             output.writeMessage(2, element);
           }
@@ -342,7 +342,7 @@ public interface ProtoPlaybackData {
       int size = super.computeSerializedSize();
       if (this.media != null && this.media.length > 0) {
         for (int i = 0; i < this.media.length; i++) {
-          com.doctoror.commons.wear.nano.ProtoPlaybackData.Media element = this.media[i];
+          com.doctoror.commons.wear.nano.WearPlaybackData.Media element = this.media[i];
           if (element != null) {
             size += com.google.protobuf.nano.CodedOutputByteBufferNano
               .computeMessageSize(2, element);
@@ -371,18 +371,18 @@ public interface ProtoPlaybackData {
             int arrayLength = com.google.protobuf.nano.WireFormatNano
                 .getRepeatedFieldArrayLength(input, 18);
             int i = this.media == null ? 0 : this.media.length;
-            com.doctoror.commons.wear.nano.ProtoPlaybackData.Media[] newArray =
-                new com.doctoror.commons.wear.nano.ProtoPlaybackData.Media[i + arrayLength];
+            com.doctoror.commons.wear.nano.WearPlaybackData.Media[] newArray =
+                new com.doctoror.commons.wear.nano.WearPlaybackData.Media[i + arrayLength];
             if (i != 0) {
               java.lang.System.arraycopy(this.media, 0, newArray, 0, i);
             }
             for (; i < newArray.length - 1; i++) {
-              newArray[i] = new com.doctoror.commons.wear.nano.ProtoPlaybackData.Media();
+              newArray[i] = new com.doctoror.commons.wear.nano.WearPlaybackData.Media();
               input.readMessage(newArray[i]);
               input.readTag();
             }
             // Last one without readTag.
-            newArray[i] = new com.doctoror.commons.wear.nano.ProtoPlaybackData.Media();
+            newArray[i] = new com.doctoror.commons.wear.nano.WearPlaybackData.Media();
             input.readMessage(newArray[i]);
             this.media = newArray;
             break;

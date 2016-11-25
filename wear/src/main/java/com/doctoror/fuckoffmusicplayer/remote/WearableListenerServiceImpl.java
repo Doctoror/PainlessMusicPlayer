@@ -29,7 +29,7 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.doctoror.commons.util.ByteStreams;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
@@ -115,7 +115,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
         }
 
         try {
-            final ProtoPlaybackData.Media media = ProtoPlaybackData.Media.parseFrom(data);
+            final WearPlaybackData.Media media = WearPlaybackData.Media.parseFrom(data);
             MediaHolder.getInstance(this).setMedia(media);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, e);
@@ -166,7 +166,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
             return;
         }
         try {
-            final ProtoPlaybackData.PlaybackState s = ProtoPlaybackData.PlaybackState
+            final WearPlaybackData.PlaybackState s = WearPlaybackData.PlaybackState
                     .parseFrom(data);
             MediaHolder.getInstance(this).setPlaybackState(s);
         } catch (InvalidProtocolBufferNanoException e) {
@@ -181,7 +181,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
             return;
         }
         try {
-            final ProtoPlaybackData.Playlist p = ProtoPlaybackData.Playlist.parseFrom(data);
+            final WearPlaybackData.Playlist p = WearPlaybackData.Playlist.parseFrom(data);
             PlaylistHolder.getInstance(this).setPlaylist(p);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, e);

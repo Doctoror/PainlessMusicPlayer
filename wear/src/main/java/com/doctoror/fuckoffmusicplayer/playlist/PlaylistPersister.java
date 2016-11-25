@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.util.ProtoUtils;
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -35,7 +35,7 @@ final class PlaylistPersister {
     }
 
     static void persist(@NonNull final Context context,
-            @Nullable final ProtoPlaybackData.Playlist playlist) {
+            @Nullable final WearPlaybackData.Playlist playlist) {
         if (playlist != null) {
             ProtoUtils.writeToFile(context, FILE_NAME_PLAYLIST, playlist);
         } else {
@@ -44,8 +44,8 @@ final class PlaylistPersister {
     }
 
     @Nullable
-    static ProtoPlaybackData.Playlist read(@NonNull final Context context) {
+    static WearPlaybackData.Playlist read(@NonNull final Context context) {
         return ProtoUtils.readFromFile(context, FILE_NAME_PLAYLIST,
-                new ProtoPlaybackData.Playlist());
+                new WearPlaybackData.Playlist());
     }
 }

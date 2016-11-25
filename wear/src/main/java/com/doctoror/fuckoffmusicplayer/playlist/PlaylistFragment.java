@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
@@ -107,8 +107,8 @@ public final class PlaylistFragment extends Fragment {
     }
 
     @MainThread
-    private void bindPlaylist(@Nullable final ProtoPlaybackData.Playlist playlist,
-            @Nullable final ProtoPlaybackData.Media media) {
+    private void bindPlaylist(@Nullable final WearPlaybackData.Playlist playlist,
+            @Nullable final WearPlaybackData.Media media) {
         mAdapter.setItems(makePlaylist(playlist, media));
         mModel.setIsEmpty(mAdapter.getItemCount() == 0);
         if (mRecyclerView != null && media != null && playlist != null) {
@@ -117,12 +117,12 @@ public final class PlaylistFragment extends Fragment {
     }
 
     @NonNull
-    private static List<ProtoPlaybackData.Media> makePlaylist(
-            @Nullable final ProtoPlaybackData.Playlist playlist,
-            @Nullable final ProtoPlaybackData.Media media) {
-        List<ProtoPlaybackData.Media> p = null;
+    private static List<WearPlaybackData.Media> makePlaylist(
+            @Nullable final WearPlaybackData.Playlist playlist,
+            @Nullable final WearPlaybackData.Media media) {
+        List<WearPlaybackData.Media> p = null;
         if (playlist != null) {
-            final ProtoPlaybackData.Media[] medias = playlist.media;
+            final WearPlaybackData.Media[] medias = playlist.media;
             if (medias != null && medias.length != 0) {
                 p = Arrays.asList(medias);
             }
@@ -147,7 +147,7 @@ public final class PlaylistFragment extends Fragment {
             = new PlaylistHolder.PlaylistObserver() {
 
         @Override
-        public void onPlaylistChanged(@Nullable final ProtoPlaybackData.Playlist playlist) {
+        public void onPlaylistChanged(@Nullable final WearPlaybackData.Playlist playlist) {
             //noinspection WrongThread
             mHandler.post(() -> bindPlaylist(playlist, mMediaHolder.getMedia()));
         }
@@ -157,7 +157,7 @@ public final class PlaylistFragment extends Fragment {
             = new MediaHolder.PlaybackInfoObserver() {
 
         @Override
-        public void onMediaChanged(@Nullable final ProtoPlaybackData.Media media) {
+        public void onMediaChanged(@Nullable final WearPlaybackData.Media media) {
             // If playlist is a fake list of single media, update it
             if (mAdapter.getItemCount() == 1) {
                 //noinspection WrongThread
@@ -167,7 +167,7 @@ public final class PlaylistFragment extends Fragment {
 
         @Override
         public void onPlaybackStateChanged(
-                @Nullable final ProtoPlaybackData.PlaybackState playbackState) {
+                @Nullable final WearPlaybackData.PlaybackState playbackState) {
 
         }
 

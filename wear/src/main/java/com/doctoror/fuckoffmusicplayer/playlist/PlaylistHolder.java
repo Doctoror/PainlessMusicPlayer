@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.commons.wear.nano.ProtoPlaybackData;
+import com.doctoror.commons.wear.nano.WearPlaybackData;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -53,7 +53,7 @@ public final class PlaylistHolder {
     @NonNull
     private final Context mContext;
 
-    private ProtoPlaybackData.Playlist mPlaylist;
+    private WearPlaybackData.Playlist mPlaylist;
 
     private PlaylistHolder(@NonNull final Context context) {
         mContext = context;
@@ -61,7 +61,7 @@ public final class PlaylistHolder {
     }
 
     @WorkerThread
-    public synchronized void setPlaylist(@Nullable final ProtoPlaybackData.Playlist playlist) {
+    public synchronized void setPlaylist(@Nullable final WearPlaybackData.Playlist playlist) {
         if (mPlaylist != playlist) {
             mPlaylist = playlist;
             notifyChanged(playlist);
@@ -70,7 +70,7 @@ public final class PlaylistHolder {
     }
 
     @Nullable
-    public ProtoPlaybackData.Playlist getPlaylist() {
+    public WearPlaybackData.Playlist getPlaylist() {
         return mPlaylist;
     }
 
@@ -82,7 +82,7 @@ public final class PlaylistHolder {
         mObservers.remove(observer);
     }
 
-    private void notifyChanged(@Nullable final ProtoPlaybackData.Playlist playlist) {
+    private void notifyChanged(@Nullable final WearPlaybackData.Playlist playlist) {
         for (final PlaylistObserver observer : mObservers) {
             observer.onPlaylistChanged(playlist);
         }
@@ -91,6 +91,6 @@ public final class PlaylistHolder {
     public interface PlaylistObserver {
 
         @WorkerThread
-        void onPlaylistChanged(@Nullable ProtoPlaybackData.Playlist playlist);
+        void onPlaylistChanged(@Nullable WearPlaybackData.Playlist playlist);
     }
 }
