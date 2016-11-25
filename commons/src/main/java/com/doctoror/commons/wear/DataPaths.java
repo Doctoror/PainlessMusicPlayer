@@ -26,10 +26,19 @@ public final class DataPaths {
     }
 
     public static final class Assets {
+
+        private Assets() {
+            throw new UnsupportedOperationException();
+        }
+
         public static final String ALBUM_ART = "/assets/album/art";
     }
 
     public static final class Paths {
+
+        private Paths() {
+            throw new UnsupportedOperationException();
+        }
 
         public static final String MEDIA = "/playback/media";
         public static final String PLAYBACK_STATE = "/playback/state";
@@ -37,6 +46,11 @@ public final class DataPaths {
     }
 
     public static final class Messages {
+
+        private Messages() {
+            throw new UnsupportedOperationException();
+        }
+
         public static final String PLAY_FROM_PLAYLIST = "/message/play/from_playlist";
         public static final String PLAY_PAUSE = "/message/playpause";
         public static final String PREV = "/message/prev";
@@ -44,6 +58,9 @@ public final class DataPaths {
         public static final String SEEK = "/message/seek";
         public static final String SEARCH = "/message/search";
         public static final String SEARCH_RESULT = "/message/search_result";
+        public static final String PLAY_ALBUM = "/message/play/artist";
+        public static final String PLAY_ARTIST = "/message/play/album";
+        public static final String PLAY_TRACK = "/message/play/track";
     }
 
 }

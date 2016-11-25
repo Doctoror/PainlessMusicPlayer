@@ -156,6 +156,7 @@ public final class SearchFragment extends Fragment {
                 } else {
                     if (mAdapter == null) {
                         mAdapter = new SearchResultsAdapter(getActivity(), mSearchResults);
+                        mAdapter.setOnItemClickListener(mOnItemClickListener);
                         mListView.setAdapter(mAdapter);
                     } else {
                         mAdapter.setResults(mSearchResults);
@@ -280,6 +281,25 @@ public final class SearchFragment extends Fragment {
                 bindProgress();
                 bindScene();
             });
+        }
+    };
+
+    private final SearchResultsAdapter.OnItemClickListener mOnItemClickListener
+            = new SearchResultsAdapter.OnItemClickListener() {
+
+        @Override
+        public void onAlbumClick(@NonNull final WearSearchData.Album album) {
+            RemoteControl.getInstance().playAlbum(album.id);
+        }
+
+        @Override
+        public void onArtistClick(@NonNull final WearSearchData.Artist artist) {
+            RemoteControl.getInstance().playArtist(artist.id);
+        }
+
+        @Override
+        public void onTrackClick(@NonNull final WearSearchData.Track track) {
+            RemoteControl.getInstance().playTrack(track.id);
         }
     };
 

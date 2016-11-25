@@ -119,6 +119,21 @@ public final class RemoteControl {
                 query.getBytes(Charset.forName("UTF-8")));
     }
 
+    public void playAlbum(final long albumId) {
+        sendMessageIfPossible(DataPaths.Messages.PLAY_ALBUM,
+                ByteBuffer.allocate(8).putLong(albumId).array());
+    }
+
+    public void playArtist(final long artistId) {
+        sendMessageIfPossible(DataPaths.Messages.PLAY_ARTIST,
+                ByteBuffer.allocate(8).putLong(artistId).array());
+    }
+
+    public void playTrack(final long trackId) {
+        sendMessageIfPossible(DataPaths.Messages.PLAY_TRACK,
+                ByteBuffer.allocate(8).putLong(trackId).array());
+    }
+
     private void sendMessageIfPossible(@NonNull final String path,
             @Nullable final byte[] data) {
         synchronized (mCapabilityLock) {
