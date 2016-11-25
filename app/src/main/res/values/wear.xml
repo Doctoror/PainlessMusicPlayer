@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="UnusedResources">
+
     <string-array name="android_wear_capabilities">
         <item>@string/wear_capability_playback_control</item>
     </string-array>
