@@ -22,6 +22,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
@@ -35,6 +36,7 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -194,6 +196,22 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private void onImageSet() {
         supportStartPostponedEnterTransition();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (isNowPlayingPlaylist) {
+            PlaylistHolder.getInstance(this).addObserver(mPlaylistObserver);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (isNowPlayingPlaylist) {
+            PlaylistHolder.getInstance(this).deleteObserver(mPlaylistObserver);
+        }
     }
 
     @Override
@@ -371,6 +389,38 @@ public final class PlaylistActivity extends BaseActivity implements
             if (mAdapter.getItemCount() == 0 && !isFinishing()) {
                 onPlaylistEmpty();
             }
+        }
+    };
+
+    private final PlaylistHolder.PlaylistObserver mPlaylistObserver
+            = new PlaylistHolder.PlaylistObserver() {
+
+        @Override
+        public void onPlaylistChanged(@Nullable final List<Media> playlist) {
+            if (isNowPlayingPlaylist) {
+                final Intent intent = Henson.with(PlaylistActivity.this)
+                        .gotoPlaylistActivity()
+                        .hasCoverTransition(false)
+                        .isNowPlayingPlaylist(true)
+                        .playlist(playlist)
+                        .build();
+                restart(intent);
+            }
+        }
+
+        @Override
+        public void onPositionChanged(final long position) {
+
+        }
+
+        @Override
+        public void onMediaChanged(final Media media) {
+
+        }
+
+        @Override
+        public void onMediaRemoved(final Media media) {
+
         }
     };
 }

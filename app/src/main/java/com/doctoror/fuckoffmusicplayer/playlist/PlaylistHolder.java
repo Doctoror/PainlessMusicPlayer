@@ -46,6 +46,8 @@ public final class PlaylistHolder {
         return sInstance;
     }
 
+    private final Object mObserversLock = new Object();
+
     private final List<PlaylistObserver> mObservers = new LinkedList<>();
 
     @NonNull
@@ -116,34 +118,46 @@ public final class PlaylistHolder {
     }
 
     public void addObserver(@NonNull final PlaylistObserver observer) {
-        mObservers.add(observer);
+        synchronized (mObserversLock) {
+            mObservers.add(observer);
+        }
     }
 
     public void deleteObserver(@NonNull final PlaylistObserver observer) {
-        mObservers.remove(observer);
+        synchronized (mObserversLock) {
+            mObservers.remove(observer);
+        }
     }
 
     private void notifyMediaChanged(final Media media) {
-        for (final PlaylistObserver observer : mObservers) {
-            observer.onMediaChanged(media);
+        synchronized (mObserversLock) {
+            for (final PlaylistObserver observer : mObservers) {
+                observer.onMediaChanged(media);
+            }
         }
     }
 
     private void notifyPositionChanged(final long position) {
-        for (final PlaylistObserver observer : mObservers) {
-            observer.onPositionChanged(position);
+        synchronized (mObserversLock) {
+            for (final PlaylistObserver observer : mObservers) {
+                observer.onPositionChanged(position);
+            }
         }
     }
 
     private void notifyMediaRemoved(@NonNull final Media media) {
-        for (final PlaylistObserver observer : mObservers) {
-            observer.onMediaRemoved(media);
+        synchronized (mObserversLock) {
+            for (final PlaylistObserver observer : mObservers) {
+                observer.onMediaRemoved(media);
+            }
         }
     }
 
     private void notifyPlaylistChanged(@Nullable final List<Media> playlist) {
-        for (final PlaylistObserver observer : mObservers) {
-            observer.onPlaylistChanged(playlist);
+        synchronized (mObserversLock) {
+            for (final PlaylistObserver observer : mObservers) {
+                observer.onPlaylistChanged(playlist);
+            }
         }
     }
 
