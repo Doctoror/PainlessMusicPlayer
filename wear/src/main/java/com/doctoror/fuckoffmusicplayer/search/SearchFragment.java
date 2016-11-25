@@ -45,11 +45,11 @@ public final class SearchFragment extends Fragment {
     private Scene mSceneCurrent;
     private Scene mSceneMessage;
     private Scene mSceneResults;
-    private Scene mSceneSearching;
 
     private ViewGroup mSceneRoot;
 
     private View mBtnInput;
+    private View mProgress;
     private TextView mTextViewMessage;
     private RecyclerView mListView;
     private SearchResultsAdapter mAdapter;
@@ -85,8 +85,6 @@ public final class SearchFragment extends Fragment {
         mSceneMessage = new Scene(mSceneRoot, mSceneRoot.findViewById(R.id.container));
         mSceneResults = Scene.getSceneForLayout(mSceneRoot, R.layout.fragment_search_results,
                 getActivity());
-        mSceneSearching = Scene.getSceneForLayout(mSceneRoot, R.layout.fragment_search_searching,
-                getActivity());
         return view;
     }
 
@@ -109,6 +107,8 @@ public final class SearchFragment extends Fragment {
 
     private void findViews() {
         mBtnInput = mSceneRoot.findViewById(R.id.btnInput);
+        mProgress = mSceneRoot.findViewById(android.R.id.progress);
+
         mListView = (RecyclerView) mSceneRoot.findViewById(android.R.id.list);
         mTextViewMessage = (TextView) mSceneRoot.findViewById(android.R.id.message);
     }
@@ -123,18 +123,21 @@ public final class SearchFragment extends Fragment {
                 mListView.setAdapter(mAdapter);
             }
         }
+        bindProgress();
+    }
+
+    private void bindProgress() {
+        if (mProgress != null) {
+            mProgress.setVisibility(mSearching ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void bindScene() {
         if (mSearchResults == null) {
-            if (mSearching) {
-                goToScene(mSceneSearching);
+            if (mSceneCurrent != mSceneMessage) {
+                goToScene(mSceneMessage);
             } else {
-                if (mSceneCurrent != mSceneMessage) {
-                    goToScene(mSceneMessage);
-                } else {
-                    mTextViewMessage.setText(R.string.Search_for_artists_albums_and_songs);
-                }
+                mTextViewMessage.setText(R.string.Search_for_artists_albums_and_songs);
             }
         } else {
             if (areSearchResultsEmpty()) {
@@ -216,14 +219,13 @@ public final class SearchFragment extends Fragment {
             mSearchResults = null;
             mSearching = true;
             RemoteControl.getInstance().search(mSearchQuery);
-            bindScene();
+            bindProgress();
         } else if (requestCode == REQUEST_CODE_SPEECH) {
             // TODO REMOVE THIS IF ABOVE
             mSearchQuery = "Death";
-            mSearchResults = null;
             mSearching = true;
             RemoteControl.getInstance().search(mSearchQuery);
-            bindScene();
+            bindProgress();
         }
     }
 
@@ -275,6 +277,7 @@ public final class SearchFragment extends Fragment {
             getActivity().runOnUiThread(() -> {
                 mSearchResults = (WearSearchData.Results) o;
                 mSearching = false;
+                bindProgress();
                 bindScene();
             });
         }
