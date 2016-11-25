@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Fuck Off Music Player</string>
-    <string name="Connecting">Connecting</string>
     <string name="Could_not_fix_this_issue">Could not fix this issue</string>
 
     <!-- Google play services -->
