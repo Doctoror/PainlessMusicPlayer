@@ -33,9 +33,13 @@ final class SearchResultsAdapter
     private WearSearchData.Results mResults;
 
     interface OnItemClickListener {
+
         void onAlbumClick(@NonNull WearSearchData.Album album);
+
         void onArtistClick(@NonNull WearSearchData.Artist artist);
-        void onTrackClick(@NonNull WearSearchData.Track track);
+
+        void onTrackClick(@NonNull WearSearchData.Track[] tracks,
+                final long trackId);
     }
 
     private OnItemClickListener mOnItemClickListener;
@@ -59,7 +63,7 @@ final class SearchResultsAdapter
     }
 
     @UiThread
-    public void setOnItemClickListener(@Nullable final OnItemClickListener onItemClickListener) {
+    void setOnItemClickListener(@Nullable final OnItemClickListener onItemClickListener) {
         mOnItemClickListener = onItemClickListener;
     }
 
@@ -72,8 +76,9 @@ final class SearchResultsAdapter
                 mOnItemClickListener.onArtistClick(
                         ((SearchResultsAdapterItemArtist) item).getArtist());
             } else if (item instanceof SearchResultsAdapterItemTrack) {
-                mOnItemClickListener.onTrackClick(
-                        ((SearchResultsAdapterItemTrack) item).getTrack());
+                final WearSearchData.Track track = ((SearchResultsAdapterItemTrack) item)
+                        .getTrack();
+                mOnItemClickListener.onTrackClick(mResults.tracks, track.id);
             }
         }
     }

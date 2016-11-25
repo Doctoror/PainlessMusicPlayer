@@ -4,6 +4,7 @@ import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.remote.SearchResultsObservable;
+import com.doctoror.fuckoffmusicplayer.root.RootActivity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -249,6 +250,13 @@ public final class SearchFragment extends Fragment {
         }
     }
 
+    private void goToNowPlaying() {
+        final Activity activity = getActivity();
+        if (activity instanceof RootActivity) {
+            ((RootActivity) activity).goToNowPlaying();
+        }
+    }
+
     private final Animator.AnimatorListener mAnimatorListenerBtnInputReveal
             = new AnimatorListenerAdapter() {
         @Override
@@ -290,16 +298,20 @@ public final class SearchFragment extends Fragment {
         @Override
         public void onAlbumClick(@NonNull final WearSearchData.Album album) {
             RemoteControl.getInstance().playAlbum(album.id);
+            goToNowPlaying();
         }
 
         @Override
         public void onArtistClick(@NonNull final WearSearchData.Artist artist) {
             RemoteControl.getInstance().playArtist(artist.id);
+            goToNowPlaying();
         }
 
         @Override
-        public void onTrackClick(@NonNull final WearSearchData.Track track) {
-            RemoteControl.getInstance().playTrack(track.id);
+        public void onTrackClick(@NonNull final WearSearchData.Track[] tracks,
+                final long trackId) {
+            RemoteControl.getInstance().playTrack(tracks, trackId);
+            goToNowPlaying();
         }
     };
 

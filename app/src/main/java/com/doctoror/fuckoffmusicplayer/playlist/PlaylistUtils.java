@@ -22,6 +22,7 @@ import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -51,7 +52,13 @@ public final class PlaylistUtils {
         if (mediaList.isEmpty()) {
             throw new IllegalArgumentException("Will not play empty playlist");
         }
-        play(context, mediaList, mediaList.get(0), 0);
+        play(context, mediaList, 0);
+    }
+
+    public static void play(@NonNull final Context context,
+            @NonNull final List<Media> mediaList,
+            final int position) {
+        play(context, mediaList, mediaList.get(position), position);
     }
 
     public static void play(@NonNull final Context context,
@@ -66,6 +73,44 @@ public final class PlaylistUtils {
         playlist.persistAsync();
 
         PlaybackService.play(context);
+    }
+
+    @Nullable
+    @WorkerThread
+    public static List<Media> fromAlbum(@NonNull final ContentResolver resolver,
+            final long albumId) {
+        final List<Media> playlist = new ArrayList<>(15);
+        final Cursor c = resolver.query(Query.CONTENT_URI,
+                Query.PROJECTION_WITH_ALBUM_ART,
+                MediaStore.Audio.Media.ALBUM_ID + '=' + albumId,
+                null,
+                MediaStore.Audio.Media.TRACK);
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
+    }
+
+    @Nullable
+    @WorkerThread
+    public static List<Media> fromArtist(@NonNull final ContentResolver resolver,
+            final long artistId) {
+        final List<Media> playlist = new ArrayList<>(25);
+        final Cursor c = resolver.query(Query.CONTENT_URI,
+                Query.PROJECTION_WITH_ALBUM_ART,
+                MediaStore.Audio.Media.ARTIST_ID + '=' + artistId,
+                null,
+                MediaStore.Audio.Media.ALBUM_ID + ',' + MediaStore.Audio.Media.TRACK);
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
     }
 
     @Nullable

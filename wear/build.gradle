@@ -27,14 +27,38 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+
+        release {
+            storeFile file("../keystore/doctoror.keystore")
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
         }
 
         release {
-            minifyEnabled false
+            signingConfig signingConfigs.release
+
+            if (project.hasProperty('keyAlias')) {
+                android.signingConfigs.release.keyAlias = keyAlias
+            }
+
+            if (project.hasProperty('storePassword')) {
+                android.signingConfigs.release.storePassword = storePassword
+            }
+
+            if (project.hasProperty('keyPassword')) {
+                android.signingConfigs.release.keyPassword = keyPassword
+            }
+
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile 'proguard-retrolambda.pro'
+            proguardFile 'proguard-rx-java.pro'
         }
     }
 
@@ -49,7 +73,9 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':commons')
 
+    provided 'com.google.android.wearable:wearable:2.0.0-alpha3'
     compile 'com.google.android.support:wearable:2.0.0-alpha3'
+
     compile "com.google.android.gms:play-services-wearable:$gpsVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 

@@ -21,13 +21,18 @@ import com.google.android.gms.wearable.CapabilityInfo;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 
+import com.doctoror.commons.util.Log;
+import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
+import com.doctoror.commons.wear.nano.WearPlaylistFromSearch;
+import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Set;
@@ -37,6 +42,8 @@ import java.util.Set;
  */
 
 public final class RemoteControl {
+
+    private static final String TAG = "RemoteControl";
 
     private static final RemoteControl INSTANCE = new RemoteControl();
 
@@ -129,9 +136,23 @@ public final class RemoteControl {
                 ByteBuffer.allocate(8).putLong(artistId).array());
     }
 
-    public void playTrack(final long trackId) {
-        sendMessageIfPossible(DataPaths.Messages.PLAY_TRACK,
-                ByteBuffer.allocate(8).putLong(trackId).array());
+    public void playTrack(@NonNull final WearSearchData.Track[] tracks,
+            final long trackId) {
+        final WearPlaylistFromSearch.Playlist playlist = new WearPlaylistFromSearch.Playlist();
+        final long[] trackIds = new long[tracks.length];
+        for (int i = 0; i < tracks.length; i++) {
+            trackIds[i] = tracks[i].id;
+        }
+        playlist.playlist = trackIds;
+        playlist.selectedId = trackId;
+        final byte[] data;
+        try {
+            data = ProtoUtils.toByteArray(playlist);
+        } catch (IOException e) {
+            Log.w(TAG, e);
+            return;
+        }
+        sendMessageIfPossible(DataPaths.Messages.PLAY_TRACK, data);
     }
 
     private void sendMessageIfPossible(@NonNull final String path,
