@@ -64,9 +64,7 @@ android {
             proguardFile 'proguard-rx-java.pro'
             proguardFile 'proguard-support-design.pro'
             proguardFile 'proguard-support-v7-appcompat.pro'
-
         }
-
     }
 
     splits {
