@@ -53,5 +53,5 @@ dependencies {
     compile "com.google.android.gms:play-services-wearable:$gpsVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
-    compile 'io.reactivex:rxjava:1.2.2'
+    compile 'io.reactivex:rxjava:1.2.3'
 }
