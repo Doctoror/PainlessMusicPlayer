@@ -28,14 +28,12 @@ import android.view.MenuItem;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    @Nullable
-    @InjectExtra
-    Intent parentActivityIntent;
-
     private Theme mTheme;
 
     @Theme.ThemeType
     private int mThemeUsed;
+
+    private boolean mFragmentTransactionsAllowed;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -44,6 +42,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         mTheme = Theme.getInstance(this);
         mThemeUsed = mTheme.getThemeType();
+
+        mFragmentTransactionsAllowed = true;
     }
 
     protected final Theme getTheme1() {
@@ -62,10 +62,27 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mFragmentTransactionsAllowed = true;
         // Theme changed while this Activity was in background
         if (mThemeUsed != mTheme.getThemeType()) {
             restart();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFragmentTransactionsAllowed = true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mFragmentTransactionsAllowed = false;
+    }
+
+    protected final boolean areFragmentTransactionsAllowed() {
+        return mFragmentTransactionsAllowed;
     }
 
     @Override
@@ -88,8 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Nullable
     @Override
     public Intent getParentActivityIntent() {
-        final Intent intent = parentActivityIntent != null
-                ? parentActivityIntent : super.getParentActivityIntent();
+        final Intent intent = super.getParentActivityIntent();
         if (intent != null) {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         }
