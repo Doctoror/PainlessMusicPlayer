@@ -31,8 +31,11 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.commons.wear.nano.WearSearchData;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventSearchResults;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+
+import org.greenrobot.eventbus.EventBus;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -74,7 +77,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                         Log.w(TAG, e);
                         break;
                     }
-                    SearchResultsObservable.getInstance().onSearchResultsReceived(searchResults);
+                    EventBus.getDefault().post(new EventSearchResults(searchResults));
                 }
                 break;
         }

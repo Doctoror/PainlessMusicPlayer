@@ -16,6 +16,11 @@
 package com.doctoror.fuckoffmusicplayer.media;
 
 import com.doctoror.commons.wear.nano.WearPlaybackData;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventAlbumArt;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventMedia;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventPlaybackState;
+
+import org.greenrobot.eventbus.EventBus;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -24,9 +29,6 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Yaroslav Mytkalyk on 21.10.16.
@@ -50,7 +52,7 @@ public final class MediaHolder {
         return sInstance;
     }
 
-    private final List<PlaybackInfoObserver> mObservers = new LinkedList<>();
+    private final EventBus mEventBus = EventBus.getDefault();
 
     @NonNull
     private final Context mContext;
@@ -120,41 +122,15 @@ public final class MediaHolder {
         return mPlaybackState;
     }
 
-    public void addObserver(@NonNull final PlaybackInfoObserver observer) {
-        mObservers.add(observer);
-    }
-
-    public void deleteObserver(@NonNull final PlaybackInfoObserver observer) {
-        mObservers.remove(observer);
-    }
-
     private void notifyAlbumArtChanged(@Nullable final Bitmap albumArt) {
-        for (final PlaybackInfoObserver observer : mObservers) {
-            observer.onAlbumArtChanged(albumArt);
-        }
+        mEventBus.post(new EventAlbumArt(albumArt));
     }
 
     private void notifyMediaChanged(@Nullable final WearPlaybackData.Media media) {
-        for (final PlaybackInfoObserver observer : mObservers) {
-            observer.onMediaChanged(media);
-        }
+        mEventBus.post(new EventMedia(media));
     }
 
     private void notifyPlaybackStateChanged(@Nullable final WearPlaybackData.PlaybackState ps) {
-        for (final PlaybackInfoObserver observer : mObservers) {
-            observer.onPlaybackStateChanged(ps);
-        }
-    }
-
-    public interface PlaybackInfoObserver {
-
-        @WorkerThread
-        void onMediaChanged(@Nullable WearPlaybackData.Media media);
-
-        @WorkerThread
-        void onPlaybackStateChanged(@Nullable WearPlaybackData.PlaybackState playbackState);
-
-        @WorkerThread
-        void onAlbumArtChanged(@Nullable Bitmap albumArt);
+        mEventBus.post(new EventPlaybackState(ps));
     }
 }

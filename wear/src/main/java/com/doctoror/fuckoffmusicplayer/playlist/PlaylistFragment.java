@@ -17,10 +17,17 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventAlbumArt;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventMedia;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventPlaylist;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
+import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.root.RootActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -29,8 +36,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,8 +53,6 @@ import java.util.List;
  */
 
 public final class PlaylistFragment extends Fragment {
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     private final PlaylistFragmentModel mModel = new PlaylistFragmentModel();
 
@@ -87,15 +90,31 @@ public final class PlaylistFragment extends Fragment {
         super.onStart();
         mModel.setBackground(albumArtOrStub(mMediaHolder.getAlbumArt()));
         bindPlaylist(mPlaylistHolder.getPlaylist(), mMediaHolder.getMedia());
-        mMediaHolder.addObserver(mPlaybackInfoObserver);
-        mPlaylistHolder.addObserver(mPlaylistObserver);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mPlaylistHolder.deleteObserver(mPlaylistObserver);
-        mMediaHolder.deleteObserver(mPlaybackInfoObserver);
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMedia(@NonNull final EventMedia event) {
+        // If playlist is a fake list of single media, update it
+        if (mAdapter.getItemCount() == 1) {
+            bindPlaylist(mPlaylistHolder.getPlaylist(), event.media);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onEventAlbumArt(@NonNull final EventAlbumArt event) {
+        mModel.setBackground(albumArtOrStub(event.albumArt));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventPlaylist(@NonNull final EventPlaylist event) {
+        bindPlaylist(event.playlist, mMediaHolder.getMedia());
     }
 
     private void playMediaFromPlaylist(final long mediaId) {
@@ -129,8 +148,10 @@ public final class PlaylistFragment extends Fragment {
         }
 
         if (p == null) {
-            p = new ArrayList<>(1);
-            p.add(media);
+            p = new ArrayList<>(media == null ? 0 : 1);
+            if (media != null) {
+                p.add(media);
+            }
         }
 
         return p;
@@ -142,38 +163,4 @@ public final class PlaylistFragment extends Fragment {
         }
         return new BitmapDrawable(getResources(), art);
     }
-
-    private final PlaylistHolder.PlaylistObserver mPlaylistObserver
-            = new PlaylistHolder.PlaylistObserver() {
-
-        @Override
-        public void onPlaylistChanged(@Nullable final WearPlaybackData.Playlist playlist) {
-            //noinspection WrongThread
-            mHandler.post(() -> bindPlaylist(playlist, mMediaHolder.getMedia()));
-        }
-    };
-
-    private final MediaHolder.PlaybackInfoObserver mPlaybackInfoObserver
-            = new MediaHolder.PlaybackInfoObserver() {
-
-        @Override
-        public void onMediaChanged(@Nullable final WearPlaybackData.Media media) {
-            // If playlist is a fake list of single media, update it
-            if (mAdapter.getItemCount() == 1) {
-                //noinspection WrongThread
-                mHandler.post(() -> bindPlaylist(mPlaylistHolder.getPlaylist(), media));
-            }
-        }
-
-        @Override
-        public void onPlaybackStateChanged(
-                @Nullable final WearPlaybackData.PlaybackState playbackState) {
-
-        }
-
-        @Override
-        public void onAlbumArtChanged(@Nullable final Bitmap albumArt) {
-            mModel.setBackground(albumArtOrStub(albumArt));
-        }
-    };
 }

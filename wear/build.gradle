@@ -57,6 +57,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile 'proguard-eventbus.pro'
             proguardFile 'proguard-retrolambda.pro'
             proguardFile 'proguard-rx-java.pro'
         }
@@ -79,5 +80,6 @@ dependencies {
     compile "com.google.android.gms:play-services-wearable:$gpsVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
+    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'io.reactivex:rxjava:1.2.3'
 }

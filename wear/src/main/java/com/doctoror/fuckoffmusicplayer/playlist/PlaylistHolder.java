@@ -16,15 +16,15 @@
 package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.wear.nano.WearPlaybackData;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventPlaylist;
+
+import org.greenrobot.eventbus.EventBus;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Yaroslav Mytkalyk on 21.10.16.
@@ -47,8 +47,6 @@ public final class PlaylistHolder {
         }
         return sInstance;
     }
-
-    private final List<PlaylistObserver> mObservers = new LinkedList<>();
 
     @NonNull
     private final Context mContext;
@@ -74,23 +72,7 @@ public final class PlaylistHolder {
         return mPlaylist;
     }
 
-    public void addObserver(@NonNull final PlaylistObserver observer) {
-        mObservers.add(observer);
-    }
-
-    public void deleteObserver(@NonNull final PlaylistObserver observer) {
-        mObservers.remove(observer);
-    }
-
     private void notifyChanged(@Nullable final WearPlaybackData.Playlist playlist) {
-        for (final PlaylistObserver observer : mObservers) {
-            observer.onPlaylistChanged(playlist);
-        }
-    }
-
-    public interface PlaylistObserver {
-
-        @WorkerThread
-        void onPlaylistChanged(@Nullable WearPlaybackData.Playlist playlist);
+        EventBus.getDefault().post(new EventPlaylist(playlist));
     }
 }

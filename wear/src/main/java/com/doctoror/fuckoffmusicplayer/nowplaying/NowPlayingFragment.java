@@ -18,15 +18,23 @@ package com.doctoror.fuckoffmusicplayer.nowplaying;
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventAlbumArt;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventMedia;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventPlaybackState;
 import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowPlayingBinding;
 import com.doctoror.fuckoffmusicplayer.media.MediaHolder;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
@@ -80,13 +88,28 @@ public final class NowPlayingFragment extends Fragment {
         bindArt(mMediaHolder.getAlbumArt());
         bindMedia(mMediaHolder.getMedia());
         bindPlaybackState(mMediaHolder.getPlaybackState());
-        mMediaHolder.addObserver(mPlaybackInfoObserver);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mMediaHolder.deleteObserver(mPlaybackInfoObserver);
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onEventMedia(@NonNull final EventMedia event) {
+        bindMedia(event.media);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onEventAlbumArt(@NonNull final EventAlbumArt event) {
+        bindArt(event.albumArt);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onEventPlaybackState(@NonNull final EventPlaybackState event) {
+        bindPlaybackState(event.playbackState);
     }
 
     private void bindMedia(@Nullable final WearPlaybackData.Media media) {
@@ -151,24 +174,4 @@ public final class NowPlayingFragment extends Fragment {
             mRemoteControl.seek((float) seekBar.getProgress() / (float) seekBar.getMax());
         }
     }
-
-    private final MediaHolder.PlaybackInfoObserver mPlaybackInfoObserver
-            = new MediaHolder.PlaybackInfoObserver() {
-
-        @Override
-        public void onMediaChanged(@Nullable final WearPlaybackData.Media media) {
-            bindMedia(media);
-        }
-
-        @Override
-        public void onAlbumArtChanged(@Nullable final Bitmap albumArt) {
-            bindArt(albumArt);
-        }
-
-        @Override
-        public void onPlaybackStateChanged(
-                @Nullable final WearPlaybackData.PlaybackState playbackState) {
-            bindPlaybackState(playbackState);
-        }
-    };
 }

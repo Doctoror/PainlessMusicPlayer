@@ -2,9 +2,13 @@ package com.doctoror.fuckoffmusicplayer.search;
 
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.eventbus.EventSearchResults;
 import com.doctoror.fuckoffmusicplayer.remote.RemoteControl;
-import com.doctoror.fuckoffmusicplayer.remote.SearchResultsObservable;
 import com.doctoror.fuckoffmusicplayer.root.RootActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -29,8 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Created by Yaroslav Mytkalyk on 22.11.16.
@@ -68,13 +70,13 @@ public final class SearchFragment extends Fragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SearchResultsObservable.getInstance().addObserver(mSearchResultsObserver);
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SearchResultsObservable.getInstance().deleteObserver(mSearchResultsObserver);
+        EventBus.getDefault().unregister(this);
     }
 
     @Nullable
@@ -187,6 +189,14 @@ public final class SearchFragment extends Fragment {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventSearchResults(@NonNull final EventSearchResults results) {
+        mSearchResults = results.results;
+        mSearching = false;
+        bindProgress();
+        bindScene();
+    }
+
     private final View.OnClickListener mOnInputClickListener = v -> {
         final Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -276,19 +286,6 @@ public final class SearchFragment extends Fragment {
             if (mBtnInput != null) {
                 mBtnInput.setVisibility(View.GONE);
             }
-        }
-    };
-
-    private final Observer mSearchResultsObserver = new Observer() {
-
-        @Override
-        public void update(final Observable observable, final Object o) {
-            getActivity().runOnUiThread(() -> {
-                mSearchResults = (WearSearchData.Results) o;
-                mSearching = false;
-                bindProgress();
-                bindScene();
-            });
         }
     };
 
