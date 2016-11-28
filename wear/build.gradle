@@ -3,7 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "25.0.1"
 
     defaultConfig {
         applicationId "com.doctoror.fuckoffmusicplayer"
@@ -12,10 +12,6 @@ android {
         versionCode 1
         versionName "1.0.0"
         resConfigs "en"
-    }
-
-    retrolambda {
-        jvmArgs '-noverify'
     }
 
     lintOptions {
