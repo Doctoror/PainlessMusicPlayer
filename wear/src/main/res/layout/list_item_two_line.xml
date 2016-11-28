@@ -32,7 +32,6 @@
         android:ellipsize="end"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="15sp"
-        android:alpha="@dimen/alpha_list_item_unselected"
         tools:text="Text 1"
         tools:ignore="SelectableText"/>
 
@@ -47,7 +46,6 @@
         android:ellipsize="end"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp"
-        android:alpha="@dimen/alpha_list_item_unselected"
         tools:text="Text 2"
         tools:ignore="SelectableText"/>
 

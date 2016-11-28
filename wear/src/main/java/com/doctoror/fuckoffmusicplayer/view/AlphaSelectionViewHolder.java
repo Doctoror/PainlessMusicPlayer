@@ -13,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.base;
+package com.doctoror.fuckoffmusicplayer.view;
 
 import com.doctoror.fuckoffmusicplayer.R;
 
 import android.support.wearable.view.WearableListView;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.TextView;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * {@link WearableListView.ViewHolder} that applies alpha to unselected items
  */
-public final class TwoLineItemViewHolder extends WearableListView.ViewHolder {
+public abstract class AlphaSelectionViewHolder extends WearableListView.ViewHolder {
 
     private final float mAlphaUnselected;
     private final float mAlphaSelected;
 
-    public final TextView text1;
-    public final TextView text2;
-
-    public TwoLineItemViewHolder(final View itemView) {
+    public AlphaSelectionViewHolder(final View itemView) {
         super(itemView);
-        text1 = (TextView) itemView.findViewById(android.R.id.text1);
-        text2 = (TextView) itemView.findViewById(android.R.id.text2);
 
         final TypedValue tv = new TypedValue();
         itemView.getResources().getValue(R.dimen.alpha_list_item_unselected, tv, false);
@@ -44,6 +38,8 @@ public final class TwoLineItemViewHolder extends WearableListView.ViewHolder {
 
         itemView.getResources().getValue(R.dimen.alpha_list_item_selected, tv, false);
         mAlphaSelected = tv.getFloat();
+
+        itemView.setAlpha(mAlphaUnselected);
     }
 
     @Override
@@ -53,11 +49,9 @@ public final class TwoLineItemViewHolder extends WearableListView.ViewHolder {
 
     private void setAlpha(final float alpha, final boolean animate) {
         if (animate) {
-            text1.animate().alpha(alpha).start();
-            text2.animate().alpha(alpha).start();
+            itemView.animate().alpha(alpha).start();
         } else {
-            text1.setAlpha(alpha);
-            text2.setAlpha(alpha);
+            itemView.setAlpha(alpha);
         }
     }
 }

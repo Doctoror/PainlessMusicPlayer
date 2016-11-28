@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.search;
+package com.doctoror.fuckoffmusicplayer.view;
+
+import android.view.View;
+import android.widget.TextView;
 
 /**
- * Created by Yaroslav Mytkalyk on 22.11.16.
+ * Created by Yaroslav Mytkalyk on 17.10.16.
  */
-abstract class SearchResultsAdapterItem {
+public final class TwoLineItemViewHolder extends AlphaSelectionViewHolder {
 
-    private CharSequence mTitle;
+    public final TextView text1;
+    public final TextView text2;
 
-    SearchResultsAdapterItem(final CharSequence title) {
-        mTitle = title;
-    }
-
-    public CharSequence getTitle() {
-        return mTitle;
+    public TwoLineItemViewHolder(final View itemView) {
+        super(itemView);
+        text1 = (TextView) itemView.findViewById(android.R.id.text1);
+        text2 = (TextView) itemView.findViewById(android.R.id.text2);
     }
 }

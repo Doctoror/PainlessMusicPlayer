@@ -2,7 +2,7 @@ package com.doctoror.fuckoffmusicplayer.search;
 
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.view.BaseRecyclerAdapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;

@@ -17,8 +17,8 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseRecyclerAdapter;
-import com.doctoror.fuckoffmusicplayer.base.TwoLineItemViewHolder;
+import com.doctoror.fuckoffmusicplayer.view.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.view.TwoLineItemViewHolder;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
