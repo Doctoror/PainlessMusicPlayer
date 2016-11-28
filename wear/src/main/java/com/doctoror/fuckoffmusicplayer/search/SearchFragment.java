@@ -232,13 +232,13 @@ public final class SearchFragment extends Fragment {
             mSearching = true;
             RemoteControl.getInstance().search(mSearchQuery);
             bindProgress();
-        } else if (requestCode == REQUEST_CODE_SPEECH) {
-            // TODO REMOVE THIS IF ABOVE
-            mSearchQuery = "Death";
-            mSearching = true;
-            RemoteControl.getInstance().search(mSearchQuery);
-            bindProgress();
         }
+//        } else if (requestCode == REQUEST_CODE_SPEECH) {
+//            mSearchQuery = "Death";
+//            mSearching = true;
+//            RemoteControl.getInstance().search(mSearchQuery);
+//            bindProgress();
+//        }
     }
 
     private void showBtnSearch() {
