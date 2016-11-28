@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -39,7 +40,7 @@ final class GenresRecyclerAdapter
 
     interface OnGenreClickListener {
 
-        void onGenreClick(long id, String artist);
+        void onGenreClick(@NonNull View itemView, long id, @NonNull String genre);
     }
 
     @NonNull
@@ -60,9 +61,10 @@ final class GenresRecyclerAdapter
         mClickListener = clickListener;
     }
 
-    private void onGenreClick(final long id, @NonNull final String genre) {
+    private void onGenreClick(@NonNull final View itemView, final long id,
+            @NonNull final String genre) {
         if (mClickListener != null) {
-            mClickListener.onGenreClick(id, genre);
+            mClickListener.onGenreClick(itemView, id, genre);
         }
     }
 
@@ -81,7 +83,9 @@ final class GenresRecyclerAdapter
         vh.itemView.setOnClickListener(v -> {
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onGenreClick(item.getLong(GenresQuery.COLUMN_ID),
+                onGenreClick(
+                        vh.itemView,
+                        item.getLong(GenresQuery.COLUMN_ID),
                         item.getString(GenresQuery.COLUMN_NAME));
             }
         });

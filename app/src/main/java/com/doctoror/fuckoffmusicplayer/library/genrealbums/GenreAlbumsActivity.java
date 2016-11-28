@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
@@ -33,6 +34,8 @@ import android.support.v7.widget.Toolbar;
  * Created by Yaroslav Mytkalyk on 18.10.16.
  */
 public final class GenreAlbumsActivity extends BaseActivity {
+
+    public static final String TRANSITION_NAME_ROOT = "TRANSITION_NAME_ROOT";
 
     @InjectExtra
     String genre;
@@ -44,6 +47,12 @@ public final class GenreAlbumsActivity extends BaseActivity {
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
+
+        ViewCompat.setTransitionName(findViewById(android.R.id.content),
+                TRANSITION_NAME_ROOT);
+
+        supportPostponeEnterTransition();
+
         setTitle(genre);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(android.R.id.content,
@@ -67,6 +76,14 @@ public final class GenreAlbumsActivity extends BaseActivity {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE
                     | ActionBar.DISPLAY_SHOW_HOME
                     | ActionBar.DISPLAY_HOME_AS_UP);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!getFragmentManager().popBackStackImmediate()) {
+            // Finish without transitions
+            finish();
         }
     }
 }

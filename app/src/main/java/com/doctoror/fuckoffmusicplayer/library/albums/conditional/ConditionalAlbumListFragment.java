@@ -140,6 +140,7 @@ public class ConditionalAlbumListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         restartLoader();
+        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
     }
 
     @Override

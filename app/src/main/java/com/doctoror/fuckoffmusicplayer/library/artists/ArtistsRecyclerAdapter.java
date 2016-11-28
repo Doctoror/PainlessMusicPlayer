@@ -30,7 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * Artists recycler view adapter
  */
 final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemViewHolder>
         implements FastScroller.SectionIndexer {
