@@ -16,12 +16,15 @@
 package com.doctoror.fuckoffmusicplayer.library.genrealbums;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListExitTransition;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
+import android.app.SharedElementCallback;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -29,6 +32,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Yaroslav Mytkalyk on 18.10.16.
@@ -52,8 +59,24 @@ public final class GenreAlbumsActivity extends BaseActivity {
                 TRANSITION_NAME_ROOT);
 
         supportPostponeEnterTransition();
-
         setTitle(genre);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setEnterSharedElementCallback(new SharedElementCallback() {
+
+                @Override
+                public void onMapSharedElements(final List<String> names,
+                        final Map<String, View> sharedElements) {
+                    super.onMapSharedElements(names, sharedElements);
+                    if (isFinishingAfterTransition()) {
+                        names.clear();
+                        sharedElements.clear();
+                    }
+                }
+            });
+            getWindow().setReturnTransition(new ConditionalAlbumListExitTransition());
+        }
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(android.R.id.content,
                     ConditionalAlbumListFragment.instantiate(this, genre, newParams())).commit();
@@ -76,14 +99,6 @@ public final class GenreAlbumsActivity extends BaseActivity {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE
                     | ActionBar.DISPLAY_SHOW_HOME
                     | ActionBar.DISPLAY_HOME_AS_UP);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!getFragmentManager().popBackStackImmediate()) {
-            // Finish without transitions
-            finish();
         }
     }
 }

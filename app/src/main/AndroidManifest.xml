@@ -18,11 +18,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <permission
-        android:name="com.doctoror.fuckoffmusicplayer.permission.RECEIVE_PLAYBACK_STATE"
+        android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"
         android:protectionLevel="signature"/>
 
     <uses-permission
-        android:name="com.doctoror.fuckoffmusicplayer.permission.RECEIVE_PLAYBACK_STATE"/>
+        android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"/>
 
     <application
         android:name=".App"

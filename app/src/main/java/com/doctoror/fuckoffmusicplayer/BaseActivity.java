@@ -18,12 +18,15 @@ package com.doctoror.fuckoffmusicplayer;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
 import com.f2prateek.dart.InjectExtra;
 
+import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v13.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -36,6 +39,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private boolean mFragmentTransactionsAllowed;
 
+    private boolean mFinishingAfterTransition;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +50,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         mThemeUsed = mTheme.getThemeType();
 
         mFragmentTransactionsAllowed = true;
+        mFinishingAfterTransition = false;
+    }
+
+    public boolean isFinishingAfterTransition() {
+        return mFinishingAfterTransition;
     }
 
     protected final Theme getTheme1() {
@@ -90,6 +100,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void finishAfterTransition() {
+        mFinishingAfterTransition = true;
+        super.finishAfterTransition();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -97,7 +114,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (parent != null) {
                     navigateUpTo(getParentActivityIntent());
                 } else {
-                    finish();
+                    ActivityCompat.finishAfterTransition(this);
                 }
                 return true;
 
