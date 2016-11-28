@@ -106,8 +106,7 @@ public final class NowPlayingActivity extends BaseActivity {
     private boolean mTransitionStarted;
 
     @InjectExtra
-    @Nullable
-    Boolean hasCoverTransition;
+    boolean hasCoverTransition;
 
     private volatile boolean mSeekBarTracking;
 
@@ -158,12 +157,8 @@ public final class NowPlayingActivity extends BaseActivity {
         handleIntent(getIntent());
     }
 
-    private boolean hasCoverTransition() {
-        return hasCoverTransition != null && hasCoverTransition;
-    }
-
     private void setAlbumArt(@Nullable final String artUri) {
-        if (!mTransitionPostponed && hasCoverTransition()) {
+        if (!mTransitionPostponed && hasCoverTransition) {
             mTransitionPostponed = true;
             supportPostponeEnterTransition();
         }
@@ -173,7 +168,7 @@ public final class NowPlayingActivity extends BaseActivity {
             onArtProcessed();
         } else {
             final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
-            if (hasCoverTransition()) {
+            if (hasCoverTransition) {
                 b.dontAnimate();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -204,7 +199,7 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void onArtProcessed() {
-        if (!mTransitionStarted && hasCoverTransition()) {
+        if (!mTransitionStarted && hasCoverTransition) {
             mTransitionStarted = true;
             try {
                 supportStartPostponedEnterTransition();

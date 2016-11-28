@@ -1,16 +1,15 @@
-package com.doctoror.fuckoffmusicplayer.library.albums.conditional;
+package com.doctoror.fuckoffmusicplayer.transition;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.transition.Transition;
 import android.transition.TransitionValues;
-import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,17 +20,12 @@ import java.util.Collection;
  * Exit transition for {@link ConditionalAlbumListFragment} content view
  */
 @TargetApi(Build.VERSION_CODES.KITKAT)
-public class ConditionalAlbumListExitTransition extends Transition {
+public class SlideAppBarAndRecyclerViewReturnTransition extends Transition {
 
     private static final String TRANSLATION_Y = "translationY";
     private static final String DUMMY_PROPERTY_NAME = "d";
 
-    public ConditionalAlbumListExitTransition() {
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ConditionalAlbumListExitTransition(final Context context, final AttributeSet attrs) {
-        super(context, attrs);
+    public SlideAppBarAndRecyclerViewReturnTransition() {
     }
 
     @Override

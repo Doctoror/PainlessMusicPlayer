@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.genrealbums;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListExitTransition;
+import com.doctoror.fuckoffmusicplayer.transition.SlideAppBarAndRecyclerViewReturnTransition;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
 import com.doctoror.rxcursorloader.RxCursorLoader;
@@ -74,7 +74,7 @@ public final class GenreAlbumsActivity extends BaseActivity {
                     }
                 }
             });
-            getWindow().setReturnTransition(new ConditionalAlbumListExitTransition());
+            getWindow().setReturnTransition(new SlideAppBarAndRecyclerViewReturnTransition());
         }
 
         if (savedInstanceState == null) {

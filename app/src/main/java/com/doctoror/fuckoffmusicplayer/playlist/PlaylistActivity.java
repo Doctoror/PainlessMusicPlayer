@@ -28,6 +28,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.transition.SlideAppBarAndRecyclerViewReturnTransition;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -39,9 +40,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v13.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
@@ -56,9 +59,8 @@ import java.util.List;
 import butterknife.OnClick;
 
 /**
- * Created by Yaroslav Mytkalyk on 20.10.16.
+ * "Playlist" activity
  */
-
 public final class PlaylistActivity extends BaseActivity implements
         DeleteFileDialogFragment.Callback {
 
@@ -97,6 +99,14 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (!hasCoverTransition) {
+                // TODO transition not being called
+                getWindow().setReturnTransition(new SlideAppBarAndRecyclerViewReturnTransition());
+            }
+        }
+
         if (!TextUtils.isEmpty(title)) {
             setTitle(title);
         }
@@ -117,6 +127,7 @@ public final class PlaylistActivity extends BaseActivity implements
         initRecyclerView(mBinding);
 
         mFinishWhenDialogDismissed = false;
+
         if (savedInstanceState != null) {
             final State state = Parcels.unwrap(savedInstanceState.getParcelable(EXTRA_STATE));
             mDeleteSession = state.deleteSession;
@@ -157,9 +168,9 @@ public final class PlaylistActivity extends BaseActivity implements
             animateToPlaceholder();
             onImageSet();
         } else {
-            supportPostponeEnterTransition();
             final DrawableRequestBuilder<String> b = Glide.with(this).load(pic);
             if (hasCoverTransition) {
+                supportPostponeEnterTransition();
                 b.dontAnimate();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -195,7 +206,9 @@ public final class PlaylistActivity extends BaseActivity implements
     }
 
     private void onImageSet() {
-        supportStartPostponedEnterTransition();
+        if (hasCoverTransition) {
+            supportStartPostponedEnterTransition();
+        }
     }
 
     @Override
@@ -244,7 +257,7 @@ public final class PlaylistActivity extends BaseActivity implements
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(result -> {
                     if (result) {
-                        if (!isFinishing()) {
+                        if (!isFinishingAfterTransition()) {
                             FileManagerService.delete(getApplicationContext(), media);
                         }
                     }
@@ -276,7 +289,7 @@ public final class PlaylistActivity extends BaseActivity implements
     private void finishIfNeeded() {
         if (mFinishWhenDialogDismissed && mDeleteSession == null) {
             mFinishWhenDialogDismissed = false;
-            finish();
+            ActivityCompat.finishAfterTransition(this);
         }
     }
 

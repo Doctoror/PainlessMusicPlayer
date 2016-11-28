@@ -152,6 +152,7 @@ public final class LivePlaylistsFragment extends Fragment {
                     .isNowPlayingPlaylist(false)
                     .playlist(playlist)
                     .build();
+
             startActivity(intent);
         }
     }

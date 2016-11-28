@@ -112,7 +112,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             case android.R.id.home:
                 final Intent parent = getParentActivityIntent();
                 if (parent != null) {
-                    navigateUpTo(getParentActivityIntent());
+                    if (!navigateUpTo(getParentActivityIntent())) {
+                        ActivityCompat.finishAfterTransition(this);
+                    }
                 } else {
                     ActivityCompat.finishAfterTransition(this);
                 }
@@ -144,7 +146,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         startActivity(upIntent);
-        finish();
+        ActivityCompat.finishAfterTransition(this);
         return true;
     }
 }
