@@ -23,6 +23,9 @@ import android.support.annotation.NonNull;
 import android.widget.ImageView;
 import android.widget.ViewAnimator;
 
+/**
+ * Common binding adapters
+ */
 public final class BindingAdapters {
 
     private BindingAdapters() {

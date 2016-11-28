@@ -23,9 +23,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ * Common String utils for the app modules
  */
-
 public final class StringUtils {
 
     private StringUtils() {

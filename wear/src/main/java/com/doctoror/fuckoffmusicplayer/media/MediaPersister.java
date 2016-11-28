@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.media;
 
+import com.doctoror.commons.util.FileUtils;
 import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 
@@ -70,7 +71,7 @@ final class MediaPersister {
 
     static void persistAlbumArt(@NonNull final Context context,
             @Nullable final byte[] albumArt) {
-        ProtoUtils.writeOrDeletePrivateFile(context, FILE_NAME_MEDIA_ART, albumArt);
+        FileUtils.writeOrDeletePrivateFile(context, FILE_NAME_MEDIA_ART, albumArt);
     }
 
     @Nullable

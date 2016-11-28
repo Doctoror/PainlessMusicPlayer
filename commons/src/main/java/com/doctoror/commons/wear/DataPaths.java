@@ -16,9 +16,8 @@
 package com.doctoror.commons.wear;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ * Data paths and messages for communitation between wear and handheld app
  */
-
 public final class DataPaths {
 
     private DataPaths() {
