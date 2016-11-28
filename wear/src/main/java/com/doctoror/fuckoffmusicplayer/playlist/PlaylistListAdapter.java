@@ -26,9 +26,8 @@ import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.11.16.
+ * Recycler view adapter for playlsit
  */
-
 final class PlaylistListAdapter extends BaseRecyclerAdapter
         <WearPlaybackData.Media, TwoLineItemViewHolder> {
 

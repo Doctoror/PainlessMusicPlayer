@@ -38,9 +38,8 @@ import java.nio.charset.Charset;
 import java.util.Set;
 
 /**
- * Created by Yaroslav Mytkalyk on 16.11.16.
+ * Sends control messages to handheld
  */
-
 public final class RemoteControl {
 
     private static final String TAG = "RemoteControl";

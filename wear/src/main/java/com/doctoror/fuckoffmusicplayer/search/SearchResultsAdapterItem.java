@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.search;
 
 /**
- * Created by Yaroslav Mytkalyk on 22.11.16.
+ * Base item for {@link SearchResultsAdapter}
  */
 abstract class SearchResultsAdapterItem {
 

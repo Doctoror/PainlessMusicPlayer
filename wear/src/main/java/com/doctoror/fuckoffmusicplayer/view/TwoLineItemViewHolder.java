@@ -19,7 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * Wearable list view holder for two line list item
  */
 public final class TwoLineItemViewHolder extends AlphaSelectionViewHolder {
 

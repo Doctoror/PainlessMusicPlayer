@@ -23,9 +23,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.11.16.
+ * Data binding model for {@link PlaylistFragment} view
  */
-
 public final class PlaylistFragmentModel {
 
     private final ObservableBoolean mIsEmpty = new ObservableBoolean();

@@ -25,9 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 20.10.16.
+ * The base {@link RecyclerView.Adapter}
  */
-
 public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
 

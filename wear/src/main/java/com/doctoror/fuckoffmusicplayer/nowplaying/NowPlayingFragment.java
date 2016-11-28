@@ -42,6 +42,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
+/**
+ * "Now Playing" screen
+ */
 public final class NowPlayingFragment extends Fragment {
 
     private final NowPlayingFragmentModelPlaybackState mModelPlaybackState

@@ -20,9 +20,8 @@ import com.doctoror.commons.wear.nano.WearSearchData;
 import android.support.annotation.NonNull;
 
 /**
- * Created by Yaroslav Mytkalyk on 22.11.16.
+ * Media track item for {@link SearchResultsAdapter}
  */
-
 final class SearchResultsAdapterItemTrack extends SearchResultsAdapterItem {
 
     @NonNull

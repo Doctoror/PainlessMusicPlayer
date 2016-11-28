@@ -44,9 +44,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.11.16.
+ * The root Activity for the wear app
  */
-
 public final class RootActivity extends WearableActivity {
 
     private static final int REQUEST_CODE_GOOGLE_API = 1;

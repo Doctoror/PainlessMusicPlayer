@@ -20,9 +20,8 @@ import com.doctoror.commons.util.Log;
 import android.app.Application;
 
 /**
- * Created by Yaroslav Mytkalyk on 18.11.16.
+ * Application instance
  */
-
 public final class App extends Application {
 
     @Override

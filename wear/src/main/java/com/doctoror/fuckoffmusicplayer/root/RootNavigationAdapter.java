@@ -23,9 +23,8 @@ import android.support.annotation.NonNull;
 import android.support.wearable.view.drawer.WearableNavigationDrawer;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.11.16.
+ * Root navigation drawer adapter
  */
-
 final class RootNavigationAdapter
         extends WearableNavigationDrawer.WearableNavigationDrawerAdapter {
 

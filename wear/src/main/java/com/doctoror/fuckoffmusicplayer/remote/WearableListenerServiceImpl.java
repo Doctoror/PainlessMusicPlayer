@@ -46,9 +46,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ * {@link WearableListenerService} implementation for wear app
  */
-
 public final class WearableListenerServiceImpl extends WearableListenerService {
 
     private static final String TAG = "WearableListenerService";

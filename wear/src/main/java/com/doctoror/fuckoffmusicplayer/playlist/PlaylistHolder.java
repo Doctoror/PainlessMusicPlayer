@@ -27,9 +27,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 /**
- * Created by Yaroslav Mytkalyk on 21.10.16.
+ * Holds current playlist
  */
-
 public final class PlaylistHolder {
 
     // Is not a leak since it's an application context

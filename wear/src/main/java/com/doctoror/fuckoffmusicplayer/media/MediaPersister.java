@@ -25,9 +25,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ * Helper for persisting album art, media and playback state
  */
-
 final class MediaPersister {
 
     private static final String TAG = "MediaPersister";

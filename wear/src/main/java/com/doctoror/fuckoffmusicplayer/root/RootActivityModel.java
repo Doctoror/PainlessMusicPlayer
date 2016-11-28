@@ -21,9 +21,8 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.11.16.
+ * Model for data binding used in {@link RootActivity} content view
  */
-
 public final class RootActivityModel {
 
     private final ObservableField<CharSequence> mMessage = new ObservableField<>();
@@ -44,7 +43,7 @@ public final class RootActivityModel {
         return mMessage;
     }
 
-    public void setMessage(@Nullable final CharSequence message) {
+    void setMessage(@Nullable final CharSequence message) {
         mMessage.set(message);
     }
 
@@ -52,7 +51,7 @@ public final class RootActivityModel {
         return mHandheldConnected;
     }
 
-    public void setHandheldConnected(final boolean connected) {
+    void setHandheldConnected(final boolean connected) {
         mHandheldConnected.set(connected);
     }
 

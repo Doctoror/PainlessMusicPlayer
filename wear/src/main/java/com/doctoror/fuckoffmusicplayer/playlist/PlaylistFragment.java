@@ -49,9 +49,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.11.16.
+ * "Playlist" screen
  */
-
 public final class PlaylistFragment extends Fragment {
 
     private final PlaylistFragmentModel mModel = new PlaylistFragmentModel();

@@ -18,9 +18,8 @@ package com.doctoror.fuckoffmusicplayer.nowplaying;
 import android.databinding.ObservableInt;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ *  Playback state data binding model for {@link NowPlayingFragment} view
  */
-
 public final class NowPlayingFragmentModelPlaybackState {
 
     private final ObservableInt mProgress = new ObservableInt();

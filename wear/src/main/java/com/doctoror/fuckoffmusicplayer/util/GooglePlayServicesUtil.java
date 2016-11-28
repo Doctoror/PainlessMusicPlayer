@@ -23,12 +23,10 @@ import com.doctoror.fuckoffmusicplayer.R;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ * Google Play Services utils
  */
-
 public final class GooglePlayServicesUtil {
 
     private GooglePlayServicesUtil() {

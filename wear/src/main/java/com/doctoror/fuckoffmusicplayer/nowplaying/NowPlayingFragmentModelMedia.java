@@ -19,9 +19,8 @@ import android.databinding.ObservableField;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by Yaroslav Mytkalyk on 16.11.16.
+ * Media data binding model for {@link NowPlayingFragment} view
  */
-
 public final class NowPlayingFragmentModelMedia {
 
     private final ObservableField<CharSequence> mTitle = new ObservableField<>();

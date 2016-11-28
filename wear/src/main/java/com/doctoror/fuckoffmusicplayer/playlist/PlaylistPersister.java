@@ -23,9 +23,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Yaroslav Mytkalyk on 15.11.16.
+ * Helper for persiting playlsit
  */
-
 final class PlaylistPersister {
 
     private static final String FILE_NAME_PLAYLIST = "playlist";

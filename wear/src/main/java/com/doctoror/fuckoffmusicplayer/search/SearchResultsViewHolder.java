@@ -21,9 +21,8 @@ import android.view.View;
 import android.widget.TextView;
 
 /**
- * Created by Yaroslav Mytkalyk on 22.11.16.
+ * View holder for {@link SearchResultsAdapter}
  */
-
 final class SearchResultsViewHolder extends AlphaSelectionViewHolder {
 
     TextView textView;

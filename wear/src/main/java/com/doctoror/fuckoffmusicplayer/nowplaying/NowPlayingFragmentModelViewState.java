@@ -16,15 +16,12 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 /**
- * Created by Yaroslav Mytkalyk on 16.11.16.
+ * View state data binding model for {@link NowPlayingFragment} view
  */
-
 public final class NowPlayingFragmentModelViewState {
 
     private final ObservableInt mBtnPlayRes = new ObservableInt();

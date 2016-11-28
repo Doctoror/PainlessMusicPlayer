@@ -16,9 +16,8 @@ import android.view.ViewGroup;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 22.11.16.
+ * RecyclerView.Adapter for search results
  */
-
 final class SearchResultsAdapter
         extends BaseRecyclerAdapter<SearchResultsAdapterItem, SearchResultsViewHolder> {
 

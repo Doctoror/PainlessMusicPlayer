@@ -31,9 +31,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 /**
- * Created by Yaroslav Mytkalyk on 21.10.16.
+ * Holds current album art, {@link WearPlaybackData.Media} and {@link
+ * WearPlaybackData.PlaybackState}
  */
-
 public final class MediaHolder {
 
     // Is not a leak since it's an application context
