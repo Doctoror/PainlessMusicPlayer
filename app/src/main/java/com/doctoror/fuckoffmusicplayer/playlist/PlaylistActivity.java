@@ -303,7 +303,7 @@ public final class PlaylistActivity extends BaseActivity implements
 
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media.getAlbumArt());
-        NowPlayingActivity.start(this, shouldPassCoverView ? mBinding.albumArt : null);
+        NowPlayingActivity.start(this, shouldPassCoverView ? mBinding.albumArt : null, null);
     }
 
     @Override

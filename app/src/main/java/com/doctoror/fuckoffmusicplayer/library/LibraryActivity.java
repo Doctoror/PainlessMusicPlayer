@@ -116,6 +116,7 @@ public final class LibraryActivity extends BaseActivity {
                 startActivity(Henson.with(this)
                         .gotoNowPlayingActivity()
                         .hasCoverTransition(false)
+                        .hasListViewTransition(false)
                         .build());
                 return true;
 

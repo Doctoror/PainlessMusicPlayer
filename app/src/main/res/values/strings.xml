@@ -55,6 +55,7 @@
         <item>Artists</item>
         <item>Albums</item>
         <item>Genres</item>
+        <item>Tracks</item>
         <item>Playlists</item>
     </string-array>
 

@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
@@ -30,10 +31,8 @@ import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
-import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -77,21 +76,27 @@ public final class NowPlayingActivity extends BaseActivity {
     private static final String TAG = "NowPlayingActivity";
 
     public static final String VIEW_ALBUM_ART = "VIEW_ALBUM_ART";
+    public static final String VIEW_ROOT = "VIEW_ROOT";
 
     public static void start(@NonNull final Activity activity,
-            @Nullable final View albumArt) {
+            @Nullable final View albumArt,
+            @Nullable final View listItemView) {
         final Intent intent = Henson.with(activity)
                 .gotoNowPlayingActivity()
                 .hasCoverTransition(albumArt != null)
+                .hasListViewTransition(listItemView != null)
                 .build();
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        if (albumArt == null) {
-            activity.startActivity(intent);
-        } else {
+        if (albumArt != null) {
             final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, albumArt,
-                            PlaylistActivity.VIEW_ALBUM_ART);
+                    .makeSceneTransitionAnimation(activity, albumArt, VIEW_ALBUM_ART);
             activity.startActivity(intent, options.toBundle());
+        } else if (listItemView != null) {
+            final ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(activity, listItemView, VIEW_ROOT);
+            activity.startActivity(intent, options.toBundle());
+        } else {
+            activity.startActivity(intent);
         }
     }
 
@@ -107,6 +112,9 @@ public final class NowPlayingActivity extends BaseActivity {
 
     @InjectExtra
     boolean hasCoverTransition;
+
+    @InjectExtra
+    boolean hasListViewTransition;
 
     private volatile boolean mSeekBarTracking;
 
@@ -128,6 +136,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_nowplaying);
         ViewCompat.setTransitionName(mBinding.albumArt, VIEW_ALBUM_ART);
+        ViewCompat.setTransitionName(mBinding.getRoot(), VIEW_ROOT);
         ButterKnife.bind(this);
 
         mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);
@@ -158,7 +167,7 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void setAlbumArt(@Nullable final String artUri) {
-        if (!mTransitionPostponed && hasCoverTransition) {
+        if (!mTransitionPostponed && (hasCoverTransition || hasListViewTransition)) {
             mTransitionPostponed = true;
             supportPostponeEnterTransition();
         }
@@ -168,7 +177,7 @@ public final class NowPlayingActivity extends BaseActivity {
             onArtProcessed();
         } else {
             final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
-            if (hasCoverTransition) {
+            if (hasCoverTransition || hasListViewTransition) {
                 b.dontAnimate();
             }
             b.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -199,7 +208,7 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void onArtProcessed() {
-        if (!mTransitionStarted && hasCoverTransition) {
+        if (!mTransitionStarted && (hasCoverTransition || hasListViewTransition)) {
             mTransitionStarted = true;
             try {
                 supportStartPostponedEnterTransition();
@@ -304,6 +313,15 @@ public final class NowPlayingActivity extends BaseActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void finishAfterTransition() {
+        if (hasListViewTransition) {
+            finish();
+        } else {
+            super.finishAfterTransition();
         }
     }
 

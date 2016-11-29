@@ -16,7 +16,6 @@
 package com.doctoror.fuckoffmusicplayer;
 
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
-import com.f2prateek.dart.InjectExtra;
 
 import android.annotation.TargetApi;
 import android.content.ComponentName;

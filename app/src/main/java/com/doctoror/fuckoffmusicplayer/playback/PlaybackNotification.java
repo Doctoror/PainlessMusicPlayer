@@ -85,6 +85,7 @@ final class PlaybackNotification {
         final Intent contentIntent = Henson.with(context)
                 .gotoNowPlayingActivity()
                 .hasCoverTransition(false)
+                .hasListViewTransition(false)
                 .build();
 
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
