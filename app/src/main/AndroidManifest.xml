@@ -80,7 +80,7 @@
             android:name=".nowplaying.NowPlayingActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:label="@string/app_name"
+            android:label="@string/Now_Playing"
             android:screenOrientation="portrait"
             android:parentActivityName=".library.LibraryActivity">
 
