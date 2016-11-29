@@ -82,14 +82,14 @@ public final class SettingsActivity extends BaseActivity {
     @IdRes
     private static int themeToButtonId(@Theme.ThemeType final int theme) {
         switch (theme) {
-            case Theme.DAYNIGHT:
-                return R.id.radioDayNight;
-
             case Theme.DAY:
                 return R.id.radioDay;
 
             case Theme.NIGHT:
                 return R.id.radioNight;
+
+            case Theme.DAYNIGHT:
+                return R.id.radioDayNight;
 
             default:
                 throw new IllegalArgumentException("Unexpected theme: " + theme);
@@ -99,14 +99,14 @@ public final class SettingsActivity extends BaseActivity {
     @Theme.ThemeType
     private static int buttonIdToTheme(@IdRes final int buttonId) {
         switch (buttonId) {
-            case R.id.radioDayNight:
-                return Theme.DAYNIGHT;
-
             case R.id.radioDay:
                 return Theme.DAY;
 
             case R.id.radioNight:
                 return Theme.NIGHT;
+
+            case R.id.radioDayNight:
+                return Theme.DAYNIGHT;
 
             default:
                 throw new IllegalArgumentException("Unexpected button id: " + buttonId);

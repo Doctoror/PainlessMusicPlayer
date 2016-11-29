@@ -27,14 +27,14 @@ public final class Theme {
         return sTheme;
     }
 
-    static final int DAYNIGHT = 0;
+    static final int NIGHT = 0;
     static final int DAY = 1;
-    static final int NIGHT = 2;
+    static final int DAYNIGHT = 2;
 
     @IntDef({
-            DAYNIGHT,
+            NIGHT,
             DAY,
-            NIGHT
+            DAYNIGHT
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ThemeType {
@@ -52,7 +52,7 @@ public final class Theme {
         mThemeType = mPrefs.getTheme();
     }
 
-    public void setThemeType(@ThemeType final int themeType) {
+    void setThemeType(@ThemeType final int themeType) {
         if (mThemeType != themeType) {
             mThemeType = themeType;
             mPrefs.setTheme(themeType);
@@ -73,14 +73,14 @@ public final class Theme {
     @AppCompatDelegate.NightMode
     private static int getDayNightMode(@ThemeType final int theme) {
         switch (theme) {
-            case DAYNIGHT:
-                return AppCompatDelegate.MODE_NIGHT_AUTO;
+            case NIGHT:
+                return AppCompatDelegate.MODE_NIGHT_YES;
 
             case DAY:
                 return AppCompatDelegate.MODE_NIGHT_NO;
 
-            case NIGHT:
-                return AppCompatDelegate.MODE_NIGHT_YES;
+            case DAYNIGHT:
+                return AppCompatDelegate.MODE_NIGHT_AUTO;
 
             default:
                 throw new IllegalArgumentException("Unexpected theme: " + theme);
