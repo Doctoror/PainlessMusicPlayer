@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -81,12 +82,16 @@ final class PlaybackNotification {
             }
         }
 
-        final Intent contentIntent = new Intent(context, NowPlayingActivity.class);
+        final Intent contentIntent = Henson.with(context)
+                .gotoNowPlayingActivity()
+                .hasCoverTransition(false)
+                .build();
+
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         final NotificationCompat.Style style = new NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.getSessionToken())
-                .setShowActionsInCompactView(1);
+                .setShowActionsInCompactView(1, 2);
 
         final android.support.v4.app.NotificationCompat.Builder b
                 = new NotificationCompat.Builder(context)
