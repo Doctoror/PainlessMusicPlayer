@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.library;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
@@ -46,11 +45,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * "Library" activity
  */
 public final class LibraryActivity extends BaseActivity {
 
-    private static final int ANIMATOR_CHILD_PROGRESS = 0;
     private static final int ANIMATOR_CHILD_PERMISSION_DENIED = 1;
     private static final int ANIMATOR_CHILD_CONTENT = 2;
 
