@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -114,7 +115,10 @@ public final class LibraryActivity extends BaseActivity {
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionNowPlaying:
-                startActivity(new Intent(this, NowPlayingActivity.class));
+                startActivity(Henson.with(this)
+                        .gotoNowPlayingActivity()
+                        .hasCoverTransition(false)
+                        .build());
                 return true;
 
             case R.id.actionSettings:
