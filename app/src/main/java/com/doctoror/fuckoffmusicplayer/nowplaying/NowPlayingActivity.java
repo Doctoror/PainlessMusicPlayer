@@ -40,12 +40,14 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.SharedElementCallback;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -62,6 +64,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -128,6 +131,24 @@ public final class NowPlayingActivity extends BaseActivity {
                     new ComponentName(this, LibraryActivity.class));
             startActivity(intent);
             return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (!hasCoverTransition) {
+                setEnterSharedElementCallback(new SharedElementCallback() {
+
+                    @Override
+                    public void onMapSharedElements(final List<String> names,
+                            final Map<String, View> sharedElements) {
+                        super.onMapSharedElements(names, sharedElements);
+                        if (isFinishingAfterTransition()) {
+                            names.clear();
+                            sharedElements.clear();
+                        }
+                    }
+                });
+                getWindow().setReturnTransition(new ArtAndControlsGateTransition());
+            }
         }
 
         mTransitionPostponed = false;
@@ -208,27 +229,29 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void onArtProcessed() {
-        if (!mTransitionStarted && (hasCoverTransition || hasListViewTransition)) {
-            mTransitionStarted = true;
-            try {
-                supportStartPostponedEnterTransition();
-            } catch (NullPointerException e) {
-                Log.wtf(TAG, "While starting postponed transition", e);
-                // TODO sometimes get NPE. WTF?
-                //java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.app.ActivityOptions.isReturning()' on a null object reference
-                //at android.app.ActivityTransitionState.startEnter(ActivityTransitionState.java:203)
-                //at android.app.ActivityTransitionState.startPostponedEnterTransition(ActivityTransitionState.java:197)
-                //at android.app.Activity.startPostponedEnterTransition(Activity.java:6213)
-                //at android.support.v4.app.ActivityCompatApi21.startPostponedEnterTransition(ActivityCompatApi21.java:58)
-                //at android.support.v4.app.ActivityCompat.startPostponedEnterTransition(ActivityCompat.java:298)
-                //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
+        if (!isFinishingAfterTransition()) {
+            if (!mTransitionStarted && (hasCoverTransition || hasListViewTransition)) {
+                mTransitionStarted = true;
+                try {
+                    supportStartPostponedEnterTransition();
+                } catch (NullPointerException e) {
+                    Log.wtf(TAG, "While starting postponed transition", e);
+                    // TODO sometimes get NPE. WTF?
+                    //java.lang.NullPointerException: Attempt to invoke virtual method 'boolean android.app.ActivityOptions.isReturning()' on a null object reference
+                    //at android.app.ActivityTransitionState.startEnter(ActivityTransitionState.java:203)
+                    //at android.app.ActivityTransitionState.startPostponedEnterTransition(ActivityTransitionState.java:197)
+                    //at android.app.Activity.startPostponedEnterTransition(Activity.java:6213)
+                    //at android.support.v4.app.ActivityCompatApi21.startPostponedEnterTransition(ActivityCompatApi21.java:58)
+                    //at android.support.v4.app.ActivityCompat.startPostponedEnterTransition(ActivityCompat.java:298)
+                    //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
+                }
             }
-        }
-        if (mBinding.infoContainer.getAlpha() != 1f) {
-            mBinding.infoContainer.animate().setStartDelay(500).alpha(1f).start();
-        }
-        if (mBinding.toolbar.getAlpha() != 1f) {
-            mBinding.toolbar.animate().setStartDelay(500).alpha(1f).start();
+            if (mBinding.infoContainer.getAlpha() != 1f) {
+                mBinding.infoContainer.animate().setStartDelay(500).alpha(1f).start();
+            }
+            if (mBinding.toolbar.getAlpha() != 1f) {
+                mBinding.toolbar.animate().setStartDelay(500).alpha(1f).start();
+            }
         }
     }
 
@@ -317,15 +340,6 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     @Override
-    public void finishAfterTransition() {
-        if (hasListViewTransition) {
-            finish();
-        } else {
-            super.finishAfterTransition();
-        }
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
@@ -342,60 +356,66 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     void bindTrack(@Nullable Media track, final long position) {
-        if (track != null) {
-            setAlbumArt(track.getAlbumArt());
-            mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
-                    track.getArtist(), track.getAlbum()));
-            mModel.setTitle(track.getTitle());
-            mModel.setDuration(track.getDuration());
-            bindProgress(position);
-            mModel.notifyChange();
-        } else {
-            setAlbumArt(null);
-            mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
-                    null, null));
-            mModel.setTitle(getString(R.string.Untitled));
-            mModel.setElapsedTime(0);
-            mModel.setProgress(0);
-            mModel.setDuration(0);
-            mModel.notifyChange();
+        if (!isFinishingAfterTransition()) {
+            if (track != null) {
+                setAlbumArt(track.getAlbumArt());
+                mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
+                        track.getArtist(), track.getAlbum()));
+                mModel.setTitle(track.getTitle());
+                mModel.setDuration(track.getDuration());
+                bindProgress(position);
+                mModel.notifyChange();
+            } else {
+                setAlbumArt(null);
+                mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
+                        null, null));
+                mModel.setTitle(getString(R.string.Untitled));
+                mModel.setElapsedTime(0);
+                mModel.setProgress(0);
+                mModel.setDuration(0);
+                mModel.notifyChange();
+            }
         }
     }
 
     void bindProgress(final long progress) {
-        mModel.setElapsedTime(progress);
-        final long duration = mModel.getDuration();
-        if (!mSeekBarTracking && duration > 0) {
-            // Max is 200 so progress is a fraction of 200
-            mModel.setProgress((int) (((double) progress / (double) duration) * 200f));
+        if (!isFinishingAfterTransition()) {
+            mModel.setElapsedTime(progress);
+            final long duration = mModel.getDuration();
+            if (!mSeekBarTracking && duration > 0) {
+                // Max is 200 so progress is a fraction of 200
+                mModel.setProgress((int) (((double) progress / (double) duration) * 200f));
+            }
         }
     }
 
     void bindState(final int state) {
-        mState = state;
-        final int playBtnRes;
-        switch (state) {
-            case PlaybackService.STATE_IDLE:
-                playBtnRes = R.drawable.ic_play_arrow_white_36dp;
-                break;
+        if (!isFinishingAfterTransition()) {
+            mState = state;
+            final int playBtnRes;
+            switch (state) {
+                case PlaybackService.STATE_IDLE:
+                    playBtnRes = R.drawable.ic_play_arrow_white_36dp;
+                    break;
 
-            case PlaybackService.STATE_LOADING:
-                playBtnRes = R.drawable.ic_pause_white_36dp;
-                break;
+                case PlaybackService.STATE_LOADING:
+                    playBtnRes = R.drawable.ic_pause_white_36dp;
+                    break;
 
-            case PlaybackService.STATE_PLAYING:
-                playBtnRes = R.drawable.ic_pause_white_36dp;
-                break;
+                case PlaybackService.STATE_PLAYING:
+                    playBtnRes = R.drawable.ic_pause_white_36dp;
+                    break;
 
-            case PlaybackService.STATE_PAUSED:
-                playBtnRes = R.drawable.ic_play_arrow_white_36dp;
-                break;
+                case PlaybackService.STATE_PAUSED:
+                    playBtnRes = R.drawable.ic_play_arrow_white_36dp;
+                    break;
 
-            default:
-                playBtnRes = R.drawable.ic_play_arrow_white_36dp;
-                break;
+                default:
+                    playBtnRes = R.drawable.ic_play_arrow_white_36dp;
+                    break;
+            }
+            mModel.setBtnPlayRes(playBtnRes);
         }
-        mModel.setBtnPlayRes(playBtnRes);
     }
 
     @OnClick(R.id.btnPlay)

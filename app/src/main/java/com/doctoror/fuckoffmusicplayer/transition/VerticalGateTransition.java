@@ -1,13 +1,13 @@
 package com.doctoror.fuckoffmusicplayer.transition;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.support.annotation.IdRes;
 import android.transition.Transition;
 import android.transition.TransitionValues;
 import android.view.View;
@@ -17,15 +17,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Exit transition for {@link ConditionalAlbumListFragment} content view
+ * A {@link Transition} that slides upper view to top and bottom view to bottom
  */
 @TargetApi(Build.VERSION_CODES.KITKAT)
-public class SlideAppBarAndRecyclerViewReturnTransition extends Transition {
+public class VerticalGateTransition extends Transition {
 
     private static final String TRANSLATION_Y = "translationY";
     private static final String DUMMY_PROPERTY_NAME = "d";
 
-    public SlideAppBarAndRecyclerViewReturnTransition() {
+    @IdRes
+    private int mUpperViewId = R.id.appBar;
+
+    @IdRes
+    private int mBottomViewId = R.id.recyclerView;
+
+    public VerticalGateTransition() {
+    }
+
+    public void setUpperViewId(@IdRes final int upperViewId) {
+        mUpperViewId = upperViewId;
+    }
+
+    public void setBottomViewId(@IdRes final int bottomViewId) {
+        mBottomViewId = bottomViewId;
     }
 
     @Override
@@ -44,12 +58,12 @@ public class SlideAppBarAndRecyclerViewReturnTransition extends Transition {
     public Animator createAnimator(final ViewGroup sceneRoot, final TransitionValues startValues,
             final TransitionValues endValues) {
         final Collection<Animator> animators = new ArrayList<>(2);
-        final View appBar = sceneRoot.findViewById(R.id.appBar);
+        final View appBar = sceneRoot.findViewById(mUpperViewId);
         if (appBar != null) {
             animators.add(ObjectAnimator.ofFloat(appBar, TRANSLATION_Y, 0, -appBar.getHeight()));
         }
 
-        final View recyclerView = sceneRoot.findViewById(R.id.recyclerView);
+        final View recyclerView = sceneRoot.findViewById(mBottomViewId);
         if (recyclerView != null) {
             animators.add(ObjectAnimator.ofFloat(recyclerView, TRANSLATION_Y,
                     0, recyclerView.getHeight()));
@@ -59,4 +73,5 @@ public class SlideAppBarAndRecyclerViewReturnTransition extends Transition {
         animatorSet.playTogether(animators);
         return animatorSet;
     }
+
 }

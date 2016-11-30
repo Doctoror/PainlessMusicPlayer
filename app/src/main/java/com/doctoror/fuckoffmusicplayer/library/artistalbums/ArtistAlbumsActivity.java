@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.transition.SlideAppBarAndRecyclerViewReturnTransition;
+import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -69,7 +69,7 @@ public final class ArtistAlbumsActivity extends BaseActivity {
                     }
                 }
             });
-            getWindow().setReturnTransition(new SlideAppBarAndRecyclerViewReturnTransition());
+            getWindow().setReturnTransition(new VerticalGateTransition());
         }
 
         if (savedInstanceState == null) {

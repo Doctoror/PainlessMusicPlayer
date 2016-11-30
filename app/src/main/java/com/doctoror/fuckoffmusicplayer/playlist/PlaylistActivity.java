@@ -28,7 +28,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.transition.SlideAppBarAndRecyclerViewReturnTransition;
+import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -103,7 +103,7 @@ public final class PlaylistActivity extends BaseActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (!hasCoverTransition) {
                 // TODO transition not being called
-                getWindow().setReturnTransition(new SlideAppBarAndRecyclerViewReturnTransition());
+                getWindow().setReturnTransition(new VerticalGateTransition());
             }
         }
 
