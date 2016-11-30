@@ -72,8 +72,8 @@ import rx.Subscription;
 
 public final class PlaybackService extends Service {
 
-    public static final String PERMISSION_RECEIVE_PLAYBACK_STATE
-            = "com.doctoror.fuckoffmusicplayer.permission.RECEIVE_PLAYBACK_STATE";
+    private static final String SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE
+            = ".permission.RECEIVE_PLAYBACK_STATE";
 
     private static final String TAG = "PlaybackService";
     private static final int NOTIFICATION_ID = 666;
@@ -238,11 +238,15 @@ public final class PlaybackService extends Service {
     private CharSequence mErrorMessage;
 
     private GoogleApiClient mGoogleApiClient;
+    private String mPermissionReceivePlaybackState;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mDestroying = false;
+        mPermissionReceivePlaybackState = getPackageName()
+                .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
+
         mPlaylist = PlaylistHolder.getInstance(this);
         mPlaylist.addObserver(mPlaylistObserver);
 
@@ -644,7 +648,7 @@ public final class PlaybackService extends Service {
     private void broadcastState() {
         final Intent intent = new Intent(ACTION_STATE_CHANGED);
         intent.putExtra(EXTRA_STATE, mState);
-        sendBroadcast(intent, PERMISSION_RECEIVE_PLAYBACK_STATE);
+        sendBroadcast(intent, mPermissionReceivePlaybackState);
     }
 
     private void syncWearableMediaAsync() {
