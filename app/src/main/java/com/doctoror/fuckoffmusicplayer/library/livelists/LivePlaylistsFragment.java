@@ -6,13 +6,11 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,9 +39,9 @@ public final class LivePlaylistsFragment extends Fragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+    private LivePlaylistsRecyclerAdapter mAdapter;
 
     private Subscription mLoadPlaylistSubscription;
-    private ProgressDialog mProgressDialog;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -64,35 +62,27 @@ public final class LivePlaylistsFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        final LivePlaylistsRecyclerAdapter adapter = new LivePlaylistsRecyclerAdapter(
-                getActivity(), mPlaylists);
-        adapter.setOnPlaylistClickListener(this::loadPlaylist);
+        mAdapter = new LivePlaylistsRecyclerAdapter(getActivity(), mPlaylists);
+        mAdapter.setOnPlaylistClickListener(this::loadPlaylist);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         unsubscribeFromPlaylistLoad();
-        dismissProgressDialog();
+        clearLoadingFlag();
     }
 
     private void loadPlaylist(@NonNull final LivePlaylist livePlaylist) {
         unsubscribeFromPlaylistLoad();
-        dismissProgressDialog();
 
         final Context context = getActivity();
         if (context == null) {
+            clearLoadingFlag();
             return;
         }
-
-        mProgressDialog = ProgressDialog
-                .show(context, null, context.getText(R.string.Loading_playlist), true, true,
-                        dialog -> {
-                            unsubscribeFromPlaylistLoad();
-                            mProgressDialog = null;
-                        });
 
         mLoadPlaylistSubscription = Observable.<List<Media>>create(
                 s -> s.onNext(livePlaylist.create(context)))
@@ -103,14 +93,14 @@ public final class LivePlaylistsFragment extends Fragment {
                     @Override
                     public void onCompleted() {
                         if (isAdded()) {
-                            dismissProgressDialog();
+                            clearLoadingFlag();
                         }
                     }
 
                     @Override
                     public void onError(final Throwable e) {
                         if (isAdded()) {
-                            dismissProgressDialog();
+                            clearLoadingFlag();
                             Toast.makeText(getActivity(),
                                     getString(R.string.Failed_to_load_data_s, e.getMessage()),
                                     Toast.LENGTH_LONG).show();
@@ -120,17 +110,16 @@ public final class LivePlaylistsFragment extends Fragment {
                     @Override
                     public void onNext(final List<Media> medias) {
                         if (isAdded()) {
-                            dismissProgressDialog();
+                            clearLoadingFlag();
                             onPlaylistLoaded(medias);
                         }
                     }
                 });
     }
 
-    private void dismissProgressDialog() {
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
-            mProgressDialog = null;
+    private void clearLoadingFlag() {
+        if (mAdapter != null) {
+            mAdapter.clearLoadingFlag();
         }
     }
 

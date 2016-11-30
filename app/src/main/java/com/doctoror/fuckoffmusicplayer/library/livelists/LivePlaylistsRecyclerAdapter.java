@@ -4,13 +4,13 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.SingleLineWithIconItemViewHolder;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 08.11.16.
  */
 final class LivePlaylistsRecyclerAdapter extends BaseRecyclerAdapter<LivePlaylist,
-        SingleLineWithIconItemViewHolder> {
+        LivePlaylistViewHolder> {
 
     interface OnPlaylistClickListener {
         void onPlaylistClick(@NonNull LivePlaylist livePlaylist);
@@ -30,6 +30,8 @@ final class LivePlaylistsRecyclerAdapter extends BaseRecyclerAdapter<LivePlaylis
 
     @Nullable
     private final Drawable mIcon;
+
+    private int mLoadingPosition = -1;
 
     private OnPlaylistClickListener mOnPlaylistClickListener;
 
@@ -46,25 +48,39 @@ final class LivePlaylistsRecyclerAdapter extends BaseRecyclerAdapter<LivePlaylis
         mOnPlaylistClickListener = onPlaylistClickListener;
     }
 
-    private void onPlaylistClick(@NonNull final LivePlaylist livePlaylist) {
+    void clearLoadingFlag() {
+        if (mLoadingPosition != -1) {
+            final int prevValue = mLoadingPosition;
+            mLoadingPosition = -1;
+            notifyItemChanged(prevValue);
+        }
+    }
+
+    private void onPlaylistClick(final int position, @NonNull final LivePlaylist livePlaylist) {
         if (mOnPlaylistClickListener != null) {
+            mLoadingPosition = position;
+            notifyItemChanged(position);
             mOnPlaylistClickListener.onPlaylistClick(livePlaylist);
         }
     }
 
     @Override
-    public SingleLineWithIconItemViewHolder onCreateViewHolder(final ViewGroup parent,
+    public LivePlaylistViewHolder onCreateViewHolder(final ViewGroup parent,
             final int viewType) {
-        final SingleLineWithIconItemViewHolder vh = new SingleLineWithIconItemViewHolder(
-                mLayoutInflater.inflate(R.layout.list_item_single_line_icon, parent, false));
+        final LivePlaylistViewHolder vh = new LivePlaylistViewHolder(
+                mLayoutInflater.inflate(R.layout.list_item_live_playlist, parent, false));
         vh.icon.setImageDrawable(mIcon);
-        vh.itemView.setOnClickListener(v -> onPlaylistClick(getItem(vh.getAdapterPosition())));
+        vh.itemView.setOnClickListener(v -> {
+            final int position = vh.getAdapterPosition();
+            onPlaylistClick(position, getItem(position));
+        });
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(final SingleLineWithIconItemViewHolder holder,
+    public void onBindViewHolder(final LivePlaylistViewHolder holder,
             final int position) {
         holder.text.setText(getItem(position).getTitle());
+        holder.progress.setVisibility(mLoadingPosition == position ? View.VISIBLE : View.GONE);
     }
 }

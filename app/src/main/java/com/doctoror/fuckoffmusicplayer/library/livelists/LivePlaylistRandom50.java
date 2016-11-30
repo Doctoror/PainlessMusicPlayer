@@ -15,11 +15,11 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 08.11.16.
  */
 
-public final class LivePlaylistRandom50 implements LivePlaylist {
+final class LivePlaylistRandom50 implements LivePlaylist {
 
     private final CharSequence mTitle;
 
-    public LivePlaylistRandom50(@NonNull final Resources resources) {
+    LivePlaylistRandom50(@NonNull final Resources resources) {
         mTitle = resources.getText(R.string.Random_50);
     }
 
