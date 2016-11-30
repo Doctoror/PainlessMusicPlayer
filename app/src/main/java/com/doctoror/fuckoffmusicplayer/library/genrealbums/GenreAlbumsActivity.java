@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.library.genrealbums;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
@@ -61,19 +62,8 @@ public final class GenreAlbumsActivity extends BaseActivity {
         supportPostponeEnterTransition();
         setTitle(genre);
 
+        TransitionUtils.clearSharedElementsOnReturn(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setEnterSharedElementCallback(new SharedElementCallback() {
-
-                @Override
-                public void onMapSharedElements(final List<String> names,
-                        final Map<String, View> sharedElements) {
-                    super.onMapSharedElements(names, sharedElements);
-                    if (isFinishingAfterTransition()) {
-                        names.clear();
-                        sharedElements.clear();
-                    }
-                }
-            });
             getWindow().setReturnTransition(new VerticalGateTransition());
         }
 

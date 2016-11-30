@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -143,15 +144,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         // The default method returns false when launched from notification and task was swiped out
         // from recents
         // http://stackoverflow.com/questions/19999619/navutils-navigateupto-does-not-start-any-activity
-        final ActivityManager activityManager = (ActivityManager) getSystemService(
-                Context.ACTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
-            for (final ActivityManager.AppTask t : tasks) {
-                if (t.getTaskInfo().numActivities == 1) {
-                    // If only one activity, we should recreate task
-                    return true;
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (BaseActivityMarshmallow.shouldUpRecreateTask(this)) {
+                return true;
             }
         }
 
@@ -175,5 +170,30 @@ public abstract class BaseActivity extends AppCompatActivity {
             ActivityCompat.finishAfterTransition(this);
         }
         return true;
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private static final class BaseActivityMarshmallow {
+
+        private BaseActivityMarshmallow() {
+            throw new UnsupportedOperationException();
+        }
+
+        static boolean shouldUpRecreateTask(@NonNull final Activity activity) {
+            // The default method returns false when launched from notification and task was swiped out
+            // from recents
+            // http://stackoverflow.com/questions/19999619/navutils-navigateupto-does-not-start-any-activity
+            final ActivityManager activityManager = (ActivityManager) activity.getSystemService(
+                    Context.ACTIVITY_SERVICE);
+            final List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
+            for (final ActivityManager.AppTask t : tasks) {
+                if (t.getTaskInfo().numActivities == 1) {
+                    // If only one activity, we should recreate task
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

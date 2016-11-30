@@ -16,21 +16,17 @@
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
-import android.app.SharedElementCallback;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Yaroslav Mytkalyk on 18.10.16.
@@ -56,19 +52,8 @@ public final class ArtistAlbumsActivity extends BaseActivity {
         supportPostponeEnterTransition();
         setTitle(artist);
 
+        TransitionUtils.clearSharedElementsOnReturn(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setEnterSharedElementCallback(new SharedElementCallback() {
-
-                @Override
-                public void onMapSharedElements(final List<String> names,
-                        final Map<String, View> sharedElements) {
-                    super.onMapSharedElements(names, sharedElements);
-                    if (isFinishingAfterTransition()) {
-                        names.clear();
-                        sharedElements.clear();
-                    }
-                }
-            });
             getWindow().setReturnTransition(new VerticalGateTransition());
         }
 

@@ -17,7 +17,6 @@
 package com.doctoror.fuckoffmusicplayer.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -25,7 +24,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
 
 /**
@@ -50,13 +48,6 @@ public class NoOffsetScrimInsetsFrameLayout extends FrameLayout {
 
     public NoOffsetScrimInsetsFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
-        final TypedArray a = context.obtainStyledAttributes(attrs,
-                android.support.design.R.styleable.ScrimInsetsFrameLayout, defStyleAttr,
-                android.support.design.R.style.Widget_Design_ScrimInsetsFrameLayout);
-        mInsetForeground = a.getDrawable(
-                android.support.design.R.styleable.ScrimInsetsFrameLayout_insetForeground);
-        a.recycle();
         setWillNotDraw(true); // No need to draw until the insets are adjusted
 
         ViewCompat.setOnApplyWindowInsetsListener(this,

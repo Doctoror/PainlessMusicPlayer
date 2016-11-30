@@ -28,6 +28,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -109,18 +110,7 @@ public final class PlaylistActivity extends BaseActivity implements
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (!hasCoverTransition) {
-                setEnterSharedElementCallback(new SharedElementCallback() {
-
-                    @Override
-                    public void onMapSharedElements(final List<String> names,
-                            final Map<String, View> sharedElements) {
-                        super.onMapSharedElements(names, sharedElements);
-                        if (isFinishingAfterTransition()) {
-                            names.clear();
-                            sharedElements.clear();
-                        }
-                    }
-                });
+                TransitionUtils.clearSharedElementsOnReturn(this);
                 getWindow().setReturnTransition(new VerticalGateTransition());
             }
         }

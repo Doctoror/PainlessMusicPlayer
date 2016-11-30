@@ -33,6 +33,7 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -135,18 +136,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (!hasCoverTransition) {
-                setEnterSharedElementCallback(new SharedElementCallback() {
-
-                    @Override
-                    public void onMapSharedElements(final List<String> names,
-                            final Map<String, View> sharedElements) {
-                        super.onMapSharedElements(names, sharedElements);
-                        if (isFinishingAfterTransition()) {
-                            names.clear();
-                            sharedElements.clear();
-                        }
-                    }
-                });
+                TransitionUtils.clearSharedElementsOnReturn(this);
                 getWindow().setReturnTransition(new ArtAndControlsGateTransition());
             }
         }
