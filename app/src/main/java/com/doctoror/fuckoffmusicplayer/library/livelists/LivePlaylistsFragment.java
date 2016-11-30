@@ -3,6 +3,7 @@ package com.doctoror.fuckoffmusicplayer.library.livelists;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,6 +41,8 @@ public final class LivePlaylistsFragment extends Fragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+
+    private boolean mLoading;
     private LivePlaylistsRecyclerAdapter mAdapter;
 
     private Subscription mLoadPlaylistSubscription;
@@ -75,7 +79,13 @@ public final class LivePlaylistsFragment extends Fragment {
         clearLoadingFlag();
     }
 
-    private void loadPlaylist(@NonNull final LivePlaylist livePlaylist) {
+    private void loadPlaylist(@NonNull final View itemView,
+            @NonNull final LivePlaylist livePlaylist) {
+        if (mLoading) {
+            return;
+        } else {
+            mLoading = true;
+        }
         unsubscribeFromPlaylistLoad();
 
         final Context context = getActivity();
@@ -111,13 +121,14 @@ public final class LivePlaylistsFragment extends Fragment {
                     public void onNext(final List<Media> medias) {
                         if (isAdded()) {
                             clearLoadingFlag();
-                            onPlaylistLoaded(medias);
+                            onPlaylistLoaded(itemView, medias);
                         }
                     }
                 });
     }
 
     private void clearLoadingFlag() {
+        mLoading = false;
         if (mAdapter != null) {
             mAdapter.clearLoadingFlag();
         }
@@ -130,7 +141,8 @@ public final class LivePlaylistsFragment extends Fragment {
         }
     }
 
-    private void onPlaylistLoaded(@NonNull final List<Media> playlist) {
+    private void onPlaylistLoaded(@NonNull final View itemView,
+            @NonNull final List<Media> playlist) {
         final Activity activity = getActivity();
         if (playlist.isEmpty()) {
             Toast.makeText(activity, R.string.No_tracks_found, Toast.LENGTH_LONG).show();
@@ -138,11 +150,15 @@ public final class LivePlaylistsFragment extends Fragment {
             final Intent intent = Henson.with(activity)
                     .gotoPlaylistActivity()
                     .hasCoverTransition(false)
+                    .hasItemViewTransition(true)
                     .isNowPlayingPlaylist(false)
                     .playlist(playlist)
                     .build();
 
-            startActivity(intent);
+            final ActivityOptionsCompat options = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(activity, itemView, PlaylistActivity.VIEW_ROOT);
+
+            startActivity(intent, options.toBundle());
         }
     }
 }

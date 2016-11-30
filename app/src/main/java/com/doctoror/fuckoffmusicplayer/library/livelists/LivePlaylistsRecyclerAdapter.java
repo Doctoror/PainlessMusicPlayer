@@ -22,7 +22,7 @@ final class LivePlaylistsRecyclerAdapter extends BaseRecyclerAdapter<LivePlaylis
         LivePlaylistViewHolder> {
 
     interface OnPlaylistClickListener {
-        void onPlaylistClick(@NonNull LivePlaylist livePlaylist);
+        void onPlaylistClick(@NonNull View itemView, @NonNull LivePlaylist livePlaylist);
     }
 
     @NonNull
@@ -56,11 +56,12 @@ final class LivePlaylistsRecyclerAdapter extends BaseRecyclerAdapter<LivePlaylis
         }
     }
 
-    private void onPlaylistClick(final int position, @NonNull final LivePlaylist livePlaylist) {
+    private void onPlaylistClick(@NonNull final View itemView, final int position,
+            @NonNull final LivePlaylist livePlaylist) {
         if (mOnPlaylistClickListener != null) {
             mLoadingPosition = position;
             notifyItemChanged(position);
-            mOnPlaylistClickListener.onPlaylistClick(livePlaylist);
+            mOnPlaylistClickListener.onPlaylistClick(itemView, livePlaylist);
         }
     }
 
@@ -72,7 +73,7 @@ final class LivePlaylistsRecyclerAdapter extends BaseRecyclerAdapter<LivePlaylis
         vh.icon.setImageDrawable(mIcon);
         vh.itemView.setOnClickListener(v -> {
             final int position = vh.getAdapterPosition();
-            onPlaylistClick(position, getItem(position));
+            onPlaylistClick(vh.itemView, position, getItem(position));
         });
         return vh;
     }

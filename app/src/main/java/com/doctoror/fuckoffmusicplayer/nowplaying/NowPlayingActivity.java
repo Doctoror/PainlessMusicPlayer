@@ -327,6 +327,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 final Intent playlistActivity = Henson.with(this)
                         .gotoPlaylistActivity()
                         .hasCoverTransition(false)
+                        .hasItemViewTransition(false)
                         .isNowPlayingPlaylist(Boolean.TRUE)
                         .playlist(PlaylistHolder.getInstance(this).getPlaylist())
                         .build();

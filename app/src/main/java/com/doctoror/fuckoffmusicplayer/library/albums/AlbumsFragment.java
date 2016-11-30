@@ -95,6 +95,7 @@ public final class AlbumsFragment extends LibraryListFragment {
                             final Activity activity = getActivity();
                             final Intent intent = Henson.with(activity).gotoPlaylistActivity()
                                     .hasCoverTransition(true)
+                                    .hasItemViewTransition(false)
                                     .isNowPlayingPlaylist(false)
                                     .playlist(playlist)
                                     .title(albumName)
