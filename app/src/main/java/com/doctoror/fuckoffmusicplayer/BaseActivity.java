@@ -18,7 +18,9 @@ package com.doctoror.fuckoffmusicplayer;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Build;
@@ -28,6 +30,8 @@ import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -135,6 +139,26 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean shouldUpRecreateTask(final Intent targetIntent) {
+        // The default method returns false when launched from notification and task was swiped out
+        // from recents
+        // http://stackoverflow.com/questions/19999619/navutils-navigateupto-does-not-start-any-activity
+        final ActivityManager activityManager = (ActivityManager) getSystemService(
+                Context.ACTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
+            for (final ActivityManager.AppTask t : tasks) {
+                if (t.getTaskInfo().numActivities == 1) {
+                    // If only one activity, we should recreate task
+                    return true;
+                }
+            }
+        }
+
+        return super.shouldUpRecreateTask(targetIntent);
+    }
+
+    @Override
     public boolean navigateUpTo(final Intent upIntent) {
         ComponentName destInfo = upIntent.getComponent();
         if (destInfo == null) {
@@ -144,8 +168,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
 
-        startActivity(upIntent);
-        ActivityCompat.finishAfterTransition(this);
+        if (shouldUpRecreateTask(upIntent)) {
+            startActivity(upIntent);
+            finish();
+        } else {
+            ActivityCompat.finishAfterTransition(this);
+        }
         return true;
     }
 }
