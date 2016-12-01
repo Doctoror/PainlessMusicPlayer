@@ -24,6 +24,9 @@ import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
+import org.parceler.Parcel;
+import org.parceler.Parcels;
+
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
@@ -49,6 +52,8 @@ import butterknife.OnClick;
  */
 public final class LibraryActivity extends BaseActivity {
 
+    private static final String KEY_INSTANCE_STATE = "INSTANCE_STATE";
+
     private static final int ANIMATOR_CHILD_PERMISSION_DENIED = 1;
     private static final int ANIMATOR_CHILD_CONTENT = 2;
 
@@ -56,6 +61,7 @@ public final class LibraryActivity extends BaseActivity {
     private LibraryPrefs mPrefs;
 
     private boolean mHasPermissions;
+    private boolean mSearchIconified;
 
     @BindView(R.id.animator)
     ViewAnimator mViewAnimator;
@@ -83,7 +89,30 @@ public final class LibraryActivity extends BaseActivity {
             mPagerItem = mPrefs.getTab();
         }
 
+        mSearchIconified = true;
+        if (savedInstanceState != null) {
+            restoreInstanceState(savedInstanceState);
+        }
         requestPermission();
+    }
+
+    private void restoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        final InstanceState state = Parcels
+                .unwrap(savedInstanceState.getParcelable(KEY_INSTANCE_STATE));
+        if (state != null) {
+            mSearchIconified = state.searchIconified;
+            mSearchSubject.onNext(state.searchQuery);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        final InstanceState state = new InstanceState();
+        state.searchIconified = mSearchIconified;
+        state.searchQuery = mSearchSubject.getValue();
+        outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(state));
     }
 
     @Override
@@ -91,6 +120,13 @@ public final class LibraryActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.activity_library, menu);
         if (mHasPermissions) {
             final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+            searchView.setQuery(mSearchSubject.getValue(), false);
+            searchView.setOnCloseListener(() -> {
+                mSearchIconified = true;
+                return false;
+            });
+            searchView.setOnSearchClickListener((v) -> mSearchIconified = false);
+            searchView.setIconified(mSearchIconified);
             RxSearchView
                     .queryTextChanges(searchView)
                     .debounce(400, TimeUnit.MILLISECONDS)
@@ -165,5 +201,12 @@ public final class LibraryActivity extends BaseActivity {
 
     private void onPermissionDenied() {
         mViewAnimator.setDisplayedChild(ANIMATOR_CHILD_PERMISSION_DENIED);
+    }
+
+    @Parcel
+    static final class InstanceState {
+
+        String searchQuery;
+        boolean searchIconified;
     }
 }
