@@ -52,7 +52,7 @@ public final class LibraryActivity extends BaseActivity {
     private static final int ANIMATOR_CHILD_PERMISSION_DENIED = 1;
     private static final int ANIMATOR_CHILD_CONTENT = 2;
 
-    private final SearchManager mSearchManager = SearchManager.getInstance();
+    private final SearchSubject mSearchSubject = SearchSubject.getInstance();
     private LibraryPrefs mPrefs;
 
     private boolean mHasPermissions;
@@ -94,7 +94,7 @@ public final class LibraryActivity extends BaseActivity {
             RxSearchView
                     .queryTextChanges(searchView)
                     .debounce(400, TimeUnit.MILLISECONDS)
-                    .subscribe(t -> mSearchManager.updateQuery(t.toString()));
+                    .subscribe(t -> mSearchSubject.onNext(t.toString()));
 
             menu.findItem(R.id.actionNowPlaying).setVisible(hasPlaylist());
         } else {

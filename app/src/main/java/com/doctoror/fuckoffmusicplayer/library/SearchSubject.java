@@ -19,37 +19,40 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.util.Observable;
+import rx.Observable;
+import rx.subjects.BehaviorSubject;
 
 /**
- * Created by Yaroslav Mytkalyk on 18.10.16.
+ * Holds and emits current search query
  */
+final class SearchSubject {
 
-final class SearchManager extends Observable {
-
-    private static final SearchManager INSTANCE = new SearchManager();
+    private static final SearchSubject INSTANCE = new SearchSubject();
 
     @NonNull
-    public static SearchManager getInstance() {
+    public static SearchSubject getInstance() {
         return INSTANCE;
     }
 
-    private String mSearchQuery;
+    private final BehaviorSubject<String> mSubject = BehaviorSubject.create();
 
-    private SearchManager() {
+    private SearchSubject() {
 
     }
 
-    public void updateQuery(@Nullable final String searchQuery) {
-        if (!TextUtils.equals(mSearchQuery, searchQuery)) {
-            mSearchQuery = searchQuery;
-            setChanged();
-            notifyObservers(searchQuery);
+    void onNext(@Nullable final String searchQuery) {
+        if (!TextUtils.equals(mSubject.getValue(), searchQuery)) {
+            mSubject.onNext(searchQuery);
         }
     }
 
     @Nullable
-    public String getSearchQuery() {
-        return mSearchQuery;
+    String getValue() {
+        return mSubject.getValue();
+    }
+
+    @NonNull
+    Observable<String> asObservable() {
+        return mSubject.asObservable();
     }
 }

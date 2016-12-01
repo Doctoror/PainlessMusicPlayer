@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 
 import rx.Observer;
 import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * Created by Yaroslav Mytkalyk on 26.10.16.
@@ -47,24 +48,13 @@ public abstract class LibraryListFragment extends Fragment {
     private static final int ANIMATOR_CHILD_ERROR = 2;
     private static final int ANIMATOR_CHILD_CONTENT = 3;
 
-    private final SearchManager mSearchManager = SearchManager.getInstance();
+    private final SearchSubject mSearchSubject = SearchSubject.getInstance();
+    private Subscription mSearchSubscription;
 
     private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
 
     private RxCursorLoader mLoaderObservable;
     private Subscription mSubscription;
-
-    @Override
-    public void onCreate(@Nullable final Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mSearchManager.addObserver(mSearchQueryObserver);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mSearchManager.deleteObserver(mSearchQueryObserver);
-    }
 
     @Nullable
     @Override
@@ -92,7 +82,7 @@ public abstract class LibraryListFragment extends Fragment {
     public void onStart() {
         super.onStart();
         mModel.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
-        restartLoader(mSearchManager.getSearchQuery());
+        mSearchSubscription = mSearchSubject.asObservable().subscribe(mSearchQueryObserver);
     }
 
     @Override
@@ -102,6 +92,9 @@ public abstract class LibraryListFragment extends Fragment {
         if (mSubscription != null) {
             mSubscription.unsubscribe();
             mSubscription = null;
+        }
+        if (mSearchSubscription != null) {
+            mSearchSubscription.unsubscribe();
         }
     }
 
@@ -154,7 +147,6 @@ public abstract class LibraryListFragment extends Fragment {
         }
     };
 
-    private final java.util.Observer mSearchQueryObserver
-            = (observable, o) -> restartLoader((String) o);
+    private final Action1<String> mSearchQueryObserver = this::restartLoader;
 
 }
