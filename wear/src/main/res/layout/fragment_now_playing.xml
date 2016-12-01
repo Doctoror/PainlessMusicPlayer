@@ -7,15 +7,15 @@
     <data>
         <variable
             name="playbackState"
-            type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingFragmentModelPlaybackState"/>
+            type="com.doctoror.fuckoffmusicplayer.wear.nowplaying.NowPlayingFragmentModelPlaybackState"/>
 
         <variable
             name="media"
-            type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingFragmentModelMedia"/>
+            type="com.doctoror.fuckoffmusicplayer.wear.nowplaying.NowPlayingFragmentModelMedia"/>
 
         <variable
             name="viewState"
-            type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingFragmentModelViewState"/>
+            type="com.doctoror.fuckoffmusicplayer.wear.nowplaying.NowPlayingFragmentModelViewState"/>
 
         <import type="android.view.View"/>
 
