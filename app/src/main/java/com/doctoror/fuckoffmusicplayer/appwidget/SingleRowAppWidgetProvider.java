@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.appwidget;
 
+import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
@@ -145,11 +146,15 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     private static void setCoverClickAction(final Context context, final RemoteViews views,
             final boolean hasMedia) {
-        final Intent coverIntent = new Intent();
+        final Intent coverIntent;
         if (hasMedia) {
-            coverIntent.setClass(context, NowPlayingActivity.class);
+            coverIntent = Henson.with(context)
+                    .gotoNowPlayingActivity()
+                    .hasCoverTransition(true)
+                    .hasListViewTransition(false)
+                    .build();
         } else {
-            coverIntent.setClass(context, LibraryActivity.class);
+            coverIntent = new Intent(context, LibraryActivity.class);
         }
         views.setOnClickPendingIntent(R.id.appwidget_img_albumart, PendingIntent.getActivity(
                 context, 0, coverIntent, PendingIntent.FLAG_UPDATE_CURRENT));
