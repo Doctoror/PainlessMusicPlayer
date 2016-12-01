@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.appwidget;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
@@ -34,12 +33,9 @@ import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 /**
- * Created by Yaroslav Mytkalyk on 11.11.16.
+ * Launcher {@link AppWidgetProvider}
  */
-
 public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
-
-    private static final String TAG = "MediumAppWidgetProvider";
 
     private static void requestServiceStateUpdate(final Context context) {
         PlaybackService.resendState(context);
