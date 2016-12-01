@@ -35,6 +35,7 @@ final class SearchSubject {
     }
 
     private final BehaviorSubject<String> mSubject = BehaviorSubject.create();
+    private final Observable<String> mObservable = mSubject.asObservable();
 
     private SearchSubject() {
 
@@ -46,13 +47,8 @@ final class SearchSubject {
         }
     }
 
-    @Nullable
-    String getValue() {
-        return mSubject.getValue();
-    }
-
     @NonNull
     Observable<String> asObservable() {
-        return mSubject.asObservable();
+        return mObservable;
     }
 }
