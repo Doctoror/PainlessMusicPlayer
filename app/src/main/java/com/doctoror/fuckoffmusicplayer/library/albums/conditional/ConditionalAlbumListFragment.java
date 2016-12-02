@@ -127,7 +127,7 @@ public class ConditionalAlbumListFragment extends Fragment {
         activity.setSupportActionBar(mBinding.toolbar);
 
         binding.image.setColorFilter(ContextCompat.getColor(
-                activity, R.color.playlistAlbumArtBackground), PorterDuff.Mode.SRC_ATOP);
+                activity, R.color.translucentBackground), PorterDuff.Mode.SRC_ATOP);
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.setModel(mModel);

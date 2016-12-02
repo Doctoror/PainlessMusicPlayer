@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,6 +85,15 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         notifyItemRemoved(position);
     }
 
+    public final boolean removeItem(@NonNull final T item) {
+        final int position = mItems.indexOf(item);
+        if (mItems.remove(position) != null) {
+            notifyItemRemoved(position);
+            return true;
+        }
+        return false;
+    }
+
     @NonNull
     protected final LayoutInflater getLayoutInflater() {
         return mLayoutInflater;
@@ -91,6 +101,10 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
 
     public final T getItem(final int position) {
         return mItems.get(position);
+    }
+
+    public final int indexOf(@NonNull final T item) {
+        return mItems.indexOf(item);
     }
 
     @Override
@@ -108,5 +122,9 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
 
     public final void setItems(@Nullable final T[] items) {
         setItems(items == null ? null : Arrays.asList(items));
+    }
+
+    public final void swap(final int i, final int j) {
+        Collections.swap(mItems, i, j);
     }
 }

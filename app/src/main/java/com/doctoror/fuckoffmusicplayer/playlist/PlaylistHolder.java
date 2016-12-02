@@ -21,13 +21,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 21.10.16.
+ * Global playlist. Contains a playlist and current media.
  */
-
 public final class PlaylistHolder {
 
     // Is not a leak since it's an application context
@@ -46,6 +46,7 @@ public final class PlaylistHolder {
         return sInstance;
     }
 
+    private final Object mPlaylistLock = new Object();
     private final Object mObserversLock = new Object();
 
     private final List<PlaylistObserver> mObservers = new LinkedList<>();
@@ -63,6 +64,20 @@ public final class PlaylistHolder {
         PlaylistPersister.read(context, this);
     }
 
+    void swap(final int i, final int j) {
+        final List<Media> playlist;
+        synchronized (mPlaylistLock) {
+            playlist = this.playlist;
+            if (playlist != null && i < playlist.size() && j < playlist.size()) {
+                Collections.swap(playlist, i, j);
+                index = playlist.indexOf(media);
+            }
+        }
+        if (playlist != null) {
+            notifyPlaylistOrderingChanged(playlist);
+        }
+    }
+
     void remove(@NonNull final Media media) {
         if (playlist != null) {
             if (playlist.remove(media)) {
@@ -76,7 +91,9 @@ public final class PlaylistHolder {
 
     @Nullable
     public List<Media> getPlaylist() {
-        return playlist == null ? null : new ArrayList<>(playlist);
+        synchronized (mPlaylistLock) {
+            return playlist == null ? null : new ArrayList<>(playlist);
+        }
     }
 
     public int getIndex() {
@@ -93,7 +110,9 @@ public final class PlaylistHolder {
     }
 
     public void setPlaylist(@Nullable final List<Media> playlist) {
-        this.playlist = playlist;
+        synchronized (mPlaylistLock) {
+            this.playlist = playlist;
+        }
         notifyPlaylistChanged(playlist);
     }
 
@@ -155,8 +174,20 @@ public final class PlaylistHolder {
 
     private void notifyPlaylistChanged(@Nullable final List<Media> playlist) {
         synchronized (mObserversLock) {
-            for (final PlaylistObserver observer : mObservers) {
-                observer.onPlaylistChanged(playlist);
+            synchronized (mPlaylistLock) {
+                for (final PlaylistObserver observer : mObservers) {
+                    observer.onPlaylistChanged(playlist);
+                }
+            }
+        }
+    }
+
+    private void notifyPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
+        synchronized (mObserversLock) {
+            synchronized (mPlaylistLock) {
+                for (final PlaylistObserver observer : mObservers) {
+                    observer.onPlaylistOrderingChanged(playlist);
+                }
             }
         }
     }
@@ -164,6 +195,8 @@ public final class PlaylistHolder {
     public interface PlaylistObserver {
 
         void onPlaylistChanged(@Nullable List<Media> playlist);
+
+        void onPlaylistOrderingChanged(@NonNull List<Media> playlist);
 
         void onPositionChanged(long position);
 

@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -55,6 +56,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.OnClick;
@@ -82,7 +84,7 @@ public final class PlaylistActivity extends BaseActivity implements
     List<Media> playlist;
 
     @InjectExtra
-    Boolean isNowPlayingPlaylist;
+    boolean isNowPlayingPlaylist;
 
     @Nullable
     @InjectExtra
@@ -139,6 +141,8 @@ public final class PlaylistActivity extends BaseActivity implements
             final State state = Parcels.unwrap(savedInstanceState.getParcelable(EXTRA_STATE));
             mDeleteSession = state.deleteSession;
             mFinishWhenDialogDismissed = state.finishWhenDialogDismissed;
+            playlist = state.playlist;
+            mAdapter.setPlaylist(playlist);
 
             if (mDeleteSession != null && mDeleteSession.permissionRequested) {
                 onDeleteClick(mDeleteSession.media);
@@ -158,7 +162,7 @@ public final class PlaylistActivity extends BaseActivity implements
         ViewCompat.setTransitionName(binding.getRoot(), PlaylistActivity.TRANSITION_NAME_ROOT);
         ViewCompat.setTransitionName(binding.albumArt, PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
         binding.albumArt.setColorFilter(ContextCompat.getColor(
-                this, R.color.playlistAlbumArtBackground), PorterDuff.Mode.SRC_ATOP);
+                this, R.color.translucentBackground), PorterDuff.Mode.SRC_ATOP);
 
         String pic = null;
         final int size = playlist.size();
@@ -239,6 +243,7 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         final State state = new State();
+        state.playlist = playlist;
         state.deleteSession = mDeleteSession;
         state.finishWhenDialogDismissed = mFinishWhenDialogDismissed;
         outState.putParcelable(EXTRA_STATE, Parcels.wrap(state));
@@ -323,6 +328,7 @@ public final class PlaylistActivity extends BaseActivity implements
     @Parcel
     static final class State {
 
+        List<Media> playlist;
         boolean finishWhenDialogDismissed;
         DeleteSession deleteSession;
     }
@@ -350,8 +356,19 @@ public final class PlaylistActivity extends BaseActivity implements
         }
 
         @Override
-        public void onTrackDeleteClick(@NonNull final Media media) {
+        public void onTrackRemoved(final int position, @NonNull final Media media) {
+            playlist.remove(position);
             onDeleteClickFromList(media);
+        }
+
+        @Override
+        public void onTracksSwapped(final int i, final int j) {
+            if (i < playlist.size() && j < playlist.size()) {
+                Collections.swap(playlist, i, j);
+            }
+            if (isNowPlayingPlaylist) {
+                mPlaylistHolder.swap(i, j);
+            }
         }
     };
 
@@ -361,23 +378,42 @@ public final class PlaylistActivity extends BaseActivity implements
         private final PlaylistRecyclerAdapter mAdapter;
 
         ItemTouchHelperImpl(@NonNull final PlaylistRecyclerAdapter adapter) {
-            super(0, ItemTouchHelper.LEFT);
+            super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
             mAdapter = adapter;
         }
 
         @Override
+        public boolean isLongPressDragEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isItemViewSwipeEnabled() {
+            return true;
+        }
+
+        @Override
         public boolean onMove(final RecyclerView recyclerView,
-                final RecyclerView.ViewHolder viewHolder,
+                final RecyclerView.ViewHolder source,
                 final RecyclerView.ViewHolder target) {
-            return false;
+            //noinspection SimplifiableIfStatement
+            if (source.getItemViewType() != target.getItemViewType()) {
+                return false;
+            }
+
+            return mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
         }
 
         @Override
         public int getMovementFlags(final RecyclerView recyclerView,
                 final RecyclerView.ViewHolder viewHolder) {
             final int position = viewHolder.getAdapterPosition();
-            return mAdapter.canRemove(position) ?
-                    super.getMovementFlags(recyclerView, viewHolder) : 0;
+            final int swipeFlags = mAdapter.canRemove(position) ? ItemTouchHelper.LEFT : 0;
+            int dragFlags = 0;
+            if (mAdapter.canDrag(position) && mAdapter.getItemCount() > 1) {
+                dragFlags |= ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            }
+            return makeMovementFlags(dragFlags, swipeFlags);
         }
 
         @Override
@@ -390,6 +426,25 @@ public final class PlaylistActivity extends BaseActivity implements
                 }
             }
             mAdapter.setItemRemoved(pos);
+        }
+
+        @Override
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                if (viewHolder instanceof ItemTouchHelperViewHolder) {
+                    ((ItemTouchHelperViewHolder) viewHolder).onItemSelected();
+                }
+            }
+
+            super.onSelectedChanged(viewHolder, actionState);
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            if (viewHolder instanceof ItemTouchHelperViewHolder) {
+                ((ItemTouchHelperViewHolder) viewHolder).onItemClear();
+            }
         }
     }
 
@@ -428,6 +483,12 @@ public final class PlaylistActivity extends BaseActivity implements
                         .build();
                 restart(intent);
             }
+        }
+
+        @Override
+        public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
+            // Ignore. Ordering can only be chagned from this Activity, thus we know the current
+            // ordering.
         }
 
         @Override

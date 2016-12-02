@@ -4,5 +4,5 @@
         android:radius="3dp" />
 
     <solid
-        android:color="@color/playlistAlbumArtBackground" />
+        android:color="@color/translucentBackground" />
 </shape>

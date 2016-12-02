@@ -759,6 +759,11 @@ public final class PlaybackService extends Service {
         public void onPlaylistChanged(@Nullable final List<Media> playlist) {
             mExecutor.submit(() -> syncWearablePlaylist());
         }
+
+        @Override
+        public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
+            mExecutor.submit(() -> syncWearablePlaylist());
+        }
     };
 
     private final MediaPlayerListener mMediaPlayerListener = new MediaPlayerListener() {

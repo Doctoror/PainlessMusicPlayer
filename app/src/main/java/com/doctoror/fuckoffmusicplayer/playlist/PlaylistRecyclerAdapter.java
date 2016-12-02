@@ -21,6 +21,7 @@ import com.doctoror.fuckoffmusicplayer.widget.TwoLineItemViewHolder;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * "Playlist" recycler adapter
  */
 final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, RecyclerView.ViewHolder> {
 
@@ -45,7 +46,9 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
 
         void onTrackClick(@NonNull Media media, int position);
 
-        void onTrackDeleteClick(@NonNull Media media);
+        void onTrackRemoved(int position, @NonNull Media media);
+
+        void onTracksSwapped(int i, int j);
     }
 
     private OnTrackClickListener mOnTrackClickListener;
@@ -53,6 +56,10 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
     PlaylistRecyclerAdapter(@NonNull final Context context,
             @NonNull final List<Media> items) {
         super(context, toObjectList(items), true);
+    }
+
+    public void setPlaylist(@Nullable final List<Media> items) {
+        setItems(items == null ? null : toObjectList(items));
     }
 
     @NonNull
@@ -64,27 +71,47 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         final Object item = getItem(position);
         if (item instanceof Media) {
             final Media media = (Media) item;
-            final long id = media.getId();
             // Replace with "swiped out" state
-            setItem(position, new RemovedMedia(media));
+            final RemovedMedia removedMedia = new RemovedMedia(media);
+            setItem(position, removedMedia);
             // After timeout, removed the "swiped out" item completely
             Observable.timer(4, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(aLong -> {
-                        if (position < getItemCount()) {
-                            final Object itemNow = getItem(position);
-                            if (itemNow instanceof RemovedMedia) {
-                                // Is the same item we waited for
-                                if (((RemovedMedia) itemNow).media.id == id) {
-                                    removeItem(position);
-                                }
-                            }
-                        }
-                    });
+                    .subscribe(aLong -> removeItem(removedMedia));
         }
+    }
+
+    boolean onItemMove(final int fromPosition, final int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                swap(i, i + 1);
+                onTracksSwapped(i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                swap(i, i - 1);
+                onTracksSwapped(i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
     boolean canRemove(final int position) {
         return getItem(position) instanceof Media;
+    }
+
+    boolean canDrag(final int position) {
+        return !containsRemovedItems() && getItem(position) instanceof Media;
+    }
+
+    private boolean containsRemovedItems() {
+        final int count = getItemCount();
+        for (int i = 0; i < count; i++) {
+            if (getItem(i) instanceof RemovedMedia) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void setOnTrackClickListener(@NonNull final OnTrackClickListener onTrackClickListener) {
@@ -97,9 +124,15 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         }
     }
 
-    private void onTrackDeleteClick(@NonNull final Media media) {
+    private void onTrackRemoved(final int position, @NonNull final Media media) {
         if (mOnTrackClickListener != null) {
-            mOnTrackClickListener.onTrackDeleteClick(media);
+            mOnTrackClickListener.onTrackRemoved(position, media);
+        }
+    }
+
+    private void onTracksSwapped(final int i, final int j) {
+        if (mOnTrackClickListener != null) {
+            mOnTrackClickListener.onTracksSwapped(i, j);
         }
     }
 
@@ -113,7 +146,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         final int viewType = getItemViewType(position);
         switch (viewType) {
             case ITEM_MEDIA:
-                onBindViewHolderMedia((TwoLineItemViewHolder) viewHolder, position);
+                onBindViewHolderMedia((PlaylistItemViewHolder) viewHolder, position);
                 break;
 
             case ITEM_MEDIA_REMOVED:
@@ -154,7 +187,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
 
     @NonNull
     private RecyclerView.ViewHolder onCreateViewHolderMedia(final ViewGroup parent) {
-        final TwoLineItemViewHolder vh = new TwoLineItemViewHolder(
+        final TwoLineItemViewHolder vh = new PlaylistItemViewHolder(
                 getLayoutInflater().inflate(R.layout.list_item_two_line, parent, false));
         vh.itemView.setOnClickListener(v -> {
             final int position = vh.getAdapterPosition();
@@ -173,7 +206,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         vh.btnDelete.setOnClickListener(v -> {
             final int position = vh.getAdapterPosition();
             final RemovedMedia item = (RemovedMedia) getItem(position);
-            onTrackDeleteClick(item.media);
+            onTrackRemoved(position, item.media);
             // Remove item that is about to be deleted
             removeItem(position);
         });

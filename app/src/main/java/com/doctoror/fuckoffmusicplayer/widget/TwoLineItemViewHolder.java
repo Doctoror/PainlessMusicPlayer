@@ -22,7 +22,7 @@ import android.widget.TextView;
 /**
  * Created by Yaroslav Mytkalyk on 17.10.16.
  */
-public final class TwoLineItemViewHolder extends RecyclerView.ViewHolder {
+public class TwoLineItemViewHolder extends RecyclerView.ViewHolder {
 
     public final TextView text1;
     public final TextView text2;

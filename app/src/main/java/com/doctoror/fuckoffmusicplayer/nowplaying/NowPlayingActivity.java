@@ -317,7 +317,7 @@ public final class NowPlayingActivity extends BaseActivity {
                         .gotoPlaylistActivity()
                         .hasCoverTransition(false)
                         .hasItemViewTransition(false)
-                        .isNowPlayingPlaylist(Boolean.TRUE)
+                        .isNowPlayingPlaylist(true)
                         .playlist(PlaylistHolder.getInstance(this).getPlaylist())
                         .build();
                 playlistActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -441,6 +441,11 @@ public final class NowPlayingActivity extends BaseActivity {
 
         @Override
         public void onPlaylistChanged(@Nullable final List<Media> playlist) {
+            // Nothing
+        }
+
+        @Override
+        public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
             // Nothing
         }
 
