@@ -77,8 +77,9 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private static final String TAG = "NowPlayingActivity";
 
-    public static final String VIEW_ALBUM_ART = "VIEW_ALBUM_ART";
-    public static final String VIEW_ROOT = "VIEW_ROOT";
+    public static final String TRANSITION_NAME_ALBUM_ART
+            = "NowPlayingActivity.TRANSITION_NAME_ALBUM_ART";
+    public static final String TRANSITION_NAME_ROOT = "NowPlayingActivity.TRANSITION_NAME_ROOT";
 
     public static void start(@NonNull final Activity activity,
             @Nullable final View albumArt,
@@ -91,11 +92,11 @@ public final class NowPlayingActivity extends BaseActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (albumArt != null) {
             final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, albumArt, VIEW_ALBUM_ART);
+                    .makeSceneTransitionAnimation(activity, albumArt, TRANSITION_NAME_ALBUM_ART);
             activity.startActivity(intent, options.toBundle());
         } else if (listItemView != null) {
             final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, listItemView, VIEW_ROOT);
+                    .makeSceneTransitionAnimation(activity, listItemView, TRANSITION_NAME_ROOT);
             activity.startActivity(intent, options.toBundle());
         } else {
             activity.startActivity(intent);
@@ -144,8 +145,8 @@ public final class NowPlayingActivity extends BaseActivity {
         mPlaylist = PlaylistHolder.getInstance(this);
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_nowplaying);
-        ViewCompat.setTransitionName(mBinding.albumArt, VIEW_ALBUM_ART);
-        ViewCompat.setTransitionName(mBinding.getRoot(), VIEW_ROOT);
+        ViewCompat.setTransitionName(mBinding.albumArt, TRANSITION_NAME_ALBUM_ART);
+        ViewCompat.setTransitionName(mBinding.getRoot(), TRANSITION_NAME_ROOT);
         ButterKnife.bind(this);
 
         mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);

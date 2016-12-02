@@ -38,7 +38,6 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
-import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
@@ -55,10 +54,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
-import android.view.View;
 
 import java.util.List;
-import java.util.Map;
 
 import butterknife.OnClick;
 
@@ -68,8 +65,10 @@ import butterknife.OnClick;
 public final class PlaylistActivity extends BaseActivity implements
         DeleteFileDialogFragment.Callback {
 
-    public static final String VIEW_ALBUM_ART = "VIEW_ALBUM_ART";
-    public static final String VIEW_ROOT = "VIEW_ROOT";
+    public static final String TRANSITION_NAME_ALBUM_ART
+            = "PlaylistActivity.TRANSITION_NAME_ALBUM_ART";
+
+    public static final String TRANSITION_NAME_ROOT = "PlaylistActivity.TRANSITION_NAME_ROOT";
 
     private static final String EXTRA_STATE = "EXTRA_STATE";
     private static final String TAG_DIALOG_DELETE = "TAG_DIALOG_DELETE";
@@ -156,8 +155,8 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private void initAlbumArtAndToolbar(@NonNull final ActivityPlaylistBinding binding) {
         setSupportActionBar(binding.toolbar);
-        ViewCompat.setTransitionName(binding.getRoot(), PlaylistActivity.VIEW_ROOT);
-        ViewCompat.setTransitionName(binding.albumArt, PlaylistActivity.VIEW_ALBUM_ART);
+        ViewCompat.setTransitionName(binding.getRoot(), PlaylistActivity.TRANSITION_NAME_ROOT);
+        ViewCompat.setTransitionName(binding.albumArt, PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
         binding.albumArt.setColorFilter(ContextCompat.getColor(
                 this, R.color.playlistAlbumArtBackground), PorterDuff.Mode.SRC_ATOP);
 

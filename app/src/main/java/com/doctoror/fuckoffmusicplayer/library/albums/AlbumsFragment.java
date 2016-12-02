@@ -103,7 +103,7 @@ public final class AlbumsFragment extends LibraryListFragment {
 
                             final ActivityOptionsCompat options = ActivityOptionsCompat
                                     .makeSceneTransitionAnimation(activity, view,
-                                            PlaylistActivity.VIEW_ALBUM_ART);
+                                            PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
                             startActivity(intent, options.toBundle());
                         } else {
                             Toast.makeText(getActivity(), R.string.The_playlist_is_empty,

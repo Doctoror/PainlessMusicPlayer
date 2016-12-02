@@ -182,7 +182,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                                 //noinspection unchecked
                                 final ActivityOptionsCompat options = ActivityOptionsCompat
                                         .makeSceneTransitionAnimation(activity, albumArtView,
-                                                PlaylistActivity.VIEW_ALBUM_ART);
+                                                PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
 
                                 startActivity(intent, options.toBundle());
                             } else {

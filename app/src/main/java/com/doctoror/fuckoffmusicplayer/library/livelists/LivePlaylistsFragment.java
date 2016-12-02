@@ -155,7 +155,8 @@ public final class LivePlaylistsFragment extends Fragment {
                     .build();
 
             final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, itemView, PlaylistActivity.VIEW_ROOT);
+                    .makeSceneTransitionAnimation(activity, itemView,
+                            PlaylistActivity.TRANSITION_NAME_ROOT);
 
             startActivity(intent, options.toBundle());
         }
