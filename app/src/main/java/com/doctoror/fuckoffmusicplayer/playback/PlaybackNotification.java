@@ -17,20 +17,20 @@ package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.commons.util.Log;
 
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.support.v7.app.NotificationCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 
 import java.util.concurrent.ExecutionException;
@@ -80,6 +80,10 @@ final class PlaybackNotification {
             } catch (InterruptedException | ExecutionException e) {
                 Log.w(TAG, e);
             }
+        }
+        if (art == null) {
+            art = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.album_art_placeholder);
         }
 
         final Intent contentIntent = Henson.with(context)
