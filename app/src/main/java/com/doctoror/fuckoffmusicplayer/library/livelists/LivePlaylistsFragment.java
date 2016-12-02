@@ -120,7 +120,6 @@ public final class LivePlaylistsFragment extends Fragment {
                     @Override
                     public void onNext(final List<Media> medias) {
                         if (isAdded()) {
-                            clearLoadingFlag();
                             onPlaylistLoaded(itemView, medias);
                         }
                     }
