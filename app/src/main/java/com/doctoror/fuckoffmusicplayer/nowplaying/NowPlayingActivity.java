@@ -41,7 +41,6 @@ import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.SharedElementCallback;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -65,7 +64,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -73,7 +71,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 21.10.16.
+ * "Now Playing" activity
  */
 public final class NowPlayingActivity extends BaseActivity {
 
@@ -334,6 +332,7 @@ public final class NowPlayingActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
+        bindState(PlaybackService.getLastKnownState());
         mPlaylist.addObserver(mPlaylistObserver);
         registerReceiver(mReceiver, mReceiver.mIntentFilter);
         PlaybackService.resendState(this);

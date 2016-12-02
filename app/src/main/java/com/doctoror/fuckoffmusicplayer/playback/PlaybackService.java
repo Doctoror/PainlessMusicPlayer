@@ -207,6 +207,14 @@ public final class PlaybackService extends Service {
     }
 
     @State
+    private static int sLastKnownState;
+
+    @State
+    public static int getLastKnownState() {
+        return sLastKnownState;
+    }
+
+    @State
     private int mState = STATE_IDLE;
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
@@ -633,6 +641,7 @@ public final class PlaybackService extends Service {
 
     private void setState(@State final int state) {
         mState = state;
+        sLastKnownState = state;
         setMediaSessionPlaybackState(state);
         syncWearableStateAsync();
         broadcastState();
