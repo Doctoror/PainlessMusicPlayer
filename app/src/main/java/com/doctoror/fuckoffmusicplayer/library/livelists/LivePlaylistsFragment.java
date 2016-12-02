@@ -79,8 +79,7 @@ public final class LivePlaylistsFragment extends Fragment {
         clearLoadingFlag();
     }
 
-    private void loadPlaylist(@NonNull final View itemView,
-            @NonNull final LivePlaylist livePlaylist) {
+    private void loadPlaylist(final int position, @NonNull final LivePlaylist livePlaylist) {
         if (mLoading) {
             return;
         } else {
@@ -120,7 +119,9 @@ public final class LivePlaylistsFragment extends Fragment {
                     @Override
                     public void onNext(final List<Media> medias) {
                         if (isAdded()) {
-                            onPlaylistLoaded(itemView, medias);
+                            final RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+                            final View view = lm != null ? lm.findViewByPosition(position) : null;
+                            onPlaylistLoaded(view, medias);
                         }
                     }
                 });
@@ -140,7 +141,7 @@ public final class LivePlaylistsFragment extends Fragment {
         }
     }
 
-    private void onPlaylistLoaded(@NonNull final View itemView,
+    private void onPlaylistLoaded(@Nullable final View itemView,
             @NonNull final List<Media> playlist) {
         final Activity activity = getActivity();
         if (playlist.isEmpty()) {
@@ -154,11 +155,15 @@ public final class LivePlaylistsFragment extends Fragment {
                     .playlist(playlist)
                     .build();
 
-            final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, itemView,
-                            PlaylistActivity.TRANSITION_NAME_ROOT);
+            if (itemView != null) {
+                final ActivityOptionsCompat options = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(activity, itemView,
+                                PlaylistActivity.TRANSITION_NAME_ROOT);
 
-            startActivity(intent, options.toBundle());
+                startActivity(intent, options.toBundle());
+            } else {
+                startActivity(intent);
+            }
         }
     }
 }
