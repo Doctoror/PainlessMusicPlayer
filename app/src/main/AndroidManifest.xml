@@ -139,7 +139,7 @@
             </intent-filter>
         </service>
 
-        <service android:name=".wear.WearSearchProviderService"/>
+        <service android:name=".wear.SearchProviderService"/>
 
     </application>
 

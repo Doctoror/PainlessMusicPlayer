@@ -64,7 +64,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null) {
                     final String query = new String(data, Charset.forName("UTF-8"));
-                    WearSearchProviderService.search(this, query);
+                    SearchProviderService.search(this, query);
                 }
                 break;
             }

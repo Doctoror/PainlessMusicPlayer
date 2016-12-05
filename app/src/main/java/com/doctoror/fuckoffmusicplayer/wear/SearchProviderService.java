@@ -33,7 +33,7 @@ import java.util.Set;
  * Created by Yaroslav Mytkalyk on 21.11.16.
  */
 
-public final class WearSearchProviderService extends IntentService {
+public final class SearchProviderService extends IntentService {
 
     private static final String TAG = "WearSearchProviderService";
 
@@ -42,7 +42,7 @@ public final class WearSearchProviderService extends IntentService {
 
     public static void search(@NonNull final Context context,
             @NonNull final String query) {
-        final Intent intent = new Intent(context, WearSearchProviderService.class);
+        final Intent intent = new Intent(context, SearchProviderService.class);
         intent.setAction(ACTION_SEARCH);
         intent.putExtra(EXTRA_QUERY, query);
         context.startService(intent);
@@ -50,7 +50,7 @@ public final class WearSearchProviderService extends IntentService {
 
     private PowerManager.WakeLock mWakeLock;
 
-    public WearSearchProviderService() {
+    public SearchProviderService() {
         super(TAG);
     }
 

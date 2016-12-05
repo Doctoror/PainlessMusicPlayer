@@ -85,6 +85,7 @@ public final class PlaybackService extends Service {
 
     private static final String ACTION_PLAY_MEDIA_FROM_PLAYLIST = "ACTION_PLAY_MEDIA_FROM_PLAYLIST";
     private static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
+    private static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
     private static final String ACTION_PLAY = "ACTION_PLAY";
     private static final String ACTION_PAUSE = "ACTION_PAUSE";
     private static final String ACTION_STOP = "ACTION_STOP";
@@ -109,6 +110,10 @@ public final class PlaybackService extends Service {
 
     public static void play(@NonNull final Context context) {
         context.startService(playIntent(context));
+    }
+
+    public static void playAnything(@NonNull final Context context) {
+        context.startService(playAnythingIntent(context));
     }
 
     public static void pause(@NonNull final Context context) {
@@ -161,6 +166,12 @@ public final class PlaybackService extends Service {
     static Intent playIntent(@NonNull final Context context) {
         final Intent intent = new Intent(context, PlaybackService.class);
         intent.setAction(ACTION_PLAY);
+        return intent;
+    }
+
+    static Intent playAnythingIntent(@NonNull final Context context) {
+        final Intent intent = new Intent(context, PlaybackService.class);
+        intent.setAction(ACTION_PLAY_ANYTHING);
         return intent;
     }
 
@@ -315,6 +326,10 @@ public final class PlaybackService extends Service {
                     onActionPlay();
                     break;
 
+                case ACTION_PLAY_ANYTHING:
+                    onActionPlayAnything();
+                    break;
+
                 case ACTION_PAUSE:
                     onActionPause();
                     break;
@@ -411,6 +426,10 @@ public final class PlaybackService extends Service {
         }
         mPlayOnFocusGain = true;
         playCurrent(true);
+    }
+
+    private void onActionPlayAnything() {
+        playCurrentOrNewPlaylist();
     }
 
     private void onActionPause() {
