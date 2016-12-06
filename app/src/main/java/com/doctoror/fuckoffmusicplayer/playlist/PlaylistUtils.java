@@ -18,11 +18,11 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
+import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteException;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -42,6 +42,8 @@ import java.util.List;
 public final class PlaylistUtils {
 
     private static final String TAG = "PlaylistUtils";
+
+    private static final int MAX_PLAYLIST_SIZE = 99;
 
     private PlaylistUtils() {
 
@@ -80,14 +82,14 @@ public final class PlaylistUtils {
     public static List<Media> fromAlbum(@NonNull final ContentResolver resolver,
             final long albumId) {
         final List<Media> playlist = new ArrayList<>(15);
-        final Cursor c = resolver.query(Query.CONTENT_URI,
-                Query.PROJECTION_WITH_ALBUM_ART,
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION_WITH_ALBUM_ART,
                 MediaStore.Audio.Media.ALBUM_ID + '=' + albumId,
                 null,
                 MediaStore.Audio.Media.TRACK);
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
             }
             c.close();
         }
@@ -99,14 +101,14 @@ public final class PlaylistUtils {
     public static List<Media> fromArtist(@NonNull final ContentResolver resolver,
             final long artistId) {
         final List<Media> playlist = new ArrayList<>(25);
-        final Cursor c = resolver.query(Query.CONTENT_URI,
-                Query.PROJECTION_WITH_ALBUM_ART,
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION_WITH_ALBUM_ART,
                 MediaStore.Audio.Media.ARTIST_ID + '=' + artistId,
                 null,
                 MediaStore.Audio.Media.ALBUM_ID + ',' + MediaStore.Audio.Media.TRACK);
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
             }
             c.close();
         }
@@ -119,6 +121,69 @@ public final class PlaylistUtils {
             final long albumId,
             @NonNull final String albumArt) {
         return fromAlbums(resolver, new long[]{albumId}, new String[]{albumArt}, null);
+    }
+
+    @Nullable
+    @WorkerThread
+    public static List<Media> fromAlbumSearch(@NonNull final ContentResolver resolver,
+            @Nullable final String query) {
+        final List<Media> playlist = new ArrayList<>(15);
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION,
+                TextUtils.isEmpty(query) ? null : MediaStore.Audio.Albums.ALBUM + " LIKE '%"
+                        + StringUtils.sqlEscape(query) + "%'",
+                null,
+                MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
+                        MAX_PLAYLIST_SIZE);
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
+    }
+
+    @Nullable
+    @WorkerThread
+    public static List<Media> fromArtistSearch(@NonNull final ContentResolver resolver,
+            @Nullable final String query) {
+        final List<Media> playlist = new ArrayList<>(15);
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION,
+                TextUtils.isEmpty(query) ? null : MediaStore.Audio.Artists.ARTIST + " LIKE '%"
+                        + StringUtils.sqlEscape(query) + "%'",
+                null,
+                MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
+                        MAX_PLAYLIST_SIZE);
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
+    }
+
+    @Nullable
+    @WorkerThread
+    public static List<Media> fromTracksSearch(@NonNull final ContentResolver resolver,
+            @Nullable final String query) {
+        final List<Media> playlist = new ArrayList<>(15);
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION,
+                TextUtils.isEmpty(query) ? null : MediaStore.Audio.Media.TITLE + " LIKE '%"
+                        + StringUtils.sqlEscape(query) + "%'",
+                null,
+                MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
+                        MAX_PLAYLIST_SIZE);
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
     }
 
     @Nullable
@@ -139,8 +204,8 @@ public final class PlaylistUtils {
                 selection.append(" AND ")
                         .append(MediaStore.Audio.Media.ARTIST_ID).append('=').append(forArtist);
             }
-            final Cursor c = resolver.query(Query.CONTENT_URI,
-                    Query.PROJECTION,
+            final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                    MediaQuery.PROJECTION,
                     selection.toString(),
                     null,
                     MediaStore.Audio.Media.TRACK);
@@ -160,14 +225,14 @@ public final class PlaylistUtils {
             @NonNull final long[] trackIds,
             @Nullable final String sortOrder) {
         final List<Media> playlist = new ArrayList<>(trackIds.length);
-        final Cursor c = resolver.query(Query.CONTENT_URI,
-                Query.PROJECTION_WITH_ALBUM_ART,
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION_WITH_ALBUM_ART,
                 SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, trackIds),
                 null,
                 sortOrder);
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
             }
             c.close();
         }
@@ -193,14 +258,14 @@ public final class PlaylistUtils {
             }
             order.append(" LIMIT ").append(limit);
         }
-        final Cursor c = resolver.query(Query.CONTENT_URI,
-                Query.PROJECTION_WITH_ALBUM_ART,
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION_WITH_ALBUM_ART,
                 selection,
                 selectionArgs,
                 order.length() == 0 ? null : order.toString());
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
             }
             c.close();
         }
@@ -211,14 +276,14 @@ public final class PlaylistUtils {
     public static List<Media> forFile(@NonNull final ContentResolver resolver,
             @NonNull final Uri uri) throws Exception {
         final List<Media> playlist = new ArrayList<>(1);
-        final Cursor c = resolver.query(Query.CONTENT_URI,
-                Query.PROJECTION_WITH_ALBUM_ART,
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION_WITH_ALBUM_ART,
                 MediaStore.Audio.Media.DATA.concat("=?"),
                 new String[]{uri.getPath()},
                 null);
         if (c != null) {
             if (c.moveToFirst()) {
-                playlist.add(mediaFromCursor(c, c.getString(Query.COLUMN_ALBUM_ART)));
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
             }
             c.close();
         }
@@ -272,57 +337,18 @@ public final class PlaylistUtils {
     private static Media mediaFromCursor(@NonNull final Cursor c,
             @Nullable final String albumArt) {
         final Media media = new Media();
-        media.id = c.getLong(Query.COLUMN_ID);
-        media.track = c.getInt(Query.COLUMN_TRACK);
-        media.title = c.getString(Query.COLUMN_TITLE);
-        media.artist = c.getString(Query.COLUMN_ARTIST);
-        media.album = c.getString(Query.COLUMN_ALBUM);
+        media.id = c.getLong(MediaQuery.COLUMN_ID);
+        media.track = c.getInt(MediaQuery.COLUMN_TRACK);
+        media.title = c.getString(MediaQuery.COLUMN_TITLE);
+        media.artist = c.getString(MediaQuery.COLUMN_ARTIST);
+        media.album = c.getString(MediaQuery.COLUMN_ALBUM);
         media.albumArt = albumArt;
-        media.duration = c.getLong(Query.COLUMN_DURATION);
-        final String path = c.getString(Query.COLUMN_DATA);
+        media.duration = c.getLong(MediaQuery.COLUMN_DURATION);
+        final String path = c.getString(MediaQuery.COLUMN_DATA);
         if (!TextUtils.isEmpty(path)) {
             media.data = Uri.parse(new File(path).toURI().toString());
         }
         return media;
     }
 
-    private static final class Query {
-
-        static final Uri CONTENT_URI = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-
-        static final int COLUMN_ID = 0;
-        static final int COLUMN_TRACK = 1;
-        static final int COLUMN_TITLE = 2;
-        static final int COLUMN_ARTIST = 3;
-        static final int COLUMN_ALBUM = 4;
-        static final int COLUMN_DURATION = 5;
-        static final int COLUMN_DATA = 6;
-        static final int COLUMN_ALBUM_ART = 7;
-
-        static final String[] PROJECTION = {
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.TRACK,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.DATA
-        };
-
-        static final String[] PROJECTION_WITH_ALBUM_ART = {
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.TRACK,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.DATA,
-                "(SELECT _data FROM album_art WHERE album_art.album_id=audio.album_id) AS "
-                        + MediaStore.Audio.Albums.ALBUM_ART
-        };
-
-        private Query() {
-            throw new UnsupportedOperationException();
-        }
-    }
 }
