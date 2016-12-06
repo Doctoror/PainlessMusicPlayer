@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" package="com.doctoror.fuckoffmusicplayer">
 
+    <permission
+        android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"
+        android:protectionLevel="signature"/>
+
+    <uses-permission
+        android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"/>
+
     <!-- Location for better accuracy of daynight theme-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
@@ -16,13 +23,6 @@
 
     <!-- For deleting files -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <permission
-        android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"
-        android:protectionLevel="signature"/>
-
-    <uses-permission
-        android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"/>
 
     <application
         android:name=".App"
