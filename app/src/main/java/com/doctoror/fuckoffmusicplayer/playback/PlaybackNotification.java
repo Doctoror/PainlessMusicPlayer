@@ -36,9 +36,8 @@ import android.text.TextUtils;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Yaroslav Mytkalyk on 22.10.16.
+ * "Now Playing" notification
  */
-
 final class PlaybackNotification {
 
     private static final String TAG = "PlaybackNotification";
@@ -101,6 +100,7 @@ final class PlaybackNotification {
         final android.support.v4.app.NotificationCompat.Builder b
                 = new NotificationCompat.Builder(context)
                 .setStyle(style)
+                .setShowWhen(false)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setContentTitle(media.getTitle())
