@@ -26,11 +26,15 @@ import android.text.TextUtils;
 /**
  * Used for querying tracks
  */
-final class TracksQuery {
+public final class TracksQuery {
 
     private TracksQuery() {
         throw new UnsupportedOperationException();
     }
+
+    // Avoids non-music and hidden files
+    public static final String SELECTION_NON_HIDDEN_MUSIC = MediaStore.Audio.Media.IS_MUSIC + "=1"
+            + " AND " + MediaStore.Audio.Media.DATA + " NOT LIKE '%/.%'";
 
     static final int COLUMN_ID = 0;
     static final int COLUMN_TITLE = 1;
@@ -42,6 +46,17 @@ final class TracksQuery {
     static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
         final String ef = TextUtils.isEmpty(searchFilter) ? null
                 : StringUtils.sqlEscape(searchFilter);
+        final StringBuilder selection = new StringBuilder(256);
+        selection.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
+        if (!TextUtils.isEmpty(ef)) {
+            selection.append(" AND ")
+
+                    .append(MediaStore.Audio.Media.TITLE)
+                    .append(" LIKE '%").append(ef).append("%'" + " OR ")
+
+                    .append(MediaStore.Audio.Media.ARTIST)
+                    .append(" LIKE '%").append(ef).append("%'");
+        }
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
@@ -50,9 +65,7 @@ final class TracksQuery {
                         MediaStore.Audio.Media.ARTIST
                 })
                 .setSortOrder(SORT_ORDER)
-                .setSelection(TextUtils.isEmpty(ef) ? null
-                        : MediaStore.Audio.Media.TITLE + " LIKE '%" + ef + "%'" + " OR "
-                                + MediaStore.Audio.Media.ARTIST + " LIKE '%" + ef + "%'")
+                .setSelection(selection.toString())
                 .create();
     }
 

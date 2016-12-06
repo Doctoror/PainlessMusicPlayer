@@ -46,6 +46,7 @@ public final class LivePlaylistsFragment extends Fragment {
     private LivePlaylistsRecyclerAdapter mAdapter;
 
     private Subscription mLoadPlaylistSubscription;
+    private Toast mNoTracksToast;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -141,11 +142,22 @@ public final class LivePlaylistsFragment extends Fragment {
         }
     }
 
+    private void showNoTracksToast() {
+        if (mNoTracksToast == null) {
+            mNoTracksToast = Toast.makeText(getActivity(), R.string.No_tracks_found, Toast
+                    .LENGTH_LONG);
+        }
+        if (mNoTracksToast.getView().getWindowToken() == null) {
+            mNoTracksToast.show();
+        }
+    }
+
     private void onPlaylistLoaded(@Nullable final View itemView,
             @NonNull final List<Media> playlist) {
         final Activity activity = getActivity();
         if (playlist.isEmpty()) {
-            Toast.makeText(activity, R.string.No_tracks_found, Toast.LENGTH_LONG).show();
+            showNoTracksToast();
+            clearLoadingFlag();
         } else {
             final Intent intent = Henson.with(activity)
                     .gotoPlaylistActivity()

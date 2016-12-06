@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
+import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
@@ -84,7 +85,8 @@ public final class PlaylistUtils {
         final List<Media> playlist = new ArrayList<>(15);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                MediaStore.Audio.Media.ALBUM_ID + '=' + albumId,
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
+                        + MediaStore.Audio.Media.ALBUM_ID + '=' + albumId,
                 null,
                 MediaStore.Audio.Media.TRACK);
         if (c != null) {
@@ -103,7 +105,8 @@ public final class PlaylistUtils {
         final List<Media> playlist = new ArrayList<>(25);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                MediaStore.Audio.Media.ARTIST_ID + '=' + artistId,
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
+                        + MediaStore.Audio.Media.ARTIST_ID + '=' + artistId,
                 null,
                 MediaStore.Audio.Media.ALBUM_ID + ',' + MediaStore.Audio.Media.TRACK);
         if (c != null) {
@@ -130,8 +133,9 @@ public final class PlaylistUtils {
         final List<Media> playlist = new ArrayList<>(15);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION,
-                TextUtils.isEmpty(query) ? null : MediaStore.Audio.Albums.ALBUM + " LIKE '%"
-                        + StringUtils.sqlEscape(query) + "%'",
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
+                        + (TextUtils.isEmpty(query) ? null : MediaStore.Audio.Albums.ALBUM + " " +
+                        "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
                         MAX_PLAYLIST_SIZE);
@@ -151,8 +155,9 @@ public final class PlaylistUtils {
         final List<Media> playlist = new ArrayList<>(15);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION,
-                TextUtils.isEmpty(query) ? null : MediaStore.Audio.Artists.ARTIST + " LIKE '%"
-                        + StringUtils.sqlEscape(query) + "%'",
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
+                        + (TextUtils.isEmpty(query) ? null : MediaStore.Audio.Artists.ARTIST + " " +
+                        "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
                         MAX_PLAYLIST_SIZE);
@@ -172,8 +177,9 @@ public final class PlaylistUtils {
         final List<Media> playlist = new ArrayList<>(15);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION,
-                TextUtils.isEmpty(query) ? null : MediaStore.Audio.Media.TITLE + " LIKE '%"
-                        + StringUtils.sqlEscape(query) + "%'",
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
+                        + (TextUtils.isEmpty(query) ? null : MediaStore.Audio.Media.TITLE + " " +
+                        "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
                         MAX_PLAYLIST_SIZE);
@@ -199,6 +205,7 @@ public final class PlaylistUtils {
         for (int i = 0; i < albumIds.length; i++) {
             final long albumId = albumIds[i];
             final StringBuilder selection = new StringBuilder(256);
+            selection.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC).append(" AND ");
             selection.append(MediaStore.Audio.Media.ALBUM_ID).append('=').append(albumId);
             if (forArtist != null) {
                 selection.append(" AND ")

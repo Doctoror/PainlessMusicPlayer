@@ -1,6 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.library.livelists;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
@@ -12,9 +13,8 @@ import android.support.annotation.WorkerThread;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 08.11.16.
+ * Random 50 live playlist
  */
-
 final class LivePlaylistRandom50 implements LivePlaylist {
 
     private final CharSequence mTitle;
@@ -32,7 +32,7 @@ final class LivePlaylistRandom50 implements LivePlaylist {
     @Override
     public List<Media> create(@NonNull final Context context) {
         return PlaylistUtils.forSelection(context.getContentResolver(),
-                null,
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()",
                 50);
