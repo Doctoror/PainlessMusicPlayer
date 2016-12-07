@@ -67,17 +67,19 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
         super.onMessageReceived(messageEvent);
         switch (messageEvent.getPath()) {
             case DataPaths.Messages.SEARCH_RESULT:
+                WearSearchData.Results searchResults = null;
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length != 0) {
-                    final WearSearchData.Results searchResults;
                     try {
                         searchResults = WearSearchData.Results.parseFrom(data);
                     } catch (InvalidProtocolBufferNanoException e) {
                         Log.w(TAG, e);
-                        break;
                     }
-                    EventBus.getDefault().post(new EventSearchResults(searchResults));
                 }
+                if (searchResults == null) {
+                    searchResults = new WearSearchData.Results();
+                }
+                EventBus.getDefault().post(new EventSearchResults(searchResults));
                 break;
         }
     }
