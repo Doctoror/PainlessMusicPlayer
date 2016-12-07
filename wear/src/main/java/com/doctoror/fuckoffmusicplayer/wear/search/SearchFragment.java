@@ -141,6 +141,7 @@ public final class SearchFragment extends Fragment {
                 goToScene(mSceneMessage);
             } else {
                 mTextViewMessage.setText(R.string.Search_for_artists_albums_and_songs);
+                showBtnSearch();
             }
         } else {
             if (areSearchResultsEmpty()) {
@@ -152,6 +153,7 @@ public final class SearchFragment extends Fragment {
                     }
                     mTextViewMessage
                             .setText(getString(R.string.No_media_found_for_s, mSearchQuery));
+                    showBtnSearch();
                 }
             } else {
                 if (mSceneCurrent != mSceneResults) {
@@ -164,6 +166,7 @@ public final class SearchFragment extends Fragment {
                     } else {
                         mAdapter.setResults(mSearchResults);
                     }
+                    showBtnSearch();
                 }
             }
         }
