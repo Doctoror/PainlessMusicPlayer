@@ -65,7 +65,7 @@ public final class NowPlayingFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_24dp);
+        mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_48dp);
         mMediaHolder = MediaHolder.getInstance(getActivity());
     }
 
@@ -145,9 +145,9 @@ public final class NowPlayingFragment extends Fragment {
         if (playbackState != null) {
             bindProgress(playbackState.duration, playbackState.progress);
             mModelViewState.setBtnPlayRes(playbackState.state == PlaybackStateCompat.STATE_PLAYING
-                    ? R.drawable.ic_pause_white_24dp : R.drawable.ic_play_arrow_white_24dp);
+                    ? R.drawable.ic_pause_white_48dp : R.drawable.ic_play_arrow_white_48dp);
         } else {
-            mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_24dp);
+            mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_48dp);
         }
     }
 
