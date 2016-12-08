@@ -20,7 +20,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.database.Cursor;
@@ -104,7 +104,7 @@ public final class TracksFragment extends LibraryListFragment {
                 }
             }
 
-            s.onNext(PlaylistUtils.forTracks(getActivity().getContentResolver(),
+            s.onNext(PlaylistFactory.forTracks(getActivity().getContentResolver(),
                     tracks, TracksQuery.SORT_ORDER));
 
         })
@@ -125,7 +125,7 @@ public final class TracksFragment extends LibraryListFragment {
                     public void onNext(final List<Media> playlist) {
                         if (isAdded()) {
                             if (playlist != null && !playlist.isEmpty()) {
-                                PlaylistUtils.play(getActivity(), playlist, playlist.get(0), 0);
+                                PlaylistFactory.play(getActivity(), playlist, playlist.get(0), 0);
                                 NowPlayingActivity.start(getActivity(), null, itemView);
                             } else {
                                 Toast.makeText(getActivity(), R.string.The_playlist_is_empty,

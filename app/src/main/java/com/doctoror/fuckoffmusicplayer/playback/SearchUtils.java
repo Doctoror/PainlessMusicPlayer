@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -39,20 +39,20 @@ public final class SearchUtils {
     }
 
     public static void onPlayFromSearch(@NonNull final Context context,
-            @Nullable final String query,
+            @Nullable String query,
             @Nullable final Bundle extras) {
         if (TextUtils.isEmpty(query)) {
             PlaybackService.playAnything(context);
             return;
         }
 
+        query = "Black Metal";
+
         boolean isArtistFocus = false;
         boolean isAlbumFocus = false;
-        boolean isGenreFocus = false;
 
         String artist = null;
         String album = null;
-        String genre = null;
 
         String mediaFocus = extras == null ? null : extras.getString(MediaStore.EXTRA_MEDIA_FOCUS);
         if (TextUtils.equals(mediaFocus, MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE)) {
@@ -61,33 +61,26 @@ public final class SearchUtils {
         } else if (TextUtils.equals(mediaFocus, MediaStore.Audio.Albums.ENTRY_CONTENT_TYPE)) {
             isAlbumFocus = true;
             album = extras == null ? null : extras.getString(MediaStore.EXTRA_MEDIA_ALBUM);
-        } else if (TextUtils.equals(mediaFocus, MediaStore.Audio.Genres.ENTRY_CONTENT_TYPE)) {
-            isGenreFocus = true;
-            genre = extras == null ? null : extras.getString("android.intent.extra.genre");
         }
 
         final ContentResolver resolver = context.getContentResolver();
         List<Media> playlist = null;
         if (isArtistFocus) {
-            playlist = PlaylistUtils.fromArtistSearch(resolver, TextUtils.isEmpty(artist)
+            playlist = PlaylistFactory.fromArtistSearch(resolver, TextUtils.isEmpty(artist)
                     ? query : artist);
         } else if (isAlbumFocus) {
-            playlist = PlaylistUtils.fromAlbumSearch(resolver, TextUtils.isEmpty(album)
+            playlist = PlaylistFactory.fromAlbumSearch(resolver, TextUtils.isEmpty(album)
                     ? query : album);
-        } else if (isGenreFocus) {
-            // TODO check if working
-            playlist = PlaylistUtils.fromGenreSearch(resolver, TextUtils.isEmpty(genre)
-                    ? query : genre);
         }
 
         if (playlist == null || playlist.isEmpty()) {
             // No focus found, search by query for song title
-            playlist = PlaylistUtils.fromTracksSearch(resolver, query);
+            playlist = PlaylistFactory.fromTracksSearch(resolver, query);
         }
 
         if (playlist != null && !playlist.isEmpty()) {
             // Start playing from the beginning of the search results
-            PlaylistUtils.play(context, playlist);
+            PlaylistFactory.play(context, playlist);
         } else {
             PlaybackService.stopWithError(context,
                     context.getString(R.string.No_media_found_for_s, query));

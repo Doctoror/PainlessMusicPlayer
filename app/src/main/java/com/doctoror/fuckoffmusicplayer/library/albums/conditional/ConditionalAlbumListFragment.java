@@ -26,7 +26,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
@@ -156,7 +156,7 @@ public class ConditionalAlbumListFragment extends Fragment {
     @WorkerThread
     protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds,
             @NonNull final String[] arts) {
-        return PlaylistUtils.fromAlbums(getActivity().getContentResolver(), albumIds, arts, null);
+        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, arts, null);
     }
 
     private void onPlayClick(@Nullable final View albumArtView,

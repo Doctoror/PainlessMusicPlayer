@@ -3,7 +3,7 @@ package com.doctoror.fuckoffmusicplayer.library.livelists;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -31,7 +31,7 @@ final class LivePlaylistRandom50 implements LivePlaylist {
     @WorkerThread
     @Override
     public List<Media> create(@NonNull final Context context) {
-        return PlaylistUtils.forSelection(context.getContentResolver(),
+        return PlaylistFactory.forSelection(context.getContentResolver(),
                 TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()",

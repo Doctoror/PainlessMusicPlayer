@@ -18,14 +18,13 @@ package com.doctoror.fuckoffmusicplayer.nowplaying;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playback.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -88,7 +87,7 @@ final class IntentHandler {
                                         R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
                                         .show();
                             } else {
-                                PlaylistUtils.play(activity, playlist);
+                                PlaylistFactory.play(activity, playlist);
                             }
                         }
                     }
@@ -134,7 +133,7 @@ final class IntentHandler {
             @NonNull final ContentResolver contentResolver,
             @NonNull final Uri data) throws IOException {
         try {
-            return PlaylistUtils.forFile(contentResolver, data);
+            return PlaylistFactory.forFile(contentResolver, data);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }

@@ -9,7 +9,7 @@ import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaylistFromSearch;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -73,7 +73,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 8) {
                     final long id = ByteBuffer.wrap(data).getLong();
-                    final List<Media> playlist = PlaylistUtils.fromAlbum(getContentResolver(), id);
+                    final List<Media> playlist = PlaylistFactory.fromAlbum(getContentResolver(), id);
                     playPlaylist(playlist, 0);
                 }
                 break;
@@ -83,7 +83,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 8) {
                     final long id = ByteBuffer.wrap(data).getLong();
-                    final List<Media> playlist = PlaylistUtils.fromArtist(getContentResolver(), id);
+                    final List<Media> playlist = PlaylistFactory.fromArtist(getContentResolver(), id);
                     playPlaylist(playlist, 0);
                 }
                 break;
@@ -99,7 +99,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                         Log.w(TAG, e);
                         break;
                     }
-                    final List<Media> playlist = PlaylistUtils.forTracks(getContentResolver(),
+                    final List<Media> playlist = PlaylistFactory.forTracks(getContentResolver(),
                             fromSearch.playlist, MediaStore.Audio.Media.TITLE);
                     if (playlist != null && !playlist.isEmpty()) {
                         int index = 0;
@@ -121,7 +121,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
     private void playPlaylist(@Nullable final List<Media> playlist,
             final int position) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistUtils.play(this, playlist, position);
+            PlaylistFactory.play(this, playlist, position);
         }
     }
 }

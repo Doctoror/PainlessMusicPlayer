@@ -21,7 +21,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 
@@ -85,7 +85,7 @@ public final class AlbumsFragment extends LibraryListFragment {
             final long albumId,
             @Nullable final String albumName,
             final String art) {
-        Observable.<List<Media>>create(s -> s.onNext(PlaylistUtils.fromAlbum(
+        Observable.<List<Media>>create(s -> s.onNext(PlaylistFactory.fromAlbum(
                 getActivity().getContentResolver(), albumId, art)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

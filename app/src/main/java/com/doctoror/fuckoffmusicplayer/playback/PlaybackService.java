@@ -31,7 +31,7 @@ import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
@@ -261,6 +261,7 @@ public final class PlaybackService extends Service {
     public void onCreate() {
         super.onCreate();
         mDestroying = false;
+        mErrorMessage = null;
         mPermissionReceivePlaybackState = getPackageName()
                 .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
 
@@ -512,7 +513,7 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaylist.getIndex(), true);
         } else {
-            PlaylistUtils.play(this, new LivePlaylistRecent50(getResources()).create(this));
+            PlaylistFactory.play(this, new LivePlaylistRecent50(getResources()).create(this));
         }
     }
 

@@ -19,7 +19,7 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -69,7 +69,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds,
             @NonNull final String[] arts) {
-        return PlaylistUtils.fromAlbums(getActivity().getContentResolver(),
+        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(),
                 albumIds, arts, artistId);
     }
 }

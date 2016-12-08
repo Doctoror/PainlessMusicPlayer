@@ -17,6 +17,9 @@ package com.doctoror.fuckoffmusicplayer.util;
 
 import android.support.annotation.NonNull;
 
+import java.util.Collection;
+import java.util.Collections;
+
 /**
  * Created by Yaroslav Mytkalyk on 6/23/16.
  */
@@ -47,6 +50,32 @@ public final class SelectionUtils {
                 selection.append(',');
             }
             selection.append('\'').append(arguments[i]).append('\'');
+        }
+        selection.append(')');
+        return selection.toString();
+    }
+
+    /**
+     * Builds IN selection with long args
+     *
+     * @param column    the column name to build selection for
+     * @param arguments the arguments
+     * @return the IN selection
+     */
+    @NonNull
+    public static <T> String notInSelection(@NonNull final String column,
+            @NonNull final Collection<T> arguments) {
+        final StringBuilder selection = new StringBuilder(256);
+        selection.append(column);
+        selection.append(" NOT IN (");
+        boolean first = true;
+        for (final T arg : arguments) {
+            if (first) {
+                first = false;
+            } else {
+                selection.append(',');
+            }
+            selection.append('\'').append(arg).append('\'');
         }
         selection.append(')');
         return selection.toString();

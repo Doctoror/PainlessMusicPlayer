@@ -26,6 +26,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,16 +38,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 19.10.16.
+ * Playlist factory
  */
+public final class PlaylistFactory {
 
-public final class PlaylistUtils {
-
-    private static final String TAG = "PlaylistUtils";
+    private static final String TAG = "PlaylistFactory";
 
     private static final int MAX_PLAYLIST_SIZE = 99;
 
-    private PlaylistUtils() {
+    private PlaylistFactory() {
 
     }
 
@@ -130,12 +130,17 @@ public final class PlaylistUtils {
     @WorkerThread
     public static List<Media> fromAlbumSearch(@NonNull final ContentResolver resolver,
             @Nullable final String query) {
+        final StringBuilder sel = new StringBuilder(256);
+        sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
+        if (!TextUtils.isEmpty(query)) {
+            sel.append(" AND ").append(MediaStore.Audio.Media.ALBUM).append(" LIKE '%")
+                    .append(StringUtils.sqlEscape(query)).append("%'");
+        }
+
         final List<Media> playlist = new ArrayList<>(15);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
-                        + (TextUtils.isEmpty(query) ? null : MediaStore.Audio.Albums.ALBUM + " " +
-                        "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
+                sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
                         MAX_PLAYLIST_SIZE);
@@ -152,34 +157,17 @@ public final class PlaylistUtils {
     @WorkerThread
     public static List<Media> fromArtistSearch(@NonNull final ContentResolver resolver,
             @Nullable final String query) {
-        final List<Media> playlist = new ArrayList<>(15);
-        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
-                MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
-                        + (TextUtils.isEmpty(query) ? null : MediaStore.Audio.Artists.ARTIST + " " +
-                        "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
-                null,
-                MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
-                        MAX_PLAYLIST_SIZE);
-        if (c != null) {
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
-            }
-            c.close();
+        final StringBuilder sel = new StringBuilder(256);
+        sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
+        if (!TextUtils.isEmpty(query)) {
+            sel.append(" AND ").append(MediaStore.Audio.Media.ARTIST).append(" LIKE '%")
+                    .append(StringUtils.sqlEscape(query)).append("%'");
         }
-        return playlist;
-    }
 
-    @Nullable
-    @WorkerThread
-    public static List<Media> fromGenreSearch(@NonNull final ContentResolver resolver,
-            @Nullable final String query) {
         final List<Media> playlist = new ArrayList<>(15);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
-                        + (TextUtils.isEmpty(query) ? null : MediaStore.Audio.Genres.NAME + " " +
-                        "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
+                sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
                         MAX_PLAYLIST_SIZE);
@@ -197,21 +185,68 @@ public final class PlaylistUtils {
     public static List<Media> fromTracksSearch(@NonNull final ContentResolver resolver,
             @Nullable final String query) {
         final List<Media> playlist = new ArrayList<>(15);
-        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+        final List<Long> ids = new ArrayList<>(15);
+
+        final StringBuilder sel = new StringBuilder(256);
+        sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
+        if (!TextUtils.isEmpty(query)) {
+            final String likeQuery = " LIKE '%" + StringUtils.sqlEscape(query) + "%'";
+            sel.append(" AND (").append(MediaStore.Audio.Media.TITLE).append(likeQuery);
+            sel.append(" OR ").append(MediaStore.Audio.Media.ARTIST).append(likeQuery);
+            sel.append(" OR ").append(MediaStore.Audio.Media.ALBUM).append(likeQuery);
+            sel.append(')');
+        }
+
+        Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
-                        + (TextUtils.isEmpty(query) ? null
-                        : MediaStore.Audio.Media.TITLE + " " +
-                                "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
+                sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
                         MAX_PLAYLIST_SIZE);
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                 playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
+                ids.add(c.getLong(MediaQuery.COLUMN_ID));
             }
             c.close();
         }
+
+        if (!TextUtils.isEmpty(query) && playlist.size() < MAX_PLAYLIST_SIZE) {
+            // Search in genres for tracks with media ids that do not match found ids
+            c = resolver.query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
+                    new String[] {BaseColumns._ID},
+                    MediaStore.Audio.Genres.NAME + "=?",
+                    new String[] {StringUtils.capWords(query)},
+                    null);
+
+            Long genreId = null;
+            if (c != null) {
+                try {
+                    if (c.moveToFirst()) {
+                        genreId = c.getLong(0);
+                    }
+                } finally {
+                    c.close();
+                }
+            }
+
+            if (genreId != null) {
+                c = resolver
+                        .query(MediaStore.Audio.Genres.Members.getContentUri("external", genreId),
+                                MediaQuery.PROJECTION_WITH_ALBUM_ART,
+                                SelectionUtils.notInSelection(MediaStore.Audio.Media._ID, ids),
+                                null,
+                                "RANDOM() LIMIT " + (MAX_PLAYLIST_SIZE - ids.size()));
+                if (c != null) {
+                    for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                        playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
+                    }
+                    c.close();
+                }
+            }
+
+        }
+
         return playlist;
     }
 
