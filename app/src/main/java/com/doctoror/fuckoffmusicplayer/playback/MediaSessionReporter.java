@@ -77,8 +77,18 @@ final class MediaSessionReporter {
             @NonNull final Media media,
             @PlaybackService.State final int state,
             @Nullable final CharSequence errorMessage) {
-        @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
+        reportStateChanged(mediaSession, state, errorMessage);
 
+        @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
+        final boolean isPlaying = playbackState == PlaybackStateCompat.STATE_PLAYING;
+        final Intent i = androidMusicMediaIntent(ACTION_PLAYSTATE_CHANGED, media, isPlaying);
+        sendAndroidMusicPlayerBroadcast(context, i);
+    }
+
+    static void reportStateChanged(@NonNull final MediaSessionCompat mediaSession,
+            @PlaybackService.State final int state,
+            @Nullable final CharSequence errorMessage) {
+        @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
         final boolean isPlaying = playbackState == PlaybackStateCompat.STATE_PLAYING;
         mediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PLAY
@@ -91,9 +101,6 @@ final class MediaSessionReporter {
                 .setErrorMessage(errorMessage)
                 .setState(playbackState, 0, isPlaying ? 1 : 0)
                 .build());
-
-        final Intent i = androidMusicMediaIntent(ACTION_PLAYSTATE_CHANGED, media, isPlaying);
-        sendAndroidMusicPlayerBroadcast(context, i);
     }
 
     @WorkerThread

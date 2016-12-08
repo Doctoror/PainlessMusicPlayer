@@ -36,6 +36,12 @@
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
 
+        <meta-data android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc"/>
+
+        <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
+            android:resource="@mipmap/ic_launcher" />
+
         <activity
             android:name=".library.LibraryActivity"
             android:launchMode="singleTop"
@@ -94,6 +100,11 @@
                 <data android:mimeType="application/itunes"/>
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
         </activity>
 
         <activity
@@ -130,6 +141,12 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/appwidget_info_single_row"/>
         </receiver>
+
+        <service android:name=".auto.MediaBrowserServiceImpl">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
 
         <service android:name=".wear.WearableListenerServiceImpl">
             <intent-filter>

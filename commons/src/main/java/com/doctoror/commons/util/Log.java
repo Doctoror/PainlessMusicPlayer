@@ -32,6 +32,26 @@ public final class Log {
     private static boolean LOG_W = false;
     private static boolean LOG_WTF = true;
 
+    public static boolean logVEnabled() {
+        return LOG_V;
+    }
+
+    public static boolean logDEnabled() {
+        return LOG_D;
+    }
+
+    public static boolean logIEnabled() {
+        return LOG_I;
+    }
+
+    public static boolean logWEnabled() {
+        return LOG_W;
+    }
+
+    public static boolean logWTFEnabled() {
+        return LOG_WTF;
+    }
+
     public static void setLogV(final boolean logV) {
         LOG_V = logV;
     }

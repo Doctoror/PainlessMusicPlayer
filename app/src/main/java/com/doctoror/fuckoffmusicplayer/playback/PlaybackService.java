@@ -35,10 +35,8 @@ import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -50,7 +48,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -67,9 +64,8 @@ import rx.Observable;
 import rx.Subscription;
 
 /**
- * Created by Yaroslav Mytkalyk on 21.10.16.
+ * Media playback Service
  */
-
 public final class PlaybackService extends Service {
 
     private static final String SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE
@@ -137,14 +133,6 @@ public final class PlaybackService extends Service {
         final Intent intent = new Intent(context, PlaybackService.class);
         intent.setAction(ACTION_SEEK);
         intent.putExtra(EXTRA_POSITION_PERCENT, positionPercent);
-        context.startService(intent);
-    }
-
-    public static void seek(@NonNull final Context context,
-            final long position) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_SEEK);
-        intent.putExtra(EXTRA_POSITION, position);
         context.startService(intent);
     }
 
@@ -240,7 +228,7 @@ public final class PlaybackService extends Service {
 
     private RequestManager mGlide;
     private AudioManager mAudioManager;
-    private MediaSessionCompat mMediaSession;
+    private MediaSessionHolder mMediaSessionHolder;
 
     private boolean mAudioFocusRequested;
     private boolean mFocusGranted;
@@ -276,13 +264,8 @@ public final class PlaybackService extends Service {
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mAudioEffects = AudioEffects.getInstance(this);
 
-        final ComponentName mediaButtonReceiver = new ComponentName(this,
-                MediaButtonReceiver.class);
-
-        mMediaSession = new MediaSessionCompat(this, TAG, mediaButtonReceiver,
-                PendingIntent.getBroadcast(this, 1, new Intent(this, MediaButtonReceiver.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-        mMediaSession.setCallback(new MediaSessionCallback(this));
+        mMediaSessionHolder = MediaSessionHolder.getInstance(this);
+        mMediaSessionHolder.openSession();
 
         registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
         registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
@@ -291,10 +274,6 @@ public final class PlaybackService extends Service {
 
         mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(this);
-
-        mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        mMediaSession.setActive(true);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
@@ -567,8 +546,9 @@ public final class PlaybackService extends Service {
                 mPlaylist.setPosition(seekPosition);
                 mPlaylist.setMedia(media);
                 mCurrentTrack = media;
-                if (mMediaSession != null) {
-                    MediaSessionReporter.reportTrackChanged(this, mGlide, mMediaSession, media);
+                final MediaSessionCompat mediaSession = getMediaSession();
+                if (mediaSession != null) {
+                    MediaSessionReporter.reportTrackChanged(this, mGlide, mediaSession, media);
                 }
                 syncWearableMedia();
 
@@ -582,11 +562,19 @@ public final class PlaybackService extends Service {
         }
     }
 
+    @Nullable
+    private MediaSessionCompat getMediaSession() {
+        return mMediaSessionHolder != null ? mMediaSessionHolder.getMediaSession() : null;
+    }
+
     private void showNotification() {
         final Media media = mPlaylist.getMedia();
         if (media != null) {
-            mExecutor.submit(() -> startForeground(NOTIFICATION_ID, PlaybackNotification
-                    .create(getApplicationContext(), mGlide, media, mState, mMediaSession)));
+            final MediaSessionCompat mediaSession = getMediaSession();
+            if (mediaSession != null) {
+                mExecutor.submit(() -> startForeground(NOTIFICATION_ID, PlaybackNotification
+                        .create(getApplicationContext(), mGlide, media, mState, mediaSession)));
+            }
         }
     }
 
@@ -621,7 +609,6 @@ public final class PlaybackService extends Service {
         mPlaylist.persistAsync();
         mDestroying = true;
         mPlayOnFocusGain = false;
-        mMediaSession.setActive(false);
         unregisterReceiver(mBecomingNoisyReceiver);
         unregisterReceiver(mResendStateReceiver);
         setState(STATE_IDLE);
@@ -633,7 +620,7 @@ public final class PlaybackService extends Service {
         mMediaPlayer.release();
         mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         mAudioFocusRequested = false;
-        mMediaSession.release();
+        mMediaSessionHolder.closeSession();
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         }
@@ -650,7 +637,7 @@ public final class PlaybackService extends Service {
     }
 
     void setMediaSessionPlaybackState(final int state) {
-        final MediaSessionCompat mediaSession = mMediaSession;
+        final MediaSessionCompat mediaSession = getMediaSession();
         final Media media = mPlaylist.getMedia();
         if (mediaSession != null && media != null) {
             MediaSessionReporter.reportStateChanged(this, mediaSession, media, state,

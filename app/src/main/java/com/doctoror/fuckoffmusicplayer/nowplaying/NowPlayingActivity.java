@@ -32,9 +32,7 @@ import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -60,15 +58,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * "Now Playing" activity
@@ -252,40 +246,7 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void handleIntent(@NonNull final Intent intent) {
-        if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            rx.Observable.<List<Media>>create(s -> {
-                try {
-                    s.onNext(IntentHandler.playlistFromActionView(getContentResolver(), intent));
-                } catch (IOException e) {
-                    s.onError(e);
-                }
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new ObserverAdapter<List<Media>>() {
-                        @Override
-                        public void onError(final Throwable e) {
-                            if (!isFinishing()) {
-                                Toast.makeText(getApplicationContext(),
-                                        R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
-                                        .show();
-                            }
-                        }
-
-                        @Override
-                        public void onNext(final List<Media> playlist) {
-                            if (!isFinishing()) {
-                                if (playlist.isEmpty()) {
-                                    Toast.makeText(getApplicationContext(),
-                                            R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
-                                            .show();
-                                } else {
-                                    PlaylistUtils.play(NowPlayingActivity.this, playlist);
-                                }
-                            }
-                        }
-                    });
-        }
+        IntentHandler.handleIntent(this, intent);
     }
 
     @Override

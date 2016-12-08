@@ -172,6 +172,28 @@ public final class PlaylistUtils {
 
     @Nullable
     @WorkerThread
+    public static List<Media> fromGenreSearch(@NonNull final ContentResolver resolver,
+            @Nullable final String query) {
+        final List<Media> playlist = new ArrayList<>(15);
+        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
+                MediaQuery.PROJECTION,
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
+                        + (TextUtils.isEmpty(query) ? null : MediaStore.Audio.Genres.NAME + " " +
+                        "LIKE '%" + StringUtils.sqlEscape(query) + "%'"),
+                null,
+                MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK + " LIMIT " +
+                        MAX_PLAYLIST_SIZE);
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
+    }
+
+    @Nullable
+    @WorkerThread
     public static List<Media> fromTracksSearch(@NonNull final ContentResolver resolver,
             @Nullable final String query) {
         final List<Media> playlist = new ArrayList<>(15);

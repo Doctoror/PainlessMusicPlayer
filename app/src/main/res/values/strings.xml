@@ -50,6 +50,10 @@
         <item quantity="other">%1$d albums</item>
     </plurals>
 
+    <string name="Artists">Artists</string>
+    <string name="Albums">Albums</string>
+    <string name="Genres">Genres</string>
+
     <string-array name="activity_library_tabs">
         <item>Artists</item>
         <item>Albums</item>
