@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.playback;
+package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom50;
+import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecent50;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 
@@ -43,11 +46,25 @@ public final class SearchUtils {
 
     public static void onPlayFromMediaId(@NonNull final Context context,
             @NonNull final String mediaId) {
-        final List<Media> playlist = PlaylistFactory.fromSelection(context.getContentResolver(),
-                MediaStore.Audio.Media._ID + '=' + mediaId,
-                null,
-                null,
-                null);
+        final List<Media> playlist;
+        switch (mediaId) {
+            case MediaBrowserImpl.MEDIA_ID_RANDOM:
+                playlist = new LivePlaylistRandom50(context.getResources()).create(context);
+                break;
+
+            case MediaBrowserImpl.MEDIA_ID_RECENT:
+                playlist = new LivePlaylistRecent50(context.getResources()).create(context);
+                break;
+
+            default:
+                playlist = PlaylistFactory.fromSelection(context.getContentResolver(),
+                        MediaStore.Audio.Media._ID + '=' + mediaId,
+                        null,
+                        null,
+                        null);
+                break;
+        }
+
         playFromSearch(context, playlist, null);
     }
 

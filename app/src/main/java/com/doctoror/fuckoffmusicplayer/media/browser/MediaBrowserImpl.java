@@ -24,8 +24,8 @@ final class MediaBrowserImpl {
     private static final String MEDIA_ID_ROOT = "ROOT";
 
     private static final String MEDIA_ID_CURENT_QUEUE = "CURRENT_QUEUE";
-    private static final String MEDIA_ID_RANDOM = "RANDOM";
-    private static final String MEDIA_ID_RECENT = "RECENT";
+    static final String MEDIA_ID_RANDOM = "RANDOM";
+    static final String MEDIA_ID_RECENT = "RECENT";
 
     @NonNull
     private final Context mContext;
@@ -47,8 +47,8 @@ final class MediaBrowserImpl {
                 if (playlist != null && !playlist.isEmpty()) {
                     mediaItems.add(createBrowsableMediaItemCurrentQueue());
                 }
-                //mediaItems.add(createBrowsableMediaItemRandom());
-                //mediaItems.add(createBrowsableMediaItemRecent());
+                //mediaItems.add(createMediaItemRandom());
+                //mediaItems.add(createMediaItemRecent());
                 break;
             }
 
@@ -71,32 +71,26 @@ final class MediaBrowserImpl {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_CURENT_QUEUE)
                 .setTitle(mContext.getText(R.string.Now_Playing))
-                .setIconUri(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
-                        mContext.getPackageName() + "/drawable/ic_playlist_play_white_24dp"))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_BROWSABLE);
     }
 
     @NonNull
-    private MediaItem createBrowsableMediaItemRandom() {
+    private MediaItem createMediaItemRandom() {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_RANDOM)
                 .setTitle(mContext.getText(R.string.Random_50))
-                .setIconUri(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
-                        mContext.getPackageName() + "/drawable/ic_playlist_play_white_24dp"))
                 .build();
-        return new MediaItem(description, MediaItem.FLAG_BROWSABLE);
+        return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }
 
     @NonNull
-    private MediaItem createBrowsableMediaItemRecent() {
+    private MediaItem createMediaItemRecent() {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_RECENT)
                 .setTitle(mContext.getText(R.string.Recently_scanned))
-                .setIconUri(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
-                        mContext.getPackageName() + "/drawable/ic_playlist_play_white_24dp"))
                 .build();
-        return new MediaItem(description, MediaItem.FLAG_BROWSABLE);
+        return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }
 
     @NonNull

@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.media.session;
 
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playback.SearchUtils;
+import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 
 import android.content.Context;
 import android.os.Bundle;

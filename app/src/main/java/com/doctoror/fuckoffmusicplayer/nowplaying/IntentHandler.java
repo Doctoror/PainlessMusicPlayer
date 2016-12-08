@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.playback.SearchUtils;
+import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.commons.util.Log;
