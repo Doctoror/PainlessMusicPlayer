@@ -5,14 +5,13 @@ import com.doctoror.fuckoffmusicplayer.R;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
-import android.media.MediaDescription;
-import android.media.browse.MediaBrowser.MediaItem;
 import android.net.Uri;
 import android.os.Build;
-import android.service.media.MediaBrowserService.BrowserRoot;
-import android.service.media.MediaBrowserService.Result;
 import android.support.annotation.NonNull;
+import android.support.v4.media.MediaBrowserCompat.MediaItem;
+import android.support.v4.media.MediaBrowserServiceCompat.BrowserRoot;
+import android.support.v4.media.MediaBrowserServiceCompat.Result;
+import android.support.v4.media.MediaDescriptionCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +57,7 @@ final class MediaBrowserImpl {
 
     @NonNull
     private MediaItem createBrowsableMediaItemGenres() {
-        MediaDescription description = new MediaDescription.Builder()
+        final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_MUSIC_GENRES)
                 .setTitle(mContext.getText(R.string.Genres))
                 .setIconUri(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
@@ -69,7 +68,7 @@ final class MediaBrowserImpl {
 
     @NonNull
     private MediaItem createBrowsableMediaItemArtists() {
-        MediaDescription description = new MediaDescription.Builder()
+        final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_MUSIC_ARTISTS)
                 .setTitle(mContext.getText(R.string.Artists))
                 .setIconUri(Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +

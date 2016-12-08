@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback;
 
+import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
@@ -88,8 +89,8 @@ public final class SearchUtils {
             // Start playing from the beginning of the search results
             PlaylistUtils.play(context, playlist);
         } else {
-            // Stop if nothing found
-            PlaybackService.stop(context);
+            PlaybackService.stopWithError(context,
+                    context.getString(R.string.No_media_found_for_s, query));
         }
     }
 

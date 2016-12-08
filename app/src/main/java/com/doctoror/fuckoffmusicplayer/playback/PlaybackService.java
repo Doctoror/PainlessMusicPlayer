@@ -85,11 +85,13 @@ public final class PlaybackService extends Service {
     private static final String ACTION_PLAY = "ACTION_PLAY";
     private static final String ACTION_PAUSE = "ACTION_PAUSE";
     private static final String ACTION_STOP = "ACTION_STOP";
+    private static final String ACTION_STOP_WITH_ERROR = "ACTION_STOP_WITH_ERROR";
 
     private static final String ACTION_PREV = "ACTION_PREV";
     private static final String ACTION_NEXT = "ACTION_NEXT";
 
     private static final String ACTION_SEEK = "ACTION_SEEK";
+    private static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";
     private static final String EXTRA_MEDIA_ID = "EXTRA_MEDIA_ID";
     private static final String EXTRA_POSITION = "EXTRA_POSITION";
     private static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
@@ -118,6 +120,14 @@ public final class PlaybackService extends Service {
 
     public static void stop(@NonNull final Context context) {
         context.startService(stopIntent(context));
+    }
+
+    public static void stopWithError(@NonNull final Context context,
+            @NonNull final String errorMessage) {
+        final Intent intent = new Intent(context, PlaybackService.class);
+        intent.setAction(ACTION_STOP_WITH_ERROR);
+        intent.putExtra(EXTRA_ERROR_MESSAGE, errorMessage);
+        context.startService(intent);
     }
 
     public static void prev(@NonNull final Context context) {
@@ -317,6 +327,10 @@ public final class PlaybackService extends Service {
                     onActionStop();
                     break;
 
+                case ACTION_STOP_WITH_ERROR:
+                    onActionStopWithError(intent.getStringExtra(EXTRA_ERROR_MESSAGE));
+                    break;
+
                 case ACTION_PREV:
                     onActionPrev();
                     break;
@@ -421,6 +435,12 @@ public final class PlaybackService extends Service {
 
     private void onActionStop() {
         mPlayOnFocusGain = false;
+        stopSelf();
+    }
+
+    private void onActionStopWithError(@Nullable final String errorMessage) {
+        mPlayOnFocusGain = false;
+        mErrorMessage = errorMessage;
         stopSelf();
     }
 
@@ -611,7 +631,11 @@ public final class PlaybackService extends Service {
         mPlayOnFocusGain = false;
         unregisterReceiver(mBecomingNoisyReceiver);
         unregisterReceiver(mResendStateReceiver);
-        setState(STATE_IDLE);
+        if (mErrorMessage != null) {
+            setState(STATE_ERROR);
+        } else {
+            setState(STATE_IDLE);
+        }
         if (mTimerSubscription != null) {
             mTimerSubscription.unsubscribe();
             mTimerSubscription = null;

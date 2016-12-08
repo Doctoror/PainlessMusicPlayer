@@ -20,12 +20,14 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.playback.MediaSessionHolder;
 
 import android.annotation.TargetApi;
-import android.media.browse.MediaBrowser;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.media.MediaBrowserService;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.media.MediaBrowserServiceCompat;
+import android.support.v4.media.MediaBrowserCompat.MediaItem;
+import android.support.v4.media.session.MediaSessionCompat;
 
 import java.util.List;
 
@@ -33,10 +35,9 @@ import java.util.List;
  * {@link MediaBrowserService} implementation
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public final class MediaBrowserServiceImpl extends MediaBrowserService {
+public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
 
     private static final String TAG = "MediaBrowserServiceImpl";
-
 
     private MediaSessionHolder mMediaSessionHolder;
     private MediaBrowserImpl mMediaBrowser;
@@ -51,6 +52,11 @@ public final class MediaBrowserServiceImpl extends MediaBrowserService {
 
         mMediaSessionHolder = MediaSessionHolder.getInstance(this);
         mMediaSessionHolder.openSession();
+
+        final MediaSessionCompat mediaSession = mMediaSessionHolder.getMediaSession();
+        if (mediaSession != null) {
+            setSessionToken(mediaSession.getSessionToken());
+        }
     }
 
     @Override
@@ -81,7 +87,7 @@ public final class MediaBrowserServiceImpl extends MediaBrowserService {
 
     @Override
     public void onLoadChildren(@NonNull final String parentId,
-            @NonNull final Result<List<MediaBrowser.MediaItem>> result) {
+            @NonNull final Result<List<MediaItem>> result) {
         if (Log.logDEnabled()) {
             Log.d(TAG, "OnLoadChildren: parentMediaId=" + parentId);
         }
@@ -89,8 +95,7 @@ public final class MediaBrowserServiceImpl extends MediaBrowserService {
     }
 
     @Override
-    public void onLoadItem(final String itemId,
-            final Result<MediaBrowser.MediaItem> result) {
+    public void onLoadItem(final String itemId, final Result<MediaItem> result) {
         if (Log.logDEnabled()) {
             Log.d(TAG, "OnLoadItem: itemId=" + itemId);
         }
