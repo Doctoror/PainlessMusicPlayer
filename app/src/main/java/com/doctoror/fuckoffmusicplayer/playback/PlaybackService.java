@@ -26,6 +26,8 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecent50;
+import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionReporter;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;

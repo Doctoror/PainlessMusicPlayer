@@ -1,7 +1,8 @@
-package com.doctoror.fuckoffmusicplayer.playback;
+package com.doctoror.fuckoffmusicplayer.media.session;
 
 import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 

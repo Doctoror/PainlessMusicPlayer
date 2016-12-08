@@ -306,7 +306,7 @@ public final class PlaylistFactory {
 
     @Nullable
     @WorkerThread
-    public static List<Media> forSelection(@NonNull final ContentResolver resolver,
+    public static List<Media> fromSelection(@NonNull final ContentResolver resolver,
             @Nullable final String selection,
             @Nullable final String[] selectionArgs,
             @Nullable final String orderBy,

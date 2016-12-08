@@ -142,7 +142,7 @@
                 android:resource="@xml/appwidget_info_single_row"/>
         </receiver>
 
-        <service android:name=".auto.MediaBrowserServiceImpl">
+        <service android:name=".media.browser.MediaBrowserServiceImpl">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>
             </intent-filter>

@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.playback;
+package com.doctoror.fuckoffmusicplayer.media.session;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.commons.util.Log;
 
@@ -38,10 +39,9 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Created by Yaroslav Mytkalyk on 24.10.16.
+ * Used for reporting media session state
  */
-
-final class MediaSessionReporter {
+public final class MediaSessionReporter {
 
     private static final String ACTION_PLAYSTATE_CHANGED = "com.android.music.playstatechanged";
 
@@ -52,7 +52,7 @@ final class MediaSessionReporter {
     }
 
     @PlaybackStateCompat.State
-    static int toPlaybackStateCompat(@PlaybackService.State final int state) {
+    public static int toPlaybackStateCompat(@PlaybackService.State final int state) {
         switch (state) {
             case PlaybackService.STATE_LOADING:
                 return PlaybackStateCompat.STATE_BUFFERING;
@@ -72,7 +72,7 @@ final class MediaSessionReporter {
         }
     }
 
-    static void reportStateChanged(@NonNull final Context context,
+    public static void reportStateChanged(@NonNull final Context context,
             @NonNull final MediaSessionCompat mediaSession,
             @NonNull final Media media,
             @PlaybackService.State final int state,
@@ -85,7 +85,7 @@ final class MediaSessionReporter {
         sendAndroidMusicPlayerBroadcast(context, i);
     }
 
-    static void reportStateChanged(@NonNull final MediaSessionCompat mediaSession,
+    public static void reportStateChanged(@NonNull final MediaSessionCompat mediaSession,
             @PlaybackService.State final int state,
             @Nullable final CharSequence errorMessage) {
         @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
@@ -105,7 +105,7 @@ final class MediaSessionReporter {
     }
 
     @WorkerThread
-    static void reportTrackChanged(@NonNull final Context context,
+    public static void reportTrackChanged(@NonNull final Context context,
             @NonNull final RequestManager glide,
             @NonNull final MediaSessionCompat mediaSession,
             @NonNull final Media media) {

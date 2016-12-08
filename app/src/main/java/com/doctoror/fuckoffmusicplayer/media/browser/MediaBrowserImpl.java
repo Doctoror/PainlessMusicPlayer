@@ -1,14 +1,12 @@
-package com.doctoror.fuckoffmusicplayer.auto;
+package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat.BrowserRoot;
@@ -19,9 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 08.12.16.
+ * Media browser implementation
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 final class MediaBrowserImpl {
 
     private static final String MEDIA_ID_ROOT = "ROOT";
@@ -109,6 +106,6 @@ final class MediaBrowserImpl {
                 .setTitle(media.getTitle())
                 .setSubtitle(media.getArtist())
                 .build();
-        return new MediaItem(description, MediaItem.FLAG_BROWSABLE);
+        return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }
 }

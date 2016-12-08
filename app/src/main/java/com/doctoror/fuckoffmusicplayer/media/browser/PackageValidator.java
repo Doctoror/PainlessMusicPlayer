@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.auto;
+package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
@@ -97,8 +97,7 @@ final class PackageValidator {
     /**
      * @return false if the caller is not authorized to get data from this MediaBrowserService
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean isCallerAllowed(Context context, String callingPackage, int callingUid) {
+    boolean isCallerAllowed(Context context, String callingPackage, int callingUid) {
         // Always allow calls from the framework, self app or development environment.
         if (Process.SYSTEM_UID == callingUid || Process.myUid() == callingUid) {
             return true;

@@ -31,7 +31,7 @@ final class LivePlaylistRandom50 implements LivePlaylist {
     @WorkerThread
     @Override
     public List<Media> create(@NonNull final Context context) {
-        return PlaylistFactory.forSelection(context.getContentResolver(),
+        return PlaylistFactory.fromSelection(context.getContentResolver(),
                 TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()",

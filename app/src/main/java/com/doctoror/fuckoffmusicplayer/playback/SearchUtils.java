@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback;
 
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
@@ -34,8 +35,20 @@ import java.util.List;
  */
 public final class SearchUtils {
 
+    private static final String TAG = "SearchUtils";
+
     private SearchUtils() {
         throw new UnsupportedOperationException();
+    }
+
+    public static void onPlayFromMediaId(@NonNull final Context context,
+            @NonNull final String mediaId) {
+        final List<Media> playlist = PlaylistFactory.fromSelection(context.getContentResolver(),
+                MediaStore.Audio.Media._ID + '=' + mediaId,
+                null,
+                null,
+                null);
+        playFromSearch(context, playlist, null);
     }
 
     public static void onPlayFromSearch(@NonNull final Context context,
@@ -76,12 +89,20 @@ public final class SearchUtils {
             playlist = PlaylistFactory.fromTracksSearch(resolver, query);
         }
 
+        playFromSearch(context, playlist, query);
+    }
+
+    private static void playFromSearch(@NonNull final Context context,
+            @Nullable final List<Media> playlist,
+            @Nullable final String query) {
         if (playlist != null && !playlist.isEmpty()) {
-            // Start playing from the beginning of the search results
             PlaylistFactory.play(context, playlist);
         } else {
-            PlaybackService.stopWithError(context,
-                    context.getString(R.string.No_media_found_for_s, query));
+            final String message = TextUtils.isEmpty(query)
+                    ? context.getString(R.string.No_media_found)
+                    : context.getString(R.string.No_media_found_for_s, query);
+
+            PlaybackService.stopWithError(context, message);
         }
     }
 

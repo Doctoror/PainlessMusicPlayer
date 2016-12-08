@@ -14,20 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.auto;
+package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.playback.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Bundle;
 import android.service.media.MediaBrowserService;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
+import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 
 import java.util.List;
@@ -35,7 +32,6 @@ import java.util.List;
 /**
  * {@link MediaBrowserService} implementation
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
 
     private static final String TAG = "MediaBrowserServiceImpl";
@@ -93,13 +89,5 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
             Log.d(TAG, "OnLoadChildren: parentMediaId=" + parentId);
         }
         mMediaBrowser.onLoadChildren(parentId, result);
-    }
-
-    @Override
-    public void onLoadItem(final String itemId, final Result<MediaItem> result) {
-        if (Log.logDEnabled()) {
-            Log.d(TAG, "OnLoadItem: itemId=" + itemId);
-        }
-        super.onLoadItem(itemId, result);
     }
 }

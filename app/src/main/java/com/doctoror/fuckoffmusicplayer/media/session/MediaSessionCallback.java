@@ -1,4 +1,7 @@
-package com.doctoror.fuckoffmusicplayer.playback;
+package com.doctoror.fuckoffmusicplayer.media.session;
+
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.SearchUtils;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -45,5 +48,10 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
     @Override
     public void onPlayFromSearch(final String query, final Bundle extras) {
         SearchUtils.onPlayFromSearch(mContext, query, extras);
+    }
+
+    @Override
+    public void onPlayFromMediaId(final String mediaId, final Bundle extras) {
+        SearchUtils.onPlayFromMediaId(mContext, mediaId);
     }
 }

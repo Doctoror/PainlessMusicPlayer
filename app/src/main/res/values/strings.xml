@@ -24,6 +24,7 @@
     <string name="No_albums_found">No albums found</string>
     <string name="No_genres_found">No genres found</string>
     <string name="No_media_found_for_s">No media found for “%1$s”</string>
+    <string name="No_media_found">No media found</string>
 
     <string name="Failed_to_load_data_s">Failed to load data: %1$s</string>
     <string name="Search">Search</string>
