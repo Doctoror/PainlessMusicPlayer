@@ -39,14 +39,12 @@ public final class SearchUtils {
     }
 
     public static void onPlayFromSearch(@NonNull final Context context,
-            @Nullable String query,
+            @Nullable final String query,
             @Nullable final Bundle extras) {
         if (TextUtils.isEmpty(query)) {
             PlaybackService.playAnything(context);
             return;
         }
-
-        query = "Black Metal";
 
         boolean isArtistFocus = false;
         boolean isAlbumFocus = false;

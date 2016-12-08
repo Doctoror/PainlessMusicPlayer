@@ -1,6 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.bumptech.glide.Glide;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 
@@ -85,6 +86,8 @@ public final class MediaSessionHolder {
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setActive(true);
+        mediaSession.setSessionActivity(PendingIntent.getActivity(mContext, 1,
+                new Intent(mContext, NowPlayingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
 
         mMediaSession = mediaSession;
         Observable.create(s -> reportMediaAndState(mediaSession)).subscribeOn(Schedulers.io())
