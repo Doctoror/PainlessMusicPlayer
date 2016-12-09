@@ -90,4 +90,12 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
         }
         mMediaBrowser.onLoadChildren(parentId, result);
     }
+
+    @Override
+    public void onLoadItem(final String itemId, final Result<MediaItem> result) {
+        if (Log.logDEnabled()) {
+            Log.d(TAG, "OnLoadItem: itemId=" + itemId);
+        }
+        super.onLoadItem(itemId, result);
+    }
 }

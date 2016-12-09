@@ -4,9 +4,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat.BrowserRoot;
@@ -47,8 +45,8 @@ final class MediaBrowserImpl {
                 if (playlist != null && !playlist.isEmpty()) {
                     mediaItems.add(createBrowsableMediaItemCurrentQueue());
                 }
-                //mediaItems.add(createMediaItemRandom());
-                //mediaItems.add(createMediaItemRecent());
+                mediaItems.add(createMediaItemRandom());
+                mediaItems.add(createMediaItemRecent());
                 break;
             }
 
