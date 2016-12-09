@@ -47,31 +47,38 @@ public final class SearchUtils {
 
     public static void onPlayFromMediaId(@NonNull final Context context,
             @NonNull final String mediaId) {
-        switch (mediaId) {
-            case MediaBrowserImpl.MEDIA_ID_RANDOM: {
-                final List<Media> playlist = new LivePlaylistRandom50(context.getResources())
-                        .create(context);
-                playFromSearch(context, playlist, null, 0);
-                break;
+        if (MediaBrowserImpl.MEDIA_ID_RANDOM.equals(mediaId)) {
+            final List<Media> playlist = new LivePlaylistRandom50(context.getResources())
+                    .create(context);
+            play(context, playlist, 0);
+        } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
+            final List<Media> playlist = new LivePlaylistRecent50(context.getResources())
+                    .create(context);
+            play(context, playlist, 0);
+        } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE)) {
+            final String genreId = mediaId
+                    .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE.length());
+            long id = -1;
+            try {
+                id = Long.parseLong(genreId);
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "Genre id is not a number " + genreId, e);
             }
-
-            case MediaBrowserImpl.MEDIA_ID_RECENT: {
-                final List<Media> playlist = new LivePlaylistRecent50(context.getResources())
-                        .create(context);
-                playFromSearch(context, playlist, null, 0);
-                break;
+            if (id != -1) {
+                final List<Media> playlist = PlaylistFactory.fromGenre(context.getContentResolver(),
+                        id);
+                play(context, playlist, 0);
             }
-
-            default:
-                final long id;
-                try {
-                    id = Long.parseLong(mediaId);
-                } catch (NumberFormatException e) {
-                    Log.w(TAG, "Media id is not a number", e);
-                    break;
-                }
+        } else {
+            long id = -1;
+            try {
+                id = Long.parseLong(mediaId);
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "Media id is not a number", e);
+            }
+            if (id != -1) {
                 onPlayFromMediaId(context, id);
-                break;
+            }
         }
     }
 
@@ -99,7 +106,7 @@ public final class SearchUtils {
                     null);
         }
 
-        playFromSearch(context, playlist, null, position);
+        play(context, playlist, position);
     }
 
     public static void onPlayFromSearch(@NonNull final Context context,
@@ -140,21 +147,30 @@ public final class SearchUtils {
             playlist = PlaylistFactory.fromTracksSearch(resolver, query);
         }
 
-        playFromSearch(context, playlist, query, 0);
+        playFromSearch(context, playlist, query);
     }
 
     private static void playFromSearch(@NonNull final Context context,
             @Nullable final List<Media> playlist,
-            @Nullable final String query,
-            final int position) {
+            @Nullable final String query) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistFactory.play(context, playlist, position);
+            PlaylistFactory.play(context, playlist);
         } else {
             final String message = TextUtils.isEmpty(query)
                     ? context.getString(R.string.No_media_found)
                     : context.getString(R.string.No_media_found_for_s, query);
 
             PlaybackService.stopWithError(context, message);
+        }
+    }
+
+    private static void play(@NonNull final Context context,
+            @Nullable final List<Media> playlist,
+            final int position) {
+        if (playlist != null && !playlist.isEmpty()) {
+            PlaylistFactory.play(context, playlist, position);
+        } else {
+            PlaybackService.stopWithError(context, context.getString(R.string.No_media_found));
         }
     }
 

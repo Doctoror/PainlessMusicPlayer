@@ -27,17 +27,17 @@ import android.text.TextUtils;
  * Created by Yaroslav Mytkalyk on 17.10.16.
  */
 
-final class GenresQuery {
+public final class GenresQuery {
 
     private GenresQuery() {
         throw new UnsupportedOperationException();
     }
 
-    static final int COLUMN_ID = 0;
-    static final int COLUMN_NAME = 1;
+    public static final int COLUMN_ID = 0;
+    public static final int COLUMN_NAME = 1;
 
     @NonNull
-    static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
+    public static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{

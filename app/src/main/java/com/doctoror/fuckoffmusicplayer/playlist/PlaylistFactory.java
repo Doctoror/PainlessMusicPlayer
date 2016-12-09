@@ -46,6 +46,8 @@ public final class PlaylistFactory {
 
     private static final int MAX_PLAYLIST_SIZE = 99;
 
+    private static final String EXTERNAL = "external";
+
     private PlaylistFactory() {
 
     }
@@ -232,7 +234,7 @@ public final class PlaylistFactory {
 
             if (genreId != null) {
                 c = resolver
-                        .query(MediaStore.Audio.Genres.Members.getContentUri("external", genreId),
+                        .query(MediaStore.Audio.Genres.Members.getContentUri(EXTERNAL, genreId),
                                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
                                 SelectionUtils.notInSelection(MediaStore.Audio.Media._ID, ids),
                                 null,
@@ -295,6 +297,26 @@ public final class PlaylistFactory {
                 SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, trackIds),
                 null,
                 sortOrder);
+        if (c != null) {
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
+            }
+            c.close();
+        }
+        return playlist;
+    }
+
+    @Nullable
+    @WorkerThread
+    public static List<Media> fromGenre(@NonNull final ContentResolver resolver,
+            final long genreId) {
+        final List<Media> playlist = new ArrayList<>(MAX_PLAYLIST_SIZE);
+        final Cursor c = resolver.query(MediaStore.Audio.Genres.Members.getContentUri(EXTERNAL,
+                genreId),
+                MediaQuery.PROJECTION_WITH_ALBUM_ART,
+                TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
+                null,
+                "RANDOM()");
         if (c != null) {
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                 playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
