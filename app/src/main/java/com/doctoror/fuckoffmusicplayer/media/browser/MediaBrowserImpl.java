@@ -17,20 +17,17 @@ import android.support.v4.media.MediaDescriptionCompat;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Subscription;
-
 /**
  * Media browser implementation
  */
 final class MediaBrowserImpl {
-
-    public static final String MEDIA_ID_PREFIX_GENRE = "GENRE/";
 
     private static final String MEDIA_ID_ROOT = "ROOT";
 
     private static final String MEDIA_ID_CURENT_QUEUE = "CURRENT_QUEUE";
     private static final String MEDIA_ID_GENRES = "GENRES";
 
+    static final String MEDIA_ID_PREFIX_GENRE = "GENRE/";
     static final String MEDIA_ID_RANDOM = "RANDOM";
     static final String MEDIA_ID_RECENT = "RECENT";
 
@@ -134,22 +131,21 @@ final class MediaBrowserImpl {
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }
 
-    Subscription subscription; // TODO avoid this after library update
     private void loadChildrenGenres(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
 
         final RxCursorLoader.Query query = GenresQuery.newParams(null);
-        subscription = RxCursorLoader.create(mContext.getContentResolver(),
-                query).subscribe((c) -> {
-            final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                mediaItems.add(createMediaItemGenre(c));
-            }
-            result.sendResult(mediaItems);
-            if (subscription != null) {
-                subscription.unsubscribe();
-            }
-        });
+        RxCursorLoader.create(mContext.getContentResolver(), query)
+                .asObservable()
+                .take(1)
+                .toSingle()
+                .subscribe((c) -> {
+                    final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
+                    for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                        mediaItems.add(createMediaItemGenre(c));
+                    }
+                    result.sendResult(mediaItems);
+                });
     }
 
     @NonNull
