@@ -112,7 +112,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.8.0@aar'
     compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0'
-    compile 'com.github.doctoror.rxcursorloader:library:1.0.1'
+    compile 'com.github.doctoror.rxcursorloader:library:1.0.2'
 
     // Injection
     compile 'com.jakewharton:butterknife:8.4.0'
