@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.wear.root;
 
+import com.doctoror.fuckoffmusicplayer.wear.nowplaying.NowPlayingFragmentAmbient;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 
@@ -62,6 +63,7 @@ public final class RootActivity extends WearableActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setAmbientEnabled();
         mFragmentTransactionsAllowed = true;
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -117,6 +119,18 @@ public final class RootActivity extends WearableActivity {
     }
 
     @Override
+    public void onEnterAmbient(final Bundle ambientDetails) {
+        super.onEnterAmbient(ambientDetails);
+        showFragmentNowPlayingAmbient();
+    }
+
+    @Override
+    public void onExitAmbient() {
+        super.onExitAmbient();
+        showFragmentNowPlaying();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         mFragmentTransactionsAllowed = true;
@@ -163,6 +177,10 @@ public final class RootActivity extends WearableActivity {
         if (mBinding != null) {
             mBinding.navigationDrawer.setCurrentItem(0, true);
         }
+    }
+
+    private void showFragmentNowPlayingAmbient() {
+        showFragment(NowPlayingFragmentAmbient.class.getCanonicalName());
     }
 
     private void showFragmentNowPlaying() {
