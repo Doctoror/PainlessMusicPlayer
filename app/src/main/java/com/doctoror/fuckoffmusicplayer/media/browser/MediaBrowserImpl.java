@@ -3,17 +3,19 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsQuery;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresQuery;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat.BrowserRoot;
 import android.support.v4.media.MediaBrowserServiceCompat.Result;
@@ -22,7 +24,9 @@ import android.text.TextUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Media browser implementation
@@ -44,11 +48,15 @@ final class MediaBrowserImpl {
     @NonNull
     private final Context mContext;
 
+    @NonNull
+    private final Set<String> mMediaBrowserCallerPackageNames = new HashSet<>();
+
     MediaBrowserImpl(@NonNull final Context context) {
         mContext = context;
     }
 
-    BrowserRoot getRoot() {
+    BrowserRoot getRoot(@NonNull final String clientPackageName) {
+        mMediaBrowserCallerPackageNames.add(clientPackageName);
         return new BrowserRoot(MEDIA_ID_ROOT, null);
     }
 
@@ -196,6 +204,7 @@ final class MediaBrowserImpl {
                         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
                             mediaItems.add(createMediaItemAlbum(c));
                         }
+
                         result.sendResult(mediaItems);
                         c.close();
                     }
@@ -218,7 +227,12 @@ final class MediaBrowserImpl {
                 .setTitle(c.getString(AlbumsQuery.COLUMN_ALBUM));
         final String art = c.getString(AlbumsQuery.COLUMN_ALBUM_ART);
         if (!TextUtils.isEmpty(art)) {
-            description.setIconUri(Uri.parse(new File(art).toURI().toString()));
+            final Uri uri = FileProvider.getUriForFile(mContext,
+                    mContext.getString(R.string.authority_album_thumbs), new File(art));
+            for (final String p : mMediaBrowserCallerPackageNames) {
+                mContext.grantUriPermission(p, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+            description.setIconUri(uri);
         }
         return new MediaItem(description.build(), MediaItem.FLAG_PLAYABLE);
     }

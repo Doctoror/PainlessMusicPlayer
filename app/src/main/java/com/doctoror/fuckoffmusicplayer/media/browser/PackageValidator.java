@@ -30,8 +30,12 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Validates that the calling package is authorized to browse a
@@ -52,15 +56,27 @@ final class PackageValidator {
     /**
      * Map allowed callers' certificate keys to the expected caller information.
      */
-    private final Map<String, ArrayList<CallerInfo>> mValidCertificates;
+    private final Map<String, List<CallerInfo>> mValidCertificates;
 
     public PackageValidator(Context ctx) {
         mValidCertificates = readValidCertificates(ctx.getResources().getXml(
                 R.xml.allowed_media_browser_callers));
     }
 
-    private Map<String, ArrayList<CallerInfo>> readValidCertificates(XmlResourceParser parser) {
-        HashMap<String, ArrayList<CallerInfo>> validCertificates = new HashMap<>();
+    public Collection<String> getAllowedCallersPackageNames() {
+        final Set<String> p = new HashSet<>();
+        for (final List<CallerInfo> infoList : mValidCertificates.values()) {
+            if (infoList != null && !infoList.isEmpty()) {
+                for (final CallerInfo info : infoList) {
+                    p.add(info.packageName);
+                }
+            }
+        }
+        return p;
+    }
+
+    private Map<String, List<CallerInfo>> readValidCertificates(XmlResourceParser parser) {
+        HashMap<String, List<CallerInfo>> validCertificates = new HashMap<>();
         try {
             int eventType = parser.next();
             while (eventType != XmlResourceParser.END_DOCUMENT) {
@@ -74,7 +90,7 @@ final class PackageValidator {
 
                     CallerInfo info = new CallerInfo(name, packageName, isRelease);
 
-                    ArrayList<CallerInfo> infos = validCertificates.get(certificate);
+                    List<CallerInfo> infos = validCertificates.get(certificate);
                     if (infos == null) {
                         infos = new ArrayList<>();
                         validCertificates.put(certificate, infos);
@@ -119,7 +135,7 @@ final class PackageValidator {
                 packageInfo.signatures[0].toByteArray(), Base64.NO_WRAP);
 
         // Test for known signatures:
-        ArrayList<CallerInfo> validCallers = mValidCertificates.get(signature);
+        List<CallerInfo> validCallers = mValidCertificates.get(signature);
         if (validCallers == null) {
             if (Log.logVEnabled()) {
                 Log.v(TAG, "Signature for caller " + callingPackage + " is not valid: \n"

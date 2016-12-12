@@ -79,7 +79,7 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
             return null;
         }
 
-        return mMediaBrowser.getRoot();
+        return mMediaBrowser.getRoot(clientPackageName);
     }
 
     @Override
