@@ -19,6 +19,8 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -26,16 +28,11 @@ import android.content.res.XmlResourceParser;
 import android.os.Process;
 import android.util.Base64;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Validates that the calling package is authorized to browse a
@@ -61,18 +58,6 @@ final class PackageValidator {
     public PackageValidator(Context ctx) {
         mValidCertificates = readValidCertificates(ctx.getResources().getXml(
                 R.xml.allowed_media_browser_callers));
-    }
-
-    public Collection<String> getAllowedCallersPackageNames() {
-        final Set<String> p = new HashSet<>();
-        for (final List<CallerInfo> infoList : mValidCertificates.values()) {
-            if (infoList != null && !infoList.isEmpty()) {
-                for (final CallerInfo info : infoList) {
-                    p.add(info.packageName);
-                }
-            }
-        }
-        return p;
     }
 
     private Map<String, List<CallerInfo>> readValidCertificates(XmlResourceParser parser) {
