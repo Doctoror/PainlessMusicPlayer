@@ -27,9 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Queue;
-import java.util.Set;
 
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -81,6 +79,7 @@ public final class RecentPlaylistsManager {
         if (albums != null) {
             final long[] ids = albums.ids;
             if (ids != null) {
+                //noinspection ForLoopReplaceableByForEach
                 for (int i = 0; i < ids.length; i++) {
                     mRecentAlbums.add(ids[i]);
                 }

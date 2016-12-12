@@ -67,7 +67,6 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Yaroslav Mytkalyk on 25.10.16.
  */
-
 public class ConditionalAlbumListFragment extends Fragment {
 
     @NonNull
@@ -149,16 +148,15 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     @Nullable
     @WorkerThread
-    protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds,
-            @NonNull final String[] arts) {
-        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, arts, null);
+    protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
+        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, null);
     }
 
     private void onPlayClick(@Nullable final View albumArtView,
             @Nullable final String playlistName,
             @NonNull final long[] albumIds,
             @NonNull final String[] arts) {
-        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbums(albumIds, arts)))
+        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbums(albumIds)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {

@@ -59,7 +59,7 @@ public final class ArtistAlbumsActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(android.R.id.content,
-                    ArtistAlbumsFragment.instantiate(this, artist, artistId)).commit();
+                    ArtistAlbumsFragment.instantiate(this, artistId)).commit();
         }
     }
 

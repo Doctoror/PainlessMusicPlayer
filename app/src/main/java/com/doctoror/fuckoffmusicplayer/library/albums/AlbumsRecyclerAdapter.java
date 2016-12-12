@@ -33,7 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * "Albums" recycler adapter
  */
 final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHolder>
     implements FastScroller.SectionIndexer {
@@ -45,7 +45,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
     private final RequestManager mRequestManager;
 
     interface OnAlbumClickListener {
-        void onAlbumClick(View albumArtView, long id, String album, String art);
+        void onAlbumClick(View albumArtView, long id, String album);
     }
 
     private OnAlbumClickListener mOnAlbumClickListener;
@@ -56,14 +56,14 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
         mRequestManager = requestManager;
     }
 
-    public void setOnAlbumClickListener(@Nullable final OnAlbumClickListener onAlbumClickListener) {
+    void setOnAlbumClickListener(@Nullable final OnAlbumClickListener onAlbumClickListener) {
         mOnAlbumClickListener = onAlbumClickListener;
     }
 
-    private void onAlbumClick(@NonNull final View view, final long id, @NonNull final String album,
-            @NonNull final String art) {
+    private void onAlbumClick(@NonNull final View view, final long id,
+            @NonNull final String album) {
         if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(view, id, album, art);
+            mOnAlbumClickListener.onAlbumClick(view, id, album);
         }
     }
 
@@ -93,8 +93,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
                 onAlbumClick(vh.image,
                         item.getLong(AlbumsQuery.COLUMN_ID),
-                        item.getString(AlbumsQuery.COLUMN_ALBUM),
-                        item.getString(AlbumsQuery.COLUMN_ALBUM_ART));
+                        item.getString(AlbumsQuery.COLUMN_ALBUM));
             }
         });
         return vh;

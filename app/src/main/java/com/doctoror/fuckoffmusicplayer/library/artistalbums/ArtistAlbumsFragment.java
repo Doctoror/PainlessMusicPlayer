@@ -33,14 +33,12 @@ import android.support.annotation.Nullable;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 18.10.16.
+ * Shows album for artists
  */
-
 public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
 
     @NonNull
     public static ArtistAlbumsFragment instantiate(@NonNull final Context context,
-            @NonNull final String artist,
             @NonNull final Long artistId) {
         final ArtistAlbumsFragment fragment = new ArtistAlbumsFragment();
         final RxCursorLoader.Query params = ConditionalAlbumListQuery.newParams(
@@ -66,9 +64,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
 
     @Nullable
     @Override
-    protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds,
-            @NonNull final String[] arts) {
-        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(),
-                albumIds, arts, artistId);
+    protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
+        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, artistId);
     }
 }

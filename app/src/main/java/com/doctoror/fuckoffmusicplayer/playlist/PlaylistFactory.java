@@ -82,26 +82,6 @@ public final class PlaylistFactory {
 
     @Nullable
     @WorkerThread
-    public static List<Media> fromAlbum(@NonNull final ContentResolver resolver,
-            final long albumId) {
-        final List<Media> playlist = new ArrayList<>(15);
-        final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
-                MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
-                        + MediaStore.Audio.Media.ALBUM_ID + '=' + albumId,
-                null,
-                MediaStore.Audio.Media.TRACK);
-        if (c != null) {
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
-            }
-            c.close();
-        }
-        return playlist;
-    }
-
-    @Nullable
-    @WorkerThread
     public static List<Media> fromArtist(@NonNull final ContentResolver resolver,
             final long artistId) {
         final List<Media> playlist = new ArrayList<>(25);
@@ -118,14 +98,6 @@ public final class PlaylistFactory {
             c.close();
         }
         return playlist;
-    }
-
-    @Nullable
-    @WorkerThread
-    public static List<Media> fromAlbum(@NonNull final ContentResolver resolver,
-            final long albumId,
-            @NonNull final String albumArt) {
-        return fromAlbums(resolver, new long[]{albumId}, new String[]{albumArt}, null);
     }
 
     @Nullable
@@ -254,14 +226,18 @@ public final class PlaylistFactory {
 
     @Nullable
     @WorkerThread
+    public static List<Media> fromAlbum(@NonNull final ContentResolver resolver,
+            final long albumId) {
+        return fromAlbums(resolver, new long[]{albumId}, null);
+    }
+
+    @Nullable
+    @WorkerThread
     public static List<Media> fromAlbums(@NonNull final ContentResolver resolver,
             @NonNull final long[] albumIds,
-            @NonNull final String[] albumArts,
             @Nullable final Long forArtist) {
-        if (albumIds.length != albumArts.length) {
-            throw new IllegalArgumentException("ids lengths does not match arts length");
-        }
         final List<Media> playlist = new ArrayList<>(15 * albumIds.length);
+        //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < albumIds.length; i++) {
             final long albumId = albumIds[i];
             final StringBuilder selection = new StringBuilder(256);
@@ -272,14 +248,13 @@ public final class PlaylistFactory {
                         .append(MediaStore.Audio.Media.ARTIST_ID).append('=').append(forArtist);
             }
             final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
-                    MediaQuery.PROJECTION,
+                    MediaQuery.PROJECTION_WITH_ALBUM_ART,
                     selection.toString(),
                     null,
                     MediaStore.Audio.Media.TRACK);
             if (c != null) {
-                final String albumArt = albumArts[i];
                 for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                    playlist.add(mediaFromCursor(c, albumArt));
+                    playlist.add(mediaFromCursor(c, c.getString(MediaQuery.COLUMN_ALBUM_ART)));
                 }
                 c.close();
             }

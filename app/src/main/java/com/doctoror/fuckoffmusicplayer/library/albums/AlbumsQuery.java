@@ -26,24 +26,38 @@ import android.text.TextUtils;
 /**
  * Created by Yaroslav Mytkalyk on 17.10.16.
  */
-final class AlbumsQuery {
+public final class AlbumsQuery {
 
     private AlbumsQuery() {
         throw new UnsupportedOperationException();
     }
 
-    static final int COLUMN_ID = 0;
-    static final int COLUMN_ALBUM = 1;
-    static final int COLUMN_ALBUM_ART = 2;
+    public static final int COLUMN_ID = 0;
+    public static final int COLUMN_ALBUM = 1;
+    public static final int COLUMN_ALBUM_ART = 2;
 
     /**
-     * Constricts params for albums search.
+     * Constructs params for albums search.
      *
      * @param searchFilter the user input filter string. May be null if no filtering needed
      * @return params
      */
     @NonNull
-    static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
+    public static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
+        return newParamsBuilder()
+                .setSelection(TextUtils.isEmpty(searchFilter) ? null :
+                        MediaStore.Audio.Albums.ALBUM + " LIKE '%"
+                                + StringUtils.sqlEscape(searchFilter) + "%'")
+                .create();
+    }
+
+    /**
+     * Constructs params Builder for albums search.
+     *
+     * @return params Builder
+     */
+    @NonNull
+    public static RxCursorLoader.Query.Builder newParamsBuilder() {
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
@@ -51,11 +65,7 @@ final class AlbumsQuery {
                         MediaStore.Audio.Albums.ALBUM,
                         MediaStore.Audio.Albums.ALBUM_ART
                 })
-                .setSortOrder(MediaStore.Audio.Albums.ALBUM)
-                .setSelection(TextUtils.isEmpty(searchFilter) ? null :
-                        MediaStore.Audio.Albums.ALBUM + " LIKE '%"
-                                + StringUtils.sqlEscape(searchFilter) + "%'")
-                .create();
+                .setSortOrder(MediaStore.Audio.Albums.ALBUM);
     }
 
 }

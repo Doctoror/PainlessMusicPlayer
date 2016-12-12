@@ -55,20 +55,10 @@ public final class SearchUtils {
             final List<Media> playlist = new LivePlaylistRecentlyScanned(context.getResources())
                     .create(context);
             play(context, playlist, 0);
+        } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM)) {
+            onPlayFromAlbumId(context, mediaId);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE)) {
-            final String genreId = mediaId
-                    .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE.length());
-            long id = -1;
-            try {
-                id = Long.parseLong(genreId);
-            } catch (NumberFormatException e) {
-                Log.w(TAG, "Genre id is not a number " + genreId, e);
-            }
-            if (id != -1) {
-                final List<Media> playlist = PlaylistFactory.fromGenre(context.getContentResolver(),
-                        id);
-                play(context, playlist, 0);
-            }
+            onPlayFromGenreId(context, mediaId);
         } else {
             long id = -1;
             try {
@@ -79,6 +69,40 @@ public final class SearchUtils {
             if (id != -1) {
                 onPlayFromMediaId(context, id);
             }
+        }
+    }
+
+    private static void onPlayFromAlbumId(@NonNull final Context context,
+            @NonNull final String mediaId) {
+        final String albumId = mediaId
+                .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM.length());
+        long id = -1;
+        try {
+            id = Long.parseLong(albumId);
+        } catch (NumberFormatException e) {
+            Log.w(TAG, "Album id is not a number " + albumId, e);
+        }
+        if (id != -1) {
+            final List<Media> playlist = PlaylistFactory.fromAlbum(context.getContentResolver(),
+                    id);
+            play(context, playlist, 0);
+        }
+    }
+
+    private static void onPlayFromGenreId(@NonNull final Context context,
+            @NonNull final String mediaId) {
+        final String genreId = mediaId
+                .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE.length());
+        long id = -1;
+        try {
+            id = Long.parseLong(genreId);
+        } catch (NumberFormatException e) {
+            Log.w(TAG, "Genre id is not a number " + genreId, e);
+        }
+        if (id != -1) {
+            final List<Media> playlist = PlaylistFactory.fromGenre(context.getContentResolver(),
+                    id);
+            play(context, playlist, 0);
         }
     }
 
