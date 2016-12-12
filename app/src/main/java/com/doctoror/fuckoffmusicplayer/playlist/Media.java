@@ -31,6 +31,7 @@ public final class Media {
     long duration;
     String artist;
     String album;
+    long albumId;
     String albumArt;
     int track;
 

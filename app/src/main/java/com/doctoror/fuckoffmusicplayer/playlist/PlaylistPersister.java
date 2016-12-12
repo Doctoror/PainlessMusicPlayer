@@ -44,7 +44,7 @@ final class PlaylistPersister {
     private static final String FILE_NAME = "playlist";
 
     static void persistAsync(@NonNull final Context context,
-            @NonNull final PlaylistHolder playlist) {
+            @NonNull final CurrentPlaylist playlist) {
         // Retrieve snapshot now, so that it's immutable when writing
         if (playlist.playlist != null) {
             final PersistablePlaylist.ProtoPlaylist pp = toProtoPlaylist(playlist);
@@ -59,7 +59,7 @@ final class PlaylistPersister {
     }
 
     static void read(@NonNull final Context context,
-            @NonNull final PlaylistHolder playlist) {
+            @NonNull final CurrentPlaylist playlist) {
         final PersistablePlaylist.ProtoPlaylist protoPlaylist = ProtoUtils
                 .readFromFile(context, FILE_NAME, new PersistablePlaylist.ProtoPlaylist());
         if (protoPlaylist != null) {
@@ -68,7 +68,7 @@ final class PlaylistPersister {
     }
 
     private static void readFromProtoPlaylist(@NonNull final PersistablePlaylist.ProtoPlaylist pp,
-            @NonNull final PlaylistHolder playlist) {
+            @NonNull final CurrentPlaylist playlist) {
         playlist.index = pp.index;
         playlist.position = pp.position;
         if (pp.playlist != null) {
@@ -104,7 +104,7 @@ final class PlaylistPersister {
 
     @NonNull
     private static PersistablePlaylist.ProtoPlaylist toProtoPlaylist(
-            @NonNull final PlaylistHolder playlist) {
+            @NonNull final CurrentPlaylist playlist) {
         final PersistablePlaylist.ProtoPlaylist pp = new PersistablePlaylist.ProtoPlaylist();
         pp.playlist = toProtoMediaList(playlist.playlist);
         pp.index = playlist.index;

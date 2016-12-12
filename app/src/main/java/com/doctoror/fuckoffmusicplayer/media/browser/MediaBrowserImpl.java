@@ -3,7 +3,7 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.content.Context;
@@ -47,7 +47,7 @@ final class MediaBrowserImpl {
         switch (parentId) {
             case MEDIA_ID_ROOT: {
                 final List<MediaItem> mediaItems = new ArrayList<>(4);
-                final List<Media> playlist = PlaylistHolder.getInstance(mContext).getPlaylist();
+                final List<Media> playlist = CurrentPlaylist.getInstance(mContext).getPlaylist();
                 if (playlist != null && !playlist.isEmpty()) {
                     mediaItems.add(createBrowsableMediaItemCurrentQueue());
                 }
@@ -60,7 +60,7 @@ final class MediaBrowserImpl {
 
             case MEDIA_ID_CURENT_QUEUE: {
                 List<MediaItem> mediaItems = null;
-                final List<Media> playlist = PlaylistHolder.getInstance(mContext).getPlaylist();
+                final List<Media> playlist = CurrentPlaylist.getInstance(mContext).getPlaylist();
                 if (playlist != null && !playlist.isEmpty()) {
                     final int size = playlist.size();
                     mediaItems = new ArrayList<>(size);

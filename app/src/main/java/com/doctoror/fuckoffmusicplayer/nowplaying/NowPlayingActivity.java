@@ -31,7 +31,7 @@ import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -99,7 +99,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
     private final Receiver mReceiver = new Receiver();
-    private PlaylistHolder mPlaylist;
+    private CurrentPlaylist mPlaylist;
 
     private int mState = PlaybackService.STATE_IDLE;
     private ActivityNowplayingBinding mBinding;
@@ -136,7 +136,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
         mTransitionPostponed = false;
         mTransitionStarted = false;
-        mPlaylist = PlaylistHolder.getInstance(this);
+        mPlaylist = CurrentPlaylist.getInstance(this);
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_nowplaying);
         ViewCompat.setTransitionName(mBinding.albumArt, TRANSITION_NAME_ALBUM_ART);
@@ -279,7 +279,7 @@ public final class NowPlayingActivity extends BaseActivity {
                         .hasCoverTransition(false)
                         .hasItemViewTransition(false)
                         .isNowPlayingPlaylist(true)
-                        .playlist(PlaylistHolder.getInstance(this).getPlaylist())
+                        .playlist(CurrentPlaylist.getInstance(this).getPlaylist())
                         .build();
                 playlistActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(playlistActivity);
@@ -303,7 +303,7 @@ public final class NowPlayingActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        PlaylistHolder.getInstance(this).deleteObserver(mPlaylistObserver);
+        CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
         unregisterReceiver(mReceiver);
     }
 
@@ -397,8 +397,8 @@ public final class NowPlayingActivity extends BaseActivity {
         PlaybackService.next(this);
     }
 
-    private final PlaylistHolder.PlaylistObserver mPlaylistObserver
-            = new PlaylistHolder.PlaylistObserver() {
+    private final CurrentPlaylist.PlaylistObserver mPlaylistObserver
+            = new CurrentPlaylist.PlaylistObserver() {
 
         @Override
         public void onPlaylistChanged(@Nullable final List<Media> playlist) {

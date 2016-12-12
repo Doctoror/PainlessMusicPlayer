@@ -20,7 +20,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -76,7 +76,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
             final AppWidgetManager appWidgetManager,
             final int[] appWidgetIds,
             @PlaybackService.State final int state) {
-        final PlaylistHolder holder = PlaylistHolder.getInstance(context);
+        final CurrentPlaylist holder = CurrentPlaylist.getInstance(context);
 
         final RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.appwidget_single_row);

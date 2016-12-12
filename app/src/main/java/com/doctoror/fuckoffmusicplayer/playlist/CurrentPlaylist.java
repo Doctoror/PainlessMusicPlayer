@@ -19,27 +19,33 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Global playlist. Contains a playlist and current media.
  */
-public final class PlaylistHolder {
+public final class CurrentPlaylist {
 
     // Is not a leak since it's an application context
     @SuppressLint("StaticFieldLeak")
-    private static volatile PlaylistHolder sInstance;
+    private static volatile CurrentPlaylist sInstance;
 
     @NonNull
-    public static PlaylistHolder getInstance(@NonNull final Context context) {
+    public static CurrentPlaylist getInstance(@NonNull final Context context) {
         if (sInstance == null) {
-            synchronized (PlaylistHolder.class) {
+            synchronized (CurrentPlaylist.class) {
                 if (sInstance == null) {
-                    sInstance = new PlaylistHolder(context.getApplicationContext());
+                    sInstance = new CurrentPlaylist(context.getApplicationContext());
                 }
             }
         }
@@ -59,7 +65,7 @@ public final class PlaylistHolder {
     Media media;
     long position;
 
-    private PlaylistHolder(@NonNull final Context context) {
+    private CurrentPlaylist(@NonNull final Context context) {
         mContext = context;
         PlaylistPersister.read(context, this);
     }
@@ -114,6 +120,39 @@ public final class PlaylistHolder {
             this.playlist = playlist;
         }
         notifyPlaylistChanged(playlist);
+        Observable.create(s -> storeToRecentAlbums(getPlaylist()))
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+    }
+
+    /**
+     * Finds albums in playlist and stores them in recently played albums.
+     * Album is a sequence of tracks with the same album id.
+     * Single playlist can be a concatination of multiple albums.
+     *
+     * @param playlist The playlist to process
+     */
+    @WorkerThread
+    private void storeToRecentAlbums(@Nullable final List<Media> playlist) {
+        if (playlist != null && !playlist.isEmpty()) {
+            final Set<Long> albums = new LinkedHashSet<>();
+            final long THRESHOLD = 4; // number of items per single album
+            long prevAlbumId = playlist.get(0).albumId;
+            int sequence = 1;
+            for (int i = 1; i < playlist.size(); i++) {
+                final long albumId = playlist.get(i).albumId;
+                if (albumId == prevAlbumId) {
+                    sequence++;
+                } else {
+                    if (sequence >= THRESHOLD) {
+                        albums.add(prevAlbumId);
+                    }
+                    sequence = 1;
+                    prevAlbumId = albumId;
+                }
+            }
+            RecentPlaylistsManager.getInstance(mContext).storeAlbumsSync(albums);
+        }
     }
 
     public void setIndex(final int index) {

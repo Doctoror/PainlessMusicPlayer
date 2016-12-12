@@ -22,7 +22,7 @@ import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecent50;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -85,7 +85,7 @@ public final class SearchUtils {
     private static void onPlayFromMediaId(@NonNull final Context context,
             final long mediaId) {
         int position = -1;
-        List<Media> playlist = PlaylistHolder.getInstance(context).getPlaylist();
+        List<Media> playlist = CurrentPlaylist.getInstance(context).getPlaylist();
         if (playlist != null && !playlist.isEmpty()) {
             final int size = playlist.size();
             for (int i = 0; i < size; i++) {

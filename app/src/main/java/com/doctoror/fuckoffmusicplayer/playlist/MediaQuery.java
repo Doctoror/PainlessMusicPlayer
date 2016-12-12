@@ -30,9 +30,10 @@ final class MediaQuery {
     static final int COLUMN_TITLE = 2;
     static final int COLUMN_ARTIST = 3;
     static final int COLUMN_ALBUM = 4;
-    static final int COLUMN_DURATION = 5;
-    static final int COLUMN_DATA = 6;
-    static final int COLUMN_ALBUM_ART = 7;
+    static final int COLUMN_ALBUM_ID = 5;
+    static final int COLUMN_DURATION = 6;
+    static final int COLUMN_DATA = 7;
+    static final int COLUMN_ALBUM_ART = 8;
 
     static final String[] PROJECTION = {
             MediaStore.Audio.Media._ID,
@@ -40,6 +41,7 @@ final class MediaQuery {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM,
+            MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DATA
     };
@@ -50,6 +52,7 @@ final class MediaQuery {
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM,
+            MediaStore.Audio.Media.ALBUM_ID,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DATA,
             "(SELECT _data FROM album_art WHERE album_art.album_id=audio.album_id) AS "

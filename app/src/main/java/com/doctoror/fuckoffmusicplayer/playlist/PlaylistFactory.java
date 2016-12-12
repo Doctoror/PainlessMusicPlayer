@@ -70,7 +70,7 @@ public final class PlaylistFactory {
             @NonNull final List<Media> mediaList,
             @NonNull final Media media,
             final int position) {
-        final PlaylistHolder playlist = PlaylistHolder.getInstance(context);
+        final CurrentPlaylist playlist = CurrentPlaylist.getInstance(context);
         playlist.setPlaylist(mediaList);
         playlist.setMedia(media);
         playlist.setIndex(position);
@@ -429,6 +429,7 @@ public final class PlaylistFactory {
         media.title = c.getString(MediaQuery.COLUMN_TITLE);
         media.artist = c.getString(MediaQuery.COLUMN_ARTIST);
         media.album = c.getString(MediaQuery.COLUMN_ALBUM);
+        media.albumId = c.getLong(MediaQuery.COLUMN_ALBUM_ID);
         media.albumArt = albumArt;
         media.duration = c.getLong(MediaQuery.COLUMN_DURATION);
         final String path = c.getString(MediaQuery.COLUMN_DATA);

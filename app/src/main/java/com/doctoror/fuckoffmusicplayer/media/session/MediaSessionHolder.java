@@ -4,7 +4,7 @@ import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -110,7 +110,7 @@ public final class MediaSessionHolder {
 
     @WorkerThread
     private void reportMediaAndState(@NonNull final MediaSessionCompat mediaSession) {
-        final Media current = PlaylistHolder.getInstance(mContext).getMedia();
+        final Media current = CurrentPlaylist.getInstance(mContext).getMedia();
         if (current != null) {
             MediaSessionReporter.reportTrackChanged(mContext, Glide.with(mContext),
                     mediaSession, current);

@@ -78,7 +78,7 @@ public final class PlaylistActivity extends BaseActivity implements
     private final PlaylistActivityModel mModel = new PlaylistActivityModel();
     private PlaylistRecyclerAdapter mAdapter;
 
-    private PlaylistHolder mPlaylistHolder;
+    private CurrentPlaylist mCurrentPlaylist;
 
     @InjectExtra
     List<Media> playlist;
@@ -120,7 +120,7 @@ public final class PlaylistActivity extends BaseActivity implements
             setTitle(title);
         }
 
-        mPlaylistHolder = PlaylistHolder.getInstance(this);
+        mCurrentPlaylist = CurrentPlaylist.getInstance(this);
 
         mAdapter = new PlaylistRecyclerAdapter(this, playlist);
         mAdapter.setOnTrackClickListener(mOnTrackClickListener);
@@ -227,7 +227,7 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onStart() {
         super.onStart();
         if (isNowPlayingPlaylist) {
-            PlaylistHolder.getInstance(this).addObserver(mPlaylistObserver);
+            CurrentPlaylist.getInstance(this).addObserver(mPlaylistObserver);
         }
     }
 
@@ -235,7 +235,7 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onStop() {
         super.onStop();
         if (isNowPlayingPlaylist) {
-            PlaylistHolder.getInstance(this).deleteObserver(mPlaylistObserver);
+            CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
         }
     }
 
@@ -367,7 +367,7 @@ public final class PlaylistActivity extends BaseActivity implements
                 Collections.swap(playlist, i, j);
             }
             if (isNowPlayingPlaylist) {
-                mPlaylistHolder.swap(i, j);
+                mCurrentPlaylist.swap(i, j);
             }
         }
     };
@@ -422,7 +422,7 @@ public final class PlaylistActivity extends BaseActivity implements
             if (isNowPlayingPlaylist) {
                 final Object item = mAdapter.getItem(pos);
                 if (item instanceof Media) {
-                    mPlaylistHolder.remove((Media) item);
+                    mCurrentPlaylist.remove((Media) item);
                 }
             }
             mAdapter.setItemRemoved(pos);
@@ -468,8 +468,8 @@ public final class PlaylistActivity extends BaseActivity implements
         }
     };
 
-    private final PlaylistHolder.PlaylistObserver mPlaylistObserver
-            = new PlaylistHolder.PlaylistObserver() {
+    private final CurrentPlaylist.PlaylistObserver mPlaylistObserver
+            = new CurrentPlaylist.PlaylistObserver() {
 
         @Override
         public void onPlaylistChanged(@Nullable final List<Media> playlist) {

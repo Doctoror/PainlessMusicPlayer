@@ -32,7 +32,7 @@ import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -234,7 +234,7 @@ public final class PlaybackService extends Service {
             = new AudioBecomingNoisyReceiver();
     private final MediaPlayer mMediaPlayer = MediaPlayerFactory.newMediaPlayer();
 
-    private PlaylistHolder mPlaylist;
+    private CurrentPlaylist mPlaylist;
 
     private AudioEffects mAudioEffects;
 
@@ -267,7 +267,7 @@ public final class PlaybackService extends Service {
         mPermissionReceivePlaybackState = getPackageName()
                 .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
 
-        mPlaylist = PlaylistHolder.getInstance(this);
+        mPlaylist = CurrentPlaylist.getInstance(this);
         mPlaylist.addObserver(mPlaylistObserver);
 
         final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -759,8 +759,8 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final PlaylistHolder.PlaylistObserver mPlaylistObserver
-            = new PlaylistHolder.PlaylistObserver() {
+    private final CurrentPlaylist.PlaylistObserver mPlaylistObserver
+            = new CurrentPlaylist.PlaylistObserver() {
 
         @Override
         public void onPositionChanged(final long position) {
