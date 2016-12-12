@@ -151,8 +151,7 @@ public final class CurrentPlaylist {
                     prevAlbumId = albumId;
                 }
             }
-            if (sequence == playlist.size()) {
-                // single album
+            if (sequence >= THRESHOLD) {
                 albums.add(prevAlbumId);
             }
             RecentPlaylistsManager.getInstance(mContext).storeAlbumsSync(albums);
