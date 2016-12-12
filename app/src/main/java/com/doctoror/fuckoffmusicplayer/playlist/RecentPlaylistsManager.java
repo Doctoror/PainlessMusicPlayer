@@ -37,7 +37,7 @@ import rx.schedulers.Schedulers;
  */
 public final class RecentPlaylistsManager {
 
-    private static final int MAX_LENGTH = 8;
+    private static final int MAX_LENGTH = 10;
 
     private static final String FILE_NAME_RECENT_PLAYLISTS = "recent_playlists_albums";
 
