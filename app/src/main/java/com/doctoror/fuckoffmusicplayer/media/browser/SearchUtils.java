@@ -17,8 +17,8 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom50;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecent50;
+import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom;
+import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
@@ -48,11 +48,11 @@ public final class SearchUtils {
     public static void onPlayFromMediaId(@NonNull final Context context,
             @NonNull final String mediaId) {
         if (MediaBrowserImpl.MEDIA_ID_RANDOM.equals(mediaId)) {
-            final List<Media> playlist = new LivePlaylistRandom50(context.getResources())
+            final List<Media> playlist = new LivePlaylistRandom(context.getResources())
                     .create(context);
             play(context, playlist, 0);
         } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
-            final List<Media> playlist = new LivePlaylistRecent50(context.getResources())
+            final List<Media> playlist = new LivePlaylistRecentlyScanned(context.getResources())
                     .create(context);
             play(context, playlist, 0);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE)) {

@@ -72,12 +72,10 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     @NonNull
     public static ConditionalAlbumListFragment instantiate(@NonNull final Context context,
-            @NonNull final String title,
             @NonNull final RxCursorLoader.Query params) {
         final ConditionalAlbumListFragment fragment = new ConditionalAlbumListFragment();
         final Bundle extras = Henson.with(context).gotoConditionalAlbumListFragment()
                 .loaderParams(params)
-                .title(title)
                 .build()
                 .getExtras();
         fragment.setArguments(extras);
@@ -96,9 +94,6 @@ public class ConditionalAlbumListFragment extends Fragment {
     private Cursor mData;
 
     private String mHeaderArtUri;
-
-    @InjectExtra
-    String title;
 
     @InjectExtra
     RxCursorLoader.Query loaderParams;

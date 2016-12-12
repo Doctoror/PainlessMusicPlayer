@@ -107,7 +107,7 @@ final class MediaBrowserImpl {
     private MediaItem createMediaItemRandom() {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_RANDOM)
-                .setTitle(mContext.getText(R.string.Random_50))
+                .setTitle(mContext.getText(R.string.Random_playlist))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }

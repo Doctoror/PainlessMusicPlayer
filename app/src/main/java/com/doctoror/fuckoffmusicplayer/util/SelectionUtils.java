@@ -18,14 +18,38 @@ package com.doctoror.fuckoffmusicplayer.util;
 import android.support.annotation.NonNull;
 
 import java.util.Collection;
-import java.util.Collections;
 
 /**
- * Created by Yaroslav Mytkalyk on 6/23/16.
+ * Selection utils
  */
 public final class SelectionUtils {
 
     private SelectionUtils() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Returns ordering by long field
+     *
+     * @param column    the column name to build ordering for
+     * @param arguments the arguments
+     * @return  ordering by long field
+     */
+    @NonNull
+    public static String orderByLongField(@NonNull final String column,
+            @NonNull final long[] arguments) {
+        final StringBuilder order = new StringBuilder(256);
+        boolean first = true;
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < arguments.length; i++) {
+            if (first) {
+                first = false;
+            } else {
+                order.append(',');
+            }
+            order.append(column).append('=').append(arguments[i]).append(" DESC");
+        }
+        return order.toString();
     }
 
     /**
@@ -37,7 +61,7 @@ public final class SelectionUtils {
      */
     @NonNull
     public static String inSelectionLong(@NonNull final String column,
-                                          @NonNull final long[] arguments) {
+            @NonNull final long[] arguments) {
         final StringBuilder selection = new StringBuilder(256);
         selection.append(column);
         selection.append(" IN (");
@@ -56,6 +80,24 @@ public final class SelectionUtils {
     }
 
     /**
+     * Builds IN selection with args
+     *
+     * @param column    the column name to build selection for
+     * @param arguments the arguments
+     * @return the IN selection
+     */
+    @NonNull
+    public static <T> String inSelection(@NonNull final String column,
+            @NonNull final Collection<T> arguments) {
+        final StringBuilder selection = new StringBuilder(256);
+        selection.append(column);
+        selection.append(" IN (");
+        appendCommaSeparatedArguments(selection, arguments);
+        selection.append(')');
+        return selection.toString();
+    }
+
+    /**
      * Builds IN selection with long args
      *
      * @param column    the column name to build selection for
@@ -68,16 +110,21 @@ public final class SelectionUtils {
         final StringBuilder selection = new StringBuilder(256);
         selection.append(column);
         selection.append(" NOT IN (");
+        appendCommaSeparatedArguments(selection, arguments);
+        selection.append(')');
+        return selection.toString();
+    }
+
+    private static <T> void appendCommaSeparatedArguments(@NonNull final StringBuilder target,
+            @NonNull final Collection<T> arguments) {
         boolean first = true;
         for (final T arg : arguments) {
             if (first) {
                 first = false;
             } else {
-                selection.append(',');
+                target.append(',');
             }
-            selection.append('\'').append(arg).append('\'');
+            target.append('\'').append(arg).append('\'');
         }
-        selection.append(')');
-        return selection.toString();
     }
 }

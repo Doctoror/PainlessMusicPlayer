@@ -46,6 +46,20 @@ public final class ConditionalAlbumListQuery {
     @NonNull
     public static RxCursorLoader.Query newParams(@NonNull final Uri contentUri,
             @Nullable final String selection) {
+        return newParams(contentUri, selection, MediaStore.Audio.Albums.FIRST_YEAR);
+    }
+
+    /**
+     * Constricts params for albums search.
+     *
+     * @param contentUri content uri
+     * @param selection selection
+     * @return params
+     */
+    @NonNull
+    public static RxCursorLoader.Query newParams(@NonNull final Uri contentUri,
+            @Nullable final String selection,
+            @Nullable final String order) {
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(contentUri)
                 .setProjection(new String[]{
@@ -54,8 +68,8 @@ public final class ConditionalAlbumListQuery {
                         MediaStore.Audio.Albums.ALBUM,
                         MediaStore.Audio.Albums.ALBUM_ART,
                 })
-                .setSortOrder(MediaStore.Audio.Albums.FIRST_YEAR)
                 .setSelection(selection)
+                .setSortOrder(order)
                 .create();
     }
 }

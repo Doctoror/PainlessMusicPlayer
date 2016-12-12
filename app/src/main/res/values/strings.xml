@@ -45,7 +45,10 @@
 
     <string name="Cancel">Cancel</string>
     <string name="Recently_scanned">Recently scanned</string>
-    <string name="Random_50">Random 50</string>
+    <string name="Recently_played_albums">Recently played albums</string>
+    <string name="Random_playlist">Random playlist</string>
+
+    <string name="You_played_no_albums_yet">You played no albums yet</string>
 
     <plurals name="d_albums">
         <item quantity="one">%1$d album</item>

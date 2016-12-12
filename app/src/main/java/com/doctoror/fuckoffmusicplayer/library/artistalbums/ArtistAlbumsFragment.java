@@ -49,7 +49,6 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
         final Bundle extras = Henson.with(context).gotoArtistAlbumsFragment()
                 .artistId(artistId)
                 .loaderParams(params)
-                .title(artist)
                 .build()
                 .getExtras();
         fragment.setArguments(extras);

@@ -70,13 +70,18 @@ public final class RecentPlaylistsManager {
         read();
     }
 
+    public void clear() {
+        mRecentAlbums.clear();
+        persist();
+    }
+
     private void read() {
         final RecentPlaylists.Albums albums = ProtoUtils
                 .readFromFile(mContext, FILE_NAME_RECENT_PLAYLISTS, new RecentPlaylists.Albums());
         if (albums != null) {
             final long[] ids = albums.ids;
             if (ids != null) {
-                for (int i = ids.length - 1; i >= 0; i--) {
+                for (int i = 0; i < ids.length; i++) {
                     mRecentAlbums.add(ids[i]);
                 }
             }
@@ -90,7 +95,7 @@ public final class RecentPlaylistsManager {
     }
 
     @WorkerThread
-    public void storeAlbumsSync(@NonNull final Set<Long> albumIds) {
+    public void storeAlbumsSync(@NonNull final Collection<Long> albumIds) {
         boolean result = false;
         for (final Long albumId : albumIds) {
             if (albumId > 0) {
@@ -104,10 +109,11 @@ public final class RecentPlaylistsManager {
 
     private synchronized boolean storeAlbumInternal(final long albumId,
             boolean persist) {
-        final Long albumIdLong = albumId;
         boolean result = false;
         // If already contains
-        if (!albumIdLong.equals(mRecentAlbums.peek())) {
+        final long[] array = CollectionUtils.toLongArray(mRecentAlbums);
+        if (array.length == 0 || array[array.length - 1] != albumId) {
+            final Long albumIdLong = albumId;
             if (mRecentAlbums.contains(albumIdLong)) {
                 // Remove duplicate
                 if (mRecentAlbums.remove(albumIdLong)) {
@@ -116,7 +122,7 @@ public final class RecentPlaylistsManager {
                 }
             } else {
                 // Does not contain. Add.
-                result = mRecentAlbums.add(albumId);
+                result = mRecentAlbums.add(albumIdLong);
             }
         }
         if (persist && result) {
@@ -125,8 +131,9 @@ public final class RecentPlaylistsManager {
         return result;
     }
 
-    public Collection<Long> getRecentAlbums() {
-        return mRecentAlbums;
+    @NonNull
+    public long[] getRecentAlbums() {
+        return CollectionUtils.toReverseLongArray(mRecentAlbums);
     }
 
     private void persist() {

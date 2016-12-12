@@ -2,12 +2,13 @@ package com.doctoror.fuckoffmusicplayer.library.livelists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
+import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,7 +38,7 @@ import rx.schedulers.Schedulers;
 
 public final class LivePlaylistsFragment extends Fragment {
 
-    private final List<LivePlaylist> mPlaylists = new ArrayList<>(2);
+    private final List<LivePlaylist> mPlaylists = new ArrayList<>(3);
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -51,8 +52,9 @@ public final class LivePlaylistsFragment extends Fragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPlaylists.add(new LivePlaylistRecent50(getResources()));
-        mPlaylists.add(new LivePlaylistRandom50(getResources()));
+        mPlaylists.add(new LivePlaylistRecentAlbums(getResources()));
+        mPlaylists.add(new LivePlaylistRecentlyScanned(getResources()));
+        mPlaylists.add(new LivePlaylistRandom(getResources()));
     }
 
     @Nullable
@@ -88,9 +90,15 @@ public final class LivePlaylistsFragment extends Fragment {
         }
         unsubscribeFromPlaylistLoad();
 
-        final Context context = getActivity();
+        final Activity context = getActivity();
         if (context == null) {
             clearLoadingFlag();
+            return;
+        }
+
+        if (livePlaylist instanceof LivePlaylistRecentAlbums) {
+            clearLoadingFlag();
+            goToRecentAlbumsActivity(context, position);
             return;
         }
 
@@ -171,6 +179,31 @@ public final class LivePlaylistsFragment extends Fragment {
                 final ActivityOptionsCompat options = ActivityOptionsCompat
                         .makeSceneTransitionAnimation(activity, itemView,
                                 PlaylistActivity.TRANSITION_NAME_ROOT);
+
+                startActivity(intent, options.toBundle());
+            } else {
+                startActivity(intent);
+            }
+        }
+    }
+
+    private void goToRecentAlbumsActivity(@NonNull final Activity context,
+            final int position) {
+        final long[] recentAlbums = RecentPlaylistsManager.getInstance(context).getRecentAlbums();
+        if (recentAlbums.length == 0) {
+            Toast.makeText(context, R.string.You_played_no_albums_yet, Toast.LENGTH_LONG).show();
+        } else {
+            final Intent intent = Henson.with(context).gotoRecentAlbumsActivity()
+                    .albumIds(recentAlbums)
+                    .build();
+
+            final RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
+            final View view = lm != null ? lm.findViewByPosition(position) : null;
+
+            if (view != null) {
+                final ActivityOptionsCompat options = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(context, view,
+                                RecentAlbumsActivity.TRANSITION_NAME_ROOT);
 
                 startActivity(intent, options.toBundle());
             } else {

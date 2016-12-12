@@ -25,7 +25,7 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecent50;
+import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionReporter;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
@@ -515,7 +515,7 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaylist.getIndex(), true);
         } else {
-            PlaylistFactory.play(this, new LivePlaylistRecent50(getResources()).create(this));
+            PlaylistFactory.play(this, new LivePlaylistRecentlyScanned(getResources()).create(this));
         }
     }
 

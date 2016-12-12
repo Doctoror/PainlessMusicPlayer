@@ -7,21 +7,20 @@ import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
 import java.util.List;
 
 /**
- * Recent 50 live playlist
+ * Random 50 live playlist
  */
-public final class LivePlaylistRecent50 implements LivePlaylist {
+public final class LivePlaylistRandom implements LivePlaylist {
 
     private final CharSequence mTitle;
 
-    public LivePlaylistRecent50(@NonNull final Resources resources) {
-        mTitle = resources.getText(R.string.Recently_scanned);
+    public LivePlaylistRandom(@NonNull final Resources resources) {
+        mTitle = resources.getText(R.string.Random_playlist);
     }
 
     @Override
@@ -35,7 +34,8 @@ public final class LivePlaylistRecent50 implements LivePlaylist {
         return PlaylistFactory.fromSelection(context.getContentResolver(),
                 TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
                 null,
-                MediaStore.Audio.Media.DATE_ADDED + " DESC",
+                "RANDOM()",
                 50);
     }
+
 }

@@ -30,12 +30,22 @@ public final class CollectionUtils {
 
     @NonNull
     public static long[] toLongArray(@NonNull final Collection<Long> collection) {
-        final int size = collection.size();
-        final long[] longs = new long[size];
+        final long[] longs = new long[collection.size()];
         int i = 0;
         for (final Long item : collection) {
             longs[i] = item;
             i++;
+        }
+        return longs;
+    }
+
+    @NonNull
+    public static long[] toReverseLongArray(@NonNull final Collection<Long> collection) {
+        final long[] longs = new long[collection.size()];
+        int i = longs.length - 1;
+        for (final Long item : collection) {
+            longs[i] = item;
+            i--;
         }
         return longs;
     }

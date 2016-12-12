@@ -151,6 +151,10 @@ public final class CurrentPlaylist {
                     prevAlbumId = albumId;
                 }
             }
+            if (sequence == playlist.size()) {
+                // single album
+                albums.add(prevAlbumId);
+            }
             RecentPlaylistsManager.getInstance(mContext).storeAlbumsSync(albums);
         }
     }

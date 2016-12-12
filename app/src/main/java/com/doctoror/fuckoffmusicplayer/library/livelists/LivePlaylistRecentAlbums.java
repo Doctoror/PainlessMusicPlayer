@@ -1,9 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.library.livelists;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -13,14 +11,14 @@ import android.support.annotation.WorkerThread;
 import java.util.List;
 
 /**
- * Random 50 live playlist
+ * "Recentply played albums" live playlist
  */
-public final class LivePlaylistRandom50 implements LivePlaylist {
+final class LivePlaylistRecentAlbums implements LivePlaylist {
 
     private final CharSequence mTitle;
 
-    public LivePlaylistRandom50(@NonNull final Resources resources) {
-        mTitle = resources.getText(R.string.Random_50);
+    LivePlaylistRecentAlbums(@NonNull final Resources resources) {
+        mTitle = resources.getText(R.string.Recently_played_albums);
     }
 
     @Override
@@ -31,11 +29,6 @@ public final class LivePlaylistRandom50 implements LivePlaylist {
     @WorkerThread
     @Override
     public List<Media> create(@NonNull final Context context) {
-        return PlaylistFactory.fromSelection(context.getContentResolver(),
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
-                null,
-                "RANDOM()",
-                50);
+        throw new UnsupportedOperationException();
     }
-
 }
