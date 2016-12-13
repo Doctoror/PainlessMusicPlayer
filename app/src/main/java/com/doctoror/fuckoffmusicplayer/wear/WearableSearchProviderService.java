@@ -31,9 +31,8 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
- * Created by Yaroslav Mytkalyk on 21.11.16.
+ * Provides search for wear
  */
-
 public final class WearableSearchProviderService extends IntentService {
 
     private static final String TAG = "WearSearchProviderService";

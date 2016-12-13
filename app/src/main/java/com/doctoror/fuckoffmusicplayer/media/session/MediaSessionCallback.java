@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
 
+import rx.Observable;
+import rx.schedulers.Schedulers;
+
 /**
  * {@link MediaSessionCompat.Callback} implementation
  */
@@ -47,11 +50,15 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
     @Override
     public void onPlayFromSearch(final String query, final Bundle extras) {
-        SearchUtils.onPlayFromSearch(mContext, query, extras);
+        Observable.create(s -> SearchUtils.onPlayFromSearch(mContext, query, extras))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     @Override
     public void onPlayFromMediaId(final String mediaId, final Bundle extras) {
-        SearchUtils.onPlayFromMediaId(mContext, mediaId);
+        Observable.create(s -> SearchUtils.onPlayFromMediaId(mContext, mediaId))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 }

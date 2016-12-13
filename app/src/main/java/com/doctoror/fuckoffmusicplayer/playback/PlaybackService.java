@@ -433,7 +433,7 @@ public final class PlaybackService extends Service {
         pause();
         mPauseTimeoutSubscription = Observable.timer(8, TimeUnit.SECONDS)
                 .subscribe(o -> onActionStop());
-        mExecutor.submit(this::showNotification);
+        showNotification();
     }
 
     private void onActionStop() {
@@ -524,13 +524,13 @@ public final class PlaybackService extends Service {
     }
 
     private void playPrev() {
-        play(mPlaylist.getPlaylist(), prevPos(mPlaylist.getPlaylist(),
-                mPlaylist.getIndex()), false);
+        final List<Media> playlist = mPlaylist.getPlaylist();
+        play(playlist, prevPos(playlist, mPlaylist.getIndex()), false);
     }
 
     private void playNext() {
-        play(mPlaylist.getPlaylist(), nextPos(mPlaylist.getPlaylist(),
-                mPlaylist.getIndex()), false);
+        final List<Media> playlist = mPlaylist.getPlaylist();
+        play(playlist, nextPos(playlist, mPlaylist.getIndex()), false);
     }
 
     private void restart() {
@@ -556,7 +556,7 @@ public final class PlaybackService extends Service {
         if (mState == STATE_PAUSED && mCurrentTrack != null
                 && media.getId() == mCurrentTrack.getId()) {
             mMediaPlayer.play();
-            syncWearableMediaAsync();
+            mExecutor.submit(mRunnableSyncWarableMedia);
         } else {
             mExecutor.submit(() -> {
                 long seekPosition = 0;
@@ -676,14 +676,14 @@ public final class PlaybackService extends Service {
         mState = state;
         sLastKnownState = state;
         setMediaSessionPlaybackState(state);
-        syncWearableStateAsync();
+        mExecutor.submit(mRunnableSyncWarableState);
         broadcastState();
     }
 
     private void updatePosition() {
         if (mState == STATE_PLAYING) {
             mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
-            syncWearableStateAsync();
+            mExecutor.submit(mRunnableSyncWarableState);
         }
     }
 
@@ -691,14 +691,6 @@ public final class PlaybackService extends Service {
         final Intent intent = new Intent(ACTION_STATE_CHANGED);
         intent.putExtra(EXTRA_STATE, mState);
         sendBroadcast(intent, mPermissionReceivePlaybackState);
-    }
-
-    private void syncWearableMediaAsync() {
-        mExecutor.submit(this::syncWearableMedia);
-    }
-
-    private void syncWearableStateAsync() {
-        mExecutor.submit(mRunnableSyncWarableState);
     }
 
     @WorkerThread
@@ -779,7 +771,7 @@ public final class PlaybackService extends Service {
                 if (playlist != null && !playlist.isEmpty()) {
                     // Stop current and play the other track from playlist
                     restart();
-                    mExecutor.submit(() -> syncWearablePlaylist());
+                    mExecutor.submit(mRunnableSyncWarablePlaylist);
                 } else {
                     mCurrentTrack = null;
                     AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
@@ -790,12 +782,12 @@ public final class PlaybackService extends Service {
 
         @Override
         public void onPlaylistChanged(@Nullable final List<Media> playlist) {
-            mExecutor.submit(() -> syncWearablePlaylist());
+            mExecutor.submit(mRunnableSyncWarablePlaylist);
         }
 
         @Override
         public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
-            mExecutor.submit(() -> syncWearablePlaylist());
+            mExecutor.submit(mRunnableSyncWarablePlaylist);
         }
     };
 
@@ -885,7 +877,9 @@ public final class PlaybackService extends Service {
         }
     };
 
+    private final Runnable mRunnableSyncWarableMedia = this::syncWearableMedia;
     private final Runnable mRunnableSyncWarableState = this::syncWearableState;
+    private final Runnable mRunnableSyncWarablePlaylist = this::syncWearablePlaylist;
 
     private final class AudioBecomingNoisyReceiver extends BroadcastReceiver {
 
