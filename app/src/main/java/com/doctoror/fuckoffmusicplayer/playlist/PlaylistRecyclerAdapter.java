@@ -16,8 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
 import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.TwoLineItemViewHolder;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -158,10 +158,11 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         }
     }
 
-    private void onBindViewHolderMedia(final TwoLineItemViewHolder viewHolder, final int position) {
+    private void onBindViewHolderMedia(final PlaylistItemViewHolder viewHolder, final int position) {
         final Media item = (Media) getItem(position);
-        viewHolder.text1.setText(item.title);
-        viewHolder.text2.setText(item.artist);
+        viewHolder.textTitle.setText(item.title);
+        viewHolder.textArtist.setText(item.artist);
+        BindingAdapters.setFormattedDuration(viewHolder.textDuration, item.duration / 1000L);
     }
 
     private void onBindViewHolderMediaRemoved(final ViewHolderMediaRemoved viewHolder,
@@ -187,8 +188,8 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
 
     @NonNull
     private RecyclerView.ViewHolder onCreateViewHolderMedia(final ViewGroup parent) {
-        final TwoLineItemViewHolder vh = new PlaylistItemViewHolder(
-                getLayoutInflater().inflate(R.layout.list_item_two_line, parent, false));
+        final PlaylistItemViewHolder vh = new PlaylistItemViewHolder(
+                getLayoutInflater().inflate(R.layout.list_item_media, parent, false));
         vh.itemView.setOnClickListener(v -> {
             final int position = vh.getAdapterPosition();
             final Media item = (Media) getItem(position);
@@ -218,7 +219,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         final TextView text;
         final View btnDelete;
 
-        ViewHolderMediaRemoved(final View itemView) {
+        ViewHolderMediaRemoved(@NonNull final View itemView) {
             super(itemView);
             text = (TextView) itemView.findViewById(android.R.id.text1);
             btnDelete = itemView.findViewById(R.id.btnDelete);

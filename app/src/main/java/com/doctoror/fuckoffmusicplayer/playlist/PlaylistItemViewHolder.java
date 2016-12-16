@@ -13,14 +13,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 
 /**
- * Created by Yaroslav Mytkalyk on 02.12.16.
+ * View holder for media in playlist
  */
-
-final class PlaylistItemViewHolder extends TwoLineItemViewHolder implements
+final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
         ItemTouchHelperViewHolder {
+
+    final TextView textTitle;
+    final TextView textArtist;
+    final TextView textDuration;
 
     @Nullable
     private final Drawable mDefaultBackground;
@@ -31,6 +36,10 @@ final class PlaylistItemViewHolder extends TwoLineItemViewHolder implements
 
     PlaylistItemViewHolder(final View itemView) {
         super(itemView);
+        textTitle = (TextView) itemView.findViewById(R.id.textTitle);
+        textArtist = (TextView) itemView.findViewById(R.id.textArtist);
+        textDuration = (TextView) itemView.findViewById(R.id.textDuration);
+
         mDefaultBackground = itemView.getBackground();
         mDefaultElevation = ViewCompat.getElevation(itemView);
         mElevationSelected = itemView.getResources()

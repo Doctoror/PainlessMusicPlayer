@@ -110,6 +110,7 @@ dependencies {
     //Views
     compile 'com.github.doctoror.aspectratiolayout:library:1.0.3'
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     // RX
     compile 'io.reactivex:rxjava:1.2.3'
