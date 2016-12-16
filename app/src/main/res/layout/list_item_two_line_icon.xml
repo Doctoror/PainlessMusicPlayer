@@ -44,7 +44,7 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp"
         tools:text="Text 1"
-        tools:ignore="SelectableText"/>
+        tools:ignore="RtlSymmetry,SelectableText"/>
 
     <TextView
         android:id="@android:id/text2"
@@ -61,6 +61,6 @@
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp"
         tools:text="Text 2"
-        tools:ignore="SelectableText"/>
+        tools:ignore="RtlSymmetry,SelectableText"/>
 
 </RelativeLayout>
