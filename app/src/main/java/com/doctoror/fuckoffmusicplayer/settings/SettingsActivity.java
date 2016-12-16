@@ -5,9 +5,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.wear.WearSupportMessedUpDialogFragment;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
+
+import org.parceler.Parcel;
+import org.parceler.Parcels;
 
 import android.Manifest;
 import android.content.Intent;
@@ -22,26 +28,48 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Yaroslav Mytkalyk on 02.11.16.
+ * Settings activity
  */
-
 public final class SettingsActivity extends BaseActivity {
 
     private static final String TAG_DIALOG_DAYNIGHT_ACCURACY = "TAG_DIALOG_DAYNIGHT_ACCURACY";
     private static final String TAG_DIALOG_GMS_PROBLEM = "TAG_DIALOG_GMS_PROBLEM";
     private static final int REQUEST_CODE_RESOLVE_GMS = 1;
 
+    private static final String EXTRA_STATE = "EXTRA_STATE";
+
     @BindView(R.id.radioGroup)
     RadioGroup mRadioGroup;
+
+    @InjectExtra
+    @Nullable
+    Boolean suppressGmsWarnings;
+
+    @InjectExtra
+    @Nullable
+    Boolean suppressDayNightWarnings;
 
     private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Dart.inject(this);
+        restoreInstanceState(savedInstanceState);
+
         initView();
         initActionBar();
-        initGoogleApiClient();
+        if (!suppressGmsWarnings()) {
+            initGoogleApiClient();
+        }
+    }
+
+    private boolean suppressGmsWarnings() {
+        return suppressGmsWarnings != null && suppressGmsWarnings;
+    }
+
+    private boolean suppressDayNightWarnings() {
+        return suppressDayNightWarnings != null && suppressDayNightWarnings;
     }
 
     private void initActionBar() {
@@ -60,7 +88,10 @@ public final class SettingsActivity extends BaseActivity {
 
         mRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
             getTheme1().setThemeType(buttonIdToTheme(id));
-            restart();
+            restart(Henson.with(SettingsActivity.this).gotoSettingsActivity()
+                    .suppressGmsWarnings(Boolean.TRUE)
+                    .suppressDayNightWarnings(suppressDayNightWarnings)
+                    .build());
         });
     }
 
@@ -72,9 +103,26 @@ public final class SettingsActivity extends BaseActivity {
                 .build();
     }
 
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        final InstanceState instanceState = new InstanceState();
+        instanceState.suppressGmsWarnings = Boolean.TRUE;
+        instanceState.suppressDayNightWarnings = suppressDayNightWarnings;
+        outState.putParcelable(EXTRA_STATE, Parcels.wrap(instanceState));
+    }
+
+    private void restoreInstanceState(@Nullable final Bundle instanceState) {
+        if (instanceState != null) {
+            final InstanceState state = Parcels.unwrap(instanceState.getParcelable(EXTRA_STATE));
+            suppressGmsWarnings = state.suppressGmsWarnings;
+            suppressDayNightWarnings = state.suppressDayNightWarnings;
+        }
+    }
+
     private void bindTheme(@Theme.ThemeType final int theme) {
         mRadioGroup.check(themeToButtonId(theme));
-        if (theme == Theme.DAYNIGHT) {
+        if (theme == Theme.DAYNIGHT && !suppressDayNightWarnings()) {
             checkPermissions();
         }
     }
@@ -116,6 +164,7 @@ public final class SettingsActivity extends BaseActivity {
     private void checkPermissions() {
         if (!RxPermissions.getInstance(this)
                 .isGranted(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            suppressDayNightWarnings = Boolean.TRUE;
             new DaynightAccuracyDialog().show(getFragmentManager(), TAG_DIALOG_DAYNIGHT_ACCURACY);
         }
     }
@@ -123,13 +172,17 @@ public final class SettingsActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
@@ -156,4 +209,14 @@ public final class SettingsActivity extends BaseActivity {
 
     private final GoogleApiClient.OnConnectionFailedListener mOnConnectionFailedListener
             = this::onWearSupportMessedUp;
+
+    @Parcel
+    static final class InstanceState {
+
+        @Nullable
+        Boolean suppressGmsWarnings;
+
+        @Nullable
+        Boolean suppressDayNightWarnings;
+    }
 }

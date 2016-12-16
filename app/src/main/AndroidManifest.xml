@@ -45,8 +45,7 @@
         <activity
             android:name=".library.LibraryActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:theme="@style/AppTheme.NoActionBar">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -59,41 +58,35 @@
             android:name=".library.artistalbums.ArtistAlbumsActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:parentActivityName=".library.LibraryActivity"
-            android:screenOrientation="portrait"/>
+            android:parentActivityName=".library.LibraryActivity"/>
 
         <activity
             android:name=".library.genrealbums.GenreAlbumsActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:parentActivityName=".library.LibraryActivity"
-            android:screenOrientation="portrait"/>
+            android:parentActivityName=".library.LibraryActivity"/>
 
         <activity
             android:name=".library.recentalbums.RecentAlbumsActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:label="@string/Recently_played_albums"
-            android:screenOrientation="portrait"/>
+            android:label="@string/Recently_played_albums"/>
 
         <activity
             android:name=".playlist.PlaylistActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:label="@string/Playlist"
-            android:screenOrientation="portrait"/>
+            android:label="@string/Playlist"/>
 
         <activity
             android:name=".effects.AudioEffectsActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme"
-            android:label="@string/Effects"
-            android:screenOrientation="portrait"/>
+            android:label="@string/Effects"/>
 
         <activity
             android:name=".nowplaying.NowPlayingActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:label="@string/Now_Playing"
-            android:screenOrientation="portrait"
             android:parentActivityName=".library.LibraryActivity">
 
             <intent-filter>
@@ -118,7 +111,6 @@
             android:launchMode="singleTop"
             android:theme="@style/AppTheme"
             android:label="@string/Settings"
-            android:screenOrientation="portrait"
             android:parentActivityName=".library.LibraryActivity"/>
 
         <provider

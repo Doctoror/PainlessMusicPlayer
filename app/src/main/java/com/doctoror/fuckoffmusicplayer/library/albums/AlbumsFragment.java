@@ -27,6 +27,7 @@ import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -50,6 +51,8 @@ public final class AlbumsFragment extends LibraryListFragment {
 
     private AlbumsRecyclerAdapter mAdapter;
 
+    private RecyclerView mRecyclerView;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,9 +64,23 @@ public final class AlbumsFragment extends LibraryListFragment {
 
     @Override
     protected void setupRecyclerView(@NonNull final RecyclerView recyclerView) {
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mRecyclerView = recyclerView;
+        applyLayoutManager(recyclerView);
         recyclerView.addItemDecoration(new SpacesItemDecoration(
                 (int) getResources().getDimension(R.dimen.album_grid_spacing)));
+    }
+
+    @Override
+    public void onConfigurationChanged(final Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mRecyclerView != null) {
+            applyLayoutManager(mRecyclerView);
+        }
+    }
+
+    private void applyLayoutManager(@NonNull final RecyclerView recyclerView) {
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),
+                getResources().getInteger(R.integer.albums_grid_columns)));
     }
 
     @Override
