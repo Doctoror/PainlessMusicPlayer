@@ -44,7 +44,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
 
     interface OnTrackClickListener {
 
-        void onTrackClick(@NonNull Media media, int position);
+        void onTrackClick(@NonNull View itemView, @NonNull Media media, int position);
 
         void onTrackRemoved(int position, @NonNull Media media);
 
@@ -118,9 +118,10 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         mOnTrackClickListener = onTrackClickListener;
     }
 
-    private void onTrackClick(@NonNull final Media media, final int position) {
+    private void onTrackClick(@NonNull final View itemView, @NonNull final Media media,
+            final int position) {
         if (mOnTrackClickListener != null) {
-            mOnTrackClickListener.onTrackClick(media, position);
+            mOnTrackClickListener.onTrackClick(itemView, media, position);
         }
     }
 
@@ -194,7 +195,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
             final int position = vh.getAdapterPosition();
             final Media item = (Media) getItem(position);
             if (item != null) {
-                onTrackClick(item, position);
+                onTrackClick(vh.itemView, item, position);
             }
         });
         return vh;

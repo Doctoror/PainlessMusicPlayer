@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.util.TransitionListenerAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;
@@ -61,9 +62,12 @@ import android.view.View;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * "Playlist" activity
@@ -81,6 +85,7 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private final PlaylistActivityModel mModel = new PlaylistActivityModel();
     private PlaylistRecyclerAdapter mAdapter;
+    private CoordinatorLayoutUtil.AnchorParams mAnchorParams;
 
     private CurrentPlaylist mCurrentPlaylist;
 
@@ -246,12 +251,15 @@ public final class PlaylistActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (isNowPlayingPlaylist) {
-            CurrentPlaylist.getInstance(this).addObserver(mPlaylistObserver);
-        }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
                 || (!hasItemViewTransition && !hasCoverTransition)) {
             onEnterTransitionFinished();
+        }
+        if (mAnchorParams != null) {
+            CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mAnchorParams);
+        }
+        if (isNowPlayingPlaylist) {
+            CurrentPlaylist.getInstance(this).addObserver(mPlaylistObserver);
         }
     }
 
@@ -334,16 +342,24 @@ public final class PlaylistActivity extends BaseActivity implements
     }
 
     @OnClick(R.id.fab)
-    public void onFabClick() {
-        onPlayClick(playlist.get(0), 0);
+    public void onFabClick(@NonNull final View view) {
+        onPlayClick(view, playlist.get(0), 0);
     }
 
-    private void onPlayClick(final Media media, final int index) {
+    private void onPlayClick(@NonNull final View clickedView,
+            final Media media,
+            final int index) {
         PlaylistUtils.play(this, playlist, media, index);
 
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media.getAlbumArt());
-        startNowPlayingAfterFabHidden(shouldPassCoverView ? mBinding.albumArt : null, null);
+        if (shouldPassCoverView) {
+            startNowPlayingAfterFabHidden(mBinding.albumArt, null);
+        } else {
+            mAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
+            CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(mBinding.fab);
+            NowPlayingActivity.start(this, null, clickedView);
+        }
     }
 
     private void onEnterTransitionFinished() {
@@ -413,8 +429,10 @@ public final class PlaylistActivity extends BaseActivity implements
             = new PlaylistRecyclerAdapter.OnTrackClickListener() {
 
         @Override
-        public void onTrackClick(@NonNull final Media media, final int position) {
-            onPlayClick(media, position);
+        public void onTrackClick(@NonNull final View itemView,
+                @NonNull final Media media,
+                final int position) {
+            onPlayClick(itemView, media, position);
         }
 
         @Override
