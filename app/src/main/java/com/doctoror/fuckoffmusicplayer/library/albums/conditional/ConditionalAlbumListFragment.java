@@ -35,6 +35,8 @@ import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -154,6 +156,8 @@ public class ConditionalAlbumListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        mBinding.fab.setScaleX(1f);
+        mBinding.fab.setScaleY(1f);
         if (mFabAnchorParams != null) {
             CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mFabAnchorParams);
         }
@@ -184,13 +188,21 @@ public class ConditionalAlbumListFragment extends Fragment {
                                     .title(playlistName)
                                     .build();
 
-                            if (albumArtView != null && !isTheSameArtOnNextScreen(arts)) {
+                            if (albumArtView != null) {
                                 //noinspection unchecked
-                                final ActivityOptionsCompat options = ActivityOptionsCompat
-                                        .makeSceneTransitionAnimation(activity, albumArtView,
-                                                PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
+                                final ActivityOptionsCompat options;
 
-                                startActivity(intent, options.toBundle());
+                                if (isTheSameArtOnNextScreen(arts)) {
+                                    options = ActivityOptionsCompat
+                                            .makeSceneTransitionAnimation(activity, mBinding.image,
+                                                    PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
+                                } else {
+                                    options = ActivityOptionsCompat
+                                            .makeSceneTransitionAnimation(activity, albumArtView,
+                                                    PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
+                                }
+
+                                startActivityAfterFabHide(intent, options.toBundle());
                             } else {
                                 startActivity(intent);
                             }
@@ -281,6 +293,21 @@ public class ConditionalAlbumListFragment extends Fragment {
                 ids[i] = mData.getLong(ConditionalAlbumListQuery.COLUMN_ID);
             }
             onPlayClick(view, ids);
+        }
+    }
+
+    private void startActivityAfterFabHide(@NonNull final Intent intent,
+            @Nullable final Bundle options) {
+        if (mBinding.fab.getScaleX() == 0f) {
+            startActivity(intent, options);
+        } else {
+            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(140L)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(final Animator animation) {
+                            startActivity(intent, options);
+                        }
+                    }).start();
         }
     }
 

@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.util.TransitionListenerAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -39,6 +40,8 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
@@ -55,10 +58,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
+import android.transition.Transition;
+import android.view.View;
 
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -134,6 +140,7 @@ public final class PlaylistActivity extends BaseActivity implements
 
         initAlbumArtAndToolbar(mBinding);
         initRecyclerView(mBinding);
+        ButterKnife.bind(this);
 
         mFinishWhenDialogDismissed = false;
 
@@ -146,6 +153,22 @@ public final class PlaylistActivity extends BaseActivity implements
 
             if (mDeleteSession != null && mDeleteSession.permissionRequested) {
                 onDeleteClick(mDeleteSession.media);
+            }
+        }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final Transition enter = getWindow().getSharedElementEnterTransition();
+            if (enter != null) {
+                enter.addListener(new TransitionListenerAdapter() {
+                    @Override
+                    public void onTransitionEnd(final Transition transition) {
+                        onEnterTransitionFinished();
+                    }
+                });
             }
         }
     }
@@ -229,11 +252,17 @@ public final class PlaylistActivity extends BaseActivity implements
         if (isNowPlayingPlaylist) {
             CurrentPlaylist.getInstance(this).addObserver(mPlaylistObserver);
         }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+                || (!hasItemViewTransition && !hasCoverTransition)) {
+            onEnterTransitionFinished();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        mBinding.fab.setScaleX(1f);
+        mBinding.fab.setScaleY(1f);
         if (isNowPlayingPlaylist) {
             CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
         }
@@ -316,7 +345,44 @@ public final class PlaylistActivity extends BaseActivity implements
 
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media.getAlbumArt());
-        NowPlayingActivity.start(this, shouldPassCoverView ? mBinding.albumArt : null, null);
+        startNowPlayingAfterFabHidden(shouldPassCoverView ? mBinding.albumArt : null, null);
+    }
+
+    private void onEnterTransitionFinished() {
+        if (mBinding.fab.getScaleX() != 1f) {
+            mBinding.fab.animate().scaleX(1f).scaleY(1f).setDuration(140L).start();
+        }
+    }
+
+    @Override
+    public void finishAfterTransition() {
+        if (mBinding.fab.getScaleX() == 0f) {
+            super.finishAfterTransition();
+        } else {
+            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(140L)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(final Animator animation) {
+                            PlaylistActivity.super.finishAfterTransition();
+                        }
+                    }).start();
+        }
+    }
+
+    private void startNowPlayingAfterFabHidden(
+            @Nullable final View albumArt,
+            @Nullable final View listItemView) {
+        if (mBinding.fab.getScaleX() == 0f) {
+            NowPlayingActivity.start(this, albumArt, listItemView);
+        } else {
+            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(140L)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(final Animator animation) {
+                            NowPlayingActivity.start(PlaylistActivity.this, albumArt, listItemView);
+                        }
+                    }).start();
+        }
     }
 
     @Override
