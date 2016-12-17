@@ -1,4 +1,4 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="collapsingToolbarHeight">128dp</dimen>
+    <dimen name="collapsingToolbarHeightConditionalAlbums">156dp</dimen>
+    <dimen name="collapsingToolbarHeightAlbum">156dp</dimen>
 </resources>
