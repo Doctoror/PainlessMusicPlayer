@@ -31,9 +31,9 @@ import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionReporter;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
@@ -515,7 +515,7 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaylist.getIndex(), true);
         } else {
-            PlaylistFactory.play(this, new LivePlaylistRecentlyScanned(getResources()).create(this));
+            PlaylistUtils.play(this, new LivePlaylistRecentlyScanned(getResources()).create(this));
         }
     }
 

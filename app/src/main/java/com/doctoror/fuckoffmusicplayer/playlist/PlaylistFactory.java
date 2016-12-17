@@ -15,14 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -49,35 +47,7 @@ public final class PlaylistFactory {
     private static final String EXTERNAL = "external";
 
     private PlaylistFactory() {
-
-    }
-
-    public static void play(@NonNull final Context context,
-            @NonNull final List<Media> mediaList) {
-        if (mediaList.isEmpty()) {
-            throw new IllegalArgumentException("Will not play empty playlist");
-        }
-        play(context, mediaList, 0);
-    }
-
-    public static void play(@NonNull final Context context,
-            @NonNull final List<Media> mediaList,
-            final int position) {
-        play(context, mediaList, mediaList.get(position), position);
-    }
-
-    public static void play(@NonNull final Context context,
-            @NonNull final List<Media> mediaList,
-            @NonNull final Media media,
-            final int position) {
-        final CurrentPlaylist playlist = CurrentPlaylist.getInstance(context);
-        playlist.setPlaylist(mediaList);
-        playlist.setMedia(media);
-        playlist.setIndex(position);
-        playlist.setPosition(0);
-        playlist.persistAsync();
-
-        PlaybackService.play(context);
+        throw new UnsupportedOperationException();
     }
 
     @Nullable
@@ -188,9 +158,9 @@ public final class PlaylistFactory {
         if (!TextUtils.isEmpty(query) && playlist.size() < MAX_PLAYLIST_SIZE) {
             // Search in genres for tracks with media ids that do not match found ids
             c = resolver.query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
-                    new String[] {BaseColumns._ID},
+                    new String[]{BaseColumns._ID},
                     MediaStore.Audio.Genres.NAME + "=?",
-                    new String[] {StringUtils.capWords(query)},
+                    new String[]{StringUtils.capWords(query)},
                     null);
 
             Long genreId = null;

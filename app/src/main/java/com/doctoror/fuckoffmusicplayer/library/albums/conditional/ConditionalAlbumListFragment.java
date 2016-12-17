@@ -24,9 +24,12 @@ import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
@@ -45,6 +48,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -65,7 +69,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 25.10.16.
+ * Album lists fragment
  */
 public class ConditionalAlbumListFragment extends Fragment {
 
@@ -83,6 +87,7 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
     private FragmentConditionalAlbumListBinding mBinding;
+    private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
@@ -105,7 +110,7 @@ public class ConditionalAlbumListFragment extends Fragment {
 
         mAdapter = new ConditionalAlbumsRecyclerAdapter(getActivity(), mRequestManager);
         mAdapter.setOnAlbumClickListener((artView, id, album, art) ->
-                onPlayClick(artView, album, new long[]{id}, new String[]{art}));
+                onListItemClick(artView, album, new long[]{id}, new String[]{art}));
         mModel.setRecyclerAdpter(mAdapter);
     }
 
@@ -146,13 +151,21 @@ public class ConditionalAlbumListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mFabAnchorParams != null) {
+            CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mFabAnchorParams);
+        }
+    }
+
     @Nullable
     @WorkerThread
     protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
         return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, null);
     }
 
-    private void onPlayClick(@Nullable final View albumArtView,
+    private void onListItemClick(@Nullable final View albumArtView,
             @Nullable final String playlistName,
             @NonNull final long[] albumIds,
             @NonNull final String[] arts) {
@@ -181,6 +194,42 @@ public class ConditionalAlbumListFragment extends Fragment {
                             } else {
                                 startActivity(intent);
                             }
+                        } else {
+                            Toast.makeText(activity, R.string.The_playlist_is_empty,
+                                    Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    }
+                });
+    }
+
+    private void onPlayClick(@NonNull final View fab,
+            @NonNull final long[] albumIds) {
+        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbums(albumIds)))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((playlist) -> {
+                    if (isAdded()) {
+                        final Activity activity = getActivity();
+                        if (playlist != null && !playlist.isEmpty()) {
+                            PlaylistUtils.play(activity, playlist);
+
+                            final Intent intent = Henson.with(activity).gotoNowPlayingActivity()
+                                    .hasCoverTransition(false)
+                                    .hasListViewTransition(true)
+                                    .build();
+
+                            mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
+                            CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(fab);
+
+                            ViewCompat.setTransitionName(fab,
+                                    NowPlayingActivity.TRANSITION_NAME_ROOT);
+
+                            final ActivityOptionsCompat options = ActivityOptionsCompat
+                                    .makeSceneTransitionAnimation(activity, fab,
+                                            NowPlayingActivity.TRANSITION_NAME_ROOT);
+
+                            startActivity(intent, options.toBundle());
                         } else {
                             Toast.makeText(activity, R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)
@@ -224,16 +273,14 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     @OnClick(R.id.fab)
-    public void onFabClick() {
+    public void onFabClick(@NonNull final View view) {
         if (mData != null) {
             final long[] ids = new long[mData.getCount()];
-            final String[] arts = new String[mData.getCount()];
             int i = 0;
             for (mData.moveToFirst(); !mData.isAfterLast(); mData.moveToNext(), i++) {
                 ids[i] = mData.getLong(ConditionalAlbumListQuery.COLUMN_ID);
-                arts[i] = mData.getString(ConditionalAlbumListQuery.COLUMN_ALBUM_ART);
             }
-            onPlayClick(null, null, ids, arts);
+            onPlayClick(view, ids);
         }
     }
 
@@ -308,5 +355,4 @@ public class ConditionalAlbumListFragment extends Fragment {
             mBinding.image.animate().alpha(1f).setDuration(500).start();
         }
     };
-
 }

@@ -20,6 +20,7 @@ import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
@@ -38,9 +39,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 07.11.16.
+ * {@link NowPlayingActivity} intent handler
  */
-
 final class IntentHandler {
 
     private static final String TAG = "IntentHandler";
@@ -87,7 +87,7 @@ final class IntentHandler {
                                         R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
                                         .show();
                             } else {
-                                PlaylistFactory.play(activity, playlist);
+                                PlaylistUtils.play(activity, playlist);
                             }
                         }
                     }

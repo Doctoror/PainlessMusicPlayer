@@ -312,7 +312,7 @@ public final class PlaylistActivity extends BaseActivity implements
     }
 
     private void onPlayClick(final Media media, final int index) {
-        PlaylistFactory.play(this, playlist, media, index);
+        PlaylistUtils.play(this, playlist, media, index);
 
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media.getAlbumArt());

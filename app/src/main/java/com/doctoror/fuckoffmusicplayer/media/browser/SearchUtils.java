@@ -20,9 +20,10 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -178,7 +179,7 @@ public final class SearchUtils {
             @Nullable final List<Media> playlist,
             @Nullable final String query) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistFactory.play(context, playlist);
+            PlaylistUtils.play(context, playlist);
         } else {
             final String message = TextUtils.isEmpty(query)
                     ? context.getString(R.string.No_media_found)
@@ -192,7 +193,7 @@ public final class SearchUtils {
             @Nullable final List<Media> playlist,
             final int position) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistFactory.play(context, playlist, position);
+            PlaylistUtils.play(context, playlist, position);
         } else {
             PlaybackService.stopWithError(context, context.getString(R.string.No_media_found));
         }
