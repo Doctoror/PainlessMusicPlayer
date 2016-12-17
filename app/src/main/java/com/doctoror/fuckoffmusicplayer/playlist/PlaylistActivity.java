@@ -255,6 +255,7 @@ public final class PlaylistActivity extends BaseActivity implements
                 || (!hasItemViewTransition && !hasCoverTransition)) {
             onEnterTransitionFinished();
         }
+        // TODO doesn't actually restore or has other problems
         if (mAnchorParams != null) {
             CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mAnchorParams);
         }
