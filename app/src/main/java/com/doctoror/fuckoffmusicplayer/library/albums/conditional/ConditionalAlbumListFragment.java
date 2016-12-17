@@ -29,7 +29,6 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
-import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
@@ -43,14 +42,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -89,7 +85,6 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
     private FragmentConditionalAlbumListBinding mBinding;
-    private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
@@ -100,6 +95,8 @@ public class ConditionalAlbumListFragment extends Fragment {
     private Cursor mData;
 
     private String mHeaderArtUri;
+
+    private int mAnimTime;
 
     @InjectExtra
     RxCursorLoader.Query loaderParams;
@@ -114,6 +111,8 @@ public class ConditionalAlbumListFragment extends Fragment {
         mAdapter.setOnAlbumClickListener((artView, id, album, art) ->
                 onListItemClick(artView, album, new long[]{id}, new String[]{art}));
         mModel.setRecyclerAdpter(mAdapter);
+
+        mAnimTime = getResources().getInteger(R.integer.short_anim_time);
     }
 
     @Nullable
@@ -126,9 +125,6 @@ public class ConditionalAlbumListFragment extends Fragment {
 
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mBinding.toolbar);
-
-        binding.image.setColorFilter(ContextCompat.getColor(
-                activity, R.color.translucentBackground), PorterDuff.Mode.SRC_ATOP);
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.setModel(mModel);
@@ -158,9 +154,7 @@ public class ConditionalAlbumListFragment extends Fragment {
         super.onStart();
         mBinding.fab.setScaleX(1f);
         mBinding.fab.setScaleY(1f);
-        if (mFabAnchorParams != null) {
-            CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mFabAnchorParams);
-        }
+        mBinding.albumArtDim.setAlpha(1f);
     }
 
     @Nullable
@@ -225,23 +219,8 @@ public class ConditionalAlbumListFragment extends Fragment {
                         final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
                             PlaylistUtils.play(activity, playlist);
-
-                            final Intent intent = Henson.with(activity).gotoNowPlayingActivity()
-                                    .hasCoverTransition(false)
-                                    .hasListViewTransition(true)
-                                    .build();
-
-                            mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
-                            CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(fab);
-
-                            ViewCompat.setTransitionName(fab,
-                                    NowPlayingActivity.TRANSITION_NAME_ROOT);
-
-                            final ActivityOptionsCompat options = ActivityOptionsCompat
-                                    .makeSceneTransitionAnimation(activity, fab,
-                                            NowPlayingActivity.TRANSITION_NAME_ROOT);
-
-                            startActivity(intent, options.toBundle());
+                            prepareViewsAndExit(() ->
+                                    NowPlayingActivity.start(getActivity(), mBinding.image, null));
                         } else {
                             Toast.makeText(activity, R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)
@@ -249,6 +228,21 @@ public class ConditionalAlbumListFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
+        if (mBinding.fab.getScaleX() == 0f && mBinding.albumArtDim.getAlpha() == 0f) {
+            exitAction.run();
+        } else {
+            mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(final Animator animation) {
+                            exitAction.run();
+                        }
+                    }).start();
+        }
     }
 
     private boolean isTheSameArtOnNextScreen(@NonNull final String[] arts) {

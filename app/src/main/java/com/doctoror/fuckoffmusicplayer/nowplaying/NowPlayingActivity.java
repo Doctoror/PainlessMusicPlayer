@@ -128,10 +128,8 @@ public final class NowPlayingActivity extends BaseActivity {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (!hasCoverTransition) {
-                TransitionUtils.clearSharedElementsOnReturn(this);
-                getWindow().setReturnTransition(new ArtAndControlsGateTransition());
-            }
+            TransitionUtils.clearSharedElementsOnReturn(this);
+            getWindow().setReturnTransition(new ArtAndControlsGateTransition());
         }
 
         mTransitionPostponed = false;
