@@ -31,17 +31,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * Albums list
  */
 final class ConditionalAlbumsRecyclerAdapter
         extends CursorRecyclerViewAdapter<AlbumListViewHolder> {
 
     interface OnAlbumClickListener {
 
-        void onAlbumClick(@NonNull View albumArtView,
+        void onAlbumClick(@NonNull View itemView,
                 long albumId,
-                @Nullable String albumName,
-                @Nullable String albumArt);
+                @Nullable String albumName);
     }
 
     @NonNull
@@ -63,12 +62,11 @@ final class ConditionalAlbumsRecyclerAdapter
         mOnAlbumClickListener = onAlbumClickListener;
     }
 
-    private void onAlbumClick(@NonNull final View albumArtView,
+    private void onAlbumClick(@NonNull final View itemView,
             final long id,
-            @NonNull final String album,
-            @NonNull final String art) {
+            @NonNull final String album) {
         if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(albumArtView, id, album, art);
+            mOnAlbumClickListener.onAlbumClick(itemView, id, album);
         }
     }
 
@@ -96,10 +94,9 @@ final class ConditionalAlbumsRecyclerAdapter
         vh.itemView.setOnClickListener(v -> {
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onAlbumClick(vh.image,
+                onAlbumClick(vh.itemView,
                         item.getLong(ConditionalAlbumListQuery.COLUMN_ID),
-                        item.getString(ConditionalAlbumListQuery.COLUMN_ALBUM),
-                        item.getString(ConditionalAlbumListQuery.COLUMN_ALBUM_ART));
+                        item.getString(ConditionalAlbumListQuery.COLUMN_ALBUM));
             }
         });
         return vh;

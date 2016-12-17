@@ -29,7 +29,7 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
-import com.doctoror.fuckoffmusicplayer.util.StringUtils;
+import com.doctoror.fuckoffmusicplayer.util.ToolbarUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -85,6 +85,7 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
     private FragmentConditionalAlbumListBinding mBinding;
+    private View mToolbarTitle;
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
@@ -93,8 +94,6 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private RequestManager mRequestManager;
     private Cursor mData;
-
-    private String mHeaderArtUri;
 
     private int mAnimTime;
 
@@ -108,8 +107,7 @@ public class ConditionalAlbumListFragment extends Fragment {
         mRequestManager = Glide.with(this);
 
         mAdapter = new ConditionalAlbumsRecyclerAdapter(getActivity(), mRequestManager);
-        mAdapter.setOnAlbumClickListener((artView, id, album, art) ->
-                onListItemClick(artView, album, new long[]{id}, new String[]{art}));
+        mAdapter.setOnAlbumClickListener(this::onListItemClick);
         mModel.setRecyclerAdpter(mAdapter);
 
         mAnimTime = getResources().getInteger(R.integer.short_anim_time);
@@ -136,6 +134,7 @@ public class ConditionalAlbumListFragment extends Fragment {
     public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        mToolbarTitle = ToolbarUtils.getTitleTextView(mBinding.toolbar);
         restartLoader();
         ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
     }
@@ -155,6 +154,15 @@ public class ConditionalAlbumListFragment extends Fragment {
         mBinding.fab.setScaleX(1f);
         mBinding.fab.setScaleY(1f);
         mBinding.albumArtDim.setAlpha(1f);
+        if (mToolbarTitle != null) {
+            mToolbarTitle.setAlpha(1f);
+        }
+    }
+
+    @Nullable
+    @WorkerThread
+    protected List<Media> playlistFromAlbum(final long albumId) {
+        return PlaylistFactory.fromAlbum(getActivity().getContentResolver(), albumId);
     }
 
     @Nullable
@@ -163,11 +171,10 @@ public class ConditionalAlbumListFragment extends Fragment {
         return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, null);
     }
 
-    private void onListItemClick(@Nullable final View albumArtView,
-            @Nullable final String playlistName,
-            @NonNull final long[] albumIds,
-            @NonNull final String[] arts) {
-        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbums(albumIds)))
+    private void onListItemClick(@NonNull final View itemView,
+            final long albumId,
+            @Nullable final String playlistName) {
+        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbum(albumId)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {
@@ -175,31 +182,18 @@ public class ConditionalAlbumListFragment extends Fragment {
                         final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
                             final Intent intent = Henson.with(activity).gotoPlaylistActivity()
-                                    .hasCoverTransition(true)
+                                    .hasCoverTransition(false)
                                     .hasItemViewTransition(false)
                                     .isNowPlayingPlaylist(false)
                                     .playlist(playlist)
                                     .title(playlistName)
                                     .build();
 
-                            if (albumArtView != null) {
-                                //noinspection unchecked
-                                final ActivityOptionsCompat options;
+                            final ActivityOptionsCompat options = ActivityOptionsCompat
+                                    .makeSceneTransitionAnimation(activity, itemView,
+                                            PlaylistActivity.TRANSITION_NAME_ROOT);
 
-                                if (isTheSameArtOnNextScreen(arts)) {
-                                    options = ActivityOptionsCompat
-                                            .makeSceneTransitionAnimation(activity, mBinding.image,
-                                                    PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
-                                } else {
-                                    options = ActivityOptionsCompat
-                                            .makeSceneTransitionAnimation(activity, albumArtView,
-                                                    PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
-                                }
-
-                                startActivityAfterFabHide(intent, options.toBundle());
-                            } else {
-                                startActivity(intent);
-                            }
+                            startActivity(intent, options.toBundle());
                         } else {
                             Toast.makeText(activity, R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)
@@ -209,8 +203,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                 });
     }
 
-    private void onPlayClick(@NonNull final View fab,
-            @NonNull final long[] albumIds) {
+    private void onPlayClick(@NonNull final long[] albumIds) {
         Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbums(albumIds)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -219,8 +212,8 @@ public class ConditionalAlbumListFragment extends Fragment {
                         final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
                             PlaylistUtils.play(activity, playlist);
-                            prepareViewsAndExit(() ->
-                                    NowPlayingActivity.start(getActivity(), mBinding.image, null));
+                            prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
+                                    mBinding.image, null), true);
                         } else {
                             Toast.makeText(activity, R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)
@@ -230,11 +223,17 @@ public class ConditionalAlbumListFragment extends Fragment {
                 });
     }
 
-    private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
-        if (mBinding.fab.getScaleX() == 0f && mBinding.albumArtDim.getAlpha() == 0f) {
+    private void prepareViewsAndExit(@NonNull final Runnable exitAction,
+            final boolean fadeDim) {
+        if (mBinding.fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
-            mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+            if (mToolbarTitle != null) {
+                mToolbarTitle.animate().alpha(0f).setDuration(mAnimTime).start();
+            }
+            if (fadeDim) {
+                mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+            }
             mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
@@ -243,14 +242,6 @@ public class ConditionalAlbumListFragment extends Fragment {
                         }
                     }).start();
         }
-    }
-
-    private boolean isTheSameArtOnNextScreen(@NonNull final String[] arts) {
-        if (arts.length == 0) {
-            return TextUtils.isEmpty(mHeaderArtUri);
-        }
-        final String art = StringUtils.firstNonEmptyString(arts);
-        return art == null && mHeaderArtUri == null || TextUtils.equals(art, mHeaderArtUri);
     }
 
     private void restartLoader() {
@@ -279,29 +270,14 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     @OnClick(R.id.fab)
-    public void onFabClick(@NonNull final View view) {
+    public void onFabClick() {
         if (mData != null) {
             final long[] ids = new long[mData.getCount()];
             int i = 0;
             for (mData.moveToFirst(); !mData.isAfterLast(); mData.moveToNext(), i++) {
                 ids[i] = mData.getLong(ConditionalAlbumListQuery.COLUMN_ID);
             }
-            onPlayClick(view, ids);
-        }
-    }
-
-    private void startActivityAfterFabHide(@NonNull final Intent intent,
-            @Nullable final Bundle options) {
-        if (mBinding.fab.getScaleX() == 0f) {
-            startActivity(intent, options);
-        } else {
-            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(140L)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(final Animator animation) {
-                            startActivity(intent, options);
-                        }
-                    }).start();
+            onPlayClick(ids);
         }
     }
 
@@ -333,7 +309,6 @@ public class ConditionalAlbumListFragment extends Fragment {
                         }
                     }
                 }
-                mHeaderArtUri = pic;
                 if (TextUtils.isEmpty(pic)) {
                     Glide.clear(mBinding.image);
                     //Must be a delay of from here. TODO Why?

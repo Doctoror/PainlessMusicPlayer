@@ -117,10 +117,8 @@ public final class PlaylistActivity extends BaseActivity implements
         mAnimTime = getResources().getInteger(R.integer.short_anim_time);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (!hasCoverTransition) {
-                TransitionUtils.clearSharedElementsOnReturn(this);
-                getWindow().setReturnTransition(new VerticalGateTransition());
-            }
+            TransitionUtils.clearSharedElementsOnReturn(this);
+            getWindow().setReturnTransition(new VerticalGateTransition());
         }
 
         if (!TextUtils.isEmpty(title)) {
