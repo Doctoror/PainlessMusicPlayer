@@ -86,6 +86,8 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private CurrentPlaylist mCurrentPlaylist;
 
+    private int mAnimTime;
+
     @InjectExtra
     List<Media> playlist;
 
@@ -114,6 +116,7 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
+        mAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (!hasCoverTransition) {
@@ -184,8 +187,6 @@ public final class PlaylistActivity extends BaseActivity implements
         setSupportActionBar(binding.toolbar);
         ViewCompat.setTransitionName(binding.getRoot(), PlaylistActivity.TRANSITION_NAME_ROOT);
         ViewCompat.setTransitionName(binding.albumArt, PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
-        binding.albumArt.setColorFilter(ContextCompat.getColor(
-                this, R.color.translucentBackground), PorterDuff.Mode.SRC_ATOP);
 
         String pic = null;
         final int size = playlist.size();
@@ -263,6 +264,7 @@ public final class PlaylistActivity extends BaseActivity implements
         super.onStop();
         mBinding.fab.setScaleX(1f);
         mBinding.fab.setScaleY(1f);
+        mBinding.albumArtDim.setAlpha(1f);
         if (isNowPlayingPlaylist) {
             CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
         }
@@ -350,36 +352,34 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private void onEnterTransitionFinished() {
         if (mBinding.fab.getScaleX() != 1f) {
-            mBinding.fab.animate().scaleX(1f).scaleY(1f).setDuration(140L).start();
+            mBinding.fab.animate().scaleX(1f).scaleY(1f).setDuration(mAnimTime).start();
+        }
+        if (mBinding.albumArtDim.getAlpha() != 1f) {
+            mBinding.albumArtDim.animate().alpha(1f).setDuration(mAnimTime).start();
         }
     }
 
     @Override
     public void finishAfterTransition() {
-        if (mBinding.fab.getScaleX() == 0f) {
-            super.finishAfterTransition();
-        } else {
-            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(140L)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(final Animator animation) {
-                            PlaylistActivity.super.finishAfterTransition();
-                        }
-                    }).start();
-        }
+        prepareViewsAndExit(PlaylistActivity.super::finishAfterTransition);
     }
 
     private void startNowPlayingAfterFabHidden(
             @Nullable final View albumArt,
             @Nullable final View listItemView) {
-        if (mBinding.fab.getScaleX() == 0f) {
-            NowPlayingActivity.start(this, albumArt, listItemView);
+        prepareViewsAndExit(() -> NowPlayingActivity.start(this, albumArt, listItemView));
+    }
+
+    private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
+        if (mBinding.fab.getScaleX() == 0f && mBinding.albumArtDim.getAlpha() == 0f) {
+            exitAction.run();
         } else {
-            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(140L)
+            mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(final Animator animation) {
-                            NowPlayingActivity.start(PlaylistActivity.this, albumArt, listItemView);
+                            exitAction.run();
                         }
                     }).start();
         }

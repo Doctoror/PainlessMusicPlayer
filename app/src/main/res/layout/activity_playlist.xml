@@ -52,6 +52,13 @@
                     app:layout_collapseMode="parallax"
                     tools:ignore="ContentDescription"/>
 
+                <View
+                    android:id="@+id/albumArtDim"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/translucentBackground"
+                    android:alpha="0"/>
+
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
