@@ -227,11 +227,14 @@ public final class NowPlayingActivity extends BaseActivity {
                     //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
                 }
             }
-            if (mBinding.infoContainer.getAlpha() != 1f) {
-                mBinding.infoContainer.animate().setStartDelay(500).alpha(1f).start();
+            if (mBinding.infoContainer.getScaleY() == 0f) {
+                mBinding.infoContainer.setTranslationY(mBinding.infoContainer.getHeight() / 2);
+                mBinding.infoContainer.animate().setStartDelay(500).scaleY(1f).translationY(0f)
+                        .start();
             }
-            if (mBinding.toolbar.getAlpha() != 1f) {
-                mBinding.toolbar.animate().setStartDelay(500).alpha(1f).start();
+            if (mBinding.toolbar.getScaleY() == 0f) {
+                mBinding.toolbar.setTranslationY(-(mBinding.toolbar.getHeight() / 2));
+                mBinding.toolbar.animate().setStartDelay(500).scaleY(1f).translationY(0f).start();
             }
         }
     }

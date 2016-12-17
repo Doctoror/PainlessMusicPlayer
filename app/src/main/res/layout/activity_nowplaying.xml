@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:orientation="vertical"
-                android:alpha="0"
+                android:scaleY="0"
                 android:background="@color/translucentBackground">
 
                 <TextView
@@ -94,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/translucentBackground"
-                    android:alpha="0"
+                    android:scaleY="0"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
             </FrameLayout>
