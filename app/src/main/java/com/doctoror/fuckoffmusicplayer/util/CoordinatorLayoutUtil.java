@@ -1,5 +1,8 @@
 package com.doctoror.fuckoffmusicplayer.util;
 
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
+
 import android.graphics.Rect;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -61,6 +64,7 @@ public final class CoordinatorLayoutUtil {
         }
     }
 
+    @Parcel
     public static final class AnchorParams {
 
         @IdRes
@@ -73,6 +77,7 @@ public final class CoordinatorLayoutUtil {
         final int rightMargin;
         final int bottomMargin;
 
+        @ParcelConstructor
         AnchorParams(@IdRes final int anchorId,
                 final int anchorGravity,
                 final int leftMargin,
