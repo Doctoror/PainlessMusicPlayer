@@ -62,12 +62,9 @@ import android.view.View;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * "Playlist" activity
@@ -85,7 +82,7 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private final PlaylistActivityModel mModel = new PlaylistActivityModel();
     private PlaylistRecyclerAdapter mAdapter;
-    private CoordinatorLayoutUtil.AnchorParams mAnchorParams;
+    private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
 
     private CurrentPlaylist mCurrentPlaylist;
 
@@ -147,11 +144,16 @@ public final class PlaylistActivity extends BaseActivity implements
         ButterKnife.bind(this);
 
         mFinishWhenDialogDismissed = false;
+    }
 
+    @Override
+    protected void onRestoreInstanceState(final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
             final State state = Parcels.unwrap(savedInstanceState.getParcelable(EXTRA_STATE));
             mDeleteSession = state.deleteSession;
             mFinishWhenDialogDismissed = state.finishWhenDialogDismissed;
+            mFabAnchorParams = state.fabAnchorParams;
             playlist = state.playlist;
             mAdapter.setPlaylist(playlist);
 
@@ -256,8 +258,8 @@ public final class PlaylistActivity extends BaseActivity implements
             onEnterTransitionFinished();
         }
         // TODO doesn't actually restore or has other problems
-        if (mAnchorParams != null) {
-            CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mAnchorParams);
+        if (mFabAnchorParams != null) {
+            CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mFabAnchorParams);
         }
         if (isNowPlayingPlaylist) {
             CurrentPlaylist.getInstance(this).addObserver(mPlaylistObserver);
@@ -282,6 +284,7 @@ public final class PlaylistActivity extends BaseActivity implements
         state.playlist = playlist;
         state.deleteSession = mDeleteSession;
         state.finishWhenDialogDismissed = mFinishWhenDialogDismissed;
+        state.fabAnchorParams = mFabAnchorParams;
         outState.putParcelable(EXTRA_STATE, Parcels.wrap(state));
     }
 
@@ -357,7 +360,7 @@ public final class PlaylistActivity extends BaseActivity implements
         if (shouldPassCoverView) {
             startNowPlayingAfterFabHidden(mBinding.albumArt, null);
         } else {
-            mAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
+            mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
             CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(mBinding.fab);
             NowPlayingActivity.start(this, null, clickedView);
         }
@@ -410,6 +413,7 @@ public final class PlaylistActivity extends BaseActivity implements
         List<Media> playlist;
         boolean finishWhenDialogDismissed;
         DeleteSession deleteSession;
+        CoordinatorLayoutUtil.AnchorParams fabAnchorParams;
     }
 
     @Parcel

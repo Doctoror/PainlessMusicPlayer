@@ -44,6 +44,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
@@ -129,7 +130,11 @@ public final class NowPlayingActivity extends BaseActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionUtils.clearSharedElementsOnReturn(this);
-            getWindow().setReturnTransition(new ArtAndControlsGateTransition());
+            final boolean isLandscape = getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_LANDSCAPE;
+            getWindow().setReturnTransition(isLandscape
+                    ? new RootViewVerticalGateTransition()
+                    : new ArtAndControlsGateTransition());
         }
 
         mTransitionPostponed = false;

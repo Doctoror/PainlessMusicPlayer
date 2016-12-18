@@ -24,6 +24,7 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -99,7 +100,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         android:background="@color/translucentBackground"
-                        android:alpha="0"
                         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
                 </FrameLayout>
