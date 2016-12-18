@@ -160,6 +160,9 @@ public final class PlaylistActivity extends BaseActivity implements
             playlist = state.playlist;
             mAdapter.setPlaylist(playlist);
 
+            mBinding.fab.setScaleX(1f);
+            mBinding.fab.setScaleY(1f);
+
             if (mDeleteSession != null && mDeleteSession.permissionRequested) {
                 onDeleteClick(mDeleteSession.media);
             }
