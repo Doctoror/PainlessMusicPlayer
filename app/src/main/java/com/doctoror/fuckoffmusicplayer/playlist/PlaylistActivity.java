@@ -44,12 +44,15 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -273,6 +276,7 @@ public final class PlaylistActivity extends BaseActivity implements
         mBinding.fab.setScaleX(1f);
         mBinding.fab.setScaleY(1f);
         mBinding.albumArtDim.setAlpha(1f);
+        mBinding.albumArt.clearColorFilter();
         if (isNowPlayingPlaylist) {
             CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
         }
@@ -380,7 +384,18 @@ public final class PlaylistActivity extends BaseActivity implements
         if (mBinding.fab.getScaleX() == 0f && mBinding.albumArtDim.getAlpha() == 0f) {
             exitAction.run();
         } else {
-            mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+            final boolean isLandscape = getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_LANDSCAPE;
+            // Landscape Now Playing has a dim, so dim the ImageView and send it
+            if (isLandscape) {
+                mBinding.albumArtDim.setAlpha(0f);
+                mBinding.albumArt.setColorFilter(
+                        ContextCompat.getColor(this, R.color.translucentBackground),
+                        PorterDuff.Mode.SRC_ATOP);
+            } else {
+                // Portrait NowPlaying does not have a dim. Fade out the dim before animating.
+                mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+            }
             mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
