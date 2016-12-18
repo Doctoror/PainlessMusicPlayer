@@ -359,7 +359,7 @@ public final class PlaylistActivity extends BaseActivity implements
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media.getAlbumArt());
         if (shouldPassCoverView) {
-            startNowPlayingAfterFabHidden(mBinding.albumArt, null);
+            prepareViewsAndExit(() -> NowPlayingActivity.start(this, mBinding.albumArt, null));
         } else {
             mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
             CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(mBinding.fab);
@@ -374,17 +374,6 @@ public final class PlaylistActivity extends BaseActivity implements
         if (mBinding.albumArtDim.getAlpha() != 1f) {
             mBinding.albumArtDim.animate().alpha(1f).setDuration(mAnimTime).start();
         }
-    }
-
-    @Override
-    public void finishAfterTransition() {
-        prepareViewsAndExit(PlaylistActivity.super::finishAfterTransition);
-    }
-
-    private void startNowPlayingAfterFabHidden(
-            @Nullable final View albumArt,
-            @Nullable final View listItemView) {
-        prepareViewsAndExit(() -> NowPlayingActivity.start(this, albumArt, listItemView));
     }
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
