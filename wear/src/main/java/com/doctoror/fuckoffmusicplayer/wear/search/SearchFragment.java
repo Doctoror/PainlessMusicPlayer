@@ -236,13 +236,6 @@ public final class SearchFragment extends Fragment {
             RemoteControl.getInstance().search(mSearchQuery);
             bindProgress();
         }
-//        } else if (requestCode == REQUEST_CODE_SPEECH) {
-//            // TODO remove this hardcode
-//            mSearchQuery = "Death";
-//            mSearching = true;
-//            RemoteControl.getInstance().search(mSearchQuery);
-//            bindProgress();
-//        }
     }
 
     private void showBtnSearch() {
