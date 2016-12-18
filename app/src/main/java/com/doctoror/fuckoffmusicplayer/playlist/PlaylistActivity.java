@@ -257,9 +257,10 @@ public final class PlaylistActivity extends BaseActivity implements
                 || (!hasItemViewTransition && !hasCoverTransition)) {
             onEnterTransitionFinished();
         }
-        // TODO doesn't actually restore or has other problems
         if (mFabAnchorParams != null) {
             CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mFabAnchorParams);
+            mBinding.fab.post(() -> mBinding.fab.requestLayout());
+            mFabAnchorParams = null;
         }
         if (isNowPlayingPlaylist) {
             CurrentPlaylist.getInstance(this).addObserver(mPlaylistObserver);
