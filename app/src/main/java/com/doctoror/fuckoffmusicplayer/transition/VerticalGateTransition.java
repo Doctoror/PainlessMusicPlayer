@@ -22,7 +22,6 @@ import java.util.Collection;
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class VerticalGateTransition extends Transition {
 
-    private static final String TRANSLATION_Y = "translationY";
     private static final String DUMMY_PROPERTY_NAME = "d";
 
     @IdRes
@@ -57,18 +56,18 @@ public class VerticalGateTransition extends Transition {
         final Collection<Animator> animators = new ArrayList<>(2);
         final View upperView = sceneRoot.findViewById(mUpperViewId);
         if (upperView != null) {
-            animators.add(ObjectAnimator
-                    .ofFloat(upperView, TRANSLATION_Y, 0, -upperView.getHeight()));
+            animators.add(ObjectAnimator.ofFloat(upperView,
+                    ViewProperties.TRANSLATION_Y, 0, -upperView.getHeight()));
         }
 
         final View bottomView = sceneRoot.findViewById(mBottomViewId);
         if (bottomView != null) {
             final View bottomViewParent = (View) bottomView.getParent();
             if (bottomView.getHeight() <= bottomViewParent.getHeight()) {
-                animators.add(ObjectAnimator.ofFloat(bottomView, TRANSLATION_Y,
+                animators.add(ObjectAnimator.ofFloat(bottomView, ViewProperties.TRANSLATION_Y,
                         0, bottomViewParent.getHeight() - bottomView.getTop()));
             } else {
-                animators.add(ObjectAnimator.ofFloat(bottomView, TRANSLATION_Y,
+                animators.add(ObjectAnimator.ofFloat(bottomView, ViewProperties.TRANSLATION_Y,
                         0, bottomView.getHeight()));
             }
         }

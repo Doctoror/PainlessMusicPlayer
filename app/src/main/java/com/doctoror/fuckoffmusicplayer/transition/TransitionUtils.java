@@ -12,13 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Yaroslav Mytkalyk on 30.11.16.
+ * Transition utils
  */
-
 public final class TransitionUtils {
 
     private TransitionUtils() {
         throw new UnsupportedOperationException();
+    }
+
+    public static boolean supportsActivityTransitions() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
     public static void clearSharedElementsOnReturn(@NonNull final BaseActivity activity) {

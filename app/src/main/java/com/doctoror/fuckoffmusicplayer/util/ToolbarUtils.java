@@ -23,7 +23,7 @@ public final class ToolbarUtils {
     @Nullable
     public static TextView getTitleTextView(@NonNull final Toolbar toolbar) {
         try {
-            final Field field = toolbar.getClass().getField("mTitleTextView");
+            final Field field = Toolbar.class.getField("mTitleTextView");
             field.setAccessible(true);
             return (TextView) field.get(toolbar);
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.util;
+package com.doctoror.fuckoffmusicplayer.transition;
 
 import android.annotation.TargetApi;
 import android.os.Build;

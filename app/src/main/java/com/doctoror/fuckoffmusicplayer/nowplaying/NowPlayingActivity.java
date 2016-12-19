@@ -38,6 +38,7 @@ import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -128,13 +129,8 @@ public final class NowPlayingActivity extends BaseActivity {
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionUtils.clearSharedElementsOnReturn(this);
-            final boolean isLandscape = getResources().getConfiguration().orientation
-                    == Configuration.ORIENTATION_LANDSCAPE;
-            getWindow().setReturnTransition(isLandscape
-                    ? new RootViewVerticalGateTransition()
-                    : new ArtAndControlsGateTransition());
+        if (TransitionUtils.supportsActivityTransitions()) {
+            NowPlayingActivityLollipop.applyTransitions(this);
         }
 
         mTransitionPostponed = false;
@@ -449,5 +445,19 @@ public final class NowPlayingActivity extends BaseActivity {
                     break;
             }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static final class NowPlayingActivityLollipop {
+
+        static void applyTransitions(@NonNull final NowPlayingActivity activity) {
+            TransitionUtils.clearSharedElementsOnReturn(activity);
+            final boolean isLandscape = activity.getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_LANDSCAPE;
+            activity.getWindow().setReturnTransition(isLandscape
+                    ? new RootViewVerticalGateTransition()
+                    : new ArtAndControlsGateTransition());
+        }
+
     }
 }

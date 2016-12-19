@@ -177,8 +177,8 @@ public class ConditionalAlbumListFragment extends Fragment {
         restartLoader();
         ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionsLollipop.apply((BaseActivity) getActivity(), cardView != null);
+        if (TransitionUtils.supportsActivityTransitions()) {
+            LollipopUtils.applyTransitions((BaseActivity) getActivity(), cardView != null);
         }
     }
 
@@ -268,7 +268,7 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction,
             final boolean fadeDim) {
-        if (fab.getScaleX() == 0f) {
+        if (!TransitionUtils.supportsActivityTransitions() || fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
             if (mToolbarTitle != null) {
@@ -400,9 +400,9 @@ public class ConditionalAlbumListFragment extends Fragment {
     };
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private static final class TransitionsLollipop {
+    private static final class LollipopUtils {
 
-        static void apply(@NonNull final BaseActivity activity,
+        static void applyTransitions(@NonNull final BaseActivity activity,
                 final boolean hasCardView) {
             TransitionUtils.clearSharedElementsOnReturn(activity);
             activity.getWindow().setReturnTransition(hasCardView

@@ -29,11 +29,11 @@ import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomTransition;
+import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
-import com.doctoror.fuckoffmusicplayer.util.TransitionListenerAdapter;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -174,8 +174,8 @@ public final class PlaylistActivity extends BaseActivity implements
 
         mFinishWhenDialogDismissed = false;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionsLollipop.apply(this, cardView != null);
+        if (TransitionUtils.supportsActivityTransitions()) {
+            PlaylistActivityLollipop.applyTransitions(this, cardView != null);
         }
     }
 
@@ -202,7 +202,7 @@ public final class PlaylistActivity extends BaseActivity implements
     @Override
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (TransitionUtils.supportsActivityTransitions()) {
             final Transition enter = getWindow().getSharedElementEnterTransition();
             if (enter != null) {
                 enter.addListener(new TransitionListenerAdapter() {
@@ -289,7 +289,7 @@ public final class PlaylistActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP
+        if (!TransitionUtils.supportsActivityTransitions()
                 || (!hasItemViewTransition && !hasCoverTransition)) {
             onEnterTransitionFinished();
         }
@@ -413,21 +413,23 @@ public final class PlaylistActivity extends BaseActivity implements
         }
         if (cardView != null) {
             if (cardView.getAlpha() == 0f) {
-                if (hasItemViewTransition) {
-                    cardView.setAlpha(1f);
-                } else {
+                if (TransitionUtils.supportsActivityTransitions()
+                        && hasItemViewTransition) {
                     cardView.setTranslationY(
-                            SlideFromBottomTransition.getStartTranslation(cardView));
+                            SlideFromBottomHelper.getStartTranslation(cardView));
                     cardView.setAlpha(1f);
-                    SlideFromBottomTransition.createAnimator(cardView).setDuration(mAnimTime)
+                    SlideFromBottomHelper.createAnimator(cardView).setDuration(mAnimTime)
                             .start();
+                } else {
+                    cardView.setAlpha(1f);
                 }
             }
         }
     }
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
-        if (fab.getScaleX() == 0f && albumArtDim.getAlpha() == 0f) {
+        if (!TransitionUtils.supportsActivityTransitions() ||
+                (fab.getScaleX() == 0f && albumArtDim.getAlpha() == 0f)) {
             exitAction.run();
         } else {
             final boolean isLandscape = getResources().getConfiguration().orientation
@@ -644,9 +646,9 @@ public final class PlaylistActivity extends BaseActivity implements
     };
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private static final class TransitionsLollipop {
+    private static final class PlaylistActivityLollipop {
 
-        static void apply(@NonNull final BaseActivity activity,
+        static void applyTransitions(@NonNull final BaseActivity activity,
                 final boolean hasCardView) {
             TransitionUtils.clearSharedElementsOnReturn(activity);
             final Window window = activity.getWindow();
