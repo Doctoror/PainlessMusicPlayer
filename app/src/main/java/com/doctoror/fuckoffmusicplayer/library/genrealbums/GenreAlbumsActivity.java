@@ -18,13 +18,10 @@ package com.doctoror.fuckoffmusicplayer.library.genrealbums;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -56,11 +53,6 @@ public final class GenreAlbumsActivity extends BaseActivity {
 
         supportPostponeEnterTransition();
         setTitle(genre);
-
-        TransitionUtils.clearSharedElementsOnReturn(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setReturnTransition(new VerticalGateTransition());
-        }
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(android.R.id.content,

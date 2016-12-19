@@ -28,6 +28,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
@@ -43,6 +44,7 @@ import org.parceler.Parcels;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
@@ -126,6 +128,7 @@ public final class PlaylistActivity extends BaseActivity implements
     @BindView(R.id.fab)
     View fab;
 
+    @Nullable
     @BindView(R.id.cardView)
     CardView cardView;
 
@@ -170,12 +173,8 @@ public final class PlaylistActivity extends BaseActivity implements
         mFinishWhenDialogDismissed = false;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionUtils.clearSharedElementsOnReturn(this);
-            getWindow().setReturnTransition(cardView == null
-                    ? new VerticalGateTransition()
-                    : new CardVerticalGateTransition());
+            TransitionsLollipop.apply(this, cardView != null);
         }
-
     }
 
     @Override
@@ -628,4 +627,16 @@ public final class PlaylistActivity extends BaseActivity implements
 
         }
     };
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static final class TransitionsLollipop {
+
+        static void apply(@NonNull final BaseActivity activity,
+                final boolean hasCardView) {
+            TransitionUtils.clearSharedElementsOnReturn(activity);
+            activity.getWindow().setReturnTransition(hasCardView
+                    ? new CardVerticalGateTransition()
+                    : new VerticalGateTransition());
+        }
+    }
 }

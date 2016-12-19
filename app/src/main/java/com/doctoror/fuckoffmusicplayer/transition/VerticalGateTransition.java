@@ -58,15 +58,22 @@ public class VerticalGateTransition extends Transition {
     public Animator createAnimator(final ViewGroup sceneRoot, final TransitionValues startValues,
             final TransitionValues endValues) {
         final Collection<Animator> animators = new ArrayList<>(2);
-        final View appBar = sceneRoot.findViewById(mUpperViewId);
-        if (appBar != null) {
-            animators.add(ObjectAnimator.ofFloat(appBar, TRANSLATION_Y, 0, -appBar.getHeight()));
+        final View upperView = sceneRoot.findViewById(mUpperViewId);
+        if (upperView != null) {
+            animators.add(ObjectAnimator
+                    .ofFloat(upperView, TRANSLATION_Y, 0, -upperView.getHeight()));
         }
 
-        final View recyclerView = sceneRoot.findViewById(mBottomViewId);
-        if (recyclerView != null) {
-            animators.add(ObjectAnimator.ofFloat(recyclerView, TRANSLATION_Y,
-                    0, recyclerView.getHeight()));
+        final View bottomView = sceneRoot.findViewById(mBottomViewId);
+        if (bottomView != null) {
+            final View bottomViewParent = (View) bottomView.getParent();
+            if (bottomView.getHeight() <= bottomViewParent.getHeight()) {
+                animators.add(ObjectAnimator.ofFloat(bottomView, TRANSLATION_Y,
+                        0, bottomViewParent.getHeight() - bottomView.getTop()));
+            } else {
+                animators.add(ObjectAnimator.ofFloat(bottomView, TRANSLATION_Y,
+                        0, bottomView.getHeight()));
+            }
         }
 
         final AnimatorSet animatorSet = new AnimatorSet();

@@ -16,12 +16,9 @@
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -51,11 +48,6 @@ public final class ArtistAlbumsActivity extends BaseActivity {
 
         supportPostponeEnterTransition();
         setTitle(artist);
-
-        TransitionUtils.clearSharedElementsOnReturn(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setReturnTransition(new VerticalGateTransition());
-        }
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(android.R.id.content,

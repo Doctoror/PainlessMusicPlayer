@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
@@ -29,6 +30,9 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
+import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.ToolbarUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
@@ -36,28 +40,36 @@ import com.f2prateek.dart.InjectExtra;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observable;
@@ -84,7 +96,6 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
-    private FragmentConditionalAlbumListBinding mBinding;
     private View mToolbarTitle;
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
@@ -96,6 +107,34 @@ public class ConditionalAlbumListFragment extends Fragment {
     private Cursor mData;
 
     private int mAnimTime;
+
+    @BindView(R.id.appBar)
+    AppBarLayout appBar;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.albumArt)
+    ImageView albumArt;
+
+    @BindView(R.id.albumArtDim)
+    View albumArtDim;
+
+    @BindView(R.id.fab)
+    View fab;
+
+    @Nullable
+    @BindView(R.id.cardView)
+    CardView cardView;
+
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
+
+    @BindView(R.id.progress)
+    View progress;
+
+    @BindView(R.id.errorContainer)
+    View errorContainer;
 
     @InjectExtra
     RxCursorLoader.Query loaderParams;
@@ -119,12 +158,6 @@ public class ConditionalAlbumListFragment extends Fragment {
             @Nullable final Bundle savedInstanceState) {
         final FragmentConditionalAlbumListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_conditional_album_list, container, false);
-        mBinding = binding;
-
-        final AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(mBinding.toolbar);
-
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         binding.setModel(mModel);
 
         return binding.getRoot();
@@ -134,9 +167,19 @@ public class ConditionalAlbumListFragment extends Fragment {
     public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        mToolbarTitle = ToolbarUtils.getTitleTextView(mBinding.toolbar);
+
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mToolbarTitle = ToolbarUtils.getTitleTextView(toolbar);
+
         restartLoader();
         ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionsLollipop.apply((BaseActivity) getActivity(), cardView != null);
+        }
     }
 
     @Override
@@ -151,9 +194,9 @@ public class ConditionalAlbumListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mBinding.fab.setScaleX(1f);
-        mBinding.fab.setScaleY(1f);
-        mBinding.albumArtDim.setAlpha(1f);
+        fab.setScaleX(1f);
+        fab.setScaleY(1f);
+        albumArtDim.setAlpha(1f);
         if (mToolbarTitle != null) {
             mToolbarTitle.setAlpha(1f);
         }
@@ -213,7 +256,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                         if (playlist != null && !playlist.isEmpty()) {
                             PlaylistUtils.play(activity, playlist);
                             prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
-                                    mBinding.image, null), true);
+                                    albumArt, null), true);
                         } else {
                             Toast.makeText(activity, R.string.The_playlist_is_empty,
                                     Toast.LENGTH_SHORT)
@@ -225,16 +268,16 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction,
             final boolean fadeDim) {
-        if (mBinding.fab.getScaleX() == 0f) {
+        if (fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
             if (mToolbarTitle != null) {
                 mToolbarTitle.animate().alpha(0f).setDuration(mAnimTime).start();
             }
             if (fadeDim) {
-                mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+                albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
             }
-            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
+            fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(final Animator animation) {
@@ -256,17 +299,17 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     private void showStateError() {
-        mBinding.fab.setVisibility(View.GONE);
-        mBinding.progress.setVisibility(View.GONE);
-        mBinding.recyclerView.setVisibility(View.GONE);
-        mBinding.errorContainer.setVisibility(View.VISIBLE);
+        fab.setVisibility(View.GONE);
+        progress.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+        errorContainer.setVisibility(View.VISIBLE);
     }
 
     private void showStateContent() {
-        mBinding.fab.setVisibility(View.VISIBLE);
-        mBinding.progress.setVisibility(View.GONE);
-        mBinding.recyclerView.setVisibility(View.VISIBLE);
-        mBinding.errorContainer.setVisibility(View.GONE);
+        fab.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        errorContainer.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.fab)
@@ -299,7 +342,7 @@ public class ConditionalAlbumListFragment extends Fragment {
 
         @Override
         public void onNext(final Cursor cursor) {
-            if (mBinding != null) {
+            if (albumArt != null) {
                 String pic = null;
                 if (cursor != null) {
                     for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
@@ -310,7 +353,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                     }
                 }
                 if (TextUtils.isEmpty(pic)) {
-                    Glide.clear(mBinding.image);
+                    Glide.clear(albumArt);
                     //Must be a delay of from here. TODO Why?
                     Observable.timer(300, TimeUnit.MILLISECONDS)
                             .observeOn(AndroidSchedulers.mainThread()).subscribe((l) ->
@@ -337,7 +380,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                                     return false;
                                 }
                             })
-                            .into(mBinding.image);
+                            .into(albumArt);
                 }
             }
             mAdapter.swapCursor(cursor);
@@ -346,9 +389,21 @@ public class ConditionalAlbumListFragment extends Fragment {
         }
 
         private void animateToPlaceholder() {
-            mBinding.image.setAlpha(0f);
-            mBinding.image.setImageResource(R.drawable.album_art_placeholder);
-            mBinding.image.animate().alpha(1f).setDuration(500).start();
+            albumArt.setAlpha(0f);
+            albumArt.setImageResource(R.drawable.album_art_placeholder);
+            albumArt.animate().alpha(1f).setDuration(500).start();
         }
     };
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private static final class TransitionsLollipop {
+
+        static void apply(@NonNull final BaseActivity activity,
+                final boolean hasCardView) {
+            TransitionUtils.clearSharedElementsOnReturn(activity);
+            activity.getWindow().setReturnTransition(hasCardView
+                    ? new CardVerticalGateTransition()
+                    : new VerticalGateTransition());
+        }
+    }
 }
