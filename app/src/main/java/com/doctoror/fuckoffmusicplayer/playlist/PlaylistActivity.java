@@ -51,10 +51,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v13.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -62,10 +64,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.View;
+import android.widget.ImageView;
 
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -107,7 +111,26 @@ public final class PlaylistActivity extends BaseActivity implements
     @InjectExtra
     boolean hasItemViewTransition;
 
-    private ActivityPlaylistBinding mBinding;
+    @BindView(R.id.appBar)
+    AppBarLayout appBar;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.albumArt)
+    ImageView albumArt;
+
+    @BindView(R.id.albumArtDim)
+    View albumArtDim;
+
+    @BindView(R.id.fab)
+    View fab;
+
+    @BindView(R.id.cardView)
+    CardView cardView;
+
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
 
     private boolean mFinishWhenDialogDismissed;
     private DeleteSession mDeleteSession;
@@ -121,11 +144,6 @@ public final class PlaylistActivity extends BaseActivity implements
         Dart.inject(this);
         mAnimTime = getResources().getInteger(R.integer.short_anim_time);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionUtils.clearSharedElementsOnReturn(this);
-            getWindow().setReturnTransition(new VerticalGateTransition());
-        }
-
         if (!TextUtils.isEmpty(title)) {
             setTitle(title);
         }
@@ -137,16 +155,27 @@ public final class PlaylistActivity extends BaseActivity implements
         mAdapter.registerAdapterDataObserver(mAdapterDataObserver);
         mModel.setRecyclerAdpter(mAdapter);
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_playlist);
+        final ActivityPlaylistBinding mBinding = DataBindingUtil
+                .setContentView(this, R.layout.activity_playlist);
         mBinding.setModel(mModel);
-        mBinding.appBar.addOnOffsetChangedListener(
+
+        ButterKnife.bind(this);
+
+        appBar.addOnOffsetChangedListener(
                 (appBarLayout, verticalOffset) -> mAppbarOffset = verticalOffset);
 
         initAlbumArtAndToolbar(mBinding);
-        initRecyclerView(mBinding);
-        ButterKnife.bind(this);
+        initRecyclerView();
 
         mFinishWhenDialogDismissed = false;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            TransitionUtils.clearSharedElementsOnReturn(this);
+            getWindow().setReturnTransition(cardView == null
+                    ? new VerticalGateTransition()
+                    : new CardVerticalGateTransition());
+        }
+
     }
 
     @Override
@@ -160,8 +189,8 @@ public final class PlaylistActivity extends BaseActivity implements
             playlist = state.playlist;
             mAdapter.setPlaylist(playlist);
 
-            mBinding.fab.setScaleX(1f);
-            mBinding.fab.setScaleY(1f);
+            fab.setScaleX(1f);
+            fab.setScaleY(1f);
 
             if (mDeleteSession != null && mDeleteSession.permissionRequested) {
                 onDeleteClick(mDeleteSession.media);
@@ -185,17 +214,17 @@ public final class PlaylistActivity extends BaseActivity implements
         }
     }
 
-    private void initRecyclerView(@NonNull final ActivityPlaylistBinding binding) {
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    private void initRecyclerView() {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperImpl(
                 (PlaylistRecyclerAdapter) mModel.getRecyclerAdapter().get()));
-        itemTouchHelper.attachToRecyclerView(binding.recyclerView);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
     private void initAlbumArtAndToolbar(@NonNull final ActivityPlaylistBinding binding) {
-        setSupportActionBar(binding.toolbar);
+        setSupportActionBar(toolbar);
         ViewCompat.setTransitionName(binding.getRoot(), PlaylistActivity.TRANSITION_NAME_ROOT);
-        ViewCompat.setTransitionName(binding.albumArt, PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
+        ViewCompat.setTransitionName(albumArt, PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
 
         String pic = null;
         final int size = playlist.size();
@@ -209,7 +238,7 @@ public final class PlaylistActivity extends BaseActivity implements
         mCoverUri = pic;
 
         if (TextUtils.isEmpty(pic)) {
-            Glide.clear(mBinding.albumArt);
+            Glide.clear(albumArt);
             animateToPlaceholder();
             onImageSet();
         } else {
@@ -240,14 +269,14 @@ public final class PlaylistActivity extends BaseActivity implements
                             return false;
                         }
                     })
-                    .into(binding.albumArt);
+                    .into(albumArt);
         }
     }
 
     private void animateToPlaceholder() {
-        mBinding.albumArt.setAlpha(0f);
-        mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
-        mBinding.albumArt.animate().alpha(1f).start();
+        albumArt.setAlpha(0f);
+        albumArt.setImageResource(R.drawable.album_art_placeholder);
+        albumArt.animate().alpha(1f).start();
     }
 
     private void onImageSet() {
@@ -264,8 +293,8 @@ public final class PlaylistActivity extends BaseActivity implements
             onEnterTransitionFinished();
         }
         if (mFabAnchorParams != null) {
-            CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mFabAnchorParams);
-            mBinding.fab.post(() -> mBinding.fab.requestLayout());
+            CoordinatorLayoutUtil.applyAnchorParams(fab, mFabAnchorParams);
+            fab.post(() -> fab.requestLayout());
             mFabAnchorParams = null;
         }
         if (isNowPlayingPlaylist) {
@@ -276,10 +305,10 @@ public final class PlaylistActivity extends BaseActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        mBinding.fab.setScaleX(1f);
-        mBinding.fab.setScaleY(1f);
-        mBinding.albumArtDim.setAlpha(1f);
-        mBinding.albumArt.clearColorFilter();
+        fab.setScaleX(1f);
+        fab.setScaleY(1f);
+        albumArtDim.setAlpha(1f);
+        albumArt.clearColorFilter();
         if (isNowPlayingPlaylist) {
             CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
         }
@@ -366,40 +395,40 @@ public final class PlaylistActivity extends BaseActivity implements
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media.getAlbumArt());
         if (shouldPassCoverView) {
-            prepareViewsAndExit(() -> NowPlayingActivity.start(this, mBinding.albumArt, null));
+            prepareViewsAndExit(() -> NowPlayingActivity.start(this, albumArt, null));
         } else {
-            mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
-            CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(mBinding.fab);
+            mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(fab);
+            CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(fab);
             NowPlayingActivity.start(this, null, clickedView);
         }
     }
 
     private void onEnterTransitionFinished() {
-        if (mBinding.fab.getScaleX() != 1f) {
-            mBinding.fab.animate().scaleX(1f).scaleY(1f).setDuration(mAnimTime).start();
+        if (fab.getScaleX() != 1f) {
+            fab.animate().scaleX(1f).scaleY(1f).setDuration(mAnimTime).start();
         }
-        if (mBinding.albumArtDim.getAlpha() != 1f) {
-            mBinding.albumArtDim.animate().alpha(1f).setDuration(mAnimTime).start();
+        if (albumArtDim.getAlpha() != 1f) {
+            albumArtDim.animate().alpha(1f).setDuration(mAnimTime).start();
         }
     }
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
-        if (mBinding.fab.getScaleX() == 0f && mBinding.albumArtDim.getAlpha() == 0f) {
+        if (fab.getScaleX() == 0f && albumArtDim.getAlpha() == 0f) {
             exitAction.run();
         } else {
             final boolean isLandscape = getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_LANDSCAPE;
             // Landscape Now Playing has a dim, so dim the ImageView and send it
             if (isLandscape) {
-                mBinding.albumArtDim.setAlpha(0f);
-                mBinding.albumArt.setColorFilter(
+                albumArtDim.setAlpha(0f);
+                albumArt.setColorFilter(
                         ContextCompat.getColor(this, R.color.translucentBackground),
                         PorterDuff.Mode.SRC_ATOP);
             } else {
                 // Portrait NowPlaying does not have a dim. Fade out the dim before animating.
-                mBinding.albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+                albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
             }
-            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
+            fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(final Animator animation) {

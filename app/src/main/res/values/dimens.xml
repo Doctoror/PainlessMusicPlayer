@@ -8,4 +8,8 @@
 
     <dimen name="collapsingToolbarHeightConditionalAlbums">164dp</dimen>
     <dimen name="collapsingToolbarHeightAlbum">264dp</dimen>
+
+    <dimen name="toolbarCardViewMargin">88dp</dimen>
+    <dimen name="toolbarCardViewOverlap">64dp</dimen>
+
 </resources>

@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="collapsingToolbarHeightConditionalAlbums">256dp</dimen>
+    <dimen name="collapsingToolbarHeightAlbum">256dp</dimen>
+    <dimen name="toolbarCardViewOverlap">128dp</dimen>
+</resources>
