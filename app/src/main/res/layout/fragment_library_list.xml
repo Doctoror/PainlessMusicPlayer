@@ -31,6 +31,7 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_3x"
             android:layout_gravity="center"/>
 
         <TextView
@@ -38,7 +39,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="96dp"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_3x"
             android:gravity="center"
             android:textSize="16sp"
             android:text="@{model.emptyMessage}"/>
@@ -48,6 +49,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin_3x"
             android:gravity="center"
             android:textSize="16sp"
             android:text="@{model.errorText}"
