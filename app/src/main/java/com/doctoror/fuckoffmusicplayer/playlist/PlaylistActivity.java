@@ -203,15 +203,7 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (TransitionUtils.supportsActivityTransitions()) {
-            final Transition enter = getWindow().getSharedElementEnterTransition();
-            if (enter != null) {
-                enter.addListener(new TransitionListenerAdapter() {
-                    @Override
-                    public void onTransitionEnd(final Transition transition) {
-                        onEnterTransitionFinished();
-                    }
-                });
-            }
+            PlaylistActivityLollipop.addEnterTransitionListener(this);
         }
     }
 
@@ -655,6 +647,18 @@ public final class PlaylistActivity extends BaseActivity implements
             window.setReturnTransition(hasCardView
                     ? new CardVerticalGateTransition()
                     : new VerticalGateTransition());
+        }
+
+        static void addEnterTransitionListener(@NonNull final PlaylistActivity playlistActivity) {
+            final Transition enter = playlistActivity.getWindow().getSharedElementEnterTransition();
+            if (enter != null) {
+                enter.addListener(new TransitionListenerAdapter() {
+                    @Override
+                    public void onTransitionEnd(final Transition transition) {
+                        playlistActivity.onEnterTransitionFinished();
+                    }
+                });
+            }
         }
     }
 }
