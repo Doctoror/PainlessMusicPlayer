@@ -303,6 +303,10 @@ public class ConditionalAlbumListFragment extends Fragment {
         progress.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         errorContainer.setVisibility(View.VISIBLE);
+        if (cardView == null) {
+            // Collapse for non-card-view
+            appBar.setExpanded(false, false);
+        }
     }
 
     private void showStateContent() {
