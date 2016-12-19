@@ -87,7 +87,7 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
 
     public final boolean removeItem(@NonNull final T item) {
         final int position = mItems.indexOf(item);
-        if (mItems.remove(position) != null) {
+        if (position != -1 && mItems.remove(position) != null) {
             notifyItemRemoved(position);
             return true;
         }
