@@ -31,9 +31,6 @@ public class VerticalGateTransition extends Transition {
     @IdRes
     private int mBottomViewId = R.id.recyclerView;
 
-    public VerticalGateTransition() {
-    }
-
     public void setUpperViewId(@IdRes final int upperViewId) {
         mUpperViewId = upperViewId;
     }
