@@ -404,8 +404,7 @@ public final class PlaylistActivity extends BaseActivity implements
             albumArtDim.animate().alpha(1f).setDuration(mAnimTime).start();
         }
         if (cardView != null && cardView.getAlpha() == 0f) {
-            if (TransitionUtils.supportsActivityTransitions()
-                    && hasItemViewTransition) {
+            if (TransitionUtils.supportsActivityTransitions() && hasCoverTransition) {
                 cardView.setTranslationY(
                         SlideFromBottomHelper.getStartTranslation(cardView));
                 cardView.setAlpha(1f);
