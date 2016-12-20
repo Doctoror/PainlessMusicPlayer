@@ -87,9 +87,7 @@
                 android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:elevation="8dp"
-                app:elevation="8dp"
-                tools:ignore="UnusedAttribute">
+                app:cardElevation="8dp">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
