@@ -23,12 +23,13 @@
             type="com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListModel"/>
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <com.doctoror.fuckoffmusicplayer.widget.DisableableCoordinatorLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <android.support.design.widget.AppBarLayout
+        <com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout
             android:id="@+id/appBar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/collapsingToolbarHeightConditionalAlbums"
@@ -67,7 +68,7 @@
 
             </android.support.design.widget.CollapsingToolbarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout>
 
         <ProgressBar
             android:id="@+id/progress"
@@ -125,6 +126,6 @@
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="bottom|right|end"/>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </com.doctoror.fuckoffmusicplayer.widget.DisableableCoordinatorLayout>
 
 </layout>

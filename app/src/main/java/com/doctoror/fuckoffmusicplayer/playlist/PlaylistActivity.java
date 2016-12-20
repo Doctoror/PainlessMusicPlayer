@@ -34,6 +34,7 @@ import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -54,7 +55,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v13.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
@@ -67,6 +67,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageView;
 
@@ -115,8 +116,11 @@ public final class PlaylistActivity extends BaseActivity implements
     @InjectExtra
     boolean hasItemViewTransition;
 
+    @BindView(R.id.root)
+    View root;
+
     @BindView(R.id.appBar)
-    AppBarLayout appBar;
+    DisableableAppBarLayout appBar;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -205,6 +209,18 @@ public final class PlaylistActivity extends BaseActivity implements
         if (TransitionUtils.supportsActivityTransitions()) {
             PlaylistActivityLollipop.addEnterTransitionListener(this);
         }
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        PlaylistActivity.this.onGlobalLayout();
+                    }
+                });
+    }
+
+    private void onGlobalLayout() {
+        appBar.setCollapsible(recyclerView.getHeight() > root.getHeight() - appBar.getHeight());
     }
 
     private void initRecyclerView() {

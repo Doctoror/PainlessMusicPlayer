@@ -23,12 +23,13 @@
             type="com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivityModel"/>
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <com.doctoror.fuckoffmusicplayer.widget.DisableableCoordinatorLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <android.support.design.widget.AppBarLayout
+        <com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout
             android:id="@+id/appBar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/collapsingToolbarHeightAlbum"
@@ -66,7 +67,7 @@
 
             </android.support.design.widget.CollapsingToolbarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+        </com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -87,6 +88,6 @@
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="bottom|right|end"/>
 
-    </android.support.design.widget.CoordinatorLayout>
+    </com.doctoror.fuckoffmusicplayer.widget.DisableableCoordinatorLayout>
 
 </layout>

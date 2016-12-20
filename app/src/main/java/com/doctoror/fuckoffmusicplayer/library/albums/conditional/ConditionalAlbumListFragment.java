@@ -34,6 +34,7 @@ import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.ToolbarUtils;
+import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -52,7 +53,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -63,6 +63,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -108,8 +109,11 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private int mAnimTime;
 
+    @BindView(R.id.root)
+    View root;
+
     @BindView(R.id.appBar)
-    AppBarLayout appBar;
+    DisableableAppBarLayout appBar;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -174,6 +178,15 @@ public class ConditionalAlbumListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mToolbarTitle = ToolbarUtils.getTitleTextView(toolbar);
 
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        ConditionalAlbumListFragment.this.onGlobalLayout();
+                    }
+                });
+
         restartLoader();
         ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
 
@@ -189,6 +202,10 @@ public class ConditionalAlbumListFragment extends Fragment {
             mSubscription.unsubscribe();
             mSubscription = null;
         }
+    }
+
+    private void onGlobalLayout() {
+        appBar.setCollapsible(recyclerView.getHeight() > root.getHeight() - appBar.getHeight());
     }
 
     @Override
