@@ -139,5 +139,5 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     // Media
-    compile 'com.google.android.exoplayer:exoplayer:r2.0.4'
+    compile 'com.google.android.exoplayer:exoplayer:r2.1.1'
 }

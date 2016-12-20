@@ -29,30 +29,29 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import com.doctoror.commons.util.Log;
+
 import android.content.Context;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-/**
- * Created by Yaroslav Mytkalyk on 23.10.16.
- */
+import java.util.Locale;
 
+/**
+ * Exo media player
+ */
 final class ExoMediaPlayer implements MediaPlayer {
 
     private static final String TAG = "ExoMediaPlayer";
-
-    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     private SimpleExoPlayer mExoPlayer;
     private DataSource.Factory mDataSourceFactory;
@@ -72,8 +71,7 @@ final class ExoMediaPlayer implements MediaPlayer {
 
     @Override
     public void init(@NonNull final Context context) {
-        final TrackSelection.Factory factory = new FixedTrackSelection.Factory();
-        final TrackSelector trackSelector = new DefaultTrackSelector(mMainHandler, factory);
+        final TrackSelector trackSelector = new DefaultTrackSelector();
 
         mExoPlayer = ExoPlayerFactory
                 .newSimpleInstance(context, trackSelector, new DefaultLoadControl());
@@ -136,11 +134,16 @@ final class ExoMediaPlayer implements MediaPlayer {
 
         @Override
         public void onAudioEnabled(final DecoderCounters counters) {
-
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onAudioEnabled");
+            }
         }
 
         @Override
         public void onAudioSessionId(final int audioSessionId) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onAudioSessionId: " + audioSessionId);
+            }
             if (mMediaPlayerListener != null) {
                 mMediaPlayerListener.onAudioSessionId(audioSessionId);
             }
@@ -150,22 +153,34 @@ final class ExoMediaPlayer implements MediaPlayer {
         public void onAudioDecoderInitialized(final String decoderName,
                 final long initializedTimestampMs,
                 final long initializationDurationMs) {
-
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onAudioDecoderInitialized: " + (decoderName == null ? "null"
+                        : decoderName));
+            }
         }
 
         @Override
         public void onAudioInputFormatChanged(final Format format) {
-
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onAudioInputFormatChanged: " + (format == null ? "null" : format));
+            }
         }
 
         @Override
         public void onAudioTrackUnderrun(final int bufferSize, final long bufferSizeMs,
                 final long elapsedSinceLastFeedMs) {
-
+            if (Log.logDEnabled()) {
+                Log.d(TAG, String.format(Locale.US,
+                        "onAudioTrackUnderrun, bufferSize = '%d', bufferSizeMs = '%d', elapsedSinceLastFeedMs = '%d",
+                        bufferSize, bufferSizeMs, elapsedSinceLastFeedMs));
+            }
         }
 
         @Override
         public void onAudioDisabled(final DecoderCounters counters) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onAudioDisabled");
+            }
             if (mMediaPlayerListener != null) {
                 mMediaPlayerListener.onAudioSessionId(AudioTrack.SESSION_ID_NOT_SET);
             }
@@ -175,11 +190,25 @@ final class ExoMediaPlayer implements MediaPlayer {
     private final ExoPlayer.EventListener mEventListener = new ExoPlayer.EventListener() {
 
         @Override
+        public void onTracksChanged(final TrackGroupArray trackGroups,
+                final TrackSelectionArray trackSelections) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onTracksChanged()");
+            }
+        }
+
+        @Override
         public void onLoadingChanged(final boolean isLoading) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onLoadingChanged: " + isLoading);
+            }
         }
 
         @Override
         public void onPlayerStateChanged(final boolean playWhenReady, final int playbackState) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onPlayerStateChanged: " + playbackState);
+            }
             if (mMediaPlayerListener != null) {
                 switch (playbackState) {
                     case ExoPlayer.STATE_READY:
@@ -199,11 +228,16 @@ final class ExoMediaPlayer implements MediaPlayer {
 
         @Override
         public void onTimelineChanged(final Timeline timeline, final Object manifest) {
-
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onTimelineChanged: " + timeline);
+            }
         }
 
         @Override
         public void onPlayerError(final ExoPlaybackException error) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onPlayerError: " + (error == null ? "null" : error));
+            }
             if (mMediaPlayerListener != null) {
                 mMediaPlayerListener.onPlayerError(error);
             }
@@ -211,7 +245,9 @@ final class ExoMediaPlayer implements MediaPlayer {
 
         @Override
         public void onPositionDiscontinuity() {
-
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onPositionDiscontinuity");
+            }
         }
     };
 }
