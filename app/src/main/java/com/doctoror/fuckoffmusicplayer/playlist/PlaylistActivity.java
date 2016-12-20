@@ -403,18 +403,16 @@ public final class PlaylistActivity extends BaseActivity implements
         if (albumArtDim.getAlpha() != 1f) {
             albumArtDim.animate().alpha(1f).setDuration(mAnimTime).start();
         }
-        if (cardView != null) {
-            if (cardView.getAlpha() == 0f) {
-                if (TransitionUtils.supportsActivityTransitions()
-                        && hasItemViewTransition) {
-                    cardView.setTranslationY(
-                            SlideFromBottomHelper.getStartTranslation(cardView));
-                    cardView.setAlpha(1f);
-                    SlideFromBottomHelper.createAnimator(cardView).setDuration(mAnimTime)
-                            .start();
-                } else {
-                    cardView.setAlpha(1f);
-                }
+        if (cardView != null && cardView.getAlpha() == 0f) {
+            if (TransitionUtils.supportsActivityTransitions()
+                    && hasItemViewTransition) {
+                cardView.setTranslationY(
+                        SlideFromBottomHelper.getStartTranslation(cardView));
+                cardView.setAlpha(1f);
+                SlideFromBottomHelper.createAnimator(cardView).setDuration(mAnimTime)
+                        .start();
+            } else {
+                cardView.setAlpha(1f);
             }
         }
     }
