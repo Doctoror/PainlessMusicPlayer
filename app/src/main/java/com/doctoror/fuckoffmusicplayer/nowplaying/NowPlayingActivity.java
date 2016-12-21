@@ -38,6 +38,8 @@ import com.f2prateek.dart.InjectExtra;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -247,14 +249,27 @@ public final class NowPlayingActivity extends BaseActivity {
                     //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
                 }
             }
-            if (infoContainer != null && infoContainer.getScaleY() == 0f) {
-                infoContainer.setTranslationY(infoContainer.getHeight() / 2);
-                infoContainer.animate().setStartDelay(500).scaleY(1f).translationY(0f)
-                        .start();
+            if (infoContainer != null && infoContainer.getVisibility() != View.VISIBLE) {
+                infoContainer.setTranslationY(infoContainer.getHeight());
+                infoContainer.animate().setStartDelay(500)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationStart(final Animator animation) {
+                                infoContainer.setVisibility(View.VISIBLE);
+                            }
+                        })
+                        .translationY(0f).start();
             }
-            if (toolbar.getScaleY() == 0f) {
-                toolbar.setTranslationY(-(toolbar.getHeight() / 2));
-                toolbar.animate().setStartDelay(500).scaleY(1f).translationY(0f).start();
+            if (toolbar.getVisibility() != View.VISIBLE) {
+                toolbar.setTranslationY(-toolbar.getHeight());
+                toolbar.animate().setStartDelay(500)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationStart(final Animator animation) {
+                                toolbar.setVisibility(View.VISIBLE);
+                            }
+                        })
+                        .translationY(0f).start();
             }
         }
     }
