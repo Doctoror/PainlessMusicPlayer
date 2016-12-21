@@ -32,6 +32,7 @@ import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
@@ -135,6 +136,10 @@ public final class PlaylistActivity extends BaseActivity implements
     View fab;
 
     @Nullable
+    @BindView(R.id.cardHostScrollView)
+    View cardHostScrollView;
+
+    @Nullable
     @BindView(R.id.cardView)
     CardView cardView;
 
@@ -213,18 +218,20 @@ public final class PlaylistActivity extends BaseActivity implements
         if (TransitionUtils.supportsActivityTransitions()) {
             PlaylistActivityLollipop.addEnterTransitionListener(this);
         }
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+        root.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
-                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        root.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         PlaylistActivity.this.onGlobalLayout();
                     }
                 });
     }
 
     private void onGlobalLayout() {
-        appBar.setCollapsible(recyclerView.getHeight() > root.getHeight() - appBar.getHeight());
+        ViewUtils.setAppBarCollapsibleIfScrollableViewIsLargeEnoughToScroll(
+                root, appBar, recyclerView, ViewUtils.getOverlayTop(cardHostScrollView != null
+                        ? cardHostScrollView : recyclerView));
     }
 
     private void initRecyclerView() {

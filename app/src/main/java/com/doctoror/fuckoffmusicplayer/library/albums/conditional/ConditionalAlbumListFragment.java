@@ -34,6 +34,7 @@ import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.ToolbarUtils;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
@@ -128,6 +129,10 @@ public class ConditionalAlbumListFragment extends Fragment {
     View fab;
 
     @Nullable
+    @BindView(R.id.cardHostScrollView)
+    View cardHostScrollView;
+
+    @Nullable
     @BindView(R.id.cardView)
     CardView cardView;
 
@@ -205,7 +210,9 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     private void onGlobalLayout() {
-        appBar.setCollapsible(recyclerView.getHeight() > root.getHeight() - appBar.getHeight());
+        ViewUtils.setAppBarCollapsibleIfScrollableViewIsLargeEnoughToScroll(
+                root, appBar, recyclerView, ViewUtils.getOverlayTop(cardHostScrollView != null
+                        ? cardHostScrollView : recyclerView));
     }
 
     @Override

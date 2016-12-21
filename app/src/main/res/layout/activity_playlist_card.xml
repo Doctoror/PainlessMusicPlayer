@@ -71,6 +71,7 @@
         </com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
+            android:id="@+id/cardHostScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/toolbarCardViewMargin"
