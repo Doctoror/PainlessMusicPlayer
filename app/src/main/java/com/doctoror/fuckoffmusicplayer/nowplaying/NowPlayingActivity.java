@@ -59,10 +59,12 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -104,10 +106,25 @@ public final class NowPlayingActivity extends BaseActivity {
     private CurrentPlaylist mPlaylist;
 
     private int mState = PlaybackService.STATE_IDLE;
-    private ActivityNowplayingBinding mBinding;
 
     private boolean mTransitionPostponed;
     private boolean mTransitionStarted;
+
+    @BindView(R.id.root)
+    View root;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.albumArt)
+    ImageView albumArt;
+
+    @Nullable
+    @BindView(R.id.infoContainer)
+    View infoContainer;
+
+    @BindView(R.id.seekBar)
+    SeekBar seekBar;
 
     @InjectExtra
     boolean hasCoverTransition;
@@ -137,16 +154,18 @@ public final class NowPlayingActivity extends BaseActivity {
         mTransitionStarted = false;
         mPlaylist = CurrentPlaylist.getInstance(this);
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_nowplaying);
-        ViewCompat.setTransitionName(mBinding.albumArt, TRANSITION_NAME_ALBUM_ART);
-        ViewCompat.setTransitionName(mBinding.getRoot(), TRANSITION_NAME_ROOT);
+        final ActivityNowplayingBinding binding = DataBindingUtil.setContentView(
+                this, R.layout.activity_nowplaying);
         ButterKnife.bind(this);
 
-        mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);
-        mBinding.setModel(mModel);
-        setSupportActionBar(mBinding.toolbar);
+        ViewCompat.setTransitionName(albumArt, TRANSITION_NAME_ALBUM_ART);
+        ViewCompat.setTransitionName(root, TRANSITION_NAME_ROOT);
 
-        mBinding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);
+        binding.setModel(mModel);
+        setSupportActionBar(toolbar);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
@@ -175,8 +194,8 @@ public final class NowPlayingActivity extends BaseActivity {
             supportPostponeEnterTransition();
         }
         if (TextUtils.isEmpty(artUri)) {
-            Glide.clear(mBinding.albumArt);
-            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
+            Glide.clear(albumArt);
+            albumArt.setImageResource(R.drawable.album_art_placeholder);
             onArtProcessed();
         } else {
             final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
@@ -190,9 +209,9 @@ public final class NowPlayingActivity extends BaseActivity {
                         public boolean onException(final Exception e, final String model,
                                 final Target<GlideDrawable> target,
                                 final boolean isFirstResource) {
-                            mBinding.albumArt.setAlpha(0f);
-                            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
-                            mBinding.albumArt.animate().alpha(1f).start();
+                            albumArt.setAlpha(0f);
+                            albumArt.setImageResource(R.drawable.album_art_placeholder);
+                            albumArt.animate().alpha(1f).start();
                             onArtProcessed();
                             return true;
                         }
@@ -206,7 +225,7 @@ public final class NowPlayingActivity extends BaseActivity {
                             return false;
                         }
                     })
-                    .into(mBinding.albumArt);
+                    .into(albumArt);
         }
     }
 
@@ -228,14 +247,14 @@ public final class NowPlayingActivity extends BaseActivity {
                     //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
                 }
             }
-            if (mBinding.infoContainer.getScaleY() == 0f) {
-                mBinding.infoContainer.setTranslationY(mBinding.infoContainer.getHeight() / 2);
-                mBinding.infoContainer.animate().setStartDelay(500).scaleY(1f).translationY(0f)
+            if (infoContainer != null && infoContainer.getScaleY() == 0f) {
+                infoContainer.setTranslationY(infoContainer.getHeight() / 2);
+                infoContainer.animate().setStartDelay(500).scaleY(1f).translationY(0f)
                         .start();
             }
-            if (mBinding.toolbar.getScaleY() == 0f) {
-                mBinding.toolbar.setTranslationY(-(mBinding.toolbar.getHeight() / 2));
-                mBinding.toolbar.animate().setStartDelay(500).scaleY(1f).translationY(0f).start();
+            if (toolbar.getScaleY() == 0f) {
+                toolbar.setTranslationY(-(toolbar.getHeight() / 2));
+                toolbar.animate().setStartDelay(500).scaleY(1f).translationY(0f).start();
             }
         }
     }
