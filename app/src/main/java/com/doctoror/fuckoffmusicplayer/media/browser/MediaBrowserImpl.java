@@ -228,7 +228,7 @@ final class MediaBrowserImpl {
         final String art = c.getString(AlbumsQuery.COLUMN_ALBUM_ART);
         if (!TextUtils.isEmpty(art)) {
             final Uri uri = FileProvider.getUriForFile(mContext,
-                    mContext.getString(R.string.authority_album_thumbs), new File(art));
+                    mContext.getPackageName().concat(".provider.album_thumbs"), new File(art));
             for (final String p : mMediaBrowserCallerPackageNames) {
                 mContext.grantUriPermission(p, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }

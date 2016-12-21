@@ -115,7 +115,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="@string/authority_album_thumbs"
+            android:authorities="${applicationId}.provider.album_thumbs"
             android:exported="false"
             android:grantUriPermissions="true">
 
