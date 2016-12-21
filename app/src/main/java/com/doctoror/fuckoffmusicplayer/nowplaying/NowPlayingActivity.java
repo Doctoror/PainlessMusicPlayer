@@ -250,26 +250,34 @@ public final class NowPlayingActivity extends BaseActivity {
                 }
             }
             if (infoContainer != null && infoContainer.getVisibility() != View.VISIBLE) {
-                infoContainer.setTranslationY(infoContainer.getHeight());
-                infoContainer.animate().setStartDelay(500)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationStart(final Animator animation) {
-                                infoContainer.setVisibility(View.VISIBLE);
-                            }
-                        })
-                        .translationY(0f).start();
+                if (hasListViewTransition) {
+                    infoContainer.setVisibility(View.VISIBLE);
+                } else {
+                    infoContainer.setTranslationY(infoContainer.getHeight());
+                    infoContainer.animate().setStartDelay(500)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationStart(final Animator animation) {
+                                    infoContainer.setVisibility(View.VISIBLE);
+                                }
+                            })
+                            .translationY(0f).start();
+                }
             }
             if (toolbar.getVisibility() != View.VISIBLE) {
-                toolbar.setTranslationY(-toolbar.getHeight());
-                toolbar.animate().setStartDelay(500)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationStart(final Animator animation) {
-                                toolbar.setVisibility(View.VISIBLE);
-                            }
-                        })
-                        .translationY(0f).start();
+                if (hasListViewTransition) {
+                    toolbar.setVisibility(View.VISIBLE);
+                } else {
+                    toolbar.setTranslationY(-toolbar.getHeight());
+                    toolbar.animate().setStartDelay(500)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationStart(final Animator animation) {
+                                    toolbar.setVisibility(View.VISIBLE);
+                                }
+                            })
+                            .translationY(0f).start();
+                }
             }
         }
     }
