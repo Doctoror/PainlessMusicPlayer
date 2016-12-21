@@ -33,7 +33,6 @@ import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.util.ToolbarUtils;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 import com.doctoror.rxcursorloader.RxCursorLoader;
@@ -98,7 +97,6 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
-    private View mToolbarTitle;
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
@@ -181,7 +179,6 @@ public class ConditionalAlbumListFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mToolbarTitle = ToolbarUtils.getTitleTextView(toolbar);
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -221,9 +218,6 @@ public class ConditionalAlbumListFragment extends Fragment {
         fab.setScaleX(1f);
         fab.setScaleY(1f);
         albumArtDim.setAlpha(1f);
-        if (mToolbarTitle != null) {
-            mToolbarTitle.setAlpha(1f);
-        }
     }
 
     @Nullable
@@ -295,9 +289,6 @@ public class ConditionalAlbumListFragment extends Fragment {
         if (!TransitionUtils.supportsActivityTransitions() || fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
-            if (mToolbarTitle != null) {
-                mToolbarTitle.animate().alpha(0f).setDuration(mAnimTime).start();
-            }
             if (fadeDim) {
                 albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
             }
