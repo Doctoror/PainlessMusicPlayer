@@ -158,7 +158,7 @@ public class ConditionalAlbumListFragment extends Fragment {
         mAdapter.setOnAlbumClickListener(this::onListItemClick);
         mModel.setRecyclerAdpter(mAdapter);
 
-        mAnimTime = getResources().getInteger(R.integer.short_anim_time);
+        mAnimTime = getResources().getInteger(R.integer.shortest_anim_time);
     }
 
     @Nullable

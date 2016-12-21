@@ -99,7 +99,8 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private CurrentPlaylist mCurrentPlaylist;
 
-    private int mAnimTime;
+    private int mShortAnimTime;
+    private int mMediumAnimTime;
 
     @InjectExtra
     List<Media> playlist;
@@ -158,7 +159,8 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
-        mAnimTime = getResources().getInteger(R.integer.short_anim_time);
+        mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        mMediumAnimTime = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
         if (!TextUtils.isEmpty(title)) {
             setTitle(title);
@@ -426,20 +428,18 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private void onEnterTransitionFinished() {
         if (fab.getScaleX() != 1f) {
-            fab.animate().scaleX(1f).scaleY(1f).setDuration(mAnimTime).start();
+            fab.animate().scaleX(1f).scaleY(1f).setDuration(mShortAnimTime).start();
         }
         if (albumArtDim.getAlpha() != 1f) {
-            albumArtDim.animate().alpha(1f).setDuration(mAnimTime).start();
+            albumArtDim.animate().alpha(1f).setDuration(mShortAnimTime).start();
         }
-        if (cardView != null && cardView.getAlpha() == 0f) {
+        if (cardView != null && cardView.getVisibility() != View.VISIBLE) {
             if (TransitionUtils.supportsActivityTransitions() && hasCoverTransition) {
-                cardView.setTranslationY(
-                        SlideFromBottomHelper.getStartTranslation(cardView));
-                cardView.setAlpha(1f);
-                SlideFromBottomHelper.createAnimator(cardView).setDuration(mAnimTime)
-                        .start();
+                cardView.setTranslationY(SlideFromBottomHelper.getStartTranslation(cardView));
+                cardView.setVisibility(View.VISIBLE);
+                SlideFromBottomHelper.createAnimator(cardView).setDuration(mMediumAnimTime).start();
             } else {
-                cardView.setAlpha(1f);
+                cardView.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -459,9 +459,9 @@ public final class PlaylistActivity extends BaseActivity implements
                         PorterDuff.Mode.SRC_ATOP);
             } else {
                 // Portrait NowPlaying does not have a dim. Fade out the dim before animating.
-                albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+                albumArtDim.animate().alpha(0f).setDuration(mShortAnimTime).start();
             }
-            fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
+            fab.animate().scaleX(0f).scaleY(0f).setDuration(mShortAnimTime)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(final Animator animation) {
