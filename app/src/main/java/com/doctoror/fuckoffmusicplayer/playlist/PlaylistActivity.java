@@ -147,6 +147,8 @@ public final class PlaylistActivity extends BaseActivity implements
     private String mCoverUri;
     private int mAppbarOffset;
 
+    private boolean mCreatedWithInstanceState;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,6 +183,8 @@ public final class PlaylistActivity extends BaseActivity implements
         if (TransitionUtils.supportsActivityTransitions()) {
             PlaylistActivityLollipop.applyTransitions(this, cardView != null);
         }
+
+        mCreatedWithInstanceState = savedInstanceState != null;
     }
 
     @Override
@@ -297,7 +301,8 @@ public final class PlaylistActivity extends BaseActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (!TransitionUtils.supportsActivityTransitions()
+        if (mCreatedWithInstanceState
+                || !TransitionUtils.supportsActivityTransitions()
                 || (!hasItemViewTransition && !hasCoverTransition)) {
             onEnterTransitionFinished();
         }
