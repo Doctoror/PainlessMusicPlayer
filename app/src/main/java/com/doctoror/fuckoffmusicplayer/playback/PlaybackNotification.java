@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
@@ -50,7 +51,7 @@ final class PlaybackNotification {
     public static Notification create(@NonNull final Context context,
             @NonNull final RequestManager glide,
             @NonNull final Media media,
-            @PlaybackService.State final int state,
+            @PlaybackState.State final int state,
             @NonNull final MediaSessionCompat mediaSession) {
         final PendingIntent prevIntent = PendingIntent.getService(context, 1,
                 PlaybackService.prevIntent(context),
@@ -61,7 +62,7 @@ final class PlaybackNotification {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
-                state == PlaybackService.STATE_PLAYING
+                state == PlaybackState.STATE_PLAYING
                         ? PlaybackService.pauseIntent(context)
                         : PlaybackService.playIntent(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -109,13 +110,13 @@ final class PlaybackNotification {
                         PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setSmallIcon(state == PlaybackService.STATE_PLAYING ? R.drawable.ic_stat_play
+                .setSmallIcon(state == PlaybackState.STATE_PLAYING ? R.drawable.ic_stat_play
                         : R.drawable.ic_stat_pause)
                 .setLargeIcon(art)
                 .addAction(R.drawable.ic_fast_rewind_white_24dp,
                         context.getText(R.string.Previous), prevIntent);
 
-        if (state == PlaybackService.STATE_PLAYING) {
+        if (state == PlaybackState.STATE_PLAYING) {
             b.addAction(R.drawable.ic_pause_white_24dp, context.getText(R.string.Pause),
                     middleActionIntent);
         } else {

@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
@@ -107,7 +108,8 @@ public final class NowPlayingActivity extends BaseActivity {
     private final Receiver mReceiver = new Receiver();
     private CurrentPlaylist mPlaylist;
 
-    private int mState = PlaybackService.STATE_IDLE;
+    @PlaybackState.State
+    private int mState = PlaybackState.STATE_IDLE;
 
     private boolean mTransitionPostponed;
     private boolean mTransitionStarted;
@@ -390,19 +392,19 @@ public final class NowPlayingActivity extends BaseActivity {
             mState = state;
             final int playBtnRes;
             switch (state) {
-                case PlaybackService.STATE_IDLE:
+                case PlaybackState.STATE_IDLE:
                     playBtnRes = R.drawable.ic_play_arrow_white_36dp;
                     break;
 
-                case PlaybackService.STATE_LOADING:
+                case PlaybackState.STATE_LOADING:
                     playBtnRes = R.drawable.ic_pause_white_36dp;
                     break;
 
-                case PlaybackService.STATE_PLAYING:
+                case PlaybackState.STATE_PLAYING:
                     playBtnRes = R.drawable.ic_pause_white_36dp;
                     break;
 
-                case PlaybackService.STATE_PAUSED:
+                case PlaybackState.STATE_PAUSED:
                     playBtnRes = R.drawable.ic_play_arrow_white_36dp;
                     break;
 
@@ -417,15 +419,15 @@ public final class NowPlayingActivity extends BaseActivity {
     @OnClick(R.id.btnPlay)
     public void onPlayClick() {
         switch (mState) {
-            case PlaybackService.STATE_IDLE:
+            case PlaybackState.STATE_IDLE:
                 PlaybackService.play(this);
                 break;
 
-            case PlaybackService.STATE_PAUSED:
+            case PlaybackState.STATE_PAUSED:
                 PlaybackService.play(this);
                 break;
 
-            case PlaybackService.STATE_PLAYING:
+            case PlaybackState.STATE_PLAYING:
                 PlaybackService.pause(this);
                 break;
         }

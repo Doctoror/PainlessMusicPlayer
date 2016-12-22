@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.appwidget;
 
+import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
@@ -44,9 +45,9 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         if (PlaybackService.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-            @PlaybackService.State
+            @PlaybackState.State
             final int state = intent.getIntExtra(PlaybackService.EXTRA_STATE,
-                    PlaybackService.STATE_IDLE);
+                    PlaybackState.STATE_IDLE);
             onStateChanged(context, state);
         } else {
             // Handle AppWidgetProvider broadcast
@@ -59,7 +60,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
             final AppWidgetManager appWidgetManager,
             final int[] appWidgetIds) {
 
-        bindViews(context, appWidgetManager, appWidgetIds, PlaybackService.STATE_IDLE);
+        bindViews(context, appWidgetManager, appWidgetIds, PlaybackState.STATE_IDLE);
         requestServiceStateUpdate(context);
     }
 
@@ -75,7 +76,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     private static void bindViews(final Context context,
             final AppWidgetManager appWidgetManager,
             final int[] appWidgetIds,
-            @PlaybackService.State final int state) {
+            @PlaybackState.State final int state) {
         final CurrentPlaylist holder = CurrentPlaylist.getInstance(context);
 
         final RemoteViews views = new RemoteViews(context.getPackageName(),
@@ -88,7 +89,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
         views.setBoolean(R.id.appwidget_btn_play_pause, "setEnabled", hasMedia);
 
         views.setImageViewResource(R.id.appwidget_btn_play_pause,
-                state == PlaybackService.STATE_PLAYING
+                state == PlaybackState.STATE_PLAYING
                         ? R.drawable.ic_pause_white_24dp : R.drawable.ic_play_arrow_white_24dp);
 
         if (hasMedia) {

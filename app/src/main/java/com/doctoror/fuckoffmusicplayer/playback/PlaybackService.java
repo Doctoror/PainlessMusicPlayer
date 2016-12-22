@@ -21,19 +21,21 @@ import com.google.android.gms.wearable.Wearable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.doctoror.commons.playback.PlaybackState.State;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
-import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionReporter;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
+import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
@@ -46,7 +48,6 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
@@ -55,8 +56,6 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -64,6 +63,13 @@ import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Subscription;
+
+import static com.doctoror.commons.playback.PlaybackState.STATE_ERROR;
+import static com.doctoror.commons.playback.PlaybackState.STATE_IDLE;
+import static com.doctoror.commons.playback.PlaybackState.STATE_LOADING;
+import static com.doctoror.commons.playback.PlaybackState.STATE_PAUSED;
+import static com.doctoror.commons.playback.PlaybackState.STATE_PLAYING;
+
 
 /**
  * Media playback Service
@@ -199,24 +205,6 @@ public final class PlaybackService extends Service {
         return intent;
     }
 
-    public static final int STATE_IDLE = 0;
-    public static final int STATE_LOADING = 1;
-    public static final int STATE_PLAYING = 2;
-    public static final int STATE_PAUSED = 3;
-    public static final int STATE_ERROR = 4;
-
-    @IntDef({
-            STATE_IDLE,
-            STATE_LOADING,
-            STATE_PLAYING,
-            STATE_PAUSED,
-            STATE_ERROR
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
-
-    }
-
     @State
     private static int sLastKnownState;
 
@@ -240,7 +228,9 @@ public final class PlaybackService extends Service {
 
     private RequestManager mGlide;
     private AudioManager mAudioManager;
+
     private MediaSessionHolder mMediaSessionHolder;
+    private PlaybackReporter mPlaybackReporter;
 
     private boolean mAudioFocusRequested;
     private boolean mFocusGranted;
@@ -280,10 +270,17 @@ public final class PlaybackService extends Service {
         mMediaSessionHolder = MediaSessionHolder.getInstance(this);
         mMediaSessionHolder.openSession();
 
+        mGlide = Glide.with(this);
+
+        final MediaSessionCompat mediaSession = mMediaSessionHolder.getMediaSession();
+        if (mediaSession == null) {
+            throw new IllegalStateException("MediaSession is null");
+        }
+
+        mPlaybackReporter = PlaybackReporterFactory.newAllReporter(this, mediaSession, mGlide);
+
         registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
         registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
-
-        mGlide = Glide.with(this);
 
         mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(this);
@@ -569,10 +566,7 @@ public final class PlaybackService extends Service {
                 mPlaylist.setPosition(seekPosition);
                 mPlaylist.setMedia(media);
                 mCurrentTrack = media;
-                final MediaSessionCompat mediaSession = getMediaSession();
-                if (mediaSession != null) {
-                    MediaSessionReporter.reportTrackChanged(this, mGlide, mediaSession, media);
-                }
+                mPlaybackReporter.reportTrackChanged(media);
                 syncWearableMedia();
 
                 mMediaPlayer.stop();
@@ -663,19 +657,10 @@ public final class PlaybackService extends Service {
         }
     }
 
-    void setMediaSessionPlaybackState(final int state) {
-        final MediaSessionCompat mediaSession = getMediaSession();
-        final Media media = mPlaylist.getMedia();
-        if (mediaSession != null && media != null) {
-            MediaSessionReporter.reportStateChanged(this, mediaSession, media, state,
-                    mErrorMessage);
-        }
-    }
-
     private void setState(@State final int state) {
         mState = state;
         sLastKnownState = state;
-        setMediaSessionPlaybackState(state);
+        mPlaybackReporter.reportPlaybackStateChanged(state, mErrorMessage);
         mExecutor.submit(mRunnableSyncWarableState);
         broadcastState();
     }
@@ -710,8 +695,7 @@ public final class PlaybackService extends Service {
             final Media media = mPlaylist.getMedia();
             final long duration = media != null ? media.getDuration() : 0;
             final long position = media != null ? mPlaylist.getPosition() : 0;
-            WearableReporter.reportState(mGoogleApiClient, mState,
-                    duration, position);
+            WearableReporter.reportState(mGoogleApiClient, mState, duration, position);
         }
     }
 

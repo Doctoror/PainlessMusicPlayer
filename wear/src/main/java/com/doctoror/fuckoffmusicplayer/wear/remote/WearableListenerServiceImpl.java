@@ -170,8 +170,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
             return;
         }
         try {
-            final WearPlaybackData.PlaybackState s = WearPlaybackData.PlaybackState
-                    .parseFrom(data);
+            final WearPlaybackData.PlaybackState s = WearPlaybackData.PlaybackState.parseFrom(data);
             MediaHolder.getInstance(this).setPlaybackState(s);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, e);

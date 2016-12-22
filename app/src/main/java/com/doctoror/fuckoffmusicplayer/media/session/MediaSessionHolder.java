@@ -5,6 +5,8 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
+import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -21,9 +23,8 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 08.12.16.
+ * {@link MediaSessionCompat} holder
  */
-
 public final class MediaSessionHolder {
 
     private static final String TAG = "MediaSessionHolder";
@@ -110,12 +111,13 @@ public final class MediaSessionHolder {
 
     @WorkerThread
     private void reportMediaAndState(@NonNull final MediaSessionCompat mediaSession) {
+        final PlaybackReporter playbackReporter = PlaybackReporterFactory
+                .newMediaSessionReporter(mContext, mediaSession, Glide.with(mContext));
+
         final Media current = CurrentPlaylist.getInstance(mContext).getMedia();
         if (current != null) {
-            MediaSessionReporter.reportTrackChanged(mContext, Glide.with(mContext),
-                    mediaSession, current);
+            playbackReporter.reportTrackChanged(current);
         }
-        MediaSessionReporter.reportStateChanged(mediaSession,
-                PlaybackService.getLastKnownState(), null);
+        playbackReporter.reportPlaybackStateChanged(PlaybackService.getLastKnownState(), null);
     }
 }

@@ -8,11 +8,11 @@ import com.google.protobuf.nano.CodedOutputByteBufferNano;
 import com.google.protobuf.nano.MessageNano;
 
 import com.bumptech.glide.RequestManager;
+import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
-import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionReporter;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.commons.util.Log;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -108,7 +108,7 @@ final class WearableReporter {
 
     @WorkerThread
     static void reportState(@NonNull final GoogleApiClient googleApiClient,
-            @PlaybackService.State final int state,
+            @PlaybackState.State final int state,
             final long duration,
             final long position) {
         if (googleApiClient.isConnected()) {
@@ -135,7 +135,7 @@ final class WearableReporter {
 
     @NonNull
     private static PutDataRequest newPutStateRequest(
-            @PlaybackService.State final int state,
+            @PlaybackState.State final int state,
             final long duration,
             final long position) throws IOException {
         final PutDataRequest request = PutDataRequest.create(DataPaths.Paths.PLAYBACK_STATE);
@@ -168,11 +168,11 @@ final class WearableReporter {
 
     @NonNull
     private static WearPlaybackData.PlaybackState toPlaybackState(
-            @PlaybackService.State final int state,
+            @PlaybackState.State final int state,
             final long duration,
             final long position) {
         final WearPlaybackData.PlaybackState m = new WearPlaybackData.PlaybackState();
-        m.state = MediaSessionReporter.toPlaybackStateCompat(state);
+        m.state = state;
         m.duration = duration;
         m.progress = position;
         return m;

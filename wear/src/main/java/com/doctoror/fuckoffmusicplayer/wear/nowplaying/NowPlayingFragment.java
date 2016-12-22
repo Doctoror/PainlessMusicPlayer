@@ -15,15 +15,16 @@
  */
 package com.doctoror.fuckoffmusicplayer.wear.nowplaying;
 
+import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowPlayingBinding;
+import com.doctoror.fuckoffmusicplayer.wear.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventAlbumArt;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventMedia;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaybackState;
 import com.doctoror.fuckoffmusicplayer.wear.remote.RemoteControl;
-import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowPlayingBinding;
-import com.doctoror.fuckoffmusicplayer.wear.media.MediaHolder;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,7 +37,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,7 +144,7 @@ public final class NowPlayingFragment extends Fragment {
     private void bindPlaybackState(@Nullable final WearPlaybackData.PlaybackState playbackState) {
         if (playbackState != null) {
             bindProgress(playbackState.duration, playbackState.progress);
-            mModelViewState.setBtnPlayRes(playbackState.state == PlaybackStateCompat.STATE_PLAYING
+            mModelViewState.setBtnPlayRes(playbackState.state == PlaybackState.STATE_PLAYING
                     ? R.drawable.ic_pause_white_48dp : R.drawable.ic_play_arrow_white_48dp);
         } else {
             mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_48dp);
