@@ -18,10 +18,10 @@ package com.doctoror.fuckoffmusicplayer.settings;
 import ds.gendalf.PrefsConfig;
 
 /**
- * Theme prefs
+ * Security prefs
  */
-@PrefsConfig("ThemePrefs")
-public interface ThemePrefsConfig {
+@PrefsConfig("SecurityPrefs")
+public interface SecurityPrefsConfig {
 
-    int theme = Theme.NIGHT;
+    boolean scrobbleEnabled = true;
 }

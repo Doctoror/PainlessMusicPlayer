@@ -283,7 +283,7 @@ public final class PlaybackService extends Service {
         }
 
         mPlaybackReporter = PlaybackReporterFactory
-                .newAllReporter(this, mGoogleApiClientWear, mediaSession, mGlide);
+                .newUniversalReporter(this, mGoogleApiClientWear, mediaSession, mGlide);
 
         registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
         registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);

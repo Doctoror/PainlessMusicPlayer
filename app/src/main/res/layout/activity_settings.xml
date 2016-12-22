@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbarStyle="outsideOverlay">
 
@@ -59,6 +59,23 @@
                 android:text="@string/Day_Night"/>
 
         </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="@string/Scrobbling"
+            android:textColor="?attr/colorAccent"/>
+
+        <CheckBox
+            android:id="@+id/checkboxScrobble"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingStart="16dp"
+            android:paddingLeft="16dp"
+            android:text="@string/Send_playback_details_to_Simple_Lastfm_Scrobbler"
+            tools:ignore="RtlSymmetry"/>
 
     </LinearLayout>
 </ScrollView>

@@ -22,6 +22,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 
 import butterknife.BindView;
@@ -41,6 +42,9 @@ public final class SettingsActivity extends BaseActivity {
     @BindView(R.id.radioGroup)
     RadioGroup mRadioGroup;
 
+    @BindView(R.id.checkboxScrobble)
+    CompoundButton mBtnScrobble;
+
     @InjectExtra
     @Nullable
     Boolean suppressGmsWarnings;
@@ -51,9 +55,13 @@ public final class SettingsActivity extends BaseActivity {
 
     private GoogleApiClient mGoogleApiClient;
 
+    private SecurityPrefs mSecurityPrefs;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSecurityPrefs = SecurityPrefs.with(this);
+
         Dart.inject(this);
         restoreInstanceState(savedInstanceState);
 
@@ -93,6 +101,10 @@ public final class SettingsActivity extends BaseActivity {
                     .suppressDayNightWarnings(suppressDayNightWarnings)
                     .build());
         });
+
+        mBtnScrobble.setChecked(mSecurityPrefs.isScrobbleEnabled());
+        mBtnScrobble.setOnCheckedChangeListener(
+                (cb, value) -> mSecurityPrefs.setScrobbleEnabled(value));
     }
 
     private void initGoogleApiClient() {

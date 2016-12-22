@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">Painless Music Player</string>
 
     <string name="Music_library_needs_permission_to_access_media">Music library needs permission to
@@ -18,6 +19,11 @@
     <string name="Day_Night">Day-Night</string>
     <string name="Light">Light</string>
     <string name="Dark">Dark</string>
+
+    <string name="Scrobbling">Scrobbling</string>
+    <string name="Send_playback_details_to_Simple_Lastfm_Scrobbler">Send playback details to Simple
+        Last.fm Scrobbler
+    </string>
 
     <string name="No_tracks_found">No tracks found</string>
     <string name="No_artists_found">No artists found</string>

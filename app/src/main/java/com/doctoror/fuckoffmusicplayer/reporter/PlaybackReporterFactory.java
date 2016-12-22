@@ -18,14 +18,14 @@ public final class PlaybackReporterFactory {
     }
 
     @NonNull
-    public static PlaybackReporter newAllReporter(@NonNull final Context context,
+    public static PlaybackReporter newUniversalReporter(@NonNull final Context context,
             @NonNull final GoogleApiClient wearApiClient,
             @NonNull final MediaSessionCompat mediaSession,
             @NonNull final RequestManager glide) {
         return new PlaybackReporterSet(
                 new MediaSessionPlaybackReporter(context, mediaSession, glide),
-                new ScrobbleDroidPlaybackReporter(context),
-                new WearableMediaPlaybackReporter(context, wearApiClient, glide));
+                new WearableMediaPlaybackReporter(context, wearApiClient, glide),
+                new SLSPlaybackReporter(context));
     }
 
     @NonNull
