@@ -60,7 +60,8 @@ final class ExoMediaPlayer implements MediaPlayer {
     private MediaPlayerListener mMediaPlayerListener;
     private MediaSource mMediaSource;
 
-    private Uri mCurrentMediaUri;
+    private Uri mLoadingMediaUri;
+    private Uri mLoadedMediaUri;
 
     ExoMediaPlayer() {
 
@@ -96,7 +97,7 @@ final class ExoMediaPlayer implements MediaPlayer {
         mMediaSource = new ExtractorMediaSource(uri, mDataSourceFactory, mExtractorsFactory,
                 null, null);
 
-        mCurrentMediaUri = uri;
+        mLoadingMediaUri = uri;
         mExoPlayer.prepare(mMediaSource);
     }
 
@@ -122,8 +123,8 @@ final class ExoMediaPlayer implements MediaPlayer {
 
     @Nullable
     @Override
-    public Uri getCurrentMediaUri() {
-        return mCurrentMediaUri;
+    public Uri getLoadedMediaUri() {
+        return mLoadedMediaUri;
     }
 
     @Override
@@ -222,6 +223,7 @@ final class ExoMediaPlayer implements MediaPlayer {
             if (mMediaPlayerListener != null) {
                 switch (playbackState) {
                     case ExoPlayer.STATE_READY:
+                        mLoadedMediaUri = mLoadingMediaUri;
                         if (playWhenReady) {
                             mMediaPlayerListener.onPlaybackStarted();
                         } else {

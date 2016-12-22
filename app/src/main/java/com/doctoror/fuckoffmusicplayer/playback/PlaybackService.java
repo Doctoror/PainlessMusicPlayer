@@ -700,7 +700,7 @@ public final class PlaybackService extends Service {
             mPlaybackReporter.reportPositionChanged(0, 0);
         } else {
             final Uri mediaUri = media.getData();
-            if (mediaUri != null && mediaUri.equals(mMediaPlayer.getCurrentMediaUri())) {
+            if (mediaUri != null && mediaUri.equals(mMediaPlayer.getLoadedMediaUri())) {
                 mPlaybackReporter.reportPositionChanged(
                         media.getId(), mMediaPlayer.getCurrentPosition());
             }
