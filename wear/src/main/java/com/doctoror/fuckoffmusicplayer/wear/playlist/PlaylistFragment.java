@@ -130,7 +130,7 @@ public final class PlaylistFragment extends Fragment {
         mAdapter.setItems(makePlaylist(playlist, media));
         mModel.setIsEmpty(mAdapter.getItemCount() == 0);
         if (mRecyclerView != null && media != null && playlist != null) {
-            mRecyclerView.scrollToPosition(media.playlistPosition);
+            mRecyclerView.scrollToPosition(media.positionInPlaylist);
         }
     }
 

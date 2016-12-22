@@ -45,6 +45,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -246,7 +247,7 @@ public final class PlaybackService extends Service {
 
     private CharSequence mErrorMessage;
 
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClientWear;
     private String mPermissionReceivePlaybackState;
 
     @Override
@@ -267,17 +268,22 @@ public final class PlaybackService extends Service {
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mAudioEffects = AudioEffects.getInstance(this);
 
+        mGlide = Glide.with(this);
+        mGoogleApiClientWear = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(mGoogleApiClientCallbacks)
+                .build();
+
         mMediaSessionHolder = MediaSessionHolder.getInstance(this);
         mMediaSessionHolder.openSession();
-
-        mGlide = Glide.with(this);
 
         final MediaSessionCompat mediaSession = mMediaSessionHolder.getMediaSession();
         if (mediaSession == null) {
             throw new IllegalStateException("MediaSession is null");
         }
 
-        mPlaybackReporter = PlaybackReporterFactory.newAllReporter(this, mediaSession, mGlide);
+        mPlaybackReporter = PlaybackReporterFactory
+                .newAllReporter(this, mGoogleApiClientWear, mediaSession, mGlide);
 
         registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
         registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
@@ -285,11 +291,7 @@ public final class PlaybackService extends Service {
         mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(this);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(mGoogleApiClientCallbacks)
-                .build();
-        mGoogleApiClient.connect();
+        mGoogleApiClientWear.connect();
     }
 
     @Nullable
@@ -553,7 +555,7 @@ public final class PlaybackService extends Service {
         if (mState == STATE_PAUSED && mCurrentTrack != null
                 && media.getId() == mCurrentTrack.getId()) {
             mMediaPlayer.play();
-            mExecutor.submit(mRunnableSyncWarableMedia);
+            mExecutor.submit(mRunnableReportCurrentMedia);
         } else {
             mExecutor.submit(() -> {
                 long seekPosition = 0;
@@ -566,8 +568,9 @@ public final class PlaybackService extends Service {
                 mPlaylist.setPosition(seekPosition);
                 mPlaylist.setMedia(media);
                 mCurrentTrack = media;
-                mPlaybackReporter.reportTrackChanged(media);
-                syncWearableMedia();
+
+                reportCurrentMedia();
+                reportCurrentPlaybackPosition();
 
                 mMediaPlayer.stop();
                 mMediaPlayer.load(media.getData());
@@ -619,7 +622,7 @@ public final class PlaybackService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopForeground(true);
-        mGoogleApiClient.disconnect();
+        mGoogleApiClientWear.disconnect();
         mMediaPlayer.stop();
         mPlaylist.deleteObserver(mPlaylistObserver);
         mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
@@ -660,16 +663,8 @@ public final class PlaybackService extends Service {
     private void setState(@State final int state) {
         mState = state;
         sLastKnownState = state;
-        mPlaybackReporter.reportPlaybackStateChanged(state, mErrorMessage);
-        mExecutor.submit(mRunnableSyncWarableState);
+        mExecutor.submit(mRunnableReportCurrentState);
         broadcastState();
-    }
-
-    private void updatePosition() {
-        if (mState == STATE_PLAYING) {
-            mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
-            mExecutor.submit(mRunnableSyncWarableState);
-        }
     }
 
     private void broadcastState() {
@@ -678,34 +673,45 @@ public final class PlaybackService extends Service {
         sendBroadcast(intent, mPermissionReceivePlaybackState);
     }
 
+    private void updatePosition() {
+        if (mState == STATE_PLAYING) {
+            mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
+            mExecutor.submit(mRunnableReportCurrentPosition);
+        }
+    }
+
     @WorkerThread
-    private void syncWearableMedia() {
-        if (mGoogleApiClient.isConnected()) {
-            final Media media = mPlaylist.getMedia();
-            if (media != null) {
-                WearableReporter.reportMedia(mGoogleApiClient, mGlide, media, mPlaylist.getIndex(),
-                        mPlaylist.getPosition());
+    private void reportCurrentMedia() {
+        final Media media = mPlaylist.getMedia();
+        if (media != null) {
+            mPlaybackReporter.reportTrackChanged(media, mPlaylist.getIndex());
+        }
+    }
+
+    @WorkerThread
+    private void reportCurrentPlaybackState() {
+        mPlaybackReporter.reportPlaybackStateChanged(mState, mErrorMessage);
+    }
+
+    @WorkerThread
+    private void reportCurrentPlaybackPosition() {
+        final Media media = mPlaylist.getMedia();
+        if (media == null) {
+            mPlaybackReporter.reportPositionChanged(0, 0);
+        } else {
+            final Uri mediaUri = media.getData();
+            if (mediaUri != null && mediaUri.equals(mMediaPlayer.getCurrentMediaUri())) {
+                mPlaybackReporter.reportPositionChanged(
+                        media.getId(), mMediaPlayer.getCurrentPosition());
             }
         }
     }
 
     @WorkerThread
-    private void syncWearableState() {
-        if (mGoogleApiClient.isConnected()) {
-            final Media media = mPlaylist.getMedia();
-            final long duration = media != null ? media.getDuration() : 0;
-            final long position = media != null ? mPlaylist.getPosition() : 0;
-            WearableReporter.reportState(mGoogleApiClient, mState, duration, position);
-        }
-    }
-
-    @WorkerThread
-    private void syncWearablePlaylist() {
-        if (mGoogleApiClient.isConnected()) {
-            final List<Media> playlist = mPlaylist.getPlaylist();
-            if (playlist != null) {
-                WearableReporter.reportPlaylist(mGoogleApiClient, playlist);
-            }
+    private void reportCurrentPlaylist() {
+        final List<Media> playlist = mPlaylist.getPlaylist();
+        if (playlist != null) {
+            mPlaybackReporter.reportPlaylistChanged(playlist);
         }
     }
 
@@ -715,9 +721,10 @@ public final class PlaybackService extends Service {
         @Override
         public void onConnected(@Nullable final Bundle bundle) {
             mExecutor.submit(() -> {
-                syncWearableMedia();
-                syncWearableState();
-                syncWearablePlaylist();
+                reportCurrentPlaylist();
+                reportCurrentMedia();
+                reportCurrentPlaybackState();
+                reportCurrentPlaybackPosition();
             });
         }
 
@@ -755,7 +762,7 @@ public final class PlaybackService extends Service {
                 if (playlist != null && !playlist.isEmpty()) {
                     // Stop current and play the other track from playlist
                     restart();
-                    mExecutor.submit(mRunnableSyncWarablePlaylist);
+                    mExecutor.submit(mRunnableReportCurrentPlaylist);
                 } else {
                     mCurrentTrack = null;
                     AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
@@ -766,12 +773,12 @@ public final class PlaybackService extends Service {
 
         @Override
         public void onPlaylistChanged(@Nullable final List<Media> playlist) {
-            mExecutor.submit(mRunnableSyncWarablePlaylist);
+            mExecutor.submit(mRunnableReportCurrentPlaylist);
         }
 
         @Override
         public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
-            mExecutor.submit(mRunnableSyncWarablePlaylist);
+            mExecutor.submit(mRunnableReportCurrentPlaylist);
         }
     };
 
@@ -807,7 +814,6 @@ public final class PlaybackService extends Service {
             mErrorMessage = null;
             mCurrentTrack = null;
             if (!mDestroying) {
-                setState(STATE_IDLE);
                 playNext();
             }
         }
@@ -861,9 +867,10 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final Runnable mRunnableSyncWarableMedia = this::syncWearableMedia;
-    private final Runnable mRunnableSyncWarableState = this::syncWearableState;
-    private final Runnable mRunnableSyncWarablePlaylist = this::syncWearablePlaylist;
+    private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
+    private final Runnable mRunnableReportCurrentState = this::reportCurrentPlaybackState;
+    private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
+    private final Runnable mRunnableReportCurrentPlaylist = this::reportCurrentPlaylist;
 
     private final class AudioBecomingNoisyReceiver extends BroadcastReceiver {
 

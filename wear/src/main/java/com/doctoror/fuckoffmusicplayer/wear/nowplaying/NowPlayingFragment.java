@@ -23,6 +23,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.FragmentNowPlayingBinding;
 import com.doctoror.fuckoffmusicplayer.wear.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventAlbumArt;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventMedia;
+import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaybackPosition;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaybackState;
 import com.doctoror.fuckoffmusicplayer.wear.remote.RemoteControl;
 
@@ -115,20 +116,24 @@ public final class NowPlayingFragment extends Fragment {
         bindPlaybackState(event.playbackState);
     }
 
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onEventPlaybackPosition(@NonNull final EventPlaybackPosition event) {
+        bindPlaybackPosition(event.playbackPosition);
+    }
+
     private void bindMedia(@Nullable final WearPlaybackData.Media media) {
         if (media != null) {
             mModelMedia.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
                     media.artist, media.album));
             mModelMedia.setTitle(media.title);
-            bindProgress(media.duration, media.progress);
-
             mModelViewState.setNavigationButtonsVisible(true);
         } else {
             mModelMedia.setArtistAndAlbum(null);
             mModelMedia.setTitle(getText(R.string.Start_playing));
-            bindArt(null);
-            bindProgress(0, 0);
 
+            bindArt(null);
+
+            mModelPlaybackState.setProgress(0);
             mModelViewState.setNavigationButtonsVisible(false);
         }
     }
@@ -143,19 +148,29 @@ public final class NowPlayingFragment extends Fragment {
 
     private void bindPlaybackState(@Nullable final WearPlaybackData.PlaybackState playbackState) {
         if (playbackState != null) {
-            bindProgress(playbackState.duration, playbackState.progress);
             mModelViewState.setBtnPlayRes(playbackState.state == PlaybackState.STATE_PLAYING
+                    || playbackState.state == PlaybackState.STATE_LOADING
                     ? R.drawable.ic_pause_white_48dp : R.drawable.ic_play_arrow_white_48dp);
         } else {
             mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_48dp);
         }
     }
 
-    private void bindProgress(final long duration, final long elapsedTime) {
-        if (!mSeekBarTracking && duration > 0 && elapsedTime <= duration) {
-            // Max is 200 so progress is a fraction of 200
-            mModelPlaybackState
-                    .setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
+    private void bindPlaybackPosition(@Nullable final WearPlaybackData.PlaybackPosition pos) {
+        if (pos != null) {
+            bindProgress(pos.mediaId, pos.position);
+        }
+    }
+
+    private void bindProgress(final long mediaId, final long elapsedTime) {
+        final WearPlaybackData.Media media = mMediaHolder.getMedia();
+        if (media != null && media.id == mediaId) {
+            final long duration = media.duration;
+            if (!mSeekBarTracking && duration > 0 && elapsedTime <= duration) {
+                // Max is 200 so progress is a fraction of 200
+                mModelPlaybackState
+                        .setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
+            }
         }
     }
 

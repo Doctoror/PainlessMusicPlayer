@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.wear.media;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventAlbumArt;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventMedia;
+import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaybackPosition;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaybackState;
 
 import org.greenrobot.eventbus.EventBus;
@@ -60,12 +61,14 @@ public final class MediaHolder {
     private Bitmap mAlbumArt;
     private WearPlaybackData.Media mMedia;
     private WearPlaybackData.PlaybackState mPlaybackState;
+    private WearPlaybackData.PlaybackPosition mPlaybackPosition;
 
     private MediaHolder(@NonNull final Context context) {
         mContext = context;
         mMedia = MediaPersister.readMedia(context);
         mAlbumArt = MediaPersister.readAlbumArt(context);
         mPlaybackState = MediaPersister.readPlaybackState(context);
+        mPlaybackPosition = MediaPersister.readPlaybackPosition(context);
     }
 
     @WorkerThread
@@ -107,6 +110,20 @@ public final class MediaHolder {
         }
     }
 
+    @WorkerThread
+    public synchronized void setPlaybackPosition(
+            @Nullable final WearPlaybackData.PlaybackPosition position) {
+        if (mPlaybackPosition != position) {
+            mPlaybackPosition = position;
+            if (position == null) {
+                MediaPersister.deletePlaybackPosition(mContext);
+            } else {
+                MediaPersister.persistPlaybackPosition(mContext, position);
+            }
+            notifyPlaybackPositionChanged(position);
+        }
+    }
+
     @Nullable
     public WearPlaybackData.Media getMedia() {
         return mMedia;
@@ -132,5 +149,9 @@ public final class MediaHolder {
 
     private void notifyPlaybackStateChanged(@Nullable final WearPlaybackData.PlaybackState ps) {
         mEventBus.post(new EventPlaybackState(ps));
+    }
+
+    private void notifyPlaybackPositionChanged(@Nullable final WearPlaybackData.PlaybackPosition p) {
+        mEventBus.post(new EventPlaybackPosition(p));
     }
 }

@@ -34,5 +34,6 @@ public interface MediaPlayer {
     void stop();
     void release();
     void setListener(@Nullable MediaPlayerListener listener);
+    @Nullable Uri getCurrentMediaUri();
     long getCurrentPosition();
 }

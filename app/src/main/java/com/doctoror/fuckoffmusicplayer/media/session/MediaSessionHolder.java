@@ -114,9 +114,10 @@ public final class MediaSessionHolder {
         final PlaybackReporter playbackReporter = PlaybackReporterFactory
                 .newMediaSessionReporter(mContext, mediaSession, Glide.with(mContext));
 
-        final Media current = CurrentPlaylist.getInstance(mContext).getMedia();
+        final CurrentPlaylist currentPlaylist = CurrentPlaylist.getInstance(mContext);
+        final Media current = currentPlaylist.getMedia();
         if (current != null) {
-            playbackReporter.reportTrackChanged(current);
+            playbackReporter.reportTrackChanged(current, currentPlaylist.getIndex());
         }
         playbackReporter.reportPlaybackStateChanged(PlaybackService.getLastKnownState(), null);
     }

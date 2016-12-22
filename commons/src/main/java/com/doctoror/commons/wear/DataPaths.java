@@ -41,6 +41,7 @@ public final class DataPaths {
 
         public static final String MEDIA = "/playback/media";
         public static final String PLAYBACK_STATE = "/playback/state";
+        public static final String PLAYBACK_POSITION = "/playback/position";
         public static final String PLAYLIST = "/playback/playlist";
     }
 

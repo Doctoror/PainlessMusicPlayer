@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -49,7 +50,7 @@ final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media) {
+    public void reportTrackChanged(@NonNull final Media media, final int positionInPlaylist) {
         final MediaMetadataCompat.Builder b = new MediaMetadataCompat.Builder()
                 .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
                         Long.toString(media.getId()))
@@ -118,6 +119,16 @@ final class MediaSessionPlaybackReporter implements PlaybackReporter {
                 .setErrorMessage(errorMessage)
                 .setState(playbackState, 0, isPlaying ? 1 : 0)
                 .build());
+    }
+
+    @Override
+    public void reportPositionChanged(final long mediaId, final long position) {
+        // Not supported
+    }
+
+    @Override
+    public void reportPlaylistChanged(@Nullable final List<Media> playlist) {
+        // Not supported
     }
 
     @PlaybackStateCompat.State

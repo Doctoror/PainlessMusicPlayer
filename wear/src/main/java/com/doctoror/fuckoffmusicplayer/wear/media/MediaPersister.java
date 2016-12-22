@@ -35,6 +35,7 @@ final class MediaPersister {
     private static final String FILE_NAME_MEDIA_ART = "media_art";
     private static final String FILE_NAME_MEDIA = "media";
     private static final String FILE_NAME_PLAYBACK_STATE = "playback_state";
+    private static final String FILE_NAME_PLAYBACK_POSITION = "playback_position";
 
     private MediaPersister() {
         throw new UnsupportedOperationException();
@@ -45,12 +46,21 @@ final class MediaPersister {
         ProtoUtils.writeToFile(context, FILE_NAME_PLAYBACK_STATE, ps);
     }
 
+    static void persistPlaybackPosition(@NonNull final Context context,
+            @NonNull final WearPlaybackData.PlaybackPosition p) {
+        ProtoUtils.writeToFile(context, FILE_NAME_PLAYBACK_POSITION, p);
+    }
+
     static void deleteMedia(@NonNull final Context context) {
         context.deleteFile(FILE_NAME_MEDIA);
     }
 
     static void deletePlaybackState(@NonNull final Context context) {
         context.deleteFile(FILE_NAME_PLAYBACK_STATE);
+    }
+
+    static void deletePlaybackPosition(@NonNull final Context context) {
+        context.deleteFile(FILE_NAME_PLAYBACK_POSITION);
     }
 
     static void persistMedia(@NonNull final Context context,
@@ -62,6 +72,12 @@ final class MediaPersister {
     static WearPlaybackData.PlaybackState readPlaybackState(@NonNull final Context context) {
         return ProtoUtils.readFromFile(context, FILE_NAME_PLAYBACK_STATE,
                 new WearPlaybackData.PlaybackState());
+    }
+
+    @Nullable
+    static WearPlaybackData.PlaybackPosition readPlaybackPosition(@NonNull final Context context) {
+        return ProtoUtils.readFromFile(context, FILE_NAME_PLAYBACK_POSITION,
+                new WearPlaybackData.PlaybackPosition());
     }
 
     @Nullable

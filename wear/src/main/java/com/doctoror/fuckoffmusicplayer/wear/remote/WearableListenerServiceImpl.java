@@ -102,6 +102,10 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                             onPlaybackStateItemChanged(item);
                             break;
 
+                        case DataPaths.Paths.PLAYBACK_POSITION:
+                            onPlaybackPositionItemChanged(item);
+                            break;
+
                         case DataPaths.Paths.PLAYLIST:
                             onPlaylistChanged(item);
                             break;
@@ -172,6 +176,21 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
         try {
             final WearPlaybackData.PlaybackState s = WearPlaybackData.PlaybackState.parseFrom(data);
             MediaHolder.getInstance(this).setPlaybackState(s);
+        } catch (InvalidProtocolBufferNanoException e) {
+            Log.w(TAG, e);
+        }
+    }
+
+    private void onPlaybackPositionItemChanged(@NonNull final DataItem positionItem) {
+        final byte[] data = positionItem.getData();
+        if (data == null) {
+            MediaHolder.getInstance(this).setPlaybackPosition(null);
+            return;
+        }
+        try {
+            final WearPlaybackData.PlaybackPosition s = WearPlaybackData.PlaybackPosition
+                    .parseFrom(data);
+            MediaHolder.getInstance(this).setPlaybackPosition(s);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, e);
         }

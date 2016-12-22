@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.List;
+
 /**
  * {@link PlaybackReporter} for ScrobbleDroid
  * https://github.com/JJC1138/scrobbledroid/wiki/Developer-API
@@ -37,7 +39,7 @@ final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media) {
+    public void reportTrackChanged(@NonNull final Media media, final int positionInPlaylist) {
         mMedia = media;
         report(media, mIsPlaying);
     }
@@ -67,5 +69,15 @@ final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
             }
             mContext.sendBroadcast(intent);
         }
+    }
+
+    @Override
+    public void reportPositionChanged(final long mediaId, final long position) {
+        // Not supported
+    }
+
+    @Override
+    public void reportPlaylistChanged(@Nullable final List<Media> playlist) {
+        // Not supported
     }
 }

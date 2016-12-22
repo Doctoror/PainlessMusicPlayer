@@ -4,20 +4,22 @@ option java_package = "com.doctoror.commons.wear";
 
 message PlaybackState {
   int32 state = 1;
-  int64 progress = 2;
-  int64 duration = 3;
+}
+
+message PlaybackPosition {
+  int64 mediaId = 1;
+  int64 position = 2;
 }
 
 message Media {
-  int64 id = 7;
-  int32 playlistPosition = 1;
-  string title = 2;
-  int64 duration = 3;
-  string artist = 4;
-  string album = 5;
-  int64 progress = 6;
+  int32 positionInPlaylist = 1;
+  int64 id = 2;
+  string title = 3;
+  int64 duration = 4;
+  string artist = 5;
+  string album = 6;
 }
 
 message Playlist {
-  repeated Media media = 2;
+  repeated Media media = 1;
 }
