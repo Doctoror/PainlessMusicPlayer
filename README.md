@@ -33,8 +33,9 @@ Missing features you might expect from a Music Player
  
 ##Supported formats
 
-All formats that are supported by [ExoPlayer](https://google.github.io/ExoPlayer/supported-formats.html)
-Does not support FLAC
+All formats that are supported by [ExoPlayer](https://google.github.io/ExoPlayer/supported-formats.html).
+
+Does not support FLAC.
 
 ##Screenshots
 
