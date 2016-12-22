@@ -9,17 +9,19 @@ Min API level 16
  - Artists browser
  - Albums browser
  - Genres browser
- - Recently added tracks
+ - Tracks browser
+ - Live playlists (Recently played albums, recently scanned, random playlist)
  - Search
- - Remote controls (Headset and other remote buttons)
  - Seek
  - Themes (Light, Dark and DayNight theme)
  - Equalizer and Bass Boost effects
  - Removing from playlist
  - Deleting files (remove from playlist to see a delete button)
  - Home screen widget
- - Notifies now playing as Android Music player ([works with Simple Last.fm Scrobbler](https://play.google.com/store/apps/details?id=com.adam.aslfms))
- - Has Android Wear app
+ - Notifies now playing using [Scrobble Droid API](https://github.com/JJC1138/scrobbledroid)
+ - Android Wear app
+ - Android Auto support
+ - Remote controls support (headset, car audio)
  
 Missing features you might expect from a Music Player
  - No shuffle, repeat track mode
@@ -32,6 +34,7 @@ Missing features you might expect from a Music Player
 ##Supported formats
 
 All formats that are supported by [ExoPlayer](https://google.github.io/ExoPlayer/supported-formats.html)
+Does not support FLAC
 
 ##Screenshots
 
