@@ -106,7 +106,7 @@
             android:id="@+id/controlsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp">
+            android:paddingTop="28dp">
 
             <TextView
                 android:id="@+id/textPosition"
@@ -159,7 +159,7 @@
                 android:id="@+id/btnPlay"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:layout_margin="6dp"
+                android:layout_margin="28dp"
                 android:background="@drawable/color_accent_circle"
                 android:contentDescription="@string/Previous"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -172,7 +172,7 @@
                 android:id="@+id/btnPrev"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:layout_marginRight="14dp"
+                android:layout_marginRight="18dp"
                 android:background="@drawable/grey_circle_48dp"
                 android:src="@drawable/ic_fast_rewind_white_24dp"
                 android:contentDescription="@string/Previous"
@@ -180,13 +180,13 @@
                 app:layout_constraintEnd_toStartOf="@id/btnPlay"
                 app:layout_constraintTop_toTopOf="@+id/btnPlay"
                 app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
-                android:layout_marginEnd="14dp"/>
+                android:layout_marginEnd="18dp"/>
 
             <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
                 android:id="@+id/btnNext"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:layout_marginLeft="14dp"
+                android:layout_marginLeft="18dp"
                 android:background="@drawable/grey_circle_48dp"
                 android:src="@drawable/ic_fast_forward_white_24dp"
                 android:contentDescription="@string/Next"
@@ -194,7 +194,7 @@
                 app:layout_constraintLeft_toRightOf="@+id/btnPlay"
                 app:layout_constraintTop_toTopOf="@+id/btnPlay"
                 app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
-                android:layout_marginStart="14dp"/>
+                android:layout_marginStart="18dp"/>
 
         </android.support.constraint.ConstraintLayout>
 
