@@ -16,6 +16,7 @@ android {
 
     lintOptions {
         checkAllWarnings true
+        disable 'GoogleAppIndexingWarning'
     }
 
     compileOptions {
@@ -77,5 +78,5 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'io.reactivex:rxjava:1.2.3'
+    compile 'io.reactivex:rxjava:1.2.4'
 }
