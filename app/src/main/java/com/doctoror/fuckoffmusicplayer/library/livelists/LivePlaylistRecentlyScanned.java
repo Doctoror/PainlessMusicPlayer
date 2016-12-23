@@ -36,6 +36,6 @@ public final class LivePlaylistRecentlyScanned implements LivePlaylist {
                 TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 MediaStore.Audio.Media.DATE_ADDED + " DESC",
-                50);
+                100);
     }
 }

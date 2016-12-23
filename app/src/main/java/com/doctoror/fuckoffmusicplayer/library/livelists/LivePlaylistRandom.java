@@ -35,7 +35,7 @@ public final class LivePlaylistRandom implements LivePlaylist {
                 TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()",
-                50);
+                100);
     }
 
 }
