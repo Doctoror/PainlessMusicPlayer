@@ -29,7 +29,8 @@
         android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        tools:ignore="InconsistentLayout">
 
         <com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout
             android:id="@+id/appBar"
