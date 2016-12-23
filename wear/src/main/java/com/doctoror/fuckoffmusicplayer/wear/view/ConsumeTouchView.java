@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.wear.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -43,6 +44,7 @@ public class ConsumeTouchView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
         return true;
