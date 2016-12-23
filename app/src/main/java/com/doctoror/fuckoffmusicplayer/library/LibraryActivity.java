@@ -209,7 +209,7 @@ public final class LibraryActivity extends BaseActivity {
     }
 
     private void requestPermission() {
-        mPermissionRequested = true;
+        sPermissionRequested = mPermissionRequested = true;
         getRxPermissions().request(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     mHasPermissions = granted;
