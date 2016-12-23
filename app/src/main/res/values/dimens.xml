@@ -7,8 +7,8 @@
     <dimen name="album_grid_spacing">2dp</dimen>
     <dimen name="list_drag_selected_item_elevation">48dp</dimen>
 
-    <dimen name="collapsingToolbarHeightConditionalAlbums">164dp</dimen>
-    <dimen name="collapsingToolbarHeightAlbum">264dp</dimen>
+    <dimen name="collapsingToolbarHeightConditionalAlbums">140dp</dimen>
+    <dimen name="collapsingToolbarHeightAlbum">140dp</dimen>
 
     <dimen name="toolbarCardViewMargin">88dp</dimen>
     <dimen name="toolbarCardViewOverlap">64dp</dimen>

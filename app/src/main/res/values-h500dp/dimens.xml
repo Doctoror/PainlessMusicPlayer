@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="collapsingToolbarHeightConditionalAlbums">164dp</dimen>
+    <dimen name="collapsingToolbarHeightAlbum">230dp</dimen>
+</resources>
