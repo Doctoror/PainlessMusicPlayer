@@ -21,6 +21,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -98,13 +99,14 @@ final class PackageValidator {
     /**
      * @return false if the caller is not authorized to get data from this MediaBrowserService
      */
+    @SuppressLint("PackageManagerGetSignatures")
     boolean isCallerAllowed(Context context, String callingPackage, int callingUid) {
         // Always allow calls from the framework, self app or development environment.
         if (Process.SYSTEM_UID == callingUid || Process.myUid() == callingUid) {
             return true;
         }
-        PackageManager packageManager = context.getPackageManager();
-        PackageInfo packageInfo;
+        final PackageManager packageManager = context.getPackageManager();
+        final PackageInfo packageInfo;
         try {
             packageInfo = packageManager
                     .getPackageInfo(callingPackage, PackageManager.GET_SIGNATURES);
@@ -116,11 +118,11 @@ final class PackageValidator {
             Log.w(TAG, "Caller has more than one signature certificate!");
             return false;
         }
-        String signature = Base64.encodeToString(
+        final String signature = Base64.encodeToString(
                 packageInfo.signatures[0].toByteArray(), Base64.NO_WRAP);
 
         // Test for known signatures:
-        List<CallerInfo> validCallers = mValidCertificates.get(signature);
+        final List<CallerInfo> validCallers = mValidCertificates.get(signature);
         if (validCallers == null) {
             if (Log.logVEnabled()) {
                 Log.v(TAG, "Signature for caller " + callingPackage + " is not valid: \n"
