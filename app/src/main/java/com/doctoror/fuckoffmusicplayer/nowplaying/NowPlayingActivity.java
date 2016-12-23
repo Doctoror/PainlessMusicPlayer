@@ -31,12 +31,11 @@ import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -48,6 +47,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
@@ -55,6 +55,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -143,7 +144,8 @@ public final class NowPlayingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
 
-        if (!RxPermissions.getInstance(this).isGranted(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
             final Intent intent = Intent.makeMainActivity(
                     new ComponentName(this, LibraryActivity.class));
             startActivity(intent);
@@ -429,6 +431,14 @@ public final class NowPlayingActivity extends BaseActivity {
 
             case PlaybackState.STATE_PLAYING:
                 PlaybackService.pause(this);
+                break;
+
+            case PlaybackState.STATE_ERROR:
+                PlaybackService.play(this);
+                break;
+
+            case PlaybackState.STATE_LOADING:
+                // Do nothing
                 break;
         }
     }

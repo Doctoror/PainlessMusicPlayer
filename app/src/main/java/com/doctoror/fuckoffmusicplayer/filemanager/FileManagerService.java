@@ -15,10 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.filemanager;
 
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.util.FileUtils;
-import com.doctoror.commons.util.Log;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.parceler.Parcels;
 
@@ -26,12 +25,13 @@ import android.Manifest;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 /**
- * Created by Yaroslav Mytkalyk on 30.10.16.
+ * Service for managing files
  */
-
 public final class FileManagerService extends IntentService {
 
     private static final String TAG = "FileManagerService";
@@ -61,8 +61,8 @@ public final class FileManagerService extends IntentService {
     }
 
     private void onActionMediaDelete(@NonNull final Intent intent) {
-        if (!RxPermissions.getInstance(this).isGranted(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
             Log.w(TAG, "WRITE_EXTERNAL_STORAGE permission not granted");
             return;
         }

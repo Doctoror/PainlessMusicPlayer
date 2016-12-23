@@ -24,7 +24,6 @@ import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
@@ -96,6 +95,8 @@ public final class PlaylistActivity extends BaseActivity implements
     private final PlaylistActivityModel mModel = new PlaylistActivityModel();
     private PlaylistRecyclerAdapter mAdapter;
     private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
+
+    private RxPermissions mRxPermissions;
 
     private CurrentPlaylist mCurrentPlaylist;
 
@@ -173,16 +174,16 @@ public final class PlaylistActivity extends BaseActivity implements
         mAdapter.registerAdapterDataObserver(mAdapterDataObserver);
         mModel.setRecyclerAdpter(mAdapter);
 
-        final ActivityPlaylistBinding mBinding = DataBindingUtil
-                .setContentView(this, R.layout.activity_playlist);
-        mBinding.setModel(mModel);
+        final com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding binding
+                = DataBindingUtil.setContentView(this, R.layout.activity_playlist);
+        binding.setModel(mModel);
 
         ButterKnife.bind(this);
 
         appBar.addOnOffsetChangedListener(
                 (appBarLayout, verticalOffset) -> mAppbarOffset = verticalOffset);
 
-        initAlbumArtAndToolbar(mBinding);
+        initAlbumArtAndToolbar(binding);
         initRecyclerView();
 
         mFinishWhenDialogDismissed = false;
@@ -243,7 +244,8 @@ public final class PlaylistActivity extends BaseActivity implements
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void initAlbumArtAndToolbar(@NonNull final ActivityPlaylistBinding binding) {
+    private void initAlbumArtAndToolbar(
+            @NonNull final com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding binding) {
         setSupportActionBar(toolbar);
         ViewCompat.setTransitionName(binding.getRoot(), PlaylistActivity.TRANSITION_NAME_ROOT);
         ViewCompat.setTransitionName(albumArt, PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
@@ -359,14 +361,21 @@ public final class PlaylistActivity extends BaseActivity implements
         }
     }
 
+    @NonNull
+    private RxPermissions getRxPermissions() {
+        if (mRxPermissions == null) {
+            mRxPermissions = new RxPermissions(this);
+        }
+        return mRxPermissions;
+    }
+
     @Override
     public void onDeleteClick(@NonNull final Media media) {
         if (mDeleteSession == null) {
             mDeleteSession = new DeleteSession(media);
         }
         mDeleteSession.permissionRequested = true;
-        RxPermissions.getInstance(this).request(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        getRxPermissions().request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe(result -> {
                     if (result) {
                         if (!isFinishingAfterTransition()) {

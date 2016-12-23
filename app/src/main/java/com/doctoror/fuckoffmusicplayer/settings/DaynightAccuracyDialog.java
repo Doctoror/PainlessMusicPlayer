@@ -10,9 +10,8 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 
 /**
- * Created by Yaroslav Mytkalyk on 02.11.16.
+ * Offers to switch ACCESS_COARSE_LOCATION permission for better daynight theme accuracy
  */
-
 public final class DaynightAccuracyDialog extends DialogFragment {
 
     @Override
@@ -25,7 +24,7 @@ public final class DaynightAccuracyDialog extends DialogFragment {
     }
 
     private void onAllowClick() {
-        RxPermissions.getInstance(getActivity())
+        new RxPermissions(getActivity())
                 .request(Manifest.permission.ACCESS_COARSE_LOCATION)
                 .subscribe();
     }

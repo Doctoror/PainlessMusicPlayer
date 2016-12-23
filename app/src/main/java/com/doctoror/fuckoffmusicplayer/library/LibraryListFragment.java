@@ -15,18 +15,22 @@
  */
 package com.doctoror.fuckoffmusicplayer.library;
 
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
 import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
 
+import android.Manifest;
 import android.app.Fragment;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -38,10 +42,11 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 /**
- * Created by Yaroslav Mytkalyk on 26.10.16.
+ * Fragment used for library list
  */
-
 public abstract class LibraryListFragment extends Fragment {
+
+    private static final String TAG = "LibraryListFragment";
 
     private static final int ANIMATOR_CHILD_PROGRESS = 0;
     private static final int ANIMATOR_CHILD_EMPTY = 1;
@@ -99,13 +104,18 @@ public abstract class LibraryListFragment extends Fragment {
     }
 
     private void restartLoader(@Nullable final String searchFilter) {
-        final RxCursorLoader.Query params = newQuery(searchFilter);
-        if (mLoaderObservable == null) {
-            mLoaderObservable = RxCursorLoader
-                    .create(getActivity().getContentResolver(), params);
-            mLoaderObservable.subscribe(mObserver);
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            final RxCursorLoader.Query params = newQuery(searchFilter);
+            if (mLoaderObservable == null) {
+                mLoaderObservable = RxCursorLoader
+                        .create(getActivity().getContentResolver(), params);
+                mLoaderObservable.subscribe(mObserver);
+            } else {
+                mLoaderObservable.reloadWithNewQuery(params);
+            }
         } else {
-            mLoaderObservable.reloadWithNewQuery(params);
+            Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
         }
     }
 

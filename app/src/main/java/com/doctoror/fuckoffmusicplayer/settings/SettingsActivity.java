@@ -10,17 +10,18 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.wear.WearSupportMessedUpDialogFragment;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
@@ -174,8 +175,8 @@ public final class SettingsActivity extends BaseActivity {
     }
 
     private void checkPermissions() {
-        if (!RxPermissions.getInstance(this)
-                .isGranted(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
             suppressDayNightWarnings = Boolean.TRUE;
             new DaynightAccuracyDialog().show(getFragmentManager(), TAG_DIALOG_DAYNIGHT_ACCURACY);
         }

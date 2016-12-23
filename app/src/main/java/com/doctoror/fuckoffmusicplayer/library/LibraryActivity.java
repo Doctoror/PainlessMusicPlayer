@@ -29,9 +29,12 @@ import org.parceler.Parcels;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -57,11 +60,17 @@ public final class LibraryActivity extends BaseActivity {
     private static final int ANIMATOR_CHILD_PERMISSION_DENIED = 1;
     private static final int ANIMATOR_CHILD_CONTENT = 2;
 
+    // Request once per-app instance
+    private static boolean sPermissionRequested;
+
     private final SearchSubject mSearchSubject = SearchSubject.getInstance();
     private LibraryPrefs mPrefs;
 
     private boolean mHasPermissions;
     private boolean mSearchIconified;
+    private boolean mPermissionRequested = sPermissionRequested;
+
+    private RxPermissions mRxPermissions;
 
     @BindView(R.id.animator)
     ViewAnimator mViewAnimator;
@@ -93,7 +102,8 @@ public final class LibraryActivity extends BaseActivity {
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);
         }
-        requestPermission();
+
+        requestPermissionIfNeeded();
     }
 
     private void restoreInstanceState(final Bundle savedInstanceState) {
@@ -101,6 +111,7 @@ public final class LibraryActivity extends BaseActivity {
         final InstanceState state = Parcels
                 .unwrap(savedInstanceState.getParcelable(KEY_INSTANCE_STATE));
         if (state != null) {
+            mPermissionRequested = state.permissionRequested || sPermissionRequested;
             mSearchIconified = state.searchIconified;
             mSearchSubject.onNext(state.searchQuery);
         }
@@ -110,6 +121,7 @@ public final class LibraryActivity extends BaseActivity {
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         final InstanceState state = new InstanceState();
+        state.permissionRequested = mPermissionRequested;
         state.searchIconified = mSearchIconified;
         state.searchQuery = mSearchSubject.getValue();
         outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(state));
@@ -176,8 +188,29 @@ public final class LibraryActivity extends BaseActivity {
         requestPermission();
     }
 
+    @NonNull
+    private RxPermissions getRxPermissions() {
+        if (mRxPermissions == null) {
+            mRxPermissions = new RxPermissions(this);
+        }
+        return mRxPermissions;
+    }
+
+    private void requestPermissionIfNeeded() {
+        mHasPermissions = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        if (mHasPermissions) {
+            onPermissionGranted();
+        } else if (mPermissionRequested) {
+            onPermissionDenied();
+        } else {
+            requestPermission();
+        }
+    }
+
     private void requestPermission() {
-        RxPermissions.getInstance(this).request(Manifest.permission.READ_EXTERNAL_STORAGE)
+        mPermissionRequested = true;
+        getRxPermissions().request(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     mHasPermissions = granted;
                     if (granted) {
@@ -208,5 +241,6 @@ public final class LibraryActivity extends BaseActivity {
 
         String searchQuery;
         boolean searchIconified;
+        boolean permissionRequested;
     }
 }
