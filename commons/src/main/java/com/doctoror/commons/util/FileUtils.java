@@ -74,8 +74,8 @@ public final class FileUtils {
     public static boolean writeOrDeletePrivateFile(@NonNull final Context context,
             @NonNull final String fileName,
             @Nullable final byte[] data) {
+        context.deleteFile(fileName);
         if (data == null) {
-            context.deleteFile(fileName);
             return true;
         } else {
             OutputStream os = null;

@@ -15,6 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.effects;
 
+import com.doctoror.commons.util.Log;
+import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.effects.nano.EffectsProto;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
@@ -23,13 +28,18 @@ import android.support.annotation.Nullable;
 
 import java.util.Observable;
 
+import rx.schedulers.Schedulers;
+
 /**
  * Created by Yaroslav Mytkalyk on 22.10.16.
  */
 
 public final class AudioEffects extends Observable {
 
-    private static AudioEffects sInstance;
+    private static final String TAG = "AudioEffects";
+
+    @SuppressLint("StaticFieldLeak") // Application Context won't leak
+    private static volatile AudioEffects sInstance;
 
     @NonNull
     public static AudioEffects getInstance(@NonNull final Context context) {
@@ -43,7 +53,19 @@ public final class AudioEffects extends Observable {
         return sInstance;
     }
 
-    private final AudioEffectsPrefs mPrefs;
+    private final Object SETTINGS_LOCK = new Object();
+
+    private static final String FILE_NAME_BASS_BOOST = "bass_boost_settings";
+    private static final String FILE_NAME_EQUALIZER = "equalizer_settings";
+
+    @NonNull
+    private final Context mContext;
+
+    @NonNull
+    private final EffectsProto.BassBoostSettings mBassBoostSettings;
+
+    @NonNull
+    private final EffectsProto.EqualizerSettings mEqualizerSettings;
 
     private BassBoost mBassBoost;
     private Equalizer mEqualizer;
@@ -51,12 +73,31 @@ public final class AudioEffects extends Observable {
     private int mSessionId;
 
     private AudioEffects(@NonNull final Context context) {
-        mPrefs = AudioEffectsPrefs.with(context);
+        mContext = context;
+        synchronized (SETTINGS_LOCK) {
+            mBassBoostSettings = ProtoUtils.readFromFileNonNull(context, FILE_NAME_BASS_BOOST,
+                    new EffectsProto.BassBoostSettings());
+            mEqualizerSettings = ProtoUtils.readFromFileNonNull(context, FILE_NAME_EQUALIZER,
+                    new EffectsProto.EqualizerSettings());
+        }
     }
 
-    @NonNull
-    AudioEffectsPrefs getPrefs() {
-        return mPrefs;
+    boolean isBassBoostEnabled() {
+        synchronized (SETTINGS_LOCK) {
+            return mBassBoostSettings.enabled;
+        }
+    }
+
+    boolean isEqualizerEnabled() {
+        synchronized (SETTINGS_LOCK) {
+            return mEqualizerSettings.enabled;
+        }
+    }
+
+    int getBassBoostStrength() {
+        synchronized (SETTINGS_LOCK) {
+            return mBassBoostSettings.strength;
+        }
     }
 
     int getSessionId() {
@@ -72,11 +113,17 @@ public final class AudioEffects extends Observable {
         if (mSessionId != sessionId) {
             relese();
             mSessionId = sessionId;
-            if (mPrefs.isBassBoostEnabled()) {
+            final boolean bassBoostEnabled;
+            final boolean equalizerEnabled;
+            synchronized (SETTINGS_LOCK) {
+                bassBoostEnabled = mBassBoostSettings.enabled;
+                equalizerEnabled = mEqualizerSettings.enabled;
+            }
+            if (bassBoostEnabled) {
                 restoreBassBoost();
                 setChanged();
             }
-            if (mPrefs.isEqualizerEnabled()) {
+            if (equalizerEnabled) {
                 restoreEqualizer();
                 setChanged();
             }
@@ -102,36 +149,50 @@ public final class AudioEffects extends Observable {
     }
 
     void setBassBoostEnabled(final boolean enabled) {
-        mPrefs.setBassBoostEnabled(enabled);
-        if (enabled) {
-            if (mBassBoost == null && mSessionId != 0) {
-                restoreBassBoost();
-                setChanged();
-            }
-        } else {
-            if (mBassBoost != null) {
-                mBassBoost.setEnabled(false);
-                mBassBoost.release();
-                mBassBoost = null;
-                setChanged();
+        synchronized (SETTINGS_LOCK) {
+            if (mBassBoostSettings.enabled != enabled) {
+                mBassBoostSettings.enabled = enabled;
+                if (enabled) {
+                    if (mBassBoost == null && mSessionId != 0) {
+                        restoreBassBoost();
+                        setChanged();
+                    }
+                } else {
+                    if (mBassBoost != null) {
+                        mBassBoost.setEnabled(false);
+                        mBassBoost.release();
+                        mBassBoost = null;
+                        setChanged();
+                    }
+                }
+                rx.Observable.create(s -> persistBassBoostSettingsBlocking())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
             }
         }
         notifyObservers();
     }
 
     void setEqualizerEnabled(final boolean enabled) {
-        mPrefs.setEqualizerEnabled(enabled);
-        if (enabled) {
-            if (mEqualizer == null && mSessionId != 0) {
-                restoreEqualizer();
-                setChanged();
-            }
-        } else {
-            if (mEqualizer != null) {
-                mEqualizer.setEnabled(false);
-                mEqualizer.release();
-                mEqualizer = null;
-                setChanged();
+        synchronized (SETTINGS_LOCK) {
+            if (mEqualizerSettings.enabled != enabled) {
+                mEqualizerSettings.enabled = enabled;
+                if (enabled) {
+                    if (mEqualizer == null && mSessionId != 0) {
+                        restoreEqualizer();
+                        setChanged();
+                    }
+                } else {
+                    if (mEqualizer != null) {
+                        mEqualizer.setEnabled(false);
+                        mEqualizer.release();
+                        mEqualizer = null;
+                        setChanged();
+                    }
+                }
+                rx.Observable.create(s -> persistEqualizerSettingsBlocking())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
             }
         }
         notifyObservers();
@@ -139,27 +200,87 @@ public final class AudioEffects extends Observable {
 
     private void restoreBassBoost() {
         mBassBoost = new BassBoost(Integer.MAX_VALUE, mSessionId);
-        mBassBoost.setStrength((short) mPrefs.getBassBoostStrength());
+        synchronized (SETTINGS_LOCK) {
+            mBassBoost.setStrength((short) mBassBoostSettings.strength);
+        }
         mBassBoost.setEnabled(true);
     }
 
     private void restoreEqualizer() {
         mEqualizer = new Equalizer(Integer.MAX_VALUE, mSessionId);
-        final EqualizerSettingsWrapper wrapper = mPrefs.fetchEqualizerSettings();
-        if (wrapper != null) {
-            mEqualizer.setProperties(wrapper.settings);
+
+        synchronized (SETTINGS_LOCK) {
+            final EffectsProto.EqualizerSettings proto = mEqualizerSettings;
+            if (proto.curPreset != 0
+                    || proto.numBands != 0
+                    || proto.bandValues.length != 0) {
+                final Equalizer.Settings settings = new Equalizer.Settings();
+                settings.curPreset = (short) proto.curPreset;
+                settings.numBands = (short) proto.numBands;
+                settings.bandLevels = new short[proto.bandValues.length];
+                for (int i = 0; i < settings.bandLevels.length; i++) {
+                    settings.bandLevels[i] = (short) proto.bandValues[i];
+                }
+
+                System.out.println("RESTORING: " + proto);
+                System.out.println("RESTORING: " + settings);
+
+                try {
+                    mEqualizer.setProperties(settings);
+                } catch (IllegalArgumentException e) {
+                    Log.wtf(TAG, "Failed restoring equalizer settings", e);
+                }
+            }
         }
+
         mEqualizer.setEnabled(true);
     }
 
     void setBassBoostStrength(final int strength) {
-        mPrefs.setBassBoostStrength(strength);
-        if (mBassBoost != null) {
-            mBassBoost.setStrength((short) strength);
+        System.out.println("BBS: " + strength);
+        synchronized (SETTINGS_LOCK) {
+            if (mBassBoostSettings.strength != strength) {
+                mBassBoostSettings.strength = strength;
+                if (mBassBoost != null) {
+                    mBassBoost.setStrength((short) strength);
+                }
+                rx.Observable.create(s -> persistBassBoostSettingsBlocking())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
+            }
         }
     }
 
     void saveEqualizerSettings(@NonNull final Equalizer.Settings settings) {
-        mPrefs.setEqualizerSettings(new EqualizerSettingsWrapper(settings));
+        synchronized (SETTINGS_LOCK) {
+            final EffectsProto.EqualizerSettings proto = mEqualizerSettings;
+            proto.curPreset = settings.curPreset;
+            proto.numBands = settings.numBands;
+
+            final short[] bandLevels = settings.bandLevels;
+            proto.bandValues = new int[bandLevels != null ? bandLevels.length : 0];
+            if (bandLevels != null) {
+                for (int i = 0; i < bandLevels.length; i++) {
+                    proto.bandValues[i] = bandLevels[i];
+                }
+            }
+        }
+
+        System.out.println("WRITING: " + mEqualizerSettings);
+
+        rx.Observable.create(s -> persistEqualizerSettingsBlocking()).subscribeOn(Schedulers.io())
+                .subscribe();
+    }
+
+    private void persistBassBoostSettingsBlocking() {
+        synchronized (SETTINGS_LOCK) {
+            ProtoUtils.writeToFile(mContext, FILE_NAME_BASS_BOOST, mBassBoostSettings);
+        }
+    }
+
+    private void persistEqualizerSettingsBlocking() {
+        synchronized (SETTINGS_LOCK) {
+            ProtoUtils.writeToFile(mContext, FILE_NAME_EQUALIZER, mEqualizerSettings);
+        }
     }
 }

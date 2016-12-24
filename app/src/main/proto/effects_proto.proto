@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "com.doctoror.fuckoffmusicplayer.effects";
+
+message BassBoostSettings {
+  bool enabled = 1;
+  int32 strength = 2;
+}
+
+message EqualizerSettings {
+  bool enabled = 1;  
+  sint32 curPreset = 2;
+  int32 numBands = 3;
+  repeated sint32 bandValues = 4;
+}

@@ -36,7 +36,7 @@ public final class ProtoUtils {
     }
 
     public static byte[] toByteArray(@NonNull final MessageNano messageNano) throws IOException {
-        final byte[] output = new byte[messageNano.getCachedSize()];
+        final byte[] output = new byte[messageNano.getSerializedSize()];
         messageNano.writeTo(CodedOutputByteBufferNano.newInstance(output));
         return output;
     }
@@ -67,6 +67,14 @@ public final class ProtoUtils {
         }
 
         return message;
+    }
+
+    @NonNull
+    public static <T extends MessageNano> T readFromFileNonNull(@NonNull final Context context,
+            @NonNull final String fileName,
+            @NonNull final T obj) {
+        final T message = readFromFile(context, fileName, obj);
+        return message != null ? message : obj;
     }
 
 }

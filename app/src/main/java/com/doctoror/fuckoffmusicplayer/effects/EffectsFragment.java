@@ -83,10 +83,9 @@ public final class EffectsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        final AudioEffectsPrefs prefs = mAudioEffects.getPrefs();
-        mModel.setBassBoostStrength(prefs.getBassBoostStrength());
-        mModel.setBassBoostEnabled(prefs.isBassBoostEnabled());
-        mModel.setEqualizerEnabled(prefs.isEqualizerEnabled());
+        mModel.setBassBoostStrength(mAudioEffects.getBassBoostStrength());
+        mModel.setBassBoostEnabled(mAudioEffects.isBassBoostEnabled());
+        mModel.setEqualizerEnabled(mAudioEffects.isEqualizerEnabled());
         mBinding.equalizerView.setEqualizer(mAudioEffects.getEqualizer());
     }
 
