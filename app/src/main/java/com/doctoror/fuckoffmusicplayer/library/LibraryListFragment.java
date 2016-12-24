@@ -94,13 +94,16 @@ public abstract class LibraryListFragment extends Fragment {
     public void onStop() {
         super.onStop();
         onDataReset();
+        if (mSearchSubscription != null) {
+            mSearchSubscription.unsubscribe();
+        }
+
         if (mSubscription != null) {
             mSubscription.unsubscribe();
             mSubscription = null;
         }
-        if (mSearchSubscription != null) {
-            mSearchSubscription.unsubscribe();
-        }
+
+        mLoaderObservable = null;
     }
 
     private void restartLoader(@Nullable final String searchFilter) {
@@ -110,7 +113,7 @@ public abstract class LibraryListFragment extends Fragment {
             if (mLoaderObservable == null) {
                 mLoaderObservable = RxCursorLoader
                         .create(getActivity().getContentResolver(), params);
-                mLoaderObservable.subscribe(mObserver);
+                mSubscription = mLoaderObservable.subscribe(mObserver);
             } else {
                 mLoaderObservable.reloadWithNewQuery(params);
             }
