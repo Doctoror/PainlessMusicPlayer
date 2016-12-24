@@ -22,10 +22,11 @@ import com.doctoror.fuckoffmusicplayer.settings.Theme;
 
 import android.app.Application;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
 /**
- * Created by Yaroslav Mytkalyk on 18.10.16.
+ * Application
  */
 public final class App extends Application {
 
@@ -37,6 +38,18 @@ public final class App extends Application {
         Log.setLogI(BuildConfig.DEBUG);
         Log.setLogW(BuildConfig.DEBUG);
         Log.setLogWtf(BuildConfig.DEBUG);
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+        }
 
         AppCompatDelegate.setDefaultNightMode(Theme.getInstance(this).getDayNightMode());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
