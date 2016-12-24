@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -95,7 +96,24 @@ public final class NowPlayingActivity extends BaseActivity {
         if (albumArt != null) {
             final ActivityOptionsCompat options = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(activity, albumArt, TRANSITION_NAME_ALBUM_ART);
-            activity.startActivity(intent, options.toBundle());
+            try {
+                activity.startActivity(intent, options.toBundle());
+            } catch (IllegalArgumentException e) {
+                // TODO why?
+                //Process: com.doctoror.fuckoffmusicplayer.debug, PID: 2025
+                //java.lang.IllegalArgumentException
+                //at android.os.Parcel.readException(Parcel.java:1688)
+                //at android.os.Parcel.readException(Parcel.java:1637)
+                //at android.app.ActivityManagerProxy.isTopOfTask(ActivityManagerNative.java:5505)
+                //at android.app.Activity.isTopOfTask(Activity.java:5978)
+                //at android.app.Activity.cancelInputsAndStartExitTransition(Activity.java:4267)
+                //at android.app.Activity.startActivityForResult(Activity.java:4244)
+                //at android.support.v4.app.BaseFragmentActivityJB.startActivityForResult(BaseFragmentActivityJB.java:50)
+                //at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:79)
+                //at android.app.Activity.startActivity(Activity.java:4518)
+                //at com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity.start(NowPlayingActivity.java:99)
+                activity.startActivity(intent);
+            }
         } else if (listItemView != null) {
             final ActivityOptionsCompat options = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(activity, listItemView, TRANSITION_NAME_ROOT);
@@ -107,7 +125,9 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
     private final Receiver mReceiver = new Receiver();
+
     private CurrentPlaylist mPlaylist;
+    private PlaybackParams mPlaybackParams;
 
     @PlaybackState.State
     private int mState = PlaybackState.STATE_IDLE;
@@ -158,7 +178,9 @@ public final class NowPlayingActivity extends BaseActivity {
 
         mTransitionPostponed = false;
         mTransitionStarted = false;
+
         mPlaylist = CurrentPlaylist.getInstance(this);
+        mPlaybackParams = PlaybackParams.getInstance(this);
 
         final ActivityNowplayingBinding binding = DataBindingUtil.setContentView(
                 this, R.layout.activity_nowplaying);
@@ -168,6 +190,9 @@ public final class NowPlayingActivity extends BaseActivity {
         ViewCompat.setTransitionName(root, TRANSITION_NAME_ROOT);
 
         mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);
+        mModel.setShuffleEnabled(mPlaybackParams.isShuffleEnabled());
+        mModel.setRepeatMode(mPlaybackParams.getRepeatMode());
+
         binding.setModel(mModel);
         setSupportActionBar(toolbar);
 
@@ -451,6 +476,37 @@ public final class NowPlayingActivity extends BaseActivity {
     @OnClick(R.id.btnNext)
     public void onNextClick() {
         PlaybackService.next(this);
+    }
+
+    @OnClick(R.id.btnShuffle)
+    public void onShuffleClick() {
+        final boolean newValue = !mPlaybackParams.isShuffleEnabled();
+        mPlaybackParams.setShuffleEnabled(newValue);
+        mModel.setShuffleEnabled(newValue);
+    }
+
+    @OnClick(R.id.btnRepeat)
+    public void onRepeatClick() {
+        @PlaybackParams.RepeatMode final int value;
+        switch (mPlaybackParams.getRepeatMode()) {
+            case PlaybackParams.REPEAT_MODE_NONE:
+                value = PlaybackParams.REPEAT_MODE_PLAYLIST;
+                break;
+
+            case PlaybackParams.REPEAT_MODE_PLAYLIST:
+                value = PlaybackParams.REPEAT_MODE_TRACK;
+                break;
+
+            case PlaybackParams.REPEAT_MODE_TRACK:
+                value = PlaybackParams.REPEAT_MODE_NONE;
+                break;
+
+            default:
+                throw new IllegalArgumentException(
+                        "Unexpected repeat mode: " + mPlaybackParams.getRepeatMode());
+        }
+        mPlaybackParams.setRepeatMode(value);
+        mModel.setRepeatMode(value);
     }
 
     private final CurrentPlaylist.PlaylistObserver mPlaylistObserver

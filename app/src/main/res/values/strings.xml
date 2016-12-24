@@ -87,6 +87,9 @@
         <item>Playlists</item>
     </string-array>
 
+    <string name="Shuffle">Shuffle</string>
+    <string name="Repeat">Repeat</string>
+
     <string name="This_app_wont_support_Android_Wear_because_s">
         This app won’t support Android wear because %1$s
     </string>

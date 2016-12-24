@@ -16,4 +16,5 @@
 -->
 <resources>
     <color name="dividerBackground">#1fffffff</color>
+    <color name="borderlessImageButton">#aaffffff</color>
 </resources>

@@ -22,4 +22,9 @@
     <color name="translucentBackground">#66000000</color>
     <color name="translucentBackgroundDimmer">#88000000</color>
     <color name="dividerBackground">#1f000000</color>
+
+    <color name="greyControl">#60000000</color>
+    <color name="greyControlLight">#60ffffff</color>
+    <color name="borderlessImageButton">#60000000</color>
+
 </resources>

@@ -36,6 +36,7 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
+import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
 import android.app.Service;
@@ -55,9 +56,12 @@ import android.support.annotation.WorkerThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
+import android.util.SparseIntArray;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -222,6 +226,7 @@ public final class PlaybackService extends Service {
 
     private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
             = new AudioBecomingNoisyReceiver();
+
     private final MediaPlayer mMediaPlayer = MediaPlayerFactory.newMediaPlayer();
 
     private CurrentPlaylist mPlaylist;
@@ -233,6 +238,7 @@ public final class PlaybackService extends Service {
 
     private MediaSessionHolder mMediaSessionHolder;
     private PlaybackReporter mPlaybackReporter;
+    private PlaybackParams mPlaybackParams;
 
     private boolean mAudioFocusRequested;
     private boolean mFocusGranted;
@@ -250,6 +256,8 @@ public final class PlaybackService extends Service {
 
     private GoogleApiClient mGoogleApiClientWear;
     private String mPermissionReceivePlaybackState;
+
+    private PlaybackController mPlaybackController;
 
     @Override
     public void onCreate() {
@@ -286,6 +294,8 @@ public final class PlaybackService extends Service {
         mPlaybackReporter = PlaybackReporterFactory
                 .newUniversalReporter(this, mGoogleApiClientWear, mediaSession, mGlide);
 
+        mPlaybackParams = PlaybackParams.getInstance(this);
+
         registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
         registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
 
@@ -293,6 +303,32 @@ public final class PlaybackService extends Service {
         mMediaPlayer.init(this);
 
         mGoogleApiClientWear.connect();
+    }
+
+    @NonNull
+    private PlaybackController getPlaybackController() {
+        boolean created = false;
+        if (mPlaybackController == null) {
+            mPlaybackController = mPlaybackParams.isShuffleEnabled()
+                    ? new PlaybackControllerShuffle()
+                    : new PlaybackControllerNormal();
+            created = true;
+        } else if (mPlaybackParams.isShuffleEnabled()) {
+            if (!PlaybackControllerShuffle.class.equals(mPlaybackController.getClass())) {
+                mPlaybackController = new PlaybackControllerShuffle();
+                created = true;
+            }
+        } else {
+            if (!PlaybackControllerNormal.class.equals(mPlaybackController.getClass())) {
+                mPlaybackController = new PlaybackControllerNormal();
+                created = true;
+            }
+        }
+        if (created) {
+            mPlaybackController.setPlaylist(mPlaylist.getPlaylist());
+            mPlaybackController.setPositionInPlaylist(mPlaylist.getIndex());
+        }
+        return mPlaybackController;
     }
 
     @Nullable
@@ -448,11 +484,11 @@ public final class PlaybackService extends Service {
     }
 
     private void onActionPrev() {
-        playPrev();
+        playPrev(true);
     }
 
     private void onActionNext() {
-        playNext();
+        playNext(true);
     }
 
     private void onActionSeek(final Intent intent) {
@@ -500,7 +536,7 @@ public final class PlaybackService extends Service {
             if (mediaPosition == -1) {
                 Log.w(TAG, "Media with id " + mediaId + " not found in current playlist");
             } else {
-                play(playlist, mediaPosition, false);
+                play(playlist, mediaPosition, false, false);
             }
         }
     }
@@ -513,24 +549,22 @@ public final class PlaybackService extends Service {
     private void playCurrentOrNewPlaylist() {
         final List<Media> playlist = mPlaylist.getPlaylist();
         if (playlist != null && !playlist.isEmpty()) {
-            play(playlist, mPlaylist.getIndex(), true);
+            play(playlist, mPlaylist.getIndex(), true, false);
         } else {
             PlaylistUtils.play(this, new LivePlaylistRecentlyScanned(getResources()).create(this));
         }
     }
 
     private void playCurrent(final boolean mayContinueWhereStopped) {
-        play(mPlaylist.getPlaylist(), mPlaylist.getIndex(), mayContinueWhereStopped);
+        play(mPlaylist.getPlaylist(), mPlaylist.getIndex(), mayContinueWhereStopped, false);
     }
 
-    private void playPrev() {
-        final List<Media> playlist = mPlaylist.getPlaylist();
-        play(playlist, prevPos(playlist, mPlaylist.getIndex()), false);
+    private void playPrev(final boolean isUserAction) {
+        getPlaybackController().playPrev(isUserAction);
     }
 
-    private void playNext() {
-        final List<Media> playlist = mPlaylist.getPlaylist();
-        play(playlist, nextPos(playlist, mPlaylist.getIndex()), false);
+    private void playNext(final boolean isUserAction) {
+        getPlaybackController().playNext(isUserAction);
     }
 
     private void restart() {
@@ -541,8 +575,9 @@ public final class PlaybackService extends Service {
         playCurrent(false);
     }
 
-    private void play(@Nullable final List<Media> list, final int position,
-            final boolean mayContinueWhereStopped) {
+    private void play(@Nullable final List<Media> list,final int position,
+            final boolean mayContinueWhereStopped,
+            final boolean fromPlaybackController) {
         if (list == null) {
             throw new IllegalArgumentException("Playlist is null");
         }
@@ -569,6 +604,10 @@ public final class PlaybackService extends Service {
                 mPlaylist.setPosition(seekPosition);
                 mPlaylist.setMedia(media);
                 mCurrentTrack = media;
+
+                if (!fromPlaybackController) {
+                    getPlaybackController().setPositionInPlaylist(position);
+                }
 
                 reportCurrentMedia();
                 reportCurrentPlaybackPosition();
@@ -597,26 +636,6 @@ public final class PlaybackService extends Service {
                         .create(getApplicationContext(), mGlide, media, mState, mediaSession)));
             }
         }
-    }
-
-    private static int prevPos(@Nullable final List<Media> list, final int position) {
-        if (list == null) {
-            throw new IllegalArgumentException("Playlist is null");
-        }
-        if (position - 1 < 0) {
-            return list.size() - 1;
-        }
-        return position - 1;
-    }
-
-    private static int nextPos(@Nullable final List<Media> list, final int position) {
-        if (list == null) {
-            throw new IllegalArgumentException("Playlist is null");
-        }
-        if (position + 1 >= list.size()) {
-            return 0;
-        }
-        return position + 1;
     }
 
     @Override
@@ -774,11 +793,17 @@ public final class PlaybackService extends Service {
 
         @Override
         public void onPlaylistChanged(@Nullable final List<Media> playlist) {
+            final PlaybackController playbackController = getPlaybackController();
+            playbackController.setPlaylist(playlist);
+            playbackController.setPositionInPlaylist(mPlaylist.getIndex());
             mExecutor.submit(mRunnableReportCurrentPlaylist);
         }
 
         @Override
         public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
+            final PlaybackController playbackController = getPlaybackController();
+            playbackController.setPlaylist(playlist);
+            playbackController.setPositionInPlaylist(mPlaylist.getIndex());
             mExecutor.submit(mRunnableReportCurrentPlaylist);
         }
     };
@@ -815,7 +840,7 @@ public final class PlaybackService extends Service {
             mErrorMessage = null;
             mCurrentTrack = null;
             if (!mDestroying) {
-                playNext();
+                playNext(false);
             }
         }
 
@@ -883,6 +908,173 @@ public final class PlaybackService extends Service {
             final String action = intent.getAction();
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(action)) {
                 stopSelf();
+            }
+        }
+    }
+
+    private interface PlaybackController {
+
+        void playNext(boolean isUserAction);
+        void playPrev(boolean isUserAction);
+
+        void setPlaylist(@Nullable List<Media> playlist);
+        void setPositionInPlaylist(int position);
+    }
+
+    private class PlaybackControllerNormal implements PlaybackController {
+
+        private final Object LOCK = new Object();
+
+        private List<Media> mPlaylist;
+        private int mPosition;
+
+        @Nullable
+        protected final List<Media> getPlaylist() {
+            return mPlaylist;
+        }
+
+        @Override
+        public void playPrev(final boolean isUserAction) {
+            synchronized (LOCK) {
+                if (mPlaylist != null && !mPlaylist.isEmpty()) {
+                    final int repeatMode = mPlaybackParams.getRepeatMode();
+                    switch (repeatMode) {
+                        case PlaybackParams.REPEAT_MODE_NONE:
+                            if (!isUserAction && mPosition == 0) {
+                                onPlay(mPlaylist, mPosition);
+                            } else {
+                                onPlay(mPlaylist, prevPos(mPlaylist, mPosition));
+                            }
+                            break;
+
+                        case PlaybackParams.REPEAT_MODE_PLAYLIST:
+                            onPlay(mPlaylist, prevPos(mPlaylist, mPosition));
+                            break;
+
+                        case PlaybackParams.REPEAT_MODE_TRACK:
+                            if (isUserAction) {
+                                onPlay(mPlaylist, prevPos(mPlaylist, mPosition));
+                            } else {
+                                onPlay(mPlaylist, mPosition);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void playNext(final boolean isUserAction) {
+            synchronized (LOCK) {
+                if (mPlaylist != null && !mPlaylist.isEmpty()) {
+                    final int repeatMode = mPlaybackParams.getRepeatMode();
+                    switch (repeatMode) {
+                        case PlaybackParams.REPEAT_MODE_NONE:
+                            if (!isUserAction && mPosition == mPlaylist.size() - 1) {
+                                stopSelf();
+                            } else {
+                                onPlay(mPlaylist, nextPos(mPlaylist, mPosition));
+                            }
+                            break;
+
+                        case PlaybackParams.REPEAT_MODE_PLAYLIST:
+                            onPlay(mPlaylist, nextPos(mPlaylist, mPosition));
+                            break;
+
+                        case PlaybackParams.REPEAT_MODE_TRACK:
+                            if (isUserAction) {
+                                onPlay(mPlaylist, nextPos(mPlaylist, mPosition));
+                            } else {
+                                onPlay(mPlaylist, mPosition);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void onPlay(@Nullable final List<Media> list, final int position) {
+            mPosition = position;
+            play(list, position);
+        }
+
+        protected void play(@Nullable final List<Media> list, final int position) {
+            PlaybackService.this.play(list, position, false, true);
+        }
+
+        @Override
+        public void setPlaylist(final List<Media> playlist) {
+            synchronized (LOCK) {
+                mPlaylist = playlist;
+            }
+        }
+
+        @Override
+        public void setPositionInPlaylist(final int position) {
+            synchronized (LOCK) {
+                mPosition = position;
+            }
+        }
+
+        private int prevPos(@Nullable final List<Media> list, final int position) {
+            if (list == null) {
+                throw new IllegalArgumentException("Playlist is null");
+            }
+            if (position - 1 < 0) {
+                return list.size() - 1;
+            }
+            return position - 1;
+        }
+
+        private int nextPos(@Nullable final List<Media> list,
+                final int position) {
+            if (list == null) {
+                throw new IllegalArgumentException("Playlist is null");
+            }
+            if (position + 1 >= list.size()) {
+                return 0;
+            }
+            return position + 1;
+        }
+    }
+
+    private final class PlaybackControllerShuffle extends PlaybackControllerNormal {
+
+        private final Object LOCK = new Object();
+
+        @NonNull
+        private final SparseIntArray mShuffledPositions = new SparseIntArray();
+
+        @Override
+        public void setPlaylist(@Nullable final List<Media> playlist) {
+            synchronized (LOCK) {
+                rebuildShuffledPositions(playlist == null ? 0 : playlist.size());
+            }
+            super.setPlaylist(playlist);
+        }
+
+        @Override
+        protected void play(@Nullable final List<Media> list, final int position) {
+            final int shuffledPosition;
+            synchronized (LOCK) {
+                shuffledPosition = mShuffledPositions.get(position);
+            }
+            super.play(list, shuffledPosition);
+        }
+
+        private void rebuildShuffledPositions(final int size) {
+            mShuffledPositions.clear();
+            if (size != 0) {
+                final List<Integer> positions = new ArrayList<>(size);
+                for (int i = 0; i < size; i++) {
+                    positions.add(i);
+                }
+
+                Collections.shuffle(positions, RandomHolder.getInstance().getRandom());
+
+                for (int i = 0; i < size; i++) {
+                    mShuffledPositions.put(i, positions.get(i));
+                }
             }
         }
     }

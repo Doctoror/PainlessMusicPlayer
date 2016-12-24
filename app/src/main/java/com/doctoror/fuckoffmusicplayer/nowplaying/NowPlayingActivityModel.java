@@ -15,7 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
+
 import android.databinding.BaseObservable;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableLong;
 import android.graphics.drawable.Drawable;
@@ -37,6 +40,9 @@ public final class NowPlayingActivityModel extends BaseObservable {
     private final ObservableInt mProgress = new ObservableInt();
 
     private final ObservableInt mBtnPlayRes = new ObservableInt();
+    private final ObservableBoolean mShuffleEnabled = new ObservableBoolean();
+
+    private final ObservableInt mRepeatMode = new ObservableInt();
 
     public String getArt() {
         return mArt;
@@ -102,5 +108,23 @@ public final class NowPlayingActivityModel extends BaseObservable {
 
     public void setBtnPlayRes(final int btnPlayRes) {
         mBtnPlayRes.set(btnPlayRes);
+    }
+
+    @NonNull
+    public ObservableBoolean isShuffleEnabled() {
+        return mShuffleEnabled;
+    }
+
+    public void setShuffleEnabled(final boolean enabled) {
+        mShuffleEnabled.set(enabled);
+    }
+
+    @NonNull
+    public ObservableInt getRepeatMode() {
+        return mRepeatMode;
+    }
+
+    public void setRepeatMode(@PlaybackParams.RepeatMode final int repeatMode) {
+        mRepeatMode.set(repeatMode);
     }
 }

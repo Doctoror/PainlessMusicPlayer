@@ -23,6 +23,8 @@
         <variable
             name="model"
             type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityModel"/>
+
+        <import type="com.doctoror.fuckoffmusicplayer.playback.PlaybackParams"/>
     </data>
 
     <LinearLayout
@@ -160,8 +162,8 @@
 
             <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
                 android:id="@+id/btnPlay"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
+                android:layout_width="@dimen/activity_nowplaying_play_button_size"
+                android:layout_height="@dimen/activity_nowplaying_play_button_size"
                 android:layout_margin="28dp"
                 android:background="@drawable/color_accent_circle"
                 android:contentDescription="@string/Previous"
@@ -173,9 +175,9 @@
 
             <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
                 android:id="@+id/btnPrev"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_marginRight="18dp"
+                android:layout_width="@dimen/activity_nowplaying_button_size"
+                android:layout_height="@dimen/activity_nowplaying_button_size"
+                android:layout_marginRight="8dp"
                 android:background="@drawable/grey_circle_48dp"
                 android:src="@drawable/ic_fast_rewind_white_24dp"
                 android:contentDescription="@string/Previous"
@@ -183,13 +185,13 @@
                 app:layout_constraintEnd_toStartOf="@id/btnPlay"
                 app:layout_constraintTop_toTopOf="@+id/btnPlay"
                 app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
-                android:layout_marginEnd="18dp"/>
+                android:layout_marginEnd="8dp"/>
 
             <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
                 android:id="@+id/btnNext"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:layout_marginLeft="18dp"
+                android:layout_width="@dimen/activity_nowplaying_button_size"
+                android:layout_height="@dimen/activity_nowplaying_button_size"
+                android:layout_marginLeft="8dp"
                 android:background="@drawable/grey_circle_48dp"
                 android:src="@drawable/ic_fast_forward_white_24dp"
                 android:contentDescription="@string/Next"
@@ -197,7 +199,45 @@
                 app:layout_constraintLeft_toRightOf="@+id/btnPlay"
                 app:layout_constraintTop_toTopOf="@+id/btnPlay"
                 app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
-                android:layout_marginStart="18dp"/>
+                android:layout_marginStart="8dp"/>
+
+            <ImageButton
+                android:id="@+id/btnShuffle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/activity_nowplaying_controls_margin_secondary"
+                android:layout_marginLeft="@dimen/activity_nowplaying_controls_margin_secondary"
+                android:padding="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/Next"
+                app:src="@{@drawable/ic_shuffle_black_24dp}"
+                app:activated="@{model.shuffleEnabled}"
+                app:tintNormal="@{@color/borderlessImageButton}"
+                app:useActivatedSrcTint="@{true}"
+                app:layout_constraintStart_toEndOf="@id/btnNext"
+                app:layout_constraintLeft_toRightOf="@+id/btnNext"
+                app:layout_constraintTop_toTopOf="@+id/btnPlay"
+                app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
+                tools:src="@drawable/ic_shuffle_black_24dp"/>
+
+            <ImageButton
+                android:id="@+id/btnRepeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_nowplaying_controls_margin_secondary"
+                android:layout_marginRight="@dimen/activity_nowplaying_controls_margin_secondary"
+                android:padding="12dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/Repeat"
+                app:src="@{model.repeatMode == PlaybackParams.REPEAT_MODE_TRACK ? @drawable/ic_repeat_one_black_24dp : @drawable/ic_repeat_black_24dp}"
+                app:activated="@{model.repeatMode != PlaybackParams.REPEAT_MODE_NONE}"
+                app:tintNormal="@{@color/borderlessImageButton}"
+                app:useActivatedSrcTint="@{true}"
+                app:layout_constraintEnd_toStartOf="@id/btnPrev"
+                app:layout_constraintRight_toLeftOf="@+id/btnPrev"
+                app:layout_constraintTop_toTopOf="@+id/btnPlay"
+                app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
+                tools:src="@drawable/ic_repeat_black_24dp"/>
 
         </android.support.constraint.ConstraintLayout>
 

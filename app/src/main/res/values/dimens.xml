@@ -24,6 +24,12 @@
     <dimen name="activity_library_permission_denied_drawable_padding">0dp</dimen>
     <dimen name="activity_library_permission_denied_button_margin">8dp</dimen>
 
+    <dimen name="activity_nowplaying_button_size">48dp</dimen>
+    <dimen name="activity_nowplaying_play_button_size">58dp</dimen>
+
+    <dimen name="activity_nowplaying_controls_margin">8dp</dimen>
+    <dimen name="activity_nowplaying_controls_margin_secondary">0dp</dimen>
+
     <dimen name="album_grid_spacing">2dp</dimen>
     <dimen name="list_drag_selected_item_elevation">48dp</dimen>
 

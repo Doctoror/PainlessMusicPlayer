@@ -18,13 +18,18 @@ package com.doctoror.fuckoffmusicplayer.util;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.doctoror.fuckoffmusicplayer.R;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingComponent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -100,5 +105,40 @@ public final class BindingAdapters {
     public static void setRecyclerAdapter(@NonNull final RecyclerView recyclerView,
             @Nullable final RecyclerView.Adapter<?> adapter) {
         recyclerView.setAdapter(adapter);
+    }
+
+    @BindingAdapter({"src", "tintNormal", "useActivatedSrcTint"})
+    public static void setUseActivatedSrcTint(@NonNull final ImageView imageView,
+            @Nullable final Drawable src,
+            @ColorInt final int tintNormal,
+            final boolean useActivatedSrcTint) {
+        if (!useActivatedSrcTint || src == null) {
+            imageView.setImageDrawable(src);
+        } else {
+            imageView.setImageDrawable(DrawableUtils
+                    .getTintedDrawable(src, activatedTint(imageView.getContext(), tintNormal)));
+        }
+    }
+
+    @BindingAdapter("activated")
+    public static void setActivated(@NonNull final View view, final boolean activated) {
+        view.setActivated(activated);
+    }
+
+    @NonNull
+    private static ColorStateList activatedTint(@NonNull final Context context,
+            @ColorInt final int tintNormal) {
+
+        final int[][] states = new int[][]{
+                new int[]{android.R.attr.state_activated},
+                new int[0]
+        };
+
+        final int[] colors = new int[]{
+                ThemeUtils.getColor(context.getTheme(), R.attr.colorAccent),
+                tintNormal
+        };
+
+        return new ColorStateList(states, colors);
     }
 }
