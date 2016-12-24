@@ -15,18 +15,28 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback;
 
+import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.playback.nano.PlaybackParamsProto;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Playback config
  */
 public final class PlaybackParams {
 
+    // Application context is not considered as leak
+    @SuppressLint("StaticFieldLeak")
     private static volatile PlaybackParams sInstance;
 
     @NonNull
@@ -40,6 +50,8 @@ public final class PlaybackParams {
         }
         return sInstance;
     }
+
+    private static final String FILE_NAME = "playback_params";
 
     public static final int REPEAT_MODE_NONE = 0;
     public static final int REPEAT_MODE_PLAYLIST = 1;
@@ -55,23 +67,28 @@ public final class PlaybackParams {
 
     }
 
-    private final PlaybackParamsPrefs mPrefs;
+    @NonNull
+    private final Context mContext;
 
     private boolean mShuffleEnabled;
 
-    @RepeatMode private int mRepeatMode;
+    @RepeatMode
+    private int mRepeatMode = REPEAT_MODE_PLAYLIST;
 
     private PlaybackParams(@NonNull final Context context) {
-        mPrefs = PlaybackParamsPrefs.with(context);
-        mShuffleEnabled = mPrefs.isShuffleEnabled();
-        //noinspection WrongConstant
-        mRepeatMode = mPrefs.getRepeatMode();
+        mContext = context;
+
+        final PlaybackParamsProto.PlaybackParams persistent = read();
+        if (persistent != null) {
+            mShuffleEnabled = persistent.shuffle;
+            mRepeatMode = persistent.repeatMode;
+        }
     }
 
     public void setShuffleEnabled(final boolean shuffleEnabled) {
         if (mShuffleEnabled != shuffleEnabled) {
             mShuffleEnabled = shuffleEnabled;
-            mPrefs.setShuffleEnabled(mShuffleEnabled);
+            Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
         }
     }
 
@@ -82,12 +99,25 @@ public final class PlaybackParams {
     public void setRepeatMode(@RepeatMode final int repeatMode) {
         if (mRepeatMode != repeatMode) {
             mRepeatMode = repeatMode;
-            mPrefs.setRepeatMode(repeatMode);
+            Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
         }
     }
 
     @RepeatMode
     public int getRepeatMode() {
         return mRepeatMode;
+    }
+
+    @Nullable
+    private PlaybackParamsProto.PlaybackParams read() {
+        return ProtoUtils.readFromFile(mContext, FILE_NAME,
+                new PlaybackParamsProto.PlaybackParams());
+    }
+
+    private void persist() {
+        final PlaybackParamsProto.PlaybackParams p = new PlaybackParamsProto.PlaybackParams();
+        p.shuffle = mShuffleEnabled;
+        p.repeatMode = mRepeatMode;
+        ProtoUtils.writeToFile(mContext, FILE_NAME, p);
     }
 }
