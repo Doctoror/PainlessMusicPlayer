@@ -68,6 +68,9 @@ public final class PlaybackParams {
     }
 
     @NonNull
+    private final Object LOCK = new Object();
+
+    @NonNull
     private final Context mContext;
 
     private boolean mShuffleEnabled;
@@ -80,32 +83,42 @@ public final class PlaybackParams {
 
         final PlaybackParamsProto.PlaybackParams persistent = read();
         if (persistent != null) {
-            mShuffleEnabled = persistent.shuffle;
-            mRepeatMode = persistent.repeatMode;
+            synchronized (LOCK) {
+                mShuffleEnabled = persistent.shuffle;
+                mRepeatMode = persistent.repeatMode;
+            }
         }
     }
 
     public void setShuffleEnabled(final boolean shuffleEnabled) {
-        if (mShuffleEnabled != shuffleEnabled) {
-            mShuffleEnabled = shuffleEnabled;
-            Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
+        synchronized (LOCK) {
+            if (mShuffleEnabled != shuffleEnabled) {
+                mShuffleEnabled = shuffleEnabled;
+                Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
+            }
         }
     }
 
     public boolean isShuffleEnabled() {
-        return mShuffleEnabled;
+        synchronized (LOCK) {
+            return mShuffleEnabled;
+        }
     }
 
     public void setRepeatMode(@RepeatMode final int repeatMode) {
-        if (mRepeatMode != repeatMode) {
-            mRepeatMode = repeatMode;
-            Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
+        synchronized (LOCK) {
+            if (mRepeatMode != repeatMode) {
+                mRepeatMode = repeatMode;
+                Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
+            }
         }
     }
 
     @RepeatMode
     public int getRepeatMode() {
-        return mRepeatMode;
+        synchronized (LOCK) {
+            return mRepeatMode;
+        }
     }
 
     @Nullable
@@ -115,9 +128,11 @@ public final class PlaybackParams {
     }
 
     private void persist() {
-        final PlaybackParamsProto.PlaybackParams p = new PlaybackParamsProto.PlaybackParams();
-        p.shuffle = mShuffleEnabled;
-        p.repeatMode = mRepeatMode;
-        ProtoUtils.writeToFile(mContext, FILE_NAME, p);
+        synchronized (LOCK) {
+            final PlaybackParamsProto.PlaybackParams p = new PlaybackParamsProto.PlaybackParams();
+            p.shuffle = mShuffleEnabled;
+            p.repeatMode = mRepeatMode;
+            ProtoUtils.writeToFile(mContext, FILE_NAME, p);
+        }
     }
 }
