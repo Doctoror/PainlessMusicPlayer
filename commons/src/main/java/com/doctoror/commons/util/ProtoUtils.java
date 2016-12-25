@@ -35,6 +35,7 @@ public final class ProtoUtils {
         throw new UnsupportedOperationException();
     }
 
+    @NonNull
     public static byte[] toByteArray(@NonNull final MessageNano messageNano) throws IOException {
         final byte[] output = new byte[messageNano.getSerializedSize()];
         messageNano.writeTo(CodedOutputByteBufferNano.newInstance(output));
