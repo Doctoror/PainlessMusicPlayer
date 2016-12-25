@@ -59,7 +59,10 @@ public final class RecentPlaylistsManager {
     }
 
     @NonNull
-    private final Object LOCK = new Object();
+    private final Object mLock = new Object();
+
+    @NonNull
+    private final Object mLockIO = new Object();
 
     @NonNull
     private final Context mContext;
@@ -73,7 +76,7 @@ public final class RecentPlaylistsManager {
     }
 
     public void clear() {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             mRecentAlbums.clear();
         }
         persist();
@@ -85,7 +88,7 @@ public final class RecentPlaylistsManager {
         if (albums != null) {
             final long[] ids = albums.ids;
             if (ids != null) {
-                synchronized (LOCK) {
+                synchronized (mLock) {
                     //noinspection ForLoopReplaceableByForEach
                     for (int i = 0; i < ids.length; i++) {
                         mRecentAlbums.add(ids[i]);
@@ -110,13 +113,13 @@ public final class RecentPlaylistsManager {
             }
         }
         if (result) {
-            persistSync();
+            persistBlocking();
         }
     }
 
     private boolean storeAlbumInternal(final long albumId, boolean persist) {
         boolean result = false;
-        synchronized (LOCK) {
+        synchronized (mLock) {
             // If already contains
             final long[] array = CollectionUtils.toLongArray(mRecentAlbums);
             if (array.length == 0 || array[array.length - 1] != albumId) {
@@ -141,20 +144,22 @@ public final class RecentPlaylistsManager {
 
     @NonNull
     public long[] getRecentAlbums() {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             return CollectionUtils.toReverseLongArray(mRecentAlbums);
         }
     }
 
     private void persist() {
-        Observable.create(s -> persistSync()).subscribeOn(Schedulers.io()).subscribe();
+        Observable.create(s -> persistBlocking()).subscribeOn(Schedulers.io()).subscribe();
     }
 
     @WorkerThread
-    private void persistSync() {
-        synchronized (LOCK) {
-            final RecentPlaylists.Albums albums = new RecentPlaylists.Albums();
+    private void persistBlocking() {
+        final RecentPlaylists.Albums albums = new RecentPlaylists.Albums();
+        synchronized (mLock) {
             albums.ids = CollectionUtils.toLongArray(mRecentAlbums);
+        }
+        synchronized (mLockIO) {
             ProtoUtils.writeToFile(mContext, FILE_NAME_RECENT_PLAYLISTS, albums);
         }
     }

@@ -939,14 +939,14 @@ public final class PlaybackService extends Service {
 
     private final class PlaybackControllerShuffle extends PlaybackControllerNormal {
 
-        private final Object LOCK = new Object();
+        private final Object mLock = new Object();
 
         @NonNull
         private final SparseIntArray mShuffledPositions = new SparseIntArray();
 
         @Override
         public void setPlaylist(@Nullable final List<Media> playlist) {
-            synchronized (LOCK) {
+            synchronized (mLock) {
                 rebuildShuffledPositions(playlist == null ? 0 : playlist.size());
             }
             super.setPlaylist(playlist);
@@ -955,7 +955,7 @@ public final class PlaybackService extends Service {
         @Override
         protected void play(@Nullable final List<Media> list, final int position) {
             final int shuffledPosition;
-            synchronized (LOCK) {
+            synchronized (mLock) {
                 shuffledPosition = mShuffledPositions.get(position);
             }
             super.play(list, shuffledPosition);

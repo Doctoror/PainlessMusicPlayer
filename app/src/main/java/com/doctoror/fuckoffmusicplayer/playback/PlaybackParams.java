@@ -23,6 +23,7 @@ import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -68,7 +69,10 @@ public final class PlaybackParams {
     }
 
     @NonNull
-    private final Object LOCK = new Object();
+    private final Object mLock = new Object();
+
+    @NonNull
+    private final Object mLockIO = new Object();
 
     @NonNull
     private final Context mContext;
@@ -83,7 +87,7 @@ public final class PlaybackParams {
 
         final PlaybackParamsProto.PlaybackParams persistent = read();
         if (persistent != null) {
-            synchronized (LOCK) {
+            synchronized (mLock) {
                 mShuffleEnabled = persistent.shuffle;
                 mRepeatMode = persistent.repeatMode;
             }
@@ -91,32 +95,32 @@ public final class PlaybackParams {
     }
 
     public void setShuffleEnabled(final boolean shuffleEnabled) {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             if (mShuffleEnabled != shuffleEnabled) {
                 mShuffleEnabled = shuffleEnabled;
-                Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
+                Observable.create(s -> persistBlocking()).subscribeOn(Schedulers.io()).subscribe();
             }
         }
     }
 
     public boolean isShuffleEnabled() {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             return mShuffleEnabled;
         }
     }
 
     public void setRepeatMode(@RepeatMode final int repeatMode) {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             if (mRepeatMode != repeatMode) {
                 mRepeatMode = repeatMode;
-                Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
+                Observable.create(s -> persistBlocking()).subscribeOn(Schedulers.io()).subscribe();
             }
         }
     }
 
     @RepeatMode
     public int getRepeatMode() {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             return mRepeatMode;
         }
     }
@@ -127,11 +131,14 @@ public final class PlaybackParams {
                 new PlaybackParamsProto.PlaybackParams());
     }
 
-    private void persist() {
-        synchronized (LOCK) {
-            final PlaybackParamsProto.PlaybackParams p = new PlaybackParamsProto.PlaybackParams();
+    @WorkerThread
+    private void persistBlocking() {
+        final PlaybackParamsProto.PlaybackParams p = new PlaybackParamsProto.PlaybackParams();
+        synchronized (mLock) {
             p.shuffle = mShuffleEnabled;
             p.repeatMode = mRepeatMode;
+        }
+        synchronized (mLockIO) {
             ProtoUtils.writeToFile(mContext, FILE_NAME, p);
         }
     }

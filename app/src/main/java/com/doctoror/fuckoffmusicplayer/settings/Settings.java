@@ -13,9 +13,8 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 25.12.16.
+ * Application settings
  */
-
 public final class Settings {
 
     // Not a leak
@@ -36,8 +35,8 @@ public final class Settings {
 
     private static final String FILE_NAME = "settings";
 
-    private final Object LOCK = new Object();
-    private final Object LOCK_IO = new Object();
+    private final Object mLock = new Object();
+    private final Object mLockIO = new Object();
 
     @NonNull
     private final Context mContext;
@@ -53,7 +52,7 @@ public final class Settings {
         mContext = context;
         final SettingsProto.Settings settings = ProtoUtils.readFromFile(context, FILE_NAME,
                 new SettingsProto.Settings());
-        synchronized (LOCK) {
+        synchronized (mLock) {
             if (settings != null) {
                 mThemeType = settings.theme;
                 mLibraryTab = settings.libraryTab;
@@ -63,13 +62,13 @@ public final class Settings {
     }
 
     public boolean isScrobbleEnabled() {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             return mScrobbleEnabled;
         }
     }
 
     public void setScrobbleEnabled(final boolean enabled) {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             if (mScrobbleEnabled != enabled) {
                 mScrobbleEnabled = enabled;
                 persistAsync();
@@ -79,13 +78,13 @@ public final class Settings {
 
     @Theme.ThemeType
     public int getThemeType() {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             return mThemeType;
         }
     }
 
     public void setThemeType(@Theme.ThemeType final int themeType) {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             if (mThemeType != themeType) {
                 mThemeType = themeType;
                 AppCompatDelegate.setDefaultNightMode(Theme.getDayNightMode(themeType));
@@ -95,7 +94,7 @@ public final class Settings {
     }
 
     public void setLibraryTab(final int tab) {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             if (mLibraryTab != tab) {
                 mLibraryTab = tab;
                 persistAsync();
@@ -104,7 +103,7 @@ public final class Settings {
     }
 
     public int getLibraryTab() {
-        synchronized (LOCK) {
+        synchronized (mLock) {
             return mLibraryTab;
         }
     }
@@ -116,11 +115,11 @@ public final class Settings {
     @WorkerThread
     private void persist() {
         final SettingsProto.Settings settings = new SettingsProto.Settings();
-        synchronized (LOCK) {
+        synchronized (mLock) {
             settings.theme = mThemeType;
             settings.libraryTab = mLibraryTab;
         }
-        synchronized (LOCK_IO) {
+        synchronized (mLockIO) {
             ProtoUtils.writeToFile(mContext, FILE_NAME, settings);
         }
     }
