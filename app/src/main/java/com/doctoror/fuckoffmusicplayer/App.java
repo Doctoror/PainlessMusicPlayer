@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer;
 import com.google.android.exoplayer2.audio.AudioTrack;
 
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
 
 import android.app.Application;
@@ -51,7 +52,8 @@ public final class App extends Application {
                     .build());
         }
 
-        AppCompatDelegate.setDefaultNightMode(Theme.getInstance(this).getDayNightMode());
+        AppCompatDelegate.setDefaultNightMode(
+                Theme.getDayNightMode(Settings.getInstance(this).getThemeType()));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             AudioTrack.enablePreV21AudioSessionWorkaround = true;
         }

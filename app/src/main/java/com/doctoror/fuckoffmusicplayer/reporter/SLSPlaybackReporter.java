@@ -5,7 +5,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.settings.SecurityPrefs;
+import com.doctoror.fuckoffmusicplayer.settings.Settings;
 
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +39,7 @@ final class SLSPlaybackReporter implements PlaybackReporter {
     private final Context mContext;
 
     @NonNull
-    private final SecurityPrefs mSecurityPrefs;
+    private final Settings mSettings;
 
     private Media mMedia;
 
@@ -48,7 +48,7 @@ final class SLSPlaybackReporter implements PlaybackReporter {
 
     SLSPlaybackReporter(@NonNull final Context context) {
         mContext = context;
-        mSecurityPrefs = SecurityPrefs.with(context);
+        mSettings = Settings.getInstance(context);
         mMedia = CurrentPlaylist.getInstance(context).getMedia();
         mState = PlaybackService.getLastKnownState();
     }
@@ -69,7 +69,7 @@ final class SLSPlaybackReporter implements PlaybackReporter {
     private void report(@Nullable final Media media,
             @PlaybackState.State final int prevState,
             @PlaybackState.State final int state) {
-        if (mSecurityPrefs.isScrobbleEnabled() && media != null) {
+        if (mSettings.isScrobbleEnabled() && media != null) {
             final Intent intent = new Intent(ACTION);
             intent.putExtra(APP_NAME, mContext.getString(R.string.app_name));
             intent.putExtra(APP_PACKAGE, mContext.getPackageName());

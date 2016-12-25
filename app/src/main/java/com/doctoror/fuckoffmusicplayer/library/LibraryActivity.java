@@ -64,7 +64,6 @@ public final class LibraryActivity extends BaseActivity {
     private static boolean sPermissionRequested;
 
     private final SearchSubject mSearchSubject = SearchSubject.getInstance();
-    private LibraryPrefs mPrefs;
 
     private boolean mHasPermissions;
     private boolean mSearchIconified;
@@ -93,9 +92,8 @@ public final class LibraryActivity extends BaseActivity {
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
 
-        mPrefs = LibraryPrefs.with(this);
         if (savedInstanceState == null) {
-            mPagerItem = mPrefs.getTab();
+            mPagerItem = getSettings().getLibraryTab();
         }
 
         mSearchIconified = true;
@@ -180,7 +178,7 @@ public final class LibraryActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mPrefs.setTab(mViewPager.getCurrentItem());
+        getSettings().setLibraryTab(mViewPager.getCurrentItem());
     }
 
     @OnClick(R.id.btnRequest)

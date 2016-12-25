@@ -56,12 +56,9 @@ public final class SettingsActivity extends BaseActivity {
 
     private GoogleApiClient mGoogleApiClient;
 
-    private SecurityPrefs mSecurityPrefs;
-
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSecurityPrefs = SecurityPrefs.with(this);
 
         Dart.inject(this);
         restoreInstanceState(savedInstanceState);
@@ -93,19 +90,19 @@ public final class SettingsActivity extends BaseActivity {
     private void initView() {
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        bindTheme(getTheme1().getThemeType());
+        bindTheme(getSettings().getThemeType());
 
         mRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
-            getTheme1().setThemeType(buttonIdToTheme(id));
+            getSettings().setThemeType(buttonIdToTheme(id));
             restart(Henson.with(SettingsActivity.this).gotoSettingsActivity()
                     .suppressGmsWarnings(Boolean.TRUE)
                     .suppressDayNightWarnings(suppressDayNightWarnings)
                     .build());
         });
 
-        mBtnScrobble.setChecked(mSecurityPrefs.isScrobbleEnabled());
+        mBtnScrobble.setChecked(getSettings().isScrobbleEnabled());
         mBtnScrobble.setOnCheckedChangeListener(
-                (cb, value) -> mSecurityPrefs.setScrobbleEnabled(value));
+                (cb, value) -> getSettings().setScrobbleEnabled(value));
     }
 
     private void initGoogleApiClient() {

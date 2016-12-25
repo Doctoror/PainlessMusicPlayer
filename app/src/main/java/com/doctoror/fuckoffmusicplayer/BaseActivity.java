@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer;
 
+import com.doctoror.fuckoffmusicplayer.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
 
 import android.annotation.TargetApi;
@@ -36,7 +37,7 @@ import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private Theme mTheme;
+    private Settings mSettings;
 
     @Theme.ThemeType
     private int mThemeUsed;
@@ -50,19 +51,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        mTheme = Theme.getInstance(this);
-        mThemeUsed = mTheme.getThemeType();
+        mSettings = Settings.getInstance(this);
+        mThemeUsed = mSettings.getThemeType();
 
         mFragmentTransactionsAllowed = true;
         mFinishingAfterTransition = false;
     }
 
-    public boolean isFinishingAfterTransition() {
-        return mFinishingAfterTransition;
+    public Settings getSettings() {
+        return mSettings;
     }
 
-    protected final Theme getTheme1() {
-        return mTheme;
+    public boolean isFinishingAfterTransition() {
+        return mFinishingAfterTransition;
     }
 
     protected final void restart() {
@@ -82,7 +83,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onStart();
         mFragmentTransactionsAllowed = true;
         // Theme changed while this Activity was in background
-        if (mThemeUsed != mTheme.getThemeType()) {
+        if (mThemeUsed != mSettings.getThemeType()) {
             restart();
         }
     }
