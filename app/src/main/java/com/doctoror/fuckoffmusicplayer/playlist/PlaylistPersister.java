@@ -43,6 +43,8 @@ final class PlaylistPersister {
 
     private static final String FILE_NAME = "playlist";
 
+    private static final Object LOCK = new Object();
+
     static void persistAsync(@NonNull final Context context,
             @NonNull final CurrentPlaylist playlist) {
         // Retrieve snapshot now, so that it's immutable when writing
@@ -55,15 +57,19 @@ final class PlaylistPersister {
 
     private static void persist(@NonNull final Context context,
             @NonNull final PersistablePlaylist.ProtoPlaylist pp) {
-        ProtoUtils.writeToFile(context, FILE_NAME, pp);
+        synchronized (LOCK) {
+            ProtoUtils.writeToFile(context, FILE_NAME, pp);
+        }
     }
 
     static void read(@NonNull final Context context,
             @NonNull final CurrentPlaylist playlist) {
-        final PersistablePlaylist.ProtoPlaylist protoPlaylist = ProtoUtils
-                .readFromFile(context, FILE_NAME, new PersistablePlaylist.ProtoPlaylist());
-        if (protoPlaylist != null) {
-            readFromProtoPlaylist(protoPlaylist, playlist);
+        synchronized (LOCK) {
+            final PersistablePlaylist.ProtoPlaylist protoPlaylist = ProtoUtils
+                    .readFromFile(context, FILE_NAME, new PersistablePlaylist.ProtoPlaylist());
+            if (protoPlaylist != null) {
+                readFromProtoPlaylist(protoPlaylist, playlist);
+            }
         }
     }
 

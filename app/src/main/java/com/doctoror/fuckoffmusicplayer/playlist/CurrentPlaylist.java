@@ -85,13 +85,19 @@ public final class CurrentPlaylist {
     }
 
     void remove(@NonNull final Media media) {
-        if (playlist != null) {
-            if (playlist.remove(media)) {
-                if (media.equals(this.media)) {
-                    this.media = null;
+        boolean removed = false;
+        synchronized (mPlaylistLock) {
+            if (playlist != null) {
+                if (playlist.remove(media)) {
+                    if (media.equals(this.media)) {
+                        this.media = null;
+                    }
+                    removed = true;
                 }
-                notifyMediaRemoved(media);
             }
+        }
+        if (removed) {
+            notifyMediaRemoved(media);
         }
     }
 
