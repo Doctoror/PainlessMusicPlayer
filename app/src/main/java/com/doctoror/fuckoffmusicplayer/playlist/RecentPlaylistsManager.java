@@ -59,8 +59,12 @@ public final class RecentPlaylistsManager {
     }
 
     @NonNull
+    private final Object LOCK = new Object();
+
+    @NonNull
     private final Context mContext;
 
+    @NonNull
     private final Queue<Long> mRecentAlbums = new CircularFifoQueue<>(MAX_LENGTH);
 
     private RecentPlaylistsManager(@NonNull final Context context) {
@@ -69,7 +73,9 @@ public final class RecentPlaylistsManager {
     }
 
     public void clear() {
-        mRecentAlbums.clear();
+        synchronized (LOCK) {
+            mRecentAlbums.clear();
+        }
         persist();
     }
 
@@ -79,9 +85,11 @@ public final class RecentPlaylistsManager {
         if (albums != null) {
             final long[] ids = albums.ids;
             if (ids != null) {
-                //noinspection ForLoopReplaceableByForEach
-                for (int i = 0; i < ids.length; i++) {
-                    mRecentAlbums.add(ids[i]);
+                synchronized (LOCK) {
+                    //noinspection ForLoopReplaceableByForEach
+                    for (int i = 0; i < ids.length; i++) {
+                        mRecentAlbums.add(ids[i]);
+                    }
                 }
             }
         }
@@ -106,22 +114,23 @@ public final class RecentPlaylistsManager {
         }
     }
 
-    private synchronized boolean storeAlbumInternal(final long albumId,
-            boolean persist) {
+    private boolean storeAlbumInternal(final long albumId, boolean persist) {
         boolean result = false;
-        // If already contains
-        final long[] array = CollectionUtils.toLongArray(mRecentAlbums);
-        if (array.length == 0 || array[array.length - 1] != albumId) {
-            final Long albumIdLong = albumId;
-            if (mRecentAlbums.contains(albumIdLong)) {
-                // Remove duplicate
-                if (mRecentAlbums.remove(albumIdLong)) {
-                    // Add to head
+        synchronized (LOCK) {
+            // If already contains
+            final long[] array = CollectionUtils.toLongArray(mRecentAlbums);
+            if (array.length == 0 || array[array.length - 1] != albumId) {
+                final Long albumIdLong = albumId;
+                if (mRecentAlbums.contains(albumIdLong)) {
+                    // Remove duplicate
+                    if (mRecentAlbums.remove(albumIdLong)) {
+                        // Add to head
+                        result = mRecentAlbums.add(albumIdLong);
+                    }
+                } else {
+                    // Does not contain. Add.
                     result = mRecentAlbums.add(albumIdLong);
                 }
-            } else {
-                // Does not contain. Add.
-                result = mRecentAlbums.add(albumIdLong);
             }
         }
         if (persist && result) {
@@ -132,7 +141,9 @@ public final class RecentPlaylistsManager {
 
     @NonNull
     public long[] getRecentAlbums() {
-        return CollectionUtils.toReverseLongArray(mRecentAlbums);
+        synchronized (LOCK) {
+            return CollectionUtils.toReverseLongArray(mRecentAlbums);
+        }
     }
 
     private void persist() {
@@ -141,8 +152,10 @@ public final class RecentPlaylistsManager {
 
     @WorkerThread
     private void persistSync() {
-        final RecentPlaylists.Albums albums = new RecentPlaylists.Albums();
-        albums.ids = CollectionUtils.toLongArray(mRecentAlbums);
-        ProtoUtils.writeToFile(mContext, FILE_NAME_RECENT_PLAYLISTS, albums);
+        synchronized (LOCK) {
+            final RecentPlaylists.Albums albums = new RecentPlaylists.Albums();
+            albums.ids = CollectionUtils.toLongArray(mRecentAlbums);
+            ProtoUtils.writeToFile(mContext, FILE_NAME_RECENT_PLAYLISTS, albums);
+        }
     }
 }
