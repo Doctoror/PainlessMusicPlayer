@@ -70,6 +70,14 @@ public final class CurrentPlaylist {
         PlaylistPersister.read(context, this);
     }
 
+    private CurrentPlaylist(@NonNull final CurrentPlaylist currentPlaylist) {
+        mContext = currentPlaylist.mContext;
+        playlist = new ArrayList<>(currentPlaylist.playlist);
+        index = currentPlaylist.index;
+        media = currentPlaylist.media;
+        position = currentPlaylist.position;
+    }
+
     void swap(final int i, final int j) {
         final List<Media> playlist;
         synchronized (mPlaylistLock) {
@@ -169,7 +177,7 @@ public final class CurrentPlaylist {
     }
 
     public void persistAsync() {
-        PlaylistPersister.persistAsync(mContext, this);
+        PlaylistPersister.persistAsync(mContext, new CurrentPlaylist(this));
     }
 
     public void setMedia(final Media media) {

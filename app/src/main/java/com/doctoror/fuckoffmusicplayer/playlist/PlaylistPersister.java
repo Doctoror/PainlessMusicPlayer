@@ -47,10 +47,8 @@ final class PlaylistPersister {
 
     static void persistAsync(@NonNull final Context context,
             @NonNull final CurrentPlaylist playlist) {
-        // Retrieve snapshot now, so that it's immutable when writing
         if (playlist.playlist != null) {
-            final PersistablePlaylist.ProtoPlaylist pp = toProtoPlaylist(playlist);
-            Observable.create(s -> persist(context, pp))
+            Observable.create(s -> persist(context, toProtoPlaylist(playlist)))
                     .subscribeOn(Schedulers.io()).subscribe();
         }
     }
@@ -64,16 +62,18 @@ final class PlaylistPersister {
 
     static void read(@NonNull final Context context,
             @NonNull final CurrentPlaylist playlist) {
+        final PersistablePlaylist.ProtoPlaylist protoPlaylist;
         synchronized (LOCK) {
-            final PersistablePlaylist.ProtoPlaylist protoPlaylist = ProtoUtils
+            protoPlaylist = ProtoUtils
                     .readFromFile(context, FILE_NAME, new PersistablePlaylist.ProtoPlaylist());
-            if (protoPlaylist != null) {
-                readFromProtoPlaylist(protoPlaylist, playlist);
-            }
+        }
+        if (protoPlaylist != null) {
+            restoreFromProtoPlaylist(protoPlaylist, playlist);
         }
     }
 
-    private static void readFromProtoPlaylist(@NonNull final PersistablePlaylist.ProtoPlaylist pp,
+    private static void restoreFromProtoPlaylist(
+            @NonNull final PersistablePlaylist.ProtoPlaylist pp,
             @NonNull final CurrentPlaylist playlist) {
         playlist.index = pp.index;
         playlist.position = pp.position;
