@@ -54,17 +54,15 @@ final class PlaybackNotification {
             @PlaybackState.State final int state,
             @NonNull final MediaSessionCompat mediaSession) {
         final PendingIntent prevIntent = PendingIntent.getService(context, 1,
-                PlaybackService.prevIntent(context),
+                PlaybackServiceIntentFactory.intentPrev(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         final PendingIntent nextIntent = PendingIntent.getService(context, 2,
-                PlaybackService.nextIntent(context),
+                PlaybackServiceIntentFactory.intentNext(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
-                state == PlaybackState.STATE_PLAYING
-                        ? PlaybackService.pauseIntent(context)
-                        : PlaybackService.playIntent(context),
+                PlaybackServiceIntentFactory.intentPlayPause(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         Bitmap art = null;

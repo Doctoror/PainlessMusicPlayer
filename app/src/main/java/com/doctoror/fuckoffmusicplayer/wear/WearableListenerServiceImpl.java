@@ -7,7 +7,7 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaylistFromSearch;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
@@ -31,22 +31,22 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
         super.onMessageReceived(messageEvent);
         switch (messageEvent.getPath()) {
             case DataPaths.Messages.PLAY_PAUSE:
-                PlaybackService.playPause(this);
+                PlaybackServiceControl.playPause(this);
                 break;
 
             case DataPaths.Messages.PREV:
-                PlaybackService.prev(this);
+                PlaybackServiceControl.prev(this);
                 break;
 
             case DataPaths.Messages.NEXT:
-                PlaybackService.next(this);
+                PlaybackServiceControl.next(this);
                 break;
 
             case DataPaths.Messages.SEEK: {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 4) {
                     final float positionPercent = ByteBuffer.wrap(data).getFloat();
-                    PlaybackService.seek(this, positionPercent);
+                    PlaybackServiceControl.seek(this, positionPercent);
                 }
                 break;
             }
@@ -55,7 +55,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 8) {
                     final long mediaId = ByteBuffer.wrap(data).getLong();
-                    PlaybackService.playMediaFromPlaylist(this, mediaId);
+                    PlaybackServiceControl.playMediaFromPlaylist(this, mediaId);
                 }
                 break;
             }

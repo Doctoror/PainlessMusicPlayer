@@ -19,7 +19,7 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
@@ -138,7 +138,7 @@ public final class SearchUtils {
             @Nullable final String query,
             @Nullable final Bundle extras) {
         if (TextUtils.isEmpty(query)) {
-            PlaybackService.playAnything(context);
+            PlaybackServiceControl.playAnything(context);
             return;
         }
 
@@ -185,7 +185,7 @@ public final class SearchUtils {
                     ? context.getString(R.string.No_media_found)
                     : context.getString(R.string.No_media_found_for_s, query);
 
-            PlaybackService.stopWithError(context, message);
+            PlaybackServiceControl.stopWithError(context, message);
         }
     }
 
@@ -195,7 +195,8 @@ public final class SearchUtils {
         if (playlist != null && !playlist.isEmpty()) {
             PlaylistUtils.play(context, playlist, position);
         } else {
-            PlaybackService.stopWithError(context, context.getString(R.string.No_media_found));
+            PlaybackServiceControl
+                    .stopWithError(context, context.getString(R.string.No_media_found));
         }
     }
 

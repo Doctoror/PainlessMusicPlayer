@@ -32,6 +32,7 @@ import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
@@ -210,7 +211,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(final SeekBar seekBar) {
-                PlaybackService.seek(NowPlayingActivity.this,
+                PlaybackServiceControl.seek(NowPlayingActivity.this,
                         (float) seekBar.getProgress() / (float) seekBar.getMax());
                 mSeekBarTracking = false;
             }
@@ -370,7 +371,7 @@ public final class NowPlayingActivity extends BaseActivity {
         bindState(PlaybackService.getLastKnownState());
         mPlaylist.addObserver(mPlaylistObserver);
         registerReceiver(mReceiver, mReceiver.mIntentFilter);
-        PlaybackService.resendState(this);
+        PlaybackServiceControl.resendState(this);
     }
 
     @Override
@@ -447,19 +448,19 @@ public final class NowPlayingActivity extends BaseActivity {
     public void onPlayClick() {
         switch (mState) {
             case PlaybackState.STATE_IDLE:
-                PlaybackService.play(this);
+                PlaybackServiceControl.play(this);
                 break;
 
             case PlaybackState.STATE_PAUSED:
-                PlaybackService.play(this);
+                PlaybackServiceControl.playPause(this);
                 break;
 
             case PlaybackState.STATE_PLAYING:
-                PlaybackService.pause(this);
+                PlaybackServiceControl.playPause(this);
                 break;
 
             case PlaybackState.STATE_ERROR:
-                PlaybackService.play(this);
+                PlaybackServiceControl.play(this);
                 break;
 
             case PlaybackState.STATE_LOADING:
@@ -470,12 +471,12 @@ public final class NowPlayingActivity extends BaseActivity {
 
     @OnClick(R.id.btnPrev)
     public void onPrevClick() {
-        PlaybackService.prev(this);
+        PlaybackServiceControl.prev(this);
     }
 
     @OnClick(R.id.btnNext)
     public void onNextClick() {
-        PlaybackService.next(this);
+        PlaybackServiceControl.next(this);
     }
 
     @OnClick(R.id.btnShuffle)

@@ -20,6 +20,8 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 
@@ -30,6 +32,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
@@ -39,7 +43,7 @@ import android.widget.RemoteViews;
 public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     private static void requestServiceStateUpdate(final Context context) {
-        PlaybackService.resendState(context);
+        PlaybackServiceControl.resendState(context);
     }
 
     @Override
@@ -84,19 +88,23 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
         final Media media = holder.getMedia();
         final boolean hasMedia = media != null;
-        views.setBoolean(R.id.appwidget_btn_prev, "setEnabled", hasMedia);
-        views.setBoolean(R.id.appwidget_btn_next, "setEnabled", hasMedia);
-        views.setBoolean(R.id.appwidget_btn_play_pause, "setEnabled", hasMedia);
 
         views.setImageViewResource(R.id.appwidget_btn_play_pause,
                 state == PlaybackState.STATE_PLAYING
-                        ? R.drawable.ic_pause_white_24dp : R.drawable.ic_play_arrow_white_24dp);
+                        ? R.drawable.ic_pause_white_24dp
+                        : R.drawable.ic_play_arrow_white_24dp);
 
         if (hasMedia) {
             setPlayPauseButtonAction(context, views);
             setPrevButtonAction(context, views);
             setNextButtonAction(context, views);
+        } else {
+            final PendingIntent playAnything = generatePlayAnythingIntent(context);
+            setButtonAction(views, R.id.appwidget_btn_play_pause, playAnything);
+            setButtonAction(views, R.id.appwidget_btn_prev, playAnything);
+            setButtonAction(views, R.id.appwidget_btn_next, playAnything);
         }
+
         setCoverClickAction(context, views, hasMedia);
 
         CharSequence artist = media != null ? media.getArtist() : null;
@@ -123,22 +131,52 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetIds, views);
     }
 
+    @NonNull
+    private static PendingIntent generatePlayAnythingIntent(@NonNull final Context context) {
+        final Intent intent = PlaybackServiceIntentFactory.intentPlayAnything(context);
+        return serviceIntent(context, intent);
+    }
+
+    @NonNull
+    private static PendingIntent generatePlayPauseIntent(@NonNull final Context context) {
+        final Intent intent = PlaybackServiceIntentFactory.intentPause(context);
+        return serviceIntent(context, intent);
+    }
+
+    @NonNull
+    private static PendingIntent generatePrevIntent(@NonNull final Context context) {
+        final Intent intent = PlaybackServiceIntentFactory.intentPrev(context);
+        return serviceIntent(context, intent);
+    }
+
+    @NonNull
+    private static PendingIntent generateNextIntent(@NonNull final Context context) {
+        final Intent intent = PlaybackServiceIntentFactory.intentNext(context);
+        return serviceIntent(context, intent);
+    }
+
+    @NonNull
+    private static PendingIntent serviceIntent(@NonNull final Context context,
+            @NonNull final Intent intent) {
+        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
     private static void setPlayPauseButtonAction(final Context context, final RemoteViews views) {
-        final Intent playPauseIntent = PlaybackService.playPauseIntent(context);
-        views.setOnClickPendingIntent(R.id.appwidget_btn_play_pause, PendingIntent.getService(
-                context, 0, playPauseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        setButtonAction(views, R.id.appwidget_btn_play_pause, generatePlayPauseIntent(context));
     }
 
     private static void setPrevButtonAction(final Context context, final RemoteViews views) {
-        final Intent playPauseIntent = PlaybackService.prevIntent(context);
-        views.setOnClickPendingIntent(R.id.appwidget_btn_prev, PendingIntent.getService(
-                context, 0, playPauseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        setButtonAction(views, R.id.appwidget_btn_prev, generatePrevIntent(context));
     }
 
     private static void setNextButtonAction(final Context context, final RemoteViews views) {
-        final Intent playPauseIntent = PlaybackService.nextIntent(context);
-        views.setOnClickPendingIntent(R.id.appwidget_btn_next, PendingIntent.getService(
-                context, 0, playPauseIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        setButtonAction(views, R.id.appwidget_btn_next, generateNextIntent(context));
+    }
+
+    private static void setButtonAction(@NonNull final RemoteViews views,
+            @IdRes final int buttonId,
+            @NonNull final PendingIntent action) {
+        views.setOnClickPendingIntent(buttonId, action);
     }
 
     private static void setCoverClickAction(final Context context, final RemoteViews views,

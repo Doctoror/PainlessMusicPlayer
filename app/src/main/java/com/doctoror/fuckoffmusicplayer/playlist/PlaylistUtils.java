@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -56,7 +56,7 @@ public final class PlaylistUtils {
         playlist.setPosition(0);
         playlist.persistAsync();
 
-        PlaybackService.play(context);
+        PlaybackServiceControl.play(context);
     }
 
 }

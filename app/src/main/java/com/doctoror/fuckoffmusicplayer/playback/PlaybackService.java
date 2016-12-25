@@ -88,128 +88,27 @@ public final class PlaybackService extends Service {
     private static final String TAG = "PlaybackService";
     private static final int NOTIFICATION_ID = 666;
 
-    private static final String ACTION_RESEND_STATE = "ACTION_RESEND_STATE";
     public static final String ACTION_STATE_CHANGED
             = "com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED";
     public static final String EXTRA_STATE = "EXTRA_STATE";
 
-    private static final String ACTION_PLAY_MEDIA_FROM_PLAYLIST = "ACTION_PLAY_MEDIA_FROM_PLAYLIST";
-    private static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
-    private static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
-    private static final String ACTION_PLAY = "ACTION_PLAY";
-    private static final String ACTION_PAUSE = "ACTION_PAUSE";
-    private static final String ACTION_STOP = "ACTION_STOP";
-    private static final String ACTION_STOP_WITH_ERROR = "ACTION_STOP_WITH_ERROR";
+    static final String ACTION_RESEND_STATE = "ACTION_RESEND_STATE";
+    static final String ACTION_PLAY_MEDIA_FROM_PLAYLIST = "ACTION_PLAY_MEDIA_FROM_PLAYLIST";
+    static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
+    static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
+    static final String ACTION_PLAY = "ACTION_PLAY";
+    static final String ACTION_PAUSE = "ACTION_PAUSE";
+    static final String ACTION_STOP = "ACTION_STOP";
+    static final String ACTION_STOP_WITH_ERROR = "ACTION_STOP_WITH_ERROR";
 
-    private static final String ACTION_PREV = "ACTION_PREV";
-    private static final String ACTION_NEXT = "ACTION_NEXT";
+    static final String ACTION_PREV = "ACTION_PREV";
+    static final String ACTION_NEXT = "ACTION_NEXT";
 
-    private static final String ACTION_SEEK = "ACTION_SEEK";
-    private static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";
-    private static final String EXTRA_MEDIA_ID = "EXTRA_MEDIA_ID";
-    private static final String EXTRA_POSITION = "EXTRA_POSITION";
-    private static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
-
-    public static void resendState(@NonNull final Context context) {
-        context.sendBroadcast(new Intent(ACTION_RESEND_STATE));
-    }
-
-    public static void playPause(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_PLAY_PAUSE);
-        context.startService(intent);
-    }
-
-    public static void play(@NonNull final Context context) {
-        context.startService(playIntent(context));
-    }
-
-    public static void playAnything(@NonNull final Context context) {
-        context.startService(playAnythingIntent(context));
-    }
-
-    public static void pause(@NonNull final Context context) {
-        context.startService(pauseIntent(context));
-    }
-
-    public static void stop(@NonNull final Context context) {
-        context.startService(stopIntent(context));
-    }
-
-    public static void stopWithError(@NonNull final Context context,
-            @NonNull final String errorMessage) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_STOP_WITH_ERROR);
-        intent.putExtra(EXTRA_ERROR_MESSAGE, errorMessage);
-        context.startService(intent);
-    }
-
-    public static void prev(@NonNull final Context context) {
-        context.startService(prevIntent(context));
-    }
-
-    public static void next(@NonNull final Context context) {
-        context.startService(nextIntent(context));
-    }
-
-    public static void seek(@NonNull final Context context,
-            final float positionPercent) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_SEEK);
-        intent.putExtra(EXTRA_POSITION_PERCENT, positionPercent);
-        context.startService(intent);
-    }
-
-    public static void playMediaFromPlaylist(@NonNull final Context context,
-            final long mediaId) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_PLAY_MEDIA_FROM_PLAYLIST);
-        intent.putExtra(EXTRA_MEDIA_ID, mediaId);
-        context.startService(intent);
-    }
-
-    @NonNull
-    public static Intent playPauseIntent(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_PLAY_PAUSE);
-        return intent;
-    }
-
-    static Intent playIntent(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_PLAY);
-        return intent;
-    }
-
-    static Intent playAnythingIntent(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_PLAY_ANYTHING);
-        return intent;
-    }
-
-    static Intent pauseIntent(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_PAUSE);
-        return intent;
-    }
-
-    static Intent stopIntent(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_STOP);
-        return intent;
-    }
-
-    public static Intent prevIntent(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_PREV);
-        return intent;
-    }
-
-    public static Intent nextIntent(@NonNull final Context context) {
-        final Intent intent = new Intent(context, PlaybackService.class);
-        intent.setAction(ACTION_NEXT);
-        return intent;
-    }
+    static final String ACTION_SEEK = "ACTION_SEEK";
+    static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";
+    static final String EXTRA_MEDIA_ID = "EXTRA_MEDIA_ID";
+    static final String EXTRA_POSITION = "EXTRA_POSITION";
+    static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
     @State
     private static int sLastKnownState;

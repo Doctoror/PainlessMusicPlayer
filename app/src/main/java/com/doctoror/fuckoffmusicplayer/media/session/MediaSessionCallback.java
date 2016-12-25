@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.media.session;
 
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -25,27 +25,27 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
     @Override
     public void onPlay() {
-        PlaybackService.play(mContext);
+        PlaybackServiceControl.play(mContext);
     }
 
     @Override
     public void onStop() {
-        PlaybackService.stop(mContext);
+        PlaybackServiceControl.stop(mContext);
     }
 
     @Override
     public void onPause() {
-        PlaybackService.pause(mContext);
+        PlaybackServiceControl.pause(mContext);
     }
 
     @Override
     public void onSkipToPrevious() {
-        PlaybackService.prev(mContext);
+        PlaybackServiceControl.prev(mContext);
     }
 
     @Override
     public void onSkipToNext() {
-        PlaybackService.next(mContext);
+        PlaybackServiceControl.next(mContext);
     }
 
     @Override
