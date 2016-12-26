@@ -52,17 +52,6 @@ public final class FileUtils {
         }
     }
 
-    @Nullable
-    public static byte[] readPrivateFileSilently(@NonNull final Context context,
-            @NonNull final String fileName) {
-        try {
-            return readPrivateFile(context, fileName);
-        } catch (IOException e) {
-            Log.w(TAG, e);
-            return null;
-        }
-    }
-
     /**
      * Silently writes or deletes private file. If the bytes are null the file will be deleted.
      *
