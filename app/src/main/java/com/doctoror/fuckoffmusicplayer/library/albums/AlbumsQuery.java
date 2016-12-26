@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.albums;
 
+import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
-import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -44,11 +44,9 @@ public final class AlbumsQuery {
      */
     @NonNull
     public static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
-        return newParamsBuilder()
-                .setSelection(TextUtils.isEmpty(searchFilter) ? null :
-                        MediaStore.Audio.Albums.ALBUM + " LIKE '%"
-                                + StringUtils.sqlEscape(searchFilter) + "%'")
-                .create();
+        return newParamsBuilder().setSelection(TextUtils.isEmpty(searchFilter) ? null :
+                MediaStore.Audio.Albums.ALBUM + " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(
+                        searchFilter)).create();
     }
 
     /**

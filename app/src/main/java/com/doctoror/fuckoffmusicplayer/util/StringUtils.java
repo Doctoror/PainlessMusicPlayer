@@ -48,31 +48,6 @@ public final class StringUtils {
     public static String notNullString(@Nullable final String string) {
         return string != null ? string : "";
     }
-
-    /**
-     * Like {@link android.database.DatabaseUtils#sqlEscapeString(String)}, but does not wrap the
-     * input in single quotes
-     *
-     * @param input the value to escape
-     * @return escaped input
-     */
-    @NonNull
-    public static String sqlEscape(@NonNull final String input) {
-        if (input.indexOf('\'') != -1) {
-            final StringBuilder sb = new StringBuilder(input.length());
-            final int length = input.length();
-            for (int i = 0; i < length; i++) {
-                final char c = input.charAt(i);
-                if (c == '\'') {
-                    sb.append('\'');
-                }
-                sb.append(c);
-            }
-            return sb.toString();
-        } else {
-            return input;
-        }
-    }
 }
 
 

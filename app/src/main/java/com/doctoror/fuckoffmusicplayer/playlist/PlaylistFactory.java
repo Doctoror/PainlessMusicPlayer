@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
+import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.content.ContentResolver;
@@ -77,8 +78,8 @@ public final class PlaylistFactory {
         final StringBuilder sel = new StringBuilder(256);
         sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
-            sel.append(" AND ").append(MediaStore.Audio.Media.ALBUM).append(" LIKE '%")
-                    .append(StringUtils.sqlEscape(query)).append("%'");
+            sel.append(" AND ").append(MediaStore.Audio.Media.ALBUM).append(" LIKE ")
+                    .append(SqlUtils.escapeAndWrapForLikeArgument(query));
         }
 
         final List<Media> playlist = new ArrayList<>(15);
@@ -104,8 +105,8 @@ public final class PlaylistFactory {
         final StringBuilder sel = new StringBuilder(256);
         sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
-            sel.append(" AND ").append(MediaStore.Audio.Media.ARTIST).append(" LIKE '%")
-                    .append(StringUtils.sqlEscape(query)).append("%'");
+            sel.append(" AND ").append(MediaStore.Audio.Media.ARTIST).append(" LIKE ")
+                    .append(SqlUtils.escapeAndWrapForLikeArgument(query));
         }
 
         final List<Media> playlist = new ArrayList<>(15);
@@ -134,7 +135,7 @@ public final class PlaylistFactory {
         final StringBuilder sel = new StringBuilder(256);
         sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
-            final String likeQuery = " LIKE '%" + StringUtils.sqlEscape(query) + "%'";
+            final String likeQuery = " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(query);
             sel.append(" AND (").append(MediaStore.Audio.Media.TITLE).append(likeQuery);
             sel.append(" OR ").append(MediaStore.Audio.Media.ARTIST).append(likeQuery);
             sel.append(" OR ").append(MediaStore.Audio.Media.ALBUM).append(likeQuery);

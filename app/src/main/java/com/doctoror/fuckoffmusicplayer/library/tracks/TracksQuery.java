@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
+import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
-import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -44,18 +44,18 @@ public final class TracksQuery {
 
     @NonNull
     static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
-        final String ef = TextUtils.isEmpty(searchFilter) ? null
-                : StringUtils.sqlEscape(searchFilter);
+        final String wrapped = TextUtils.isEmpty(searchFilter) ? null
+                : SqlUtils.escapeAndWrapForLikeArgument(searchFilter);
         final StringBuilder selection = new StringBuilder(256);
         selection.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
-        if (!TextUtils.isEmpty(ef)) {
+        if (!TextUtils.isEmpty(wrapped)) {
             selection.append(" AND ")
 
                     .append(MediaStore.Audio.Media.TITLE)
-                    .append(" LIKE '%").append(ef).append("%'" + " OR ")
+                    .append(" LIKE ").append(wrapped).append(" OR ")
 
                     .append(MediaStore.Audio.Media.ARTIST)
-                    .append(" LIKE '%").append(ef).append("%'");
+                    .append(" LIKE ").append(wrapped);
         }
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)

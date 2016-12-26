@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.artists;
 
+import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
-import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -48,8 +48,8 @@ final class ArtistsQuery {
                 })
                 .setSortOrder(MediaStore.Audio.Artists.ARTIST)
                 .setSelection(TextUtils.isEmpty(searchFilter) ? null
-                        : MediaStore.Audio.Artists.ARTIST + " LIKE '%"
-                                + StringUtils.sqlEscape(searchFilter) + "%'")
+                        : MediaStore.Audio.Artists.ARTIST + " LIKE "
+                                + SqlUtils.escapeAndWrapForLikeArgument(searchFilter))
                 .create();
     }
 

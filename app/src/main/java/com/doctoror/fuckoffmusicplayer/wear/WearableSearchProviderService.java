@@ -1,6 +1,5 @@
 package com.doctoror.fuckoffmusicplayer.wear;
 
-import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -14,7 +13,8 @@ import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.util.StringUtils;
+import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
+import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 
 import android.app.IntentService;
 import android.content.ContentResolver;
@@ -158,8 +158,8 @@ public final class WearableSearchProviderService extends IntentService {
             @NonNull final String query) {
         final Cursor c = resolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM},
-                query.isEmpty() ? null : MediaStore.Audio.Albums.ALBUM + " LIKE '%"
-                        + StringUtils.sqlEscape(query) + "%'",
+                query.isEmpty() ? null : MediaStore.Audio.Albums.ALBUM + " LIKE "
+                        + SqlUtils.escapeAndWrapForLikeArgument(query),
                 null,
                 MediaStore.Audio.Albums.ALBUM + " LIMIT 8");
         if (c == null) {
@@ -185,8 +185,8 @@ public final class WearableSearchProviderService extends IntentService {
             @NonNull final String query) {
         final Cursor c = resolver.query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
                 new String[]{MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST},
-                query.isEmpty() ? null : MediaStore.Audio.Artists.ARTIST + " LIKE '%"
-                        + StringUtils.sqlEscape(query) + "%'",
+                query.isEmpty() ? null : MediaStore.Audio.Artists.ARTIST + " LIKE "
+                        + SqlUtils.escapeAndWrapForLikeArgument(query),
                 null,
                 MediaStore.Audio.Artists.ARTIST + " LIMIT 8");
         if (c == null) {
@@ -211,7 +211,7 @@ public final class WearableSearchProviderService extends IntentService {
     private static WearSearchData.Track[] queryTracks(@NonNull final ContentResolver resolver,
             @NonNull final String query) {
         final String ef = TextUtils.isEmpty(query) ? null
-                : StringUtils.sqlEscape(query);
+                : SqlUtils.escapeAndWrapForLikeArgument(query);
         final StringBuilder selection = new StringBuilder(256);
         selection.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(ef)) {

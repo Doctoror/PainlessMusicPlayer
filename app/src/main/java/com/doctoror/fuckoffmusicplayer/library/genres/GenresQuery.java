@@ -15,9 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.genres;
 
+import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
-import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
+import android.database.DatabaseUtils;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,9 +46,8 @@ public final class GenresQuery {
                         MediaStore.Audio.Genres.NAME
                 })
                 .setSortOrder(MediaStore.Audio.Genres.NAME)
-                .setSelection(TextUtils.isEmpty(searchFilter) ? null
-                        : MediaStore.Audio.Genres.NAME + " LIKE '%"
-                                + StringUtils.sqlEscape(searchFilter) + "%'")
+                .setSelection(TextUtils.isEmpty(searchFilter) ? null : MediaStore.Audio.Genres.NAME
+                        + " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(searchFilter))
                 .create();
     }
 
