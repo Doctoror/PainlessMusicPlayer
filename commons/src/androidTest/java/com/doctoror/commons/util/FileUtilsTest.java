@@ -40,6 +40,7 @@ public final class FileUtilsTest {
 
         final String fileName = "testFileForRead";
         final Context context = InstrumentationRegistry.getContext();
+        context.deleteFile(fileName);
 
         final OutputStream os = context.openFileOutput(fileName, Context.MODE_PRIVATE);
         ByteStreams.copy(new ByteArrayInputStream(data), os);
@@ -57,6 +58,8 @@ public final class FileUtilsTest {
 
         final String fileName = "testFileForWrite";
         final Context context = InstrumentationRegistry.getContext();
+        context.deleteFile(fileName);
+
         FileUtils.writeOrDeletePrivateFile(context, fileName, data);
 
         final InputStream is = context.openFileInput(fileName);
@@ -73,6 +76,7 @@ public final class FileUtilsTest {
 
         final String fileName = "testFileForWrite";
         final Context context = InstrumentationRegistry.getContext();
+        context.deleteFile(fileName);
 
         // Write file
         final OutputStream os = context.openFileOutput(fileName, Context.MODE_PRIVATE);
