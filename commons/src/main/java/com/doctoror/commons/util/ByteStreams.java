@@ -79,7 +79,7 @@ public final class ByteStreams {
      * @return the non-null reference that was validated
      * @throws NullPointerException if {@code reference} is null
      */
-    private static <T> T checkNotNull(T reference) {
+    static <T> T checkNotNull(T reference) {
         if (reference == null) {
             throw new NullPointerException();
         }
