@@ -17,8 +17,6 @@ package com.doctoror.fuckoffmusicplayer.util;
 
 import android.support.annotation.NonNull;
 
-import java.util.Collection;
-
 /**
  * Selection utils
  */
@@ -38,6 +36,10 @@ public final class SelectionUtils {
     @NonNull
     public static String orderByLongField(@NonNull final String column,
             @NonNull final long[] arguments) {
+        //noinspection ConstantConditions
+        if (column == null || column.isEmpty()) {
+            throw new IllegalArgumentException("column must not be null or empty");
+        }
         final StringBuilder order = new StringBuilder(256);
         boolean first = true;
         //noinspection ForLoopReplaceableByForEach
@@ -62,37 +64,15 @@ public final class SelectionUtils {
     @NonNull
     public static String inSelectionLong(@NonNull final String column,
             @NonNull final long[] arguments) {
-        final StringBuilder selection = new StringBuilder(256);
-        selection.append(column);
-        selection.append(" IN (");
-        boolean first = true;
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < arguments.length; i++) {
-            if (first) {
-                first = false;
-            } else {
-                selection.append(',');
-            }
-            selection.append('\'').append(arguments[i]).append('\'');
+        //noinspection ConstantConditions
+        if (column == null || column.isEmpty()) {
+            throw new IllegalArgumentException("column must not be null or empty");
         }
-        selection.append(')');
-        return selection.toString();
-    }
-
-    /**
-     * Builds IN selection with args
-     *
-     * @param column    the column name to build selection for
-     * @param arguments the arguments
-     * @return the IN selection
-     */
-    @NonNull
-    public static <T> String inSelection(@NonNull final String column,
-            @NonNull final Collection<T> arguments) {
         final StringBuilder selection = new StringBuilder(256);
         selection.append(column);
-        selection.append(" IN (");
-        appendCommaSeparatedArguments(selection, arguments);
+        selection.append(" IN ");
+        selection.append('(');
+        appendCommaSeparatedArgumentsLong(selection, arguments);
         selection.append(')');
         return selection.toString();
     }
@@ -106,19 +86,45 @@ public final class SelectionUtils {
      */
     @NonNull
     public static <T> String notInSelection(@NonNull final String column,
-            @NonNull final Collection<T> arguments) {
+            @NonNull final Iterable<T> arguments) {
+        //noinspection ConstantConditions
+        if (column == null || column.isEmpty()) {
+            throw new IllegalArgumentException("column must not be null or empty");
+        }
         final StringBuilder selection = new StringBuilder(256);
         selection.append(column);
-        selection.append(" NOT IN (");
+        selection.append(" NOT IN ");
+        selection.append('(');
         appendCommaSeparatedArguments(selection, arguments);
         selection.append(')');
         return selection.toString();
     }
 
-    private static <T> void appendCommaSeparatedArguments(@NonNull final StringBuilder target,
-            @NonNull final Collection<T> arguments) {
+    static <T> void appendCommaSeparatedArguments(@NonNull final StringBuilder target,
+            @NonNull final Iterable<T> arguments) {
+        //noinspection ConstantConditions
+        if (target == null) {
+            throw new NullPointerException("target must not be null");
+        }
         boolean first = true;
         for (final T arg : arguments) {
+            if (first) {
+                first = false;
+            } else {
+                target.append(',');
+            }
+            target.append('\'').append(arg).append('\'');
+        }
+    }
+
+    static void appendCommaSeparatedArgumentsLong(@NonNull final StringBuilder target,
+            @NonNull final long[] arguments) {
+        //noinspection ConstantConditions
+        if (target == null) {
+            throw new NullPointerException("target must not be null");
+        }
+        boolean first = true;
+        for (final long arg : arguments) {
             if (first) {
                 first = false;
             } else {
