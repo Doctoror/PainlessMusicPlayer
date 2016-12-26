@@ -42,9 +42,21 @@ public final class ViewUtils {
             @NonNull final DisableableAppBarLayout appBar,
             @NonNull final ViewGroup scrollableView,
             final int overlayTop) {
+        appBar.setCollapsible(isScrollableViewLargeEnoughToScroll(
+                rootView,
+                appBar,
+                scrollableView,
+                overlayTop));
+    }
+
+    static boolean isScrollableViewLargeEnoughToScroll(
+            @NonNull final View rootView,
+            @NonNull final ViewGroup appBar,
+            @NonNull final ViewGroup scrollableView,
+            final int overlayTop) {
         final int rootViewHeight = rootView.getHeight();
         final int recyclerViewHeight = ViewUtils.childHeights(scrollableView);
         final int appBarHeight = appBar.getHeight();
-        appBar.setCollapsible(recyclerViewHeight - overlayTop > rootViewHeight - appBarHeight);
+        return recyclerViewHeight - overlayTop > rootViewHeight - appBarHeight;
     }
 }
