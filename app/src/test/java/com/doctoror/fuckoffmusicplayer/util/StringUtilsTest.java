@@ -4,6 +4,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+/**
+ * {@link StringUtils} test
+ */
 public final class StringUtilsTest {
 
     @Test

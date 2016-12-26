@@ -1,8 +1,5 @@
 package com.doctoror.fuckoffmusicplayer.util;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,7 +17,7 @@ import android.widget.FrameLayout;
 import static org.junit.Assert.*;
 
 /**
- * Created by Yaroslav Mytkalyk on 26.12.16.
+ * {@link ViewUtils} test
  */
 @RunWith(AndroidJUnit4.class)
 public final class ViewUtilsAndroidTest {

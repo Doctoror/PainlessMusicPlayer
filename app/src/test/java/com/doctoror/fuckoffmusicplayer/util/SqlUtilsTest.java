@@ -5,9 +5,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by Yaroslav Mytkalyk on 26.12.16.
+ * {@link SqlUtils} test
  */
-
 public final class SqlUtilsTest {
 
     @Test(expected = NullPointerException.class)

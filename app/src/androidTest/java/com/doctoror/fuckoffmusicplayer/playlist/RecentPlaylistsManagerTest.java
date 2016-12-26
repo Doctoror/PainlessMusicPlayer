@@ -11,6 +11,9 @@ import java.util.Collections;
 
 import static org.junit.Assert.*;
 
+/**
+ * {@link RecentPlaylistsManager} test
+ */
 @RunWith(AndroidJUnit4.class)
 public final class RecentPlaylistsManagerTest {
 
