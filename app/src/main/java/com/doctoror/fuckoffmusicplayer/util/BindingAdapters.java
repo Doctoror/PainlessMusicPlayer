@@ -85,18 +85,23 @@ public final class BindingAdapters {
     @BindingAdapter("formattedDuration")
     public static void setFormattedDuration(@NonNull final TextView textView,
             final long seconds) {
+        if (seconds < 0) {
+            throw new IllegalArgumentException("Seconds must be a positive value");
+        }
+        final int secondsInHour = 3600;
+        final int secondsInMinute = 60;
         final String time;
-        if (seconds > 3600) {
+        if (seconds >= secondsInHour) {
             time = String.format(Locale.US,
                     "%d:%02d:%02d",
-                    seconds / 3600,
-                    (seconds % 3600) / 60,
-                    seconds % 60);
+                    seconds / secondsInHour,
+                    (seconds % secondsInHour) / secondsInMinute,
+                    seconds % secondsInMinute);
         } else {
             time = String.format(Locale.US,
                     "%d:%02d",
-                    (seconds % 3600) / 60,
-                    seconds % 60);
+                    (seconds % secondsInHour) / secondsInMinute,
+                    seconds % secondsInMinute);
         }
         textView.setText(time);
     }
