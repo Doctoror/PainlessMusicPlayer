@@ -25,7 +25,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 
 /**
- * Created by Yaroslav Mytkalyk on 7/13/16.
+ * Drawable utils
  */
 public final class DrawableUtils {
 
@@ -45,7 +45,7 @@ public final class DrawableUtils {
     @Nullable
     public static Drawable getTintedDrawable(@Nullable Drawable drawable,
             @Nullable final ColorStateList tint) {
-        if (drawable != null && tint != null) {
+        if (drawable != null) {
             drawable = DrawableCompat.wrap(drawable);
             DrawableCompat.setTintList(drawable, tint);
         }
