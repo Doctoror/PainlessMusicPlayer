@@ -19,17 +19,18 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Yaroslav Mytkalyk on 7/8/16.
+ * Utils for obtaining {@link Theme} attributes
  */
 public final class ThemeUtils {
 
     private ThemeUtils() {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -40,7 +41,7 @@ public final class ThemeUtils {
      * @return dimension for attr from the {@link Theme}
      */
     @ColorInt
-    public static int getColor(@NonNull final Theme theme, final int attr) {
+    public static int getColor(@NonNull final Theme theme, @AttrRes final int attr) {
         final TypedArray array = theme.obtainStyledAttributes(new int[]{attr});
         try {
             return array.getColor(0, Color.TRANSPARENT);
@@ -57,7 +58,8 @@ public final class ThemeUtils {
      * @return dimension for attr from the {@link Theme}
      */
     @Nullable
-    public static ColorStateList getColorStateList(@NonNull final Theme theme, final int attr) {
+    public static ColorStateList getColorStateList(@NonNull final Theme theme,
+            @AttrRes final int attr) {
         final TypedArray array = theme.obtainStyledAttributes(new int[]{attr});
         try {
             return array.getColorStateList(0);
