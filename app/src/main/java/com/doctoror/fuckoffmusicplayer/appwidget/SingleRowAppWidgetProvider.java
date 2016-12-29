@@ -139,7 +139,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     @NonNull
     private static PendingIntent generatePlayPauseIntent(@NonNull final Context context) {
-        final Intent intent = PlaybackServiceIntentFactory.intentPause(context);
+        final Intent intent = PlaybackServiceIntentFactory.intentPlayPause(context);
         return serviceIntent(context, intent);
     }
 
