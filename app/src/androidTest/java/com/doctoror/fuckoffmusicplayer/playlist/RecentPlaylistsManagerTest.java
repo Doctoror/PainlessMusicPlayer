@@ -68,9 +68,9 @@ public final class RecentPlaylistsManagerTest {
 
         final long[] albums = rpm.getRecentAlbums();
         assertEquals(3, albums.length);
-        assertEquals(666, albums[0]);
+        assertEquals(888, albums[0]);
         assertEquals(777, albums[1]);
-        assertEquals(888, albums[2]);
+        assertEquals(666, albums[2]);
     }
 
     @Test
@@ -82,9 +82,9 @@ public final class RecentPlaylistsManagerTest {
 
         final long[] albums = rpm.getRecentAlbums();
         assertEquals(3, albums.length);
-        assertEquals(666, albums[0]);
+        assertEquals(888, albums[0]);
         assertEquals(777, albums[1]);
-        assertEquals(888, albums[2]);
+        assertEquals(666, albums[2]);
     }
 
     @Test
@@ -99,14 +99,14 @@ public final class RecentPlaylistsManagerTest {
 
         final long[] albums = rpm.getRecentAlbums();
         assertEquals(8, albums.length);
-        assertEquals(1, albums[0]);
-        assertEquals(2, albums[1]);
-        assertEquals(3, albums[2]);
-        assertEquals(5, albums[3]);
-        assertEquals(6, albums[4]);
-        assertEquals(7, albums[5]);
-        assertEquals(8, albums[6]);
-        assertEquals(4, albums[7]);
+        assertEquals(4, albums[0]);
+        assertEquals(8, albums[1]);
+        assertEquals(7, albums[2]);
+        assertEquals(6, albums[3]);
+        assertEquals(5, albums[4]);
+        assertEquals(3, albums[5]);
+        assertEquals(2, albums[6]);
+        assertEquals(1, albums[7]);
     }
 
     @Test
@@ -138,15 +138,15 @@ public final class RecentPlaylistsManagerTest {
 
         long[] albums = rpm.getRecentAlbums();
         assertEquals(2, albums.length);
-        assertEquals(1, albums[0]);
-        assertEquals(2, albums[1]);
+        assertEquals(2, albums[0]);
+        assertEquals(1, albums[1]);
 
         rpm.storeAlbum(2L);
 
         albums = rpm.getRecentAlbums();
         assertEquals(2, albums.length);
-        assertEquals(1, albums[0]);
-        assertEquals(2, albums[1]);
+        assertEquals(2, albums[0]);
+        assertEquals(1, albums[1]);
     }
 
 }
