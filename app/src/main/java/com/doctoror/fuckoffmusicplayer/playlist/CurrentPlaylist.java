@@ -72,7 +72,8 @@ public final class CurrentPlaylist {
 
     private CurrentPlaylist(@NonNull final CurrentPlaylist currentPlaylist) {
         mContext = currentPlaylist.mContext;
-        playlist = new ArrayList<>(currentPlaylist.playlist);
+        playlist = currentPlaylist.playlist != null
+                ? new ArrayList<>(currentPlaylist.playlist) : null;
         index = currentPlaylist.index;
         media = currentPlaylist.media;
         position = currentPlaylist.position;
