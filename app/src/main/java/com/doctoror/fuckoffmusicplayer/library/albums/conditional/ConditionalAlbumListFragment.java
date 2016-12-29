@@ -190,11 +190,11 @@ public class ConditionalAlbumListFragment extends Fragment {
                 });
 
         restartLoader();
-        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
-
         if (TransitionUtils.supportsActivityTransitions()) {
             LollipopUtils.applyTransitions((BaseActivity) getActivity(), cardView != null);
         }
+
+        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
     }
 
     @Override
@@ -204,6 +204,7 @@ public class ConditionalAlbumListFragment extends Fragment {
             mSubscription.unsubscribe();
             mSubscription = null;
         }
+        mLoaderObservable = null;
     }
 
     private void onGlobalLayout() {
@@ -304,10 +305,10 @@ public class ConditionalAlbumListFragment extends Fragment {
 
     private void restartLoader() {
         final RxCursorLoader.Query params = loaderParams;
-        if (mLoaderObservable == null) {
+        if (mLoaderObservable == null || mSubscription == null) {
             mLoaderObservable = RxCursorLoader
                     .create(getActivity().getContentResolver(), params);
-            mLoaderObservable.subscribe(mObserver);
+            mSubscription = mLoaderObservable.subscribe(mObserver);
         } else {
             mLoaderObservable.reloadWithNewQuery(params);
         }
