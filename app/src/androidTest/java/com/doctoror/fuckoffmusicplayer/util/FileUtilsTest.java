@@ -21,7 +21,6 @@ import org.junit.Test;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -57,7 +56,9 @@ public final class FileUtilsTest {
             final Media media = mediaForFile(file, id);
             FileUtils.delete(resolver, media);
         } finally {
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
+            //noinspection ResultOfMethodCallIgnored
             file.getParentFile().delete();
         }
     }
