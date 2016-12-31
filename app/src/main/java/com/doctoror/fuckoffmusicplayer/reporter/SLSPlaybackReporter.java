@@ -17,6 +17,7 @@ import java.util.List;
 
 /**
  * Simple Last.fm Scrobbler playback reporter
+ * https://github.com/tgwizard/sls/blob/master/Developer's%20API.md
  */
 final class SLSPlaybackReporter implements PlaybackReporter {
 

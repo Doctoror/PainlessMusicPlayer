@@ -25,7 +25,7 @@ public final class PlaybackReporterFactory {
         return new PlaybackReporterSet(
                 new MediaSessionPlaybackReporter(context, mediaSession, glide),
                 new WearableMediaPlaybackReporter(context, wearApiClient, glide),
-                new SLSPlaybackReporter(context));
+                new ScrobbleDroidPlaybackReporter(context));
     }
 
     @NonNull
