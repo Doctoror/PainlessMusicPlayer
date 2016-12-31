@@ -6,6 +6,7 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.settings.Settings;
+import com.doctoror.fuckoffmusicplayer.util.Objects;
 
 import android.content.Context;
 import android.content.Intent;
@@ -55,15 +56,21 @@ final class SLSPlaybackReporter implements PlaybackReporter {
 
     @Override
     public void reportTrackChanged(@NonNull final Media media, final int positionInPlaylist) {
-        mMedia = media;
-        report(media, mState, mState);
+        if (!Objects.equals(mMedia, media)) {
+            mMedia = media;
+            if (mState != PlaybackState.STATE_IDLE) {
+                report(media, mState, mState);
+            }
+        }
     }
 
     @Override
     public void reportPlaybackStateChanged(@PlaybackState.State final int state,
             @Nullable final CharSequence errorMessage) {
-        report(mMedia, mState, state);
-        mState = state;
+        if (mState != state) {
+            report(mMedia, mState, state);
+            mState = state;
+        }
     }
 
     private void report(@Nullable final Media media,
@@ -117,7 +124,6 @@ final class SLSPlaybackReporter implements PlaybackReporter {
 
             case PlaybackState.STATE_ERROR:
                 return STATE_PAUSE;
-
 
             default:
                 return STATE_PAUSE;

@@ -580,10 +580,12 @@ public final class PlaybackService extends Service {
     }
 
     private void setState(@State final int state) {
-        mState = state;
-        sLastKnownState = state;
-        mExecutor.submit(mRunnableReportCurrentState);
-        broadcastState();
+        if (mState != state) {
+            mState = state;
+            sLastKnownState = state;
+            mExecutor.submit(mRunnableReportCurrentState);
+            broadcastState();
+        }
     }
 
     private void broadcastState() {
