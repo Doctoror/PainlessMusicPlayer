@@ -583,7 +583,7 @@ public final class PlaybackService extends Service {
         if (mState != state) {
             mState = state;
             sLastKnownState = state;
-            mExecutor.submit(mRunnableReportCurrentState);
+            mExecutor.submit(() -> reportPlaybackState(state, mErrorMessage));
             broadcastState();
         }
     }
@@ -611,7 +611,13 @@ public final class PlaybackService extends Service {
 
     @WorkerThread
     private void reportCurrentPlaybackState() {
-        mPlaybackReporter.reportPlaybackStateChanged(mState, mErrorMessage);
+        reportPlaybackState(mState, mErrorMessage);
+    }
+
+    @WorkerThread
+    private void reportPlaybackState(@State final int state,
+            @Nullable final CharSequence errorMessage) {
+        mPlaybackReporter.reportPlaybackStateChanged(state, errorMessage);
     }
 
     @WorkerThread
@@ -795,7 +801,6 @@ public final class PlaybackService extends Service {
     };
 
     private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
-    private final Runnable mRunnableReportCurrentState = this::reportCurrentPlaybackState;
     private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
     private final Runnable mRunnableReportCurrentPlaylist = this::reportCurrentPlaylist;
 
