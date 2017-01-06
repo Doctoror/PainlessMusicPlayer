@@ -2,6 +2,8 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.albums.MediaStoreAlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.db.artists.MediaStoreArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 
 import android.content.ContentResolver;
@@ -18,6 +20,12 @@ import dagger.Provides;
 
 @Module
 final class MediaStoreProvidersModule {
+
+    @Provides
+    @Singleton
+    ArtistsProvider provideArtistsProvider(@NonNull final ContentResolver resolver) {
+        return new MediaStoreArtistsProvider(resolver);
+    }
 
     @Provides
     @Singleton

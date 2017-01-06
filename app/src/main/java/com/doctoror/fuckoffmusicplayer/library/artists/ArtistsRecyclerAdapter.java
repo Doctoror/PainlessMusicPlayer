@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.artists;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.TwoLineItemViewHolder;
 import com.l4digital.fastscroll.FastScroller;
@@ -67,8 +68,8 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
 
     @Override
     public void onBindViewHolder(final TwoLineItemViewHolder viewHolder, final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(ArtistsQuery.COLUMN_ARTIST));
-        final int albumsCount = cursor.getInt(ArtistsQuery.COLUMN_NUMBER_OF_ALBUMS);
+        viewHolder.text1.setText(cursor.getString(ArtistsProvider.COLUMN_ARTIST));
+        final int albumsCount = cursor.getInt(ArtistsProvider.COLUMN_NUMBER_OF_ALBUMS);
         viewHolder.text2.setText(mResources.getQuantityString(R.plurals.d_albums,
                 albumsCount, albumsCount));
     }
@@ -81,8 +82,8 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
                 onArtistClick(vh.itemView,
-                        item.getLong(ArtistsQuery.COLUMN_ID),
-                        item.getString(ArtistsQuery.COLUMN_ARTIST));
+                        item.getLong(ArtistsProvider.COLUMN_ID),
+                        item.getString(ArtistsProvider.COLUMN_ARTIST));
             }
         });
         return vh;
@@ -92,7 +93,7 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(ArtistsQuery.COLUMN_ARTIST).charAt(0));
+            return String.valueOf(c.getString(ArtistsProvider.COLUMN_ARTIST).charAt(0));
         }
         return null;
     }

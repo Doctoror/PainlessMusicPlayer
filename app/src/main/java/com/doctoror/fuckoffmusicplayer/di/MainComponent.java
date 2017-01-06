@@ -1,6 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
+import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
@@ -19,6 +20,8 @@ import dagger.Component;
         PlaylistsModule.class
 })
 public interface MainComponent {
+
+    void inject(ArtistsFragment target);
 
     void inject(AlbumsFragment target);
 

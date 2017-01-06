@@ -58,7 +58,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
      * @return params
      */
     @NonNull
-    public static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
+    private static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
         return newParamsBuilder().setSelection(TextUtils.isEmpty(searchFilter) ? null :
                 MediaStore.Audio.Albums.ALBUM + " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(
                         searchFilter)).create();
@@ -70,7 +70,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
      * @return params Builder
      */
     @NonNull
-    public static RxCursorLoader.Query.Builder newParamsBuilder() {
+    private static RxCursorLoader.Query.Builder newParamsBuilder() {
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{

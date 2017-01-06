@@ -17,9 +17,10 @@ package com.doctoror.fuckoffmusicplayer.library.artists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsActivity;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -28,6 +29,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 
@@ -38,21 +41,23 @@ public final class ArtistsFragment extends LibraryListFragment {
 
     private ArtistsRecyclerAdapter mAdapter;
 
+    @Inject
+    ArtistsProvider mArtistsProvider;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+
         mAdapter = new ArtistsRecyclerAdapter(getActivity());
         mAdapter.setOnArtistClickListener(this::openArtist);
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_artists_found));
     }
 
-    // TODO use provider interface
     @Override
     protected Observable<Cursor> load(@Nullable final String filter) {
-        return RxCursorLoader
-                .create(getActivity().getContentResolver(), ArtistsQuery.newParams(filter))
-                .asObservable();
+        return mArtistsProvider.load(filter);
     }
 
     @Override
