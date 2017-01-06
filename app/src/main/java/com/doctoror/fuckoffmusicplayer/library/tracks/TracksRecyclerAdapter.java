@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.TwoLineItemViewHolder;
 import com.l4digital.fastscroll.FastScroller;
@@ -60,8 +61,8 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
 
     @Override
     public void onBindViewHolder(final TwoLineItemViewHolder viewHolder, final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(TracksQuery.COLUMN_TITLE));
-        viewHolder.text2.setText(cursor.getString(TracksQuery.COLUMN_ARTIST));
+        viewHolder.text1.setText(cursor.getString(TracksProvider.COLUMN_TITLE));
+        viewHolder.text2.setText(cursor.getString(TracksProvider.COLUMN_ARTIST));
     }
 
     @Override
@@ -72,7 +73,7 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
             final Cursor item = getCursor();
             final int position = vh.getAdapterPosition();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onTrackClick(vh.itemView, position, item.getLong(TracksQuery.COLUMN_ID));
+                onTrackClick(vh.itemView, position, item.getLong(TracksProvider.COLUMN_ID));
             }
         });
         return vh;
@@ -82,7 +83,7 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(TracksQuery.COLUMN_TITLE).charAt(0));
+            return String.valueOf(c.getString(TracksProvider.COLUMN_TITLE).charAt(0));
         }
         return null;
     }

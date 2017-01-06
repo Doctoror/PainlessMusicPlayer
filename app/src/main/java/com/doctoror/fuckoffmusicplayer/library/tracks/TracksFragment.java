@@ -17,12 +17,13 @@ package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -32,6 +33,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Observer;
@@ -48,9 +51,14 @@ public final class TracksFragment extends LibraryListFragment {
     private TracksRecyclerAdapter mAdapter;
     private Cursor mData;
 
+    @Inject
+    TracksProvider mTracksProvider;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+
         mAdapter = new TracksRecyclerAdapter(getActivity());
         mAdapter.setOnTrackClickListener(this::playTrack);
         setRecyclerAdapter(mAdapter);
@@ -59,9 +67,7 @@ public final class TracksFragment extends LibraryListFragment {
 
     @Override
     protected Observable<Cursor> load(@Nullable final String filter) {
-        return RxCursorLoader
-                .create(getActivity().getContentResolver(), TracksQuery.newParams(filter))
-                .asObservable();
+        return mTracksProvider.load(filter);
     }
 
     @Override
@@ -96,7 +102,7 @@ public final class TracksFragment extends LibraryListFragment {
                     for (int trackIndex = 0, i = startPosition; i < startPosition + limit;
                             trackIndex++, i++) {
                         if (data.moveToPosition(i)) {
-                            tracks[trackIndex] = data.getLong(TracksQuery.COLUMN_ID);
+                            tracks[trackIndex] = data.getLong(TracksProvider.COLUMN_ID);
                         } else {
                             throw new RuntimeException("Could not move Cursor to position " + i);
                         }
@@ -108,7 +114,7 @@ public final class TracksFragment extends LibraryListFragment {
             }
 
             s.onNext(PlaylistFactory.forTracks(getActivity().getContentResolver(),
-                    tracks, TracksQuery.SORT_ORDER));
+                    tracks, TracksProvider.SORT_ORDER));
 
         })
                 .subscribeOn(Schedulers.io())

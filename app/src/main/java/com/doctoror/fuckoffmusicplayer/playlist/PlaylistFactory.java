@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.library.tracks.TracksQuery;
+import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
@@ -58,7 +58,7 @@ public final class PlaylistFactory {
         final List<Media> playlist = new ArrayList<>(25);
         final Cursor c = resolver.query(MediaQuery.CONTENT_URI,
                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC + " AND "
+                TracksProvider.SELECTION_NON_HIDDEN_MUSIC + " AND "
                         + MediaStore.Audio.Media.ARTIST_ID + '=' + artistId,
                 null,
                 MediaStore.Audio.Media.ALBUM_ID + ',' + MediaStore.Audio.Media.TRACK);
@@ -76,7 +76,7 @@ public final class PlaylistFactory {
     public static List<Media> fromAlbumSearch(@NonNull final ContentResolver resolver,
             @Nullable final String query) {
         final StringBuilder sel = new StringBuilder(256);
-        sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
+        sel.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
             sel.append(" AND ").append(MediaStore.Audio.Media.ALBUM).append(" LIKE ")
                     .append(SqlUtils.escapeAndWrapForLikeArgument(query));
@@ -103,7 +103,7 @@ public final class PlaylistFactory {
     public static List<Media> fromArtistSearch(@NonNull final ContentResolver resolver,
             @Nullable final String query) {
         final StringBuilder sel = new StringBuilder(256);
-        sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
+        sel.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
             sel.append(" AND ").append(MediaStore.Audio.Media.ARTIST).append(" LIKE ")
                     .append(SqlUtils.escapeAndWrapForLikeArgument(query));
@@ -133,7 +133,7 @@ public final class PlaylistFactory {
         final List<Long> ids = new ArrayList<>(15);
 
         final StringBuilder sel = new StringBuilder(256);
-        sel.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC);
+        sel.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
             final String likeQuery = " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(query);
             sel.append(" AND (").append(MediaStore.Audio.Media.TITLE).append(likeQuery);
@@ -212,7 +212,7 @@ public final class PlaylistFactory {
         for (int i = 0; i < albumIds.length; i++) {
             final long albumId = albumIds[i];
             final StringBuilder selection = new StringBuilder(256);
-            selection.append(TracksQuery.SELECTION_NON_HIDDEN_MUSIC).append(" AND ");
+            selection.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC).append(" AND ");
             selection.append(MediaStore.Audio.Media.ALBUM_ID).append('=').append(albumId);
             if (forArtist != null) {
                 selection.append(" AND ")
@@ -260,7 +260,7 @@ public final class PlaylistFactory {
         final Cursor c = resolver.query(MediaStore.Audio.Genres.Members.getContentUri(EXTERNAL,
                 genreId),
                 MediaQuery.PROJECTION_WITH_ALBUM_ART,
-                TracksQuery.SELECTION_NON_HIDDEN_MUSIC,
+                TracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()");
         if (c != null) {
