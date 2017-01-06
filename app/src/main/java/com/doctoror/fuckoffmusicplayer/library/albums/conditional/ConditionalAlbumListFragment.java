@@ -73,6 +73,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -107,6 +108,7 @@ public class ConditionalAlbumListFragment extends Fragment {
     private Cursor mData;
 
     private int mAnimTime;
+    private Unbinder mUnbinder;
 
     @BindView(R.id.root)
     View root;
@@ -173,7 +175,7 @@ public class ConditionalAlbumListFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
 
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
@@ -205,6 +207,11 @@ public class ConditionalAlbumListFragment extends Fragment {
             mSubscription = null;
         }
         mLoaderObservable = null;
+
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+            mUnbinder = null;
+        }
     }
 
     private void onGlobalLayout() {

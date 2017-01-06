@@ -26,6 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -33,12 +34,13 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 08.11.16.
+ * "Live Playlists" Fragment
  */
-
 public final class LivePlaylistsFragment extends Fragment {
 
     private final List<LivePlaylist> mPlaylists = new ArrayList<>(3);
+
+    private Unbinder mUnbinder;
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -62,7 +64,7 @@ public final class LivePlaylistsFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_live_playlists, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -73,6 +75,15 @@ public final class LivePlaylistsFragment extends Fragment {
         mAdapter.setOnPlaylistClickListener(this::loadPlaylist);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mUnbinder != null) {
+            mUnbinder.unbind();
+            mUnbinder = null;
+        }
     }
 
     @Override
