@@ -17,12 +17,12 @@ package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
 import android.database.Cursor;
@@ -53,6 +53,9 @@ public final class TracksFragment extends LibraryListFragment {
 
     @Inject
     TracksProvider mTracksProvider;
+
+    @Inject
+    TrackPlaylistFactory mPlaylistFactory;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -113,8 +116,7 @@ public final class TracksFragment extends LibraryListFragment {
                 }
             }
 
-            s.onNext(PlaylistFactory.forTracks(getActivity().getContentResolver(),
-                    tracks, TracksProvider.SORT_ORDER));
+            s.onNext(mPlaylistFactory.forTracks(tracks, TracksProvider.SORT_ORDER));
 
         })
                 .subscribeOn(Schedulers.io())

@@ -450,7 +450,7 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaylist.getIndex(), true, false);
         } else {
-            PlaylistUtils.play(this, new LivePlaylistRecentlyScanned(getResources()).create(this));
+            PlaylistUtils.play(this, new LivePlaylistRecentlyScanned(this).create());
         }
     }
 

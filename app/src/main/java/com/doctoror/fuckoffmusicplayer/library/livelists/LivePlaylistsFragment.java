@@ -62,8 +62,8 @@ public final class LivePlaylistsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
         mPlaylists.add(new LivePlaylistRecentAlbums(getResources()));
-        mPlaylists.add(new LivePlaylistRecentlyScanned(getResources()));
-        mPlaylists.add(new LivePlaylistRandom(getResources()));
+        mPlaylists.add(new LivePlaylistRecentlyScanned(getActivity()));
+        mPlaylists.add(new LivePlaylistRandom(getActivity()));
     }
 
     @Nullable
@@ -121,7 +121,7 @@ public final class LivePlaylistsFragment extends Fragment {
         }
 
         mLoadPlaylistSubscription = Observable.<List<Media>>create(
-                s -> s.onNext(livePlaylist.create(context)))
+                s -> s.onNext(livePlaylist.create()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Media>>() {

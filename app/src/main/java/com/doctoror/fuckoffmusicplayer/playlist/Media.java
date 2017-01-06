@@ -35,6 +35,42 @@ public final class Media {
     String albumArt;
     int track;
 
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    public void setData(final Uri data) {
+        this.data = data;
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
+    }
+
+    public void setDuration(final long duration) {
+        this.duration = duration;
+    }
+
+    public void setArtist(final String artist) {
+        this.artist = artist;
+    }
+
+    public void setAlbum(final String album) {
+        this.album = album;
+    }
+
+    public void setAlbumId(final long albumId) {
+        this.albumId = albumId;
+    }
+
+    public void setAlbumArt(final String albumArt) {
+        this.albumArt = albumArt;
+    }
+
+    public void setTrack(final int track) {
+        this.track = track;
+    }
+
     public long getId() {
         return id;
     }

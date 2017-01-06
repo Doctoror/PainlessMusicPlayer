@@ -17,15 +17,19 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.media.MediaProvider;
+import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.ArtistPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.GenrePlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +39,8 @@ import android.text.TextUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Search utils
  */
@@ -42,24 +48,40 @@ public final class SearchUtils {
 
     private static final String TAG = "SearchUtils";
 
-    private SearchUtils() {
-        throw new UnsupportedOperationException();
+    @NonNull
+    private final Context mContext;
+
+    @Inject
+    MediaProvider mediaProvider;
+
+    @Inject
+    ArtistPlaylistFactory artistPlaylistFactory;
+
+    @Inject
+    AlbumPlaylistFactory albumPlaylistFactory;
+
+    @Inject
+    GenrePlaylistFactory genrePlaylistFactory;
+
+    @Inject
+    TrackPlaylistFactory trackPlaylistFactory;
+
+    public SearchUtils(@NonNull final Context context) {
+        mContext = context;
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
     }
 
-    public static void onPlayFromMediaId(@NonNull final Context context,
-            @NonNull final String mediaId) {
+    public void onPlayFromMediaId(@NonNull final String mediaId) {
         if (MediaBrowserImpl.MEDIA_ID_RANDOM.equals(mediaId)) {
-            final List<Media> playlist = new LivePlaylistRandom(context.getResources())
-                    .create(context);
-            play(context, playlist, 0);
+            final List<Media> playlist = new LivePlaylistRandom(mContext).create();
+            play(mContext, playlist, 0);
         } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
-            final List<Media> playlist = new LivePlaylistRecentlyScanned(context.getResources())
-                    .create(context);
-            play(context, playlist, 0);
+            final List<Media> playlist = new LivePlaylistRecentlyScanned(mContext).create();
+            play(mContext, playlist, 0);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM)) {
-            onPlayFromAlbumId(context, mediaId);
+            onPlayFromAlbumId(mediaId);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE)) {
-            onPlayFromGenreId(context, mediaId);
+            onPlayFromGenreId(mediaId);
         } else {
             long id = -1;
             try {
@@ -68,13 +90,12 @@ public final class SearchUtils {
                 Log.w(TAG, "Media id is not a number", e);
             }
             if (id != -1) {
-                onPlayFromMediaId(context, id);
+                onPlayFromMediaId(id);
             }
         }
     }
 
-    private static void onPlayFromAlbumId(@NonNull final Context context,
-            @NonNull final String mediaId) {
+    private void onPlayFromAlbumId(@NonNull final String mediaId) {
         final String albumId = mediaId
                 .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM.length());
         long id = -1;
@@ -84,14 +105,12 @@ public final class SearchUtils {
             Log.w(TAG, "Album id is not a number " + albumId, e);
         }
         if (id != -1) {
-            final List<Media> playlist = PlaylistFactory.fromAlbum(context.getContentResolver(),
-                    id);
-            play(context, playlist, 0);
+            final List<Media> playlist = albumPlaylistFactory.fromAlbum(id);
+            play(mContext, playlist, 0);
         }
     }
 
-    private static void onPlayFromGenreId(@NonNull final Context context,
-            @NonNull final String mediaId) {
+    private void onPlayFromGenreId(@NonNull final String mediaId) {
         final String genreId = mediaId
                 .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE.length());
         long id = -1;
@@ -101,16 +120,14 @@ public final class SearchUtils {
             Log.w(TAG, "Genre id is not a number " + genreId, e);
         }
         if (id != -1) {
-            final List<Media> playlist = PlaylistFactory.fromGenre(context.getContentResolver(),
-                    id);
-            play(context, playlist, 0);
+            final List<Media> playlist = genrePlaylistFactory.fromGenre(id);
+            play(mContext, playlist, 0);
         }
     }
 
-    private static void onPlayFromMediaId(@NonNull final Context context,
-            final long mediaId) {
+    private void onPlayFromMediaId(final long mediaId) {
         int position = -1;
-        List<Media> playlist = CurrentPlaylist.getInstance(context).getPlaylist();
+        List<Media> playlist = CurrentPlaylist.getInstance(mContext).getPlaylist();
         if (playlist != null && !playlist.isEmpty()) {
             final int size = playlist.size();
             for (int i = 0; i < size; i++) {
@@ -124,21 +141,16 @@ public final class SearchUtils {
         // If this media is not found in current playlist
         if (position == -1) {
             position = 0;
-            playlist = PlaylistFactory.fromSelection(context.getContentResolver(),
-                    MediaStore.Audio.Media._ID + '=' + mediaId,
-                    null,
-                    null,
-                    null);
+            playlist = mediaProvider.load(mediaId);
         }
 
-        play(context, playlist, position);
+        play(mContext, playlist, position);
     }
 
-    public static void onPlayFromSearch(@NonNull final Context context,
-            @Nullable final String query,
+    public void onPlayFromSearch(@Nullable final String query,
             @Nullable final Bundle extras) {
         if (TextUtils.isEmpty(query)) {
-            PlaybackServiceControl.playAnything(context);
+            PlaybackServiceControl.playAnything(mContext);
             return;
         }
 
@@ -157,39 +169,37 @@ public final class SearchUtils {
             album = extras == null ? null : extras.getString(MediaStore.EXTRA_MEDIA_ALBUM);
         }
 
-        final ContentResolver resolver = context.getContentResolver();
         List<Media> playlist = null;
         if (isArtistFocus) {
-            playlist = PlaylistFactory.fromArtistSearch(resolver, TextUtils.isEmpty(artist)
+            playlist = artistPlaylistFactory.fromArtistSearch(TextUtils.isEmpty(artist)
                     ? query : artist);
         } else if (isAlbumFocus) {
-            playlist = PlaylistFactory.fromAlbumSearch(resolver, TextUtils.isEmpty(album)
+            playlist = albumPlaylistFactory.fromAlbumSearch(TextUtils.isEmpty(album)
                     ? query : album);
         }
 
         if (playlist == null || playlist.isEmpty()) {
             // No focus found, search by query for song title
-            playlist = PlaylistFactory.fromTracksSearch(resolver, query);
+            playlist = trackPlaylistFactory.fromTracksSearch(query);
         }
 
-        playFromSearch(context, playlist, query);
+        playFromSearch(playlist, query);
     }
 
-    private static void playFromSearch(@NonNull final Context context,
-            @Nullable final List<Media> playlist,
+    private void playFromSearch(@Nullable final List<Media> playlist,
             @Nullable final String query) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistUtils.play(context, playlist);
+            PlaylistUtils.play(mContext, playlist);
         } else {
             final String message = TextUtils.isEmpty(query)
-                    ? context.getString(R.string.No_media_found)
-                    : context.getString(R.string.No_media_found_for_s, query);
+                    ? mContext.getString(R.string.No_media_found)
+                    : mContext.getString(R.string.No_media_found_for_s, query);
 
-            PlaybackServiceControl.stopWithError(context, message);
+            PlaybackServiceControl.stopWithError(mContext, message);
         }
     }
 
-    private static void play(@NonNull final Context context,
+    private void play(@NonNull final Context context,
             @Nullable final List<Media> playlist,
             final int position) {
         if (playlist != null && !playlist.isEmpty()) {

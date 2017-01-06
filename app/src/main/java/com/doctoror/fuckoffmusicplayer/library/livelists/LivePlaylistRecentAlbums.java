@@ -28,7 +28,8 @@ final class LivePlaylistRecentAlbums implements LivePlaylist {
 
     @WorkerThread
     @Override
-    public List<Media> create(@NonNull final Context context) {
+    public List<Media> create() {
+        // TODO Liskov Substitution Principle fucked up
         throw new UnsupportedOperationException();
     }
 }

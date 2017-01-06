@@ -16,10 +16,11 @@
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
@@ -31,6 +32,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Shows album for artists
@@ -56,15 +59,19 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     @InjectExtra
     Long artistId;
 
+    @Inject
+    AlbumPlaylistFactory mPlaylistFactory;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this, getArguments());
+        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
     }
 
     @Nullable
     @Override
     protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
-        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, artistId);
+        return mPlaylistFactory.fromAlbums(albumIds, artistId);
     }
 }

@@ -19,11 +19,11 @@ import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
 
 import android.app.Activity;
@@ -56,7 +56,11 @@ public final class AlbumsFragment extends LibraryListFragment {
 
     private RecyclerView mRecyclerView;
 
-    @Inject AlbumsProvider mAlbumsProvider;
+    @Inject
+    AlbumsProvider mAlbumsProvider;
+
+    @Inject
+    AlbumPlaylistFactory mAlbumPlaylistFactory;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -108,8 +112,7 @@ public final class AlbumsFragment extends LibraryListFragment {
     private void onAlbumClick(@NonNull final View view,
             final long albumId,
             @Nullable final String albumName) {
-        Observable.<List<Media>>create(s -> s.onNext(PlaylistFactory.fromAlbum(
-                getActivity().getContentResolver(), albumId)))
+        Observable.<List<Media>>create(s -> s.onNext(mAlbumPlaylistFactory.fromAlbum(albumId)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {

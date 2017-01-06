@@ -25,10 +25,11 @@ import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
+import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
@@ -69,6 +70,8 @@ import android.widget.Toast;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -148,10 +151,15 @@ public class ConditionalAlbumListFragment extends Fragment {
     @InjectExtra
     RxCursorLoader.Query loaderParams;
 
+    @Inject
+    AlbumPlaylistFactory mPlaylistFactory;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this, getArguments());
+        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+
         mRequestManager = Glide.with(this);
 
         mAdapter = new ConditionalAlbumsRecyclerAdapter(getActivity(), mRequestManager);
@@ -231,13 +239,13 @@ public class ConditionalAlbumListFragment extends Fragment {
     @Nullable
     @WorkerThread
     protected List<Media> playlistFromAlbum(final long albumId) {
-        return PlaylistFactory.fromAlbum(getActivity().getContentResolver(), albumId);
+        return mPlaylistFactory.fromAlbum(albumId);
     }
 
     @Nullable
     @WorkerThread
     protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
-        return PlaylistFactory.fromAlbums(getActivity().getContentResolver(), albumIds, null);
+        return mPlaylistFactory.fromAlbums(albumIds, null);
     }
 
     private void onListItemClick(@NonNull final View itemView,

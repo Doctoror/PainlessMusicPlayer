@@ -7,9 +7,12 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaylistFromSearch;
+import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.ArtistPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
 import android.provider.MediaStore;
@@ -19,12 +22,29 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * {@link WearableListenerService} implementation
  */
 public final class WearableListenerServiceImpl extends WearableListenerService {
 
     private static final String TAG = "WearableListenerServiceImpl";
+
+    @Inject
+    ArtistPlaylistFactory mArtistPlaylistFactory;
+
+    @Inject
+    AlbumPlaylistFactory mAlbumPlaylistFactory;
+
+    @Inject
+    TrackPlaylistFactory mTrackPlaylistFactory;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
+    }
 
     @Override
     public void onMessageReceived(final MessageEvent messageEvent) {
@@ -73,8 +93,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 8) {
                     final long id = ByteBuffer.wrap(data).getLong();
-                    final List<Media> playlist = PlaylistFactory
-                            .fromAlbum(getContentResolver(), id);
+                    final List<Media> playlist = mAlbumPlaylistFactory.fromAlbum(id);
                     playPlaylist(playlist, 0);
                 }
                 break;
@@ -84,8 +103,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 8) {
                     final long id = ByteBuffer.wrap(data).getLong();
-                    final List<Media> playlist = PlaylistFactory
-                            .fromArtist(getContentResolver(), id);
+                    final List<Media> playlist = mArtistPlaylistFactory.fromArtist(id);
                     playPlaylist(playlist, 0);
                 }
                 break;
@@ -101,7 +119,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                         Log.w(TAG, e);
                         break;
                     }
-                    final List<Media> playlist = PlaylistFactory.forTracks(getContentResolver(),
+                    final List<Media> playlist = mTrackPlaylistFactory.forTracks(
                             fromSearch.playlist, MediaStore.Audio.Media.TITLE);
                     if (playlist != null && !playlist.isEmpty()) {
                         int index = 0;

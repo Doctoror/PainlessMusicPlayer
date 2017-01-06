@@ -28,6 +28,8 @@ import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
+import com.doctoror.fuckoffmusicplayer.db.playlist.FilePlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
@@ -69,6 +71,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -158,12 +162,16 @@ public final class NowPlayingActivity extends BaseActivity {
     @InjectExtra
     boolean hasListViewTransition;
 
+    @Inject
+    FilePlaylistFactory mFilePlaylistFactory;
+
     private volatile boolean mSeekBarTracking;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -320,7 +328,7 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private void handleIntent(@NonNull final Intent intent) {
-        IntentHandler.handleIntent(this, intent);
+        IntentHandler.handleIntent(this, mFilePlaylistFactory, intent);
     }
 
     @Override

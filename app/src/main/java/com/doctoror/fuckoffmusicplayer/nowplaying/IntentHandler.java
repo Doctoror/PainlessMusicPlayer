@@ -16,16 +16,15 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.playlist.FilePlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
 import android.app.SearchManager;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -50,19 +49,21 @@ final class IntentHandler {
     }
 
     static void handleIntent(@NonNull final Activity activity,
+            @NonNull final FilePlaylistFactory playlistFactory,
             @NonNull final Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            onActionView(activity, intent);
+            onActionView(activity, intent, playlistFactory);
         } else if (MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH.equals(intent.getAction())) {
             onActionPlayFromSearch(activity, intent);
         }
     }
 
     private static void onActionView(@NonNull final Activity activity,
-            @NonNull final Intent intent) {
+            @NonNull final Intent intent,
+            @NonNull final FilePlaylistFactory playlistFactory) {
         rx.Observable.<List<Media>>create(s -> {
             try {
-                s.onNext(playlistFromActionView(activity.getContentResolver(), intent));
+                s.onNext(playlistFromActionView(playlistFactory, intent));
             } catch (IOException e) {
                 s.onError(e);
             }
@@ -97,15 +98,15 @@ final class IntentHandler {
     private static void onActionPlayFromSearch(@NonNull final Activity activity,
             @NonNull final Intent intent) {
         rx.Observable.create(s ->
-                SearchUtils.onPlayFromSearch(activity, intent.getStringExtra(SearchManager.QUERY),
-                        intent.getExtras()))
+                new SearchUtils(activity).onPlayFromSearch(
+                        intent.getStringExtra(SearchManager.QUERY), intent.getExtras()))
                 .subscribeOn(Schedulers.io())
                 .subscribe();
     }
 
     @NonNull
     private static List<Media> playlistFromActionView(
-            @NonNull final ContentResolver contentResolver,
+            @NonNull final FilePlaylistFactory playlistFactory,
             @NonNull final Intent intent) throws IOException {
         final Uri data = intent.getData();
         if (data == null) {
@@ -120,7 +121,7 @@ final class IntentHandler {
         }
         switch (scheme) {
             case "file":
-                return playlistFromFileActionView(contentResolver, data);
+                return playlistFromFileActionView(playlistFactory, data);
 
             default:
                 Log.w(TAG, "Unhandled Uri scheme: " + scheme);
@@ -130,10 +131,10 @@ final class IntentHandler {
 
     @NonNull
     private static List<Media> playlistFromFileActionView(
-            @NonNull final ContentResolver contentResolver,
+            @NonNull final FilePlaylistFactory playlistFactory,
             @NonNull final Uri data) throws IOException {
         try {
-            return PlaylistFactory.forFile(contentResolver, data);
+            return playlistFactory.forFile(data);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }

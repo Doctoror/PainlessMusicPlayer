@@ -19,8 +19,11 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
     @NonNull
     private final Context mContext;
 
+    private final SearchUtils mSearchUtils;
+
     MediaSessionCallback(@NonNull final Context context) {
         mContext = context.getApplicationContext();
+        mSearchUtils = new SearchUtils(context);
     }
 
     @Override
@@ -50,14 +53,14 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
     @Override
     public void onPlayFromSearch(final String query, final Bundle extras) {
-        Observable.create(s -> SearchUtils.onPlayFromSearch(mContext, query, extras))
+        Observable.create(s -> mSearchUtils.onPlayFromSearch(query, extras))
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
 
     @Override
     public void onPlayFromMediaId(final String mediaId, final Bundle extras) {
-        Observable.create(s -> SearchUtils.onPlayFromMediaId(mContext, mediaId))
+        Observable.create(s -> mSearchUtils.onPlayFromMediaId(mediaId))
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
