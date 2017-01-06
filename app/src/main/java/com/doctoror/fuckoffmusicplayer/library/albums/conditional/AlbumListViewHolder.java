@@ -15,25 +15,26 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.albums.conditional;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Created by Yaroslav Mytkalyk on 19.10.16.
- */
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
+/**
+ * View holder for albums list
+ */
 final class AlbumListViewHolder extends RecyclerView.ViewHolder {
 
-    public final TextView text1;
-    public final TextView text2;
-    public final ImageView image;
+    @BindView(android.R.id.text1) public TextView text1;
+    @BindView(android.R.id.text2) public TextView text2;
+    @BindView(android.R.id.icon) public ImageView image;
 
-    public AlbumListViewHolder(final View itemView) {
+    AlbumListViewHolder(@NonNull final View itemView) {
         super(itemView);
-        text1 = (TextView) itemView.findViewById(android.R.id.text1);
-        text2 = (TextView) itemView.findViewById(android.R.id.text2);
-        image = (ImageView) itemView.findViewById(android.R.id.icon);
+        ButterKnife.bind(this, itemView);
     }
 }

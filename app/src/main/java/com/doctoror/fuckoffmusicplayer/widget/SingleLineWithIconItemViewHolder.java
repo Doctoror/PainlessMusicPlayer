@@ -15,23 +15,25 @@
  */
 package com.doctoror.fuckoffmusicplayer.widget;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Created by Yaroslav Mytkalyk on 25.10.16.
- */
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
+/**
+ * ViewHolder for single line text with icon item
+ */
 public final class SingleLineWithIconItemViewHolder extends RecyclerView.ViewHolder {
 
-    public final ImageView icon;
-    public final TextView text;
+    @BindView(android.R.id.icon) public ImageView icon;
+    @BindView(android.R.id.text1) public TextView text;
 
-    public SingleLineWithIconItemViewHolder(final View itemView) {
+    public SingleLineWithIconItemViewHolder(@NonNull final View itemView) {
         super(itemView);
-        icon = (ImageView) itemView.findViewById(android.R.id.icon);
-        text = (TextView) itemView.findViewById(android.R.id.text1);
+        ButterKnife.bind(this, itemView);
     }
 }

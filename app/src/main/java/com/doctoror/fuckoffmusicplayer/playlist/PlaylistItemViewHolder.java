@@ -17,15 +17,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * View holder for media in playlist
  */
 final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
         ItemTouchHelperViewHolder {
 
-    final TextView textTitle;
-    final TextView textArtist;
-    final TextView textDuration;
+    @BindView(R.id.textTitle) TextView textTitle;
+    @BindView(R.id.textArtist) TextView textArtist;
+    @BindView(R.id.textDuration) TextView textDuration;
 
     @Nullable
     private final Drawable mDefaultBackground;
@@ -34,11 +37,9 @@ final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
     private final float mElevationSelected;
     private Drawable mSelectedBackground;
 
-    PlaylistItemViewHolder(final View itemView) {
+    PlaylistItemViewHolder(@NonNull final View itemView) {
         super(itemView);
-        textTitle = (TextView) itemView.findViewById(R.id.textTitle);
-        textArtist = (TextView) itemView.findViewById(R.id.textArtist);
-        textDuration = (TextView) itemView.findViewById(R.id.textDuration);
+        ButterKnife.bind(this, itemView);
 
         mDefaultBackground = itemView.getBackground();
         mDefaultElevation = ViewCompat.getElevation(itemView);

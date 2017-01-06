@@ -26,7 +26,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
 /**
- * Created by Yaroslav Mytkalyk on 18.10.16.
+ * "Artist Albums" Activity
  */
 public final class ArtistAlbumsActivity extends BaseActivity {
 

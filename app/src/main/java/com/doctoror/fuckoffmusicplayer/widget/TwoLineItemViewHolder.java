@@ -15,21 +15,24 @@
  */
 package com.doctoror.fuckoffmusicplayer.widget;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Yaroslav Mytkalyk on 17.10.16.
  */
 public class TwoLineItemViewHolder extends RecyclerView.ViewHolder {
 
-    public final TextView text1;
-    public final TextView text2;
+    @BindView(android.R.id.text1) public TextView text1;
+    @BindView(android.R.id.text2) public TextView text2;
 
-    public TwoLineItemViewHolder(final View itemView) {
+    public TwoLineItemViewHolder(@NonNull final View itemView) {
         super(itemView);
-        text1 = (TextView) itemView.findViewById(android.R.id.text1);
-        text2 = (TextView) itemView.findViewById(android.R.id.text2);
+        ButterKnife.bind(this, itemView);
     }
 }

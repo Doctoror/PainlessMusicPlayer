@@ -38,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Yaroslav Mytkalyk on 23.10.16.
  */
@@ -166,15 +169,14 @@ public class EqualizerView extends RecyclerView {
 
     }
 
-    private static final class VH extends ViewHolder {
+    static final class VH extends ViewHolder {
 
-        final TextView bandName;
-        final SeekBar bandValue;
+        @BindView(R.id.bandText) TextView bandName;
+        @BindView(R.id.seekBar) SeekBar bandValue;
 
-        VH(final View itemView) {
+        VH(@NonNull final View itemView) {
             super(itemView);
-            bandName = (TextView) itemView.findViewById(R.id.bandText);
-            bandValue = (SeekBar) itemView.findViewById(R.id.bandSeekBar);
+            ButterKnife.bind(this, itemView);
         }
     }
 

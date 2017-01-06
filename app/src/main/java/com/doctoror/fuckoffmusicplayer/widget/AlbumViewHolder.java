@@ -15,22 +15,25 @@
  */
 package com.doctoror.fuckoffmusicplayer.widget;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
- * Created by Yaroslav Mytkalyk on 17.10.16.
+ * "Album" ViewHolder
  */
 public final class AlbumViewHolder extends RecyclerView.ViewHolder {
 
-    public final TextView text1;
-    public final ImageView image;
+    @BindView(android.R.id.text1) public TextView text1;
+    @BindView(android.R.id.icon) public ImageView image;
 
-    public AlbumViewHolder(final View itemView) {
+    public AlbumViewHolder(@NonNull final View itemView) {
         super(itemView);
-        text1 = (TextView) itemView.findViewById(android.R.id.text1);
-        image = (ImageView) itemView.findViewById(android.R.id.icon);
+        ButterKnife.bind(this, itemView);
     }
 }

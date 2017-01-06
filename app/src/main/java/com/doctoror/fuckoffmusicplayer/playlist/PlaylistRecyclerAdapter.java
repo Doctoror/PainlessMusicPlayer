@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -215,15 +217,14 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Recycler
         return vh;
     }
 
-    private static final class ViewHolderMediaRemoved extends RecyclerView.ViewHolder {
+    static final class ViewHolderMediaRemoved extends RecyclerView.ViewHolder {
 
-        final TextView text;
-        final View btnDelete;
+        @BindView(android.R.id.text1) TextView text;
+        @BindView(R.id.btnDelete) View btnDelete;
 
         ViewHolderMediaRemoved(@NonNull final View itemView) {
             super(itemView);
-            text = (TextView) itemView.findViewById(android.R.id.text1);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
+            ButterKnife.bind(this, itemView);
         }
     }
 

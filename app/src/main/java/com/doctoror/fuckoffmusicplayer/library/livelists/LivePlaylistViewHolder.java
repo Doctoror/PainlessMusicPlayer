@@ -8,20 +8,20 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Created by Yaroslav Mytkalyk on 30.11.16.
- */
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
+/**
+ * "Live Playlist" ViewHolder
+ */
 final class LivePlaylistViewHolder extends RecyclerView.ViewHolder {
 
-    public final ImageView icon;
-    public final TextView text;
-    public final View progress;
+    @BindView(R.id.icon) public ImageView icon;
+    @BindView(R.id.text) public TextView text;
+    @BindView(R.id.progress) public View progress;
 
-    public LivePlaylistViewHolder(@NonNull final View itemView) {
+    LivePlaylistViewHolder(@NonNull final View itemView) {
         super(itemView);
-        icon = (ImageView) itemView.findViewById(R.id.icon);
-        text = (TextView) itemView.findViewById(R.id.text);
-        progress = itemView.findViewById(R.id.progress);
+        ButterKnife.bind(this, itemView);
     }
 }
