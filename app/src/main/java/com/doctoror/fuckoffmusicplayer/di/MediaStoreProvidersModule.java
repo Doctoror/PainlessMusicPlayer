@@ -4,6 +4,8 @@ import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.albums.MediaStoreAlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.db.artists.MediaStoreArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.db.genres.MediaStoreGenresProvider;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 
 import android.content.ContentResolver;
@@ -32,6 +34,12 @@ final class MediaStoreProvidersModule {
     AlbumsProvider provideAlbumsProvider(@NonNull final ContentResolver resolver,
             @NonNull final RecentPlaylistsManager recentPlaylistsManager) {
         return new MediaStoreAlbumsProvider(resolver, recentPlaylistsManager);
+    }
+
+    @Provides
+    @Singleton
+    GenresProvider provideGenresProvider(@NonNull final ContentResolver resolver) {
+        return new MediaStoreGenresProvider(resolver);
     }
 
 }

@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.genres;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
@@ -71,7 +72,7 @@ final class GenresRecyclerAdapter
     @Override
     public void onBindViewHolder(final SingleLineWithIconItemViewHolder viewHolder,
             final Cursor cursor) {
-        viewHolder.text.setText(cursor.getString(GenresQuery.COLUMN_NAME));
+        viewHolder.text.setText(cursor.getString(GenresProvider.COLUMN_NAME));
     }
 
     @Override
@@ -85,8 +86,8 @@ final class GenresRecyclerAdapter
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
                 onGenreClick(
                         vh.itemView,
-                        item.getLong(GenresQuery.COLUMN_ID),
-                        item.getString(GenresQuery.COLUMN_NAME));
+                        item.getLong(GenresProvider.COLUMN_ID),
+                        item.getString(GenresProvider.COLUMN_NAME));
             }
         });
         return vh;
@@ -96,7 +97,7 @@ final class GenresRecyclerAdapter
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(GenresQuery.COLUMN_NAME).charAt(0));
+            return String.valueOf(c.getString(GenresProvider.COLUMN_NAME).charAt(0));
         }
         return null;
     }

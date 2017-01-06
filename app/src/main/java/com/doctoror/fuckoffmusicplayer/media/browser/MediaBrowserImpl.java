@@ -2,13 +2,11 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.library.genres.GenresQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManagerImpl;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +53,9 @@ public final class MediaBrowserImpl {
 
     @Inject
     AlbumsProvider mAlbumsProvider;
+
+    @Inject
+    GenresProvider mGenresProvider;
 
     @Inject
     RecentPlaylistsManager mRecentPlaylistsManager;
@@ -178,18 +179,16 @@ public final class MediaBrowserImpl {
     private void loadChildrenGenres(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
 
-        final RxCursorLoader.Query query = GenresQuery.newParams(null);
-        RxCursorLoader.single(mContext.getContentResolver(), query)
-                .subscribe((c) -> {
-                    if (c != null) {
-                        final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
-                        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                            mediaItems.add(createMediaItemGenre(c));
-                        }
-                        result.sendResult(mediaItems);
-                        c.close();
-                    }
-                });
+        mGenresProvider.loadOnce().subscribe((c) -> {
+            if (c != null) {
+                final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
+                for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                    mediaItems.add(createMediaItemGenre(c));
+                }
+                result.sendResult(mediaItems);
+                c.close();
+            }
+        });
     }
 
     private void loadChildrenRecentAlbums(@NonNull final Result<List<MediaItem>> result) {
@@ -210,8 +209,8 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemGenre(@NonNull final Cursor c) {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_PREFIX_GENRE + c.getString(GenresQuery.COLUMN_ID))
-                .setTitle(c.getString(GenresQuery.COLUMN_NAME))
+                .setMediaId(MEDIA_ID_PREFIX_GENRE + c.getString(GenresProvider.COLUMN_ID))
+                .setTitle(c.getString(GenresProvider.COLUMN_NAME))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }
