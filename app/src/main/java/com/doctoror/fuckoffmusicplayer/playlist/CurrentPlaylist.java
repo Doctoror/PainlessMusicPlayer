@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -27,6 +29,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -65,8 +69,12 @@ public final class CurrentPlaylist {
     Media media;
     long position;
 
+    @Inject
+    RecentPlaylistsManager mRecentPlaylistsManager;
+
     private CurrentPlaylist(@NonNull final Context context) {
         mContext = context;
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
         PlaylistPersister.read(context, this);
     }
 
@@ -169,7 +177,7 @@ public final class CurrentPlaylist {
             if (sequence >= THRESHOLD) {
                 albums.add(prevAlbumId);
             }
-            RecentPlaylistsManager.getInstance(mContext).storeAlbumsSync(albums);
+            mRecentPlaylistsManager.storeAlbumsSync(albums);
         }
     }
 

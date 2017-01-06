@@ -18,12 +18,13 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -40,6 +41,8 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -53,9 +56,13 @@ public final class AlbumsFragment extends LibraryListFragment {
 
     private RecyclerView mRecyclerView;
 
+    @Inject AlbumsProvider mAlbumsProvider;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+
         mAdapter = new AlbumsRecyclerAdapter(getActivity(), Glide.with(this));
         mAdapter.setOnAlbumClickListener(this::onAlbumClick);
         setRecyclerAdapter(mAdapter);
@@ -84,8 +91,8 @@ public final class AlbumsFragment extends LibraryListFragment {
     }
 
     @Override
-    protected RxCursorLoader.Query newQuery(@Nullable final String filter) {
-        return AlbumsQuery.newParams(filter);
+    protected Observable<Cursor> load(@Nullable final String filter) {
+        return mAlbumsProvider.load(filter);
     }
 
     @Override

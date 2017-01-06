@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.widget.AlbumViewHolder;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.l4digital.fastscroll.FastScroller;
@@ -69,8 +70,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
 
     @Override
     public void onBindViewHolder(final AlbumViewHolder viewHolder, final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(AlbumsQuery.COLUMN_ALBUM));
-        final String artLocation = cursor.getString(AlbumsQuery.COLUMN_ALBUM_ART);
+        viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
+        final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {
             Glide.clear(viewHolder.image);
             viewHolder.image.setImageResource(R.drawable.album_art_placeholder);
@@ -92,8 +93,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
                 onAlbumClick(vh.image,
-                        item.getLong(AlbumsQuery.COLUMN_ID),
-                        item.getString(AlbumsQuery.COLUMN_ALBUM));
+                        item.getLong(AlbumsProvider.COLUMN_ID),
+                        item.getString(AlbumsProvider.COLUMN_ALBUM));
             }
         });
         return vh;
@@ -103,7 +104,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(AlbumsQuery.COLUMN_ALBUM).charAt(0));
+            return String.valueOf(c.getString(AlbumsProvider.COLUMN_ALBUM).charAt(0));
         }
         return null;
     }

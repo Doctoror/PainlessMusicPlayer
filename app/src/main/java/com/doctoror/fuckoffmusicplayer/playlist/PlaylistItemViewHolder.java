@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -34,7 +35,9 @@ final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
     private final Drawable mDefaultBackground;
     private final float mDefaultElevation;
 
-    private final float mElevationSelected;
+    @BindDimen(R.dimen.list_drag_selected_item_elevation)
+    float mElevationSelected;
+
     private Drawable mSelectedBackground;
 
     PlaylistItemViewHolder(@NonNull final View itemView) {
@@ -43,8 +46,6 @@ final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
 
         mDefaultBackground = itemView.getBackground();
         mDefaultElevation = ViewCompat.getElevation(itemView);
-        mElevationSelected = itemView.getResources()
-                .getDimension(R.dimen.list_drag_selected_item_elevation);
     }
 
     @Override

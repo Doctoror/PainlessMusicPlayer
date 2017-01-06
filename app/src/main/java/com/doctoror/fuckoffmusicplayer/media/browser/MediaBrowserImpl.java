@@ -1,19 +1,19 @@
 package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsQuery;
+import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
-import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
+import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManagerImpl;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
@@ -28,10 +28,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 /**
  * Media browser implementation
  */
-final class MediaBrowserImpl {
+public final class MediaBrowserImpl {
 
     private static final String MEDIA_ID_ROOT = "ROOT";
 
@@ -51,8 +53,15 @@ final class MediaBrowserImpl {
     @NonNull
     private final Set<String> mMediaBrowserCallerPackageNames = new HashSet<>();
 
+    @Inject
+    AlbumsProvider mAlbumsProvider;
+
+    @Inject
+    RecentPlaylistsManager mRecentPlaylistsManager;
+
     MediaBrowserImpl(@NonNull final Context context) {
         mContext = context;
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
     }
 
     BrowserRoot getRoot(@NonNull final String clientPackageName) {
@@ -69,8 +78,7 @@ final class MediaBrowserImpl {
                 if (playlist != null && !playlist.isEmpty()) {
                     mediaItems.add(createBrowsableMediaItemCurrentQueue());
                 }
-                final long[] recentlyPlayedAlbums = RecentPlaylistsManager.getInstance(mContext)
-                        .getRecentAlbums();
+                final long[] recentlyPlayedAlbums = mRecentPlaylistsManager.getRecentAlbums();
                 if (recentlyPlayedAlbums.length != 0) {
                     mediaItems.add(createBrowsableMediaItemRecentAlbums());
                 }
@@ -186,29 +194,17 @@ final class MediaBrowserImpl {
 
     private void loadChildrenRecentAlbums(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
+        mAlbumsProvider.loadRecentlyPlayedAlbumsOnce().subscribe((c) -> {
+            if (c != null) {
+                final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
+                for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                    mediaItems.add(createMediaItemAlbum(c));
+                }
 
-        final long[] recentlyPlayedAlbums = RecentPlaylistsManager.getInstance(mContext)
-                .getRecentAlbums();
-        final RxCursorLoader.Query.Builder query = AlbumsQuery.newParamsBuilder();
-        query
-                .setSelection(SelectionUtils.inSelectionLong(MediaStore.Audio.Albums._ID,
-                        recentlyPlayedAlbums))
-
-                .setSortOrder(SelectionUtils.orderByLongField(MediaStore.Audio.Albums._ID,
-                        recentlyPlayedAlbums));
-
-        RxCursorLoader.single(mContext.getContentResolver(), query.create())
-                .subscribe((c) -> {
-                    if (c != null) {
-                        final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
-                        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                            mediaItems.add(createMediaItemAlbum(c));
-                        }
-
-                        result.sendResult(mediaItems);
-                        c.close();
-                    }
-                });
+                result.sendResult(mediaItems);
+                c.close();
+            }
+        });
     }
 
     @NonNull
@@ -223,9 +219,9 @@ final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemAlbum(@NonNull final Cursor c) {
         final MediaDescriptionCompat.Builder description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_PREFIX_ALBUM + c.getString(AlbumsQuery.COLUMN_ID))
-                .setTitle(c.getString(AlbumsQuery.COLUMN_ALBUM));
-        final String art = c.getString(AlbumsQuery.COLUMN_ALBUM_ART);
+                .setMediaId(MEDIA_ID_PREFIX_ALBUM + c.getString(AlbumsProvider.COLUMN_ID))
+                .setTitle(c.getString(AlbumsProvider.COLUMN_ALBUM));
+        final String art = c.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (!TextUtils.isEmpty(art)) {
             final Uri uri = FileProvider.getUriForFile(mContext,
                     mContext.getPackageName().concat(".provider.album_thumbs"), new File(art));

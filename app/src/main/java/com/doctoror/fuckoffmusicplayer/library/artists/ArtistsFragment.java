@@ -29,6 +29,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
+import rx.Observable;
+
 /**
  * "Artists" fragment
  */
@@ -45,9 +47,12 @@ public final class ArtistsFragment extends LibraryListFragment {
         setEmptyMessage(getText(R.string.No_artists_found));
     }
 
+    // TODO use provider interface
     @Override
-    protected RxCursorLoader.Query newQuery(@Nullable final String filter) {
-        return ArtistsQuery.newParams(filter);
+    protected Observable<Cursor> load(@Nullable final String filter) {
+        return RxCursorLoader
+                .create(getActivity().getContentResolver(), ArtistsQuery.newParams(filter))
+                .asObservable();
     }
 
     @Override

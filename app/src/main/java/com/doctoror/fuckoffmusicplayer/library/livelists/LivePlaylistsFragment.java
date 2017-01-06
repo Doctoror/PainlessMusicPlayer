@@ -2,6 +2,7 @@ package com.doctoror.fuckoffmusicplayer.library.livelists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,9 +54,13 @@ public final class LivePlaylistsFragment extends Fragment {
     private Subscription mLoadPlaylistSubscription;
     private Toast mNoTracksToast;
 
+    @Inject
+    RecentPlaylistsManager mRecentPlaylistsManager;
+
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
         mPlaylists.add(new LivePlaylistRecentAlbums(getResources()));
         mPlaylists.add(new LivePlaylistRecentlyScanned(getResources()));
         mPlaylists.add(new LivePlaylistRandom(getResources()));
@@ -200,7 +207,7 @@ public final class LivePlaylistsFragment extends Fragment {
 
     private void goToRecentAlbumsActivity(@NonNull final Activity context,
             final int position) {
-        final long[] recentAlbums = RecentPlaylistsManager.getInstance(context).getRecentAlbums();
+        final long[] recentAlbums = mRecentPlaylistsManager.getRecentAlbums();
         if (recentAlbums.length == 0) {
             Toast.makeText(context, R.string.You_played_no_albums_yet, Toast.LENGTH_LONG).show();
         } else {

@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.library;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
 import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
 
@@ -37,9 +36,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Fragment used for library list
@@ -58,7 +60,7 @@ public abstract class LibraryListFragment extends Fragment {
 
     private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
 
-    private RxCursorLoader mLoaderObservable;
+    private Subscription mOldSubscription;
     private Subscription mSubscription;
 
     @Nullable
@@ -103,26 +105,26 @@ public abstract class LibraryListFragment extends Fragment {
             mSubscription = null;
         }
 
-        mLoaderObservable = null;
+        if (mOldSubscription != null) {
+            mOldSubscription.unsubscribe();
+            mOldSubscription = null;
+        }
     }
 
     private void restartLoader(@Nullable final String searchFilter) {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            final RxCursorLoader.Query params = newQuery(searchFilter);
-            if (mLoaderObservable == null) {
-                mLoaderObservable = RxCursorLoader
-                        .create(getActivity().getContentResolver(), params);
-                mSubscription = mLoaderObservable.subscribe(mObserver);
-            } else {
-                mLoaderObservable.reloadWithNewQuery(params);
-            }
+            mOldSubscription = mSubscription;
+            mSubscription = load(searchFilter)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(mObserver);
         } else {
             Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
         }
     }
 
-    protected abstract RxCursorLoader.Query newQuery(@Nullable final String filter);
+    protected abstract Observable<Cursor> load(@Nullable final String filter);
 
     protected abstract void onDataLoaded(@Nullable Cursor data);
 
@@ -145,6 +147,10 @@ public abstract class LibraryListFragment extends Fragment {
 
         @Override
         public void onError(final Throwable e) {
+            if (mOldSubscription != null) {
+                mOldSubscription.unsubscribe();
+                mOldSubscription = null;
+            }
             onDataReset();
             if (isAdded()) {
                 mModel.setErrorText(getString(R.string.Failed_to_load_data_s, e));
@@ -154,6 +160,10 @@ public abstract class LibraryListFragment extends Fragment {
 
         @Override
         public void onNext(final Cursor cursor) {
+            if (mOldSubscription != null) {
+                mOldSubscription.unsubscribe();
+                mOldSubscription = null;
+            }
             onDataLoaded(cursor);
             mModel.setDisplayedChild(cursor != null && cursor.getCount() != 0
                     ? ANIMATOR_CHILD_CONTENT : ANIMATOR_CHILD_EMPTY);

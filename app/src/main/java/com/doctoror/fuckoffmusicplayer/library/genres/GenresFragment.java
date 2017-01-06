@@ -29,6 +29,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
+import rx.Observable;
+
 /**
  * "Genres" fragment
  */
@@ -45,9 +47,12 @@ public final class GenresFragment extends LibraryListFragment {
         setEmptyMessage(getText(R.string.No_genres_found));
     }
 
+    // TODO
     @Override
-    protected RxCursorLoader.Query newQuery(@Nullable final String filter) {
-        return GenresQuery.newParams(filter);
+    protected Observable<Cursor> load(@Nullable final String filter) {
+        return RxCursorLoader
+                .create(getActivity().getContentResolver(), GenresQuery.newParams(filter))
+                .asObservable();
     }
 
     @Override

@@ -58,8 +58,10 @@ public final class TracksFragment extends LibraryListFragment {
     }
 
     @Override
-    protected RxCursorLoader.Query newQuery(@Nullable final String filter) {
-        return TracksQuery.newParams(filter);
+    protected Observable<Cursor> load(@Nullable final String filter) {
+        return RxCursorLoader
+                .create(getActivity().getContentResolver(), TracksQuery.newParams(filter))
+                .asObservable();
     }
 
     @Override

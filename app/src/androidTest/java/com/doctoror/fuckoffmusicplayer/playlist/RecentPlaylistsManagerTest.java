@@ -27,14 +27,14 @@ import java.util.Collections;
 import static org.junit.Assert.*;
 
 /**
- * {@link RecentPlaylistsManager} test
+ * {@link RecentPlaylistsManagerImpl} test
  */
 @RunWith(AndroidJUnit4.class)
 public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testStoreAlbum() throws Exception {
-        final RecentPlaylistsManager rpm = RecentPlaylistsManager.getInstance(
+        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         rpm.storeAlbum(666);
@@ -46,7 +46,7 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testStoreAlbums() throws Exception {
-        final RecentPlaylistsManager rpm = RecentPlaylistsManager.getInstance(
+        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         rpm.storeAlbumsSync(Collections.singletonList(666L));
@@ -58,7 +58,7 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testOrderingByOne() throws Exception {
-        final RecentPlaylistsManager rpm = RecentPlaylistsManager.getInstance(
+        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
 
@@ -75,7 +75,7 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testOrderingByBatch() throws Exception {
-        final RecentPlaylistsManager rpm = RecentPlaylistsManager.getInstance(
+        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         rpm.storeAlbumsSync(Arrays.asList(666L, 777L, 888L));
@@ -89,7 +89,7 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testAppendingDuplicate() throws Exception {
-        final RecentPlaylistsManager rpm = RecentPlaylistsManager.getInstance(
+        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         // Add initial values
@@ -111,7 +111,7 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testAppendingTheSameValue() throws Exception {
-        final RecentPlaylistsManager rpm = RecentPlaylistsManager.getInstance(
+        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         // Add initial values
@@ -130,7 +130,7 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testAppendingTheSameValueOnEnd() throws Exception {
-        final RecentPlaylistsManager rpm = RecentPlaylistsManager.getInstance(
+        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         // Add initial values
