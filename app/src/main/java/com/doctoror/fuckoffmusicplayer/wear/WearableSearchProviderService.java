@@ -13,7 +13,7 @@ import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 
 import android.app.IntentService;
@@ -213,7 +213,7 @@ public final class WearableSearchProviderService extends IntentService {
         final String ef = TextUtils.isEmpty(query) ? null
                 : SqlUtils.escapeAndWrapForLikeArgument(query);
         final StringBuilder selection = new StringBuilder(256);
-        selection.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC);
+        selection.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(ef)) {
             selection.append(" AND ")
                     .append(MediaStore.Audio.Media.TITLE)

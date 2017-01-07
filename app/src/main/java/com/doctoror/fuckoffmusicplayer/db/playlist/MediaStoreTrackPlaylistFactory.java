@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
@@ -55,7 +55,7 @@ public final class MediaStoreTrackPlaylistFactory implements TrackPlaylistFactor
         final List<Long> ids = new ArrayList<>(15);
 
         final StringBuilder sel = new StringBuilder(256);
-        sel.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC);
+        sel.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
             final String likeQuery = " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(query);
             sel.append(" AND (").append(MediaStore.Audio.Media.TITLE).append(likeQuery);

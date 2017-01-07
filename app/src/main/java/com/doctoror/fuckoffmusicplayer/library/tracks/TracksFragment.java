@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.library.tracks;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
@@ -116,7 +117,7 @@ public final class TracksFragment extends LibraryListFragment {
                 }
             }
 
-            s.onNext(mPlaylistFactory.forTracks(tracks, TracksProvider.SORT_ORDER));
+            s.onNext(mPlaylistFactory.forTracks(tracks, MediaStoreTracksProvider.SORT_ORDER));
 
         })
                 .subscribeOn(Schedulers.io())

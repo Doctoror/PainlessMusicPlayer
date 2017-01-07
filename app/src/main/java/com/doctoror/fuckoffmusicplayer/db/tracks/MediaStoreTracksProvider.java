@@ -18,6 +18,12 @@ import rx.Observable;
 
 public final class MediaStoreTracksProvider implements TracksProvider {
 
+    // Avoids non-music and hidden files
+    public static final String SELECTION_NON_HIDDEN_MUSIC = MediaStore.Audio.Media.IS_MUSIC + "=1"
+            + " AND " + MediaStore.Audio.Media.DATA + " NOT LIKE '%/.%'";
+
+    public static final String SORT_ORDER = MediaStore.Audio.Media.TITLE;
+
     @NonNull
     private final ContentResolver mContentResolver;
 

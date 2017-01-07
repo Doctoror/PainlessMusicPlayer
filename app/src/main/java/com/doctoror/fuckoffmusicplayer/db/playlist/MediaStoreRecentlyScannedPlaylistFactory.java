@@ -1,8 +1,8 @@
 package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
-import com.doctoror.fuckoffmusicplayer.playlist.*;
+import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
+import com.doctoror.fuckoffmusicplayer.playlist.Media;
 
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -26,7 +26,7 @@ public final class MediaStoreRecentlyScannedPlaylistFactory
     @Override
     public List<Media> loadRecentlyScannedPlaylist() {
         return mMediaProvider.load(
-                TracksProvider.SELECTION_NON_HIDDEN_MUSIC,
+                MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 MediaStore.Audio.Media.DATE_ADDED + " DESC",
                 PlaylistConfig.MAX_PLAYLIST_SIZE);

@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 
 import android.support.annotation.NonNull;
@@ -24,7 +24,7 @@ public final class MediaStoreGenrePlaylistFactory implements GenrePlaylistFactor
     @Nullable
     @Override
     public List<Media> fromGenre(final long genreId) {
-        return mMediaProvider.load(TracksProvider.SELECTION_NON_HIDDEN_MUSIC,
+        return mMediaProvider.load(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()",
                 PlaylistConfig.MAX_PLAYLIST_SIZE);

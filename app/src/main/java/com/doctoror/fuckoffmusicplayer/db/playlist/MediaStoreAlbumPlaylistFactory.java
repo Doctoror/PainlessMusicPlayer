@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 
@@ -26,7 +26,7 @@ public final class MediaStoreAlbumPlaylistFactory implements AlbumPlaylistFactor
     @Override
     public List<Media> fromAlbumSearch(@Nullable final String query) {
         final StringBuilder sel = new StringBuilder(256);
-        sel.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC);
+        sel.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
             sel.append(" AND ").append(MediaStore.Audio.Media.ALBUM).append(" LIKE ")
                     .append(SqlUtils.escapeAndWrapForLikeArgument(query));
@@ -53,7 +53,7 @@ public final class MediaStoreAlbumPlaylistFactory implements AlbumPlaylistFactor
             final long albumId = albumIds[i];
 
             final StringBuilder selection = new StringBuilder(256);
-            selection.append(TracksProvider.SELECTION_NON_HIDDEN_MUSIC).append(" AND ");
+            selection.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC).append(" AND ");
             selection.append(MediaStore.Audio.Media.ALBUM_ID).append('=').append(albumId);
             if (forArtist != null) {
                 selection.append(" AND ")
