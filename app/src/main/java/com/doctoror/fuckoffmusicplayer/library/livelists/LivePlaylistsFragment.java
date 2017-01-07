@@ -212,7 +212,6 @@ public final class LivePlaylistsFragment extends Fragment {
             Toast.makeText(context, R.string.You_played_no_albums_yet, Toast.LENGTH_LONG).show();
         } else {
             final Intent intent = Henson.with(context).gotoRecentAlbumsActivity()
-                    .albumIds(recentAlbums)
                     .build();
 
             final RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();

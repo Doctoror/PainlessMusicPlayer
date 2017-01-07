@@ -1,5 +1,6 @@
 package com.doctoror.fuckoffmusicplayer.db.albums;
 
+import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreVolumeNames;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
@@ -38,7 +39,48 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     }
 
     @Override
+    public Observable<Cursor> loadForArtist(final long artistId) {
+        final RxCursorLoader.Query query = newParamsBuilder()
+                .setContentUri(MediaStore.Audio.Artists.Albums.getContentUri(
+                        MediaStoreVolumeNames.EXTERNAL, artistId))
+                .setSelection(MediaStore.Audio.Media.IS_MUSIC + "!=0")
+                .create();
+
+        return RxCursorLoader.create(mContentResolver, query).asObservable();
+    }
+
+    @Override
+    public Observable<Cursor> loadForGenre(final long genreId) {
+//        final RxCursorLoader.Query query = newParamsBuilder()
+//                .setContentUri(MediaStore.Audio.Genres.Members.getContentUri(
+//                        MediaStoreVolumeNames.EXTERNAL, genreId))
+//                .setSelection(MediaStore.Audio.Media.IS_MUSIC + "!=0")
+//                .setSortOrder(MediaStore.Audio.Albums.FIRST_YEAR)
+//                .create();
+
+        final RxCursorLoader.Query query = newParamsBuilder()
+                .setSelection(
+                        "album_info._id IN (SELECT audio_meta.album_id FROM audio_meta, audio_genres_map "
+                                + "WHERE audio_genres_map.audio_id=audio_meta._id AND audio_genres_map.genre_id="
+                                + genreId + ')')
+                .create();
+
+        return RxCursorLoader.create(mContentResolver, query).asObservable();
+    }
+
+    @Override
+    public Observable<Cursor> loadRecentlyPlayedAlbums() {
+        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery())
+                .asObservable();
+    }
+
+    @Override
     public Single<Cursor> loadRecentlyPlayedAlbumsOnce() {
+        return RxCursorLoader.single(mContentResolver, newRecentlyPlayedAlbumsQuery());
+    }
+
+    @NonNull
+    private RxCursorLoader.Query newRecentlyPlayedAlbumsQuery() {
         final long[] recentlyPlayedAlbums = mRecentPlaylistsManager.getRecentAlbums();
         final RxCursorLoader.Query.Builder query = newParamsBuilder();
         query
@@ -47,8 +89,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
                 .setSortOrder(SelectionUtils.orderByLongField(MediaStore.Audio.Albums._ID,
                         recentlyPlayedAlbums));
-
-        return RxCursorLoader.single(mContentResolver, query.create());
+        return query.create();
     }
 
     /**
@@ -76,7 +117,8 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setProjection(new String[]{
                         MediaStore.Audio.Albums._ID,
                         MediaStore.Audio.Albums.ALBUM,
-                        MediaStore.Audio.Albums.ALBUM_ART
+                        MediaStore.Audio.Albums.ALBUM_ART,
+                        MediaStore.Audio.Albums.FIRST_YEAR
                 })
                 .setSortOrder(MediaStore.Audio.Albums.ALBUM);
     }

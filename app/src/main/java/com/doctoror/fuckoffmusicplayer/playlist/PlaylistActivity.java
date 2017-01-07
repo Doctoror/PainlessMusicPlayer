@@ -67,7 +67,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageView;
 
@@ -221,24 +220,23 @@ public final class PlaylistActivity extends BaseActivity implements
         if (TransitionUtils.supportsActivityTransitions()) {
             PlaylistActivityLollipop.addEnterTransitionListener(this);
         }
-        root.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        root.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        PlaylistActivity.this.onGlobalLayout();
-                    }
-                });
     }
 
-    private void onGlobalLayout() {
+    private void setAppBarCollapsibleIfNeeded() {
         ViewUtils.setAppBarCollapsibleIfScrollableViewIsLargeEnoughToScroll(
                 root, appBar, recyclerView, ViewUtils.getOverlayTop(cardHostScrollView != null
                         ? cardHostScrollView : recyclerView));
     }
 
     private void initRecyclerView() {
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this) {
+            @Override
+            public void onLayoutChildren(final RecyclerView.Recycler recycler,
+                    final RecyclerView.State state) {
+                super.onLayoutChildren(recycler, state);
+                setAppBarCollapsibleIfNeeded();
+            }
+        });
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperImpl(
                 (PlaylistRecyclerAdapter) mModel.getRecyclerAdapter().get()));
         itemTouchHelper.attachToRecyclerView(recyclerView);

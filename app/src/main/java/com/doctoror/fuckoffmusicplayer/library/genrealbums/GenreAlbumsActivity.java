@@ -16,15 +16,10 @@
 package com.doctoror.fuckoffmusicplayer.library.genrealbums;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
@@ -56,16 +51,8 @@ public final class GenreAlbumsActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction().add(android.R.id.content,
-                    ConditionalAlbumListFragment.instantiate(this, newParams())).commit();
+                    GenreAlbumsFragment.instantiate(this, genreId)).commit();
         }
-    }
-
-    @NonNull
-    private RxCursorLoader.Query newParams() {
-        return ConditionalAlbumListQuery.newParams(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                "album_info._id IN (SELECT audio_meta.album_id FROM audio_meta, audio_genres_map "
-                        + "WHERE audio_genres_map.audio_id=audio_meta._id AND audio_genres_map.genre_id="
-                        + genreId + ')');
     }
 
     @Override

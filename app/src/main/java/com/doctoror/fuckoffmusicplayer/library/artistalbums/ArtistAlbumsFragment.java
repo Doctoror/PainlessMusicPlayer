@@ -16,24 +16,25 @@
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListQuery;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import rx.Observable;
 
 /**
  * Shows album for artists
@@ -44,12 +45,8 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     public static ArtistAlbumsFragment instantiate(@NonNull final Context context,
             @NonNull final Long artistId) {
         final ArtistAlbumsFragment fragment = new ArtistAlbumsFragment();
-        final RxCursorLoader.Query params = ConditionalAlbumListQuery.newParams(
-                MediaStore.Audio.Artists.Albums.getContentUri("external", artistId),
-                MediaStore.Audio.Media.IS_MUSIC + "!=0");
         final Bundle extras = Henson.with(context).gotoArtistAlbumsFragment()
                 .artistId(artistId)
-                .loaderParams(params)
                 .build()
                 .getExtras();
         fragment.setArguments(extras);
@@ -62,6 +59,9 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     @Inject
     AlbumPlaylistFactory mPlaylistFactory;
 
+    @Inject
+    AlbumsProvider mAlbumsProvider;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,5 +73,10 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
         return mPlaylistFactory.fromAlbums(albumIds, artistId);
+    }
+
+    @Override
+    protected Observable<Cursor> load() {
+        return mAlbumsProvider.loadForArtist(artistId);
     }
 }

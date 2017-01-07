@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 
 import android.content.Context;
@@ -72,9 +73,9 @@ final class ConditionalAlbumsRecyclerAdapter
 
     @Override
     public void onBindViewHolder(final AlbumListViewHolder viewHolder, final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(ConditionalAlbumListQuery.COLUMN_ALBUM));
-        viewHolder.text2.setText(cursor.getString(ConditionalAlbumListQuery.COLUMN_FIRST_YEAR));
-        final String artLocation = cursor.getString(ConditionalAlbumListQuery.COLUMN_ALBUM_ART);
+        viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
+        viewHolder.text2.setText(cursor.getString(AlbumsProvider.COLUMN_FIRST_YEAR));
+        final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {
             Glide.clear(viewHolder.image);
             viewHolder.image.setImageResource(R.drawable.album_art_placeholder);
@@ -95,8 +96,8 @@ final class ConditionalAlbumsRecyclerAdapter
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
                 onAlbumClick(vh.itemView,
-                        item.getLong(ConditionalAlbumListQuery.COLUMN_ID),
-                        item.getString(ConditionalAlbumListQuery.COLUMN_ALBUM));
+                        item.getLong(AlbumsProvider.COLUMN_ID),
+                        item.getString(AlbumsProvider.COLUMN_ALBUM));
             }
         });
         return vh;

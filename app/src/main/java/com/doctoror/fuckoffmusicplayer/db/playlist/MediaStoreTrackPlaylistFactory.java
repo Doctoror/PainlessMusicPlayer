@@ -1,6 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreVolumeNames;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
@@ -23,8 +24,6 @@ import java.util.List;
  */
 
 public final class MediaStoreTrackPlaylistFactory implements TrackPlaylistFactory {
-
-    private static final String EXTERNAL = "external";
 
     @NonNull
     private final ContentResolver mContentResolver;
@@ -94,7 +93,8 @@ public final class MediaStoreTrackPlaylistFactory implements TrackPlaylistFactor
 
             if (genreId != null) {
                 playlist.addAll(mMediaProvider.load(
-                        MediaStore.Audio.Genres.Members.getContentUri(EXTERNAL, genreId),
+                        MediaStore.Audio.Genres.Members
+                                .getContentUri(MediaStoreVolumeNames.EXTERNAL, genreId),
                         SelectionUtils.notInSelection(MediaStore.Audio.Media._ID, ids),
                         null,
                         "RANDOM()",

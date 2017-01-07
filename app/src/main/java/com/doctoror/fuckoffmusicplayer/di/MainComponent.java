@@ -4,10 +4,12 @@ import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
+import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistsFragment;
+import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
@@ -43,6 +45,10 @@ public interface MainComponent {
     void inject(ConditionalAlbumListFragment target);
 
     void inject(ArtistAlbumsFragment target);
+
+    void inject(GenreAlbumsFragment target);
+
+    void inject(RecentAlbumsFragment target);
 
     void inject(LivePlaylistsFragment target);
 

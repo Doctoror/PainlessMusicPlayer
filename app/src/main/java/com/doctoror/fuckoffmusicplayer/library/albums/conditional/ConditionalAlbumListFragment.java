@@ -21,10 +21,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
+import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
@@ -36,17 +38,16 @@ import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
-import com.doctoror.rxcursorloader.RxCursorLoader;
 import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.InjectExtra;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
@@ -55,6 +56,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -64,7 +66,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -86,25 +87,15 @@ import rx.schedulers.Schedulers;
 /**
  * Album lists fragment
  */
-public class ConditionalAlbumListFragment extends Fragment {
+public abstract class ConditionalAlbumListFragment extends Fragment {
 
-    @NonNull
-    public static ConditionalAlbumListFragment instantiate(@NonNull final Context context,
-            @NonNull final RxCursorLoader.Query params) {
-        final ConditionalAlbumListFragment fragment = new ConditionalAlbumListFragment();
-        final Bundle extras = Henson.with(context).gotoConditionalAlbumListFragment()
-                .loaderParams(params)
-                .build()
-                .getExtras();
-        fragment.setArguments(extras);
-        return fragment;
-    }
+    private static final String TAG = "ConditionalAlbumListFragment";
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
-    private RxCursorLoader mLoaderObservable;
+    private Subscription mOldSubscription;
     private Subscription mSubscription;
 
     private RequestManager mRequestManager;
@@ -148,9 +139,6 @@ public class ConditionalAlbumListFragment extends Fragment {
     @BindView(R.id.errorContainer)
     View errorContainer;
 
-    @InjectExtra
-    RxCursorLoader.Query loaderParams;
-
     @Inject
     AlbumPlaylistFactory mPlaylistFactory;
 
@@ -188,18 +176,15 @@ public class ConditionalAlbumListFragment extends Fragment {
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
+            @Override
+            public void onLayoutChildren(final RecyclerView.Recycler recycler,
+                    final RecyclerView.State state) {
+                super.onLayoutChildren(recycler, state);
+                setAppBarCollapsibleIfNeeded();
+            }
+        });
 
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        ConditionalAlbumListFragment.this.onGlobalLayout();
-                    }
-                });
-
-        restartLoader();
         if (TransitionUtils.supportsActivityTransitions()) {
             LollipopUtils.applyTransitions((BaseActivity) getActivity(), cardView != null);
         }
@@ -210,19 +195,13 @@ public class ConditionalAlbumListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
-            mSubscription = null;
-        }
-        mLoaderObservable = null;
-
         if (mUnbinder != null) {
             mUnbinder.unbind();
             mUnbinder = null;
         }
     }
 
-    private void onGlobalLayout() {
+    private void setAppBarCollapsibleIfNeeded() {
         ViewUtils.setAppBarCollapsibleIfScrollableViewIsLargeEnoughToScroll(
                 root, appBar, recyclerView, ViewUtils.getOverlayTop(cardHostScrollView != null
                         ? cardHostScrollView : recyclerView));
@@ -234,6 +213,21 @@ public class ConditionalAlbumListFragment extends Fragment {
         fab.setScaleX(1f);
         fab.setScaleY(1f);
         albumArtDim.setAlpha(1f);
+        restartLoader();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mSubscription != null) {
+            mSubscription.unsubscribe();
+            mSubscription = null;
+        }
+
+        if (mOldSubscription != null) {
+            mOldSubscription.unsubscribe();
+            mOldSubscription = null;
+        }
     }
 
     @Nullable
@@ -319,15 +313,19 @@ public class ConditionalAlbumListFragment extends Fragment {
     }
 
     private void restartLoader() {
-        final RxCursorLoader.Query params = loaderParams;
-        if (mLoaderObservable == null || mSubscription == null) {
-            mLoaderObservable = RxCursorLoader
-                    .create(getActivity().getContentResolver(), params);
-            mSubscription = mLoaderObservable.subscribe(mObserver);
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            mOldSubscription = mSubscription;
+            mSubscription = load()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(mObserver);
         } else {
-            mLoaderObservable.reloadWithNewQuery(params);
+            Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
         }
     }
+
+    protected abstract Observable<Cursor> load();
 
     private void showStateError() {
         fab.setVisibility(View.GONE);
@@ -353,9 +351,16 @@ public class ConditionalAlbumListFragment extends Fragment {
             final long[] ids = new long[mData.getCount()];
             int i = 0;
             for (mData.moveToFirst(); !mData.isAfterLast(); mData.moveToNext(), i++) {
-                ids[i] = mData.getLong(ConditionalAlbumListQuery.COLUMN_ID);
+                ids[i] = mData.getLong(AlbumsProvider.COLUMN_ID);
             }
             onPlayClick(ids);
+        }
+    }
+
+    private void onDataLoaded() {
+        if (mOldSubscription != null) {
+            mOldSubscription.unsubscribe();
+            mOldSubscription = null;
         }
     }
 
@@ -363,12 +368,22 @@ public class ConditionalAlbumListFragment extends Fragment {
 
         @Override
         public void onCompleted() {
-            mData = null;
+            if (mData != null) {
+                mData.close();
+                mData = null;
+            }
         }
 
         @Override
         public void onError(final Throwable e) {
-            mData = null;
+            if (mOldSubscription != null) {
+                mOldSubscription.unsubscribe();
+                mOldSubscription = null;
+            }
+            if (mData != null) {
+                mData.close();
+                mData = null;
+            }
             if (isAdded()) {
                 mModel.setErrorText(getString(R.string.Failed_to_load_data_s, e));
                 showStateError();
@@ -381,7 +396,7 @@ public class ConditionalAlbumListFragment extends Fragment {
                 String pic = null;
                 if (cursor != null) {
                     for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                        pic = cursor.getString(ConditionalAlbumListQuery.COLUMN_ALBUM_ART);
+                        pic = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
                         if (pic != null) {
                             break;
                         }
@@ -421,6 +436,7 @@ public class ConditionalAlbumListFragment extends Fragment {
             mAdapter.swapCursor(cursor);
             mData = cursor;
             showStateContent();
+            onDataLoaded();
         }
 
         private void animateToPlaceholder() {

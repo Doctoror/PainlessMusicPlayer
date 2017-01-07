@@ -98,6 +98,7 @@ public abstract class LibraryListFragment extends Fragment {
         onDataReset();
         if (mSearchSubscription != null) {
             mSearchSubscription.unsubscribe();
+            mSearchSubscription = null;
         }
 
         if (mSubscription != null) {
@@ -160,11 +161,11 @@ public abstract class LibraryListFragment extends Fragment {
 
         @Override
         public void onNext(final Cursor cursor) {
+            onDataLoaded(cursor);
             if (mOldSubscription != null) {
                 mOldSubscription.unsubscribe();
                 mOldSubscription = null;
             }
-            onDataLoaded(cursor);
             mModel.setDisplayedChild(cursor != null && cursor.getCount() != 0
                     ? ANIMATOR_CHILD_CONTENT : ANIMATOR_CHILD_EMPTY);
         }
