@@ -1,7 +1,6 @@
 package com.doctoror.fuckoffmusicplayer.library.recentalbums;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
-import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.HensonNavigable;
 
 import android.os.Bundle;
@@ -21,7 +20,6 @@ public final class RecentAlbumsActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Dart.inject(this);
 
         ViewCompat.setTransitionName(findViewById(android.R.id.content),
                 TRANSITION_NAME_ROOT);

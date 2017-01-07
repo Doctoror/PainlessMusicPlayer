@@ -38,7 +38,6 @@ import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
-import com.f2prateek.dart.Dart;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -74,6 +73,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -101,8 +101,10 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
     private RequestManager mRequestManager;
     private Cursor mData;
 
-    private int mAnimTime;
     private Unbinder mUnbinder;
+
+    @BindInt(R.integer.shortest_anim_time)
+    int mAnimTime;
 
     @BindView(R.id.root)
     View root;
@@ -145,7 +147,6 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Dart.inject(this, getArguments());
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
 
         mRequestManager = Glide.with(this);
@@ -153,8 +154,6 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         mAdapter = new ConditionalAlbumsRecyclerAdapter(getActivity(), mRequestManager);
         mAdapter.setOnAlbumClickListener(this::onListItemClick);
         mModel.setRecyclerAdpter(mAdapter);
-
-        mAnimTime = getResources().getInteger(R.integer.shortest_anim_time);
     }
 
     @Nullable
@@ -164,7 +163,6 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         final FragmentConditionalAlbumListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_conditional_album_list, container, false);
         binding.setModel(mModel);
-
         return binding.getRoot();
     }
 
@@ -228,6 +226,8 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
             mOldSubscription.unsubscribe();
             mOldSubscription = null;
         }
+
+        mAdapter.swapCursor(null);
     }
 
     @Nullable
@@ -364,6 +364,61 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         }
     }
 
+    private void loadAlbumArt(@Nullable final Cursor cursor) {
+        if (albumArt != null) {
+            final String pic = findAlbumArt(cursor);
+            if (TextUtils.isEmpty(pic)) {
+                Glide.clear(albumArt);
+                //Must be a delay of from here. TODO Why?
+                Observable.timer(300, TimeUnit.MILLISECONDS)
+                        .observeOn(AndroidSchedulers.mainThread()).subscribe((l) ->
+                        animateToPlaceholder());
+            } else {
+                mRequestManager.load(pic)
+                        .dontTransform()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .listener(new RequestListener<String, GlideDrawable>() {
+                            @Override
+                            public boolean onException(final Exception e, final String model,
+                                    final Target<GlideDrawable> target,
+                                    final boolean isFirstResource) {
+                                animateToPlaceholder();
+                                return true;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(final GlideDrawable resource,
+                                    final String model,
+                                    final Target<GlideDrawable> target,
+                                    final boolean isFromMemoryCache,
+                                    final boolean isFirstResource) {
+                                return false;
+                            }
+                        })
+                        .into(albumArt);
+            }
+        }
+    }
+
+    @Nullable
+    private String findAlbumArt(@Nullable final Cursor cursor) {
+        if (cursor != null) {
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                final String art = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
+                if (!TextUtils.isEmpty(art)) {
+                    return art;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void animateToPlaceholder() {
+        albumArt.setAlpha(0f);
+        albumArt.setImageResource(R.drawable.album_art_placeholder);
+        albumArt.animate().alpha(1f).setDuration(500).start();
+    }
+
     private final Observer<Cursor> mObserver = new Observer<Cursor>() {
 
         @Override
@@ -392,57 +447,11 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
 
         @Override
         public void onNext(final Cursor cursor) {
-            if (albumArt != null) {
-                String pic = null;
-                if (cursor != null) {
-                    for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                        pic = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
-                        if (pic != null) {
-                            break;
-                        }
-                    }
-                }
-                if (TextUtils.isEmpty(pic)) {
-                    Glide.clear(albumArt);
-                    //Must be a delay of from here. TODO Why?
-                    Observable.timer(300, TimeUnit.MILLISECONDS)
-                            .observeOn(AndroidSchedulers.mainThread()).subscribe((l) ->
-                            animateToPlaceholder());
-                } else {
-                    mRequestManager.load(pic)
-                            .dontTransform()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .listener(new RequestListener<String, GlideDrawable>() {
-                                @Override
-                                public boolean onException(final Exception e, final String model,
-                                        final Target<GlideDrawable> target,
-                                        final boolean isFirstResource) {
-                                    animateToPlaceholder();
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(final GlideDrawable resource,
-                                        final String model,
-                                        final Target<GlideDrawable> target,
-                                        final boolean isFromMemoryCache,
-                                        final boolean isFirstResource) {
-                                    return false;
-                                }
-                            })
-                            .into(albumArt);
-                }
-            }
+            loadAlbumArt(cursor);
             mAdapter.swapCursor(cursor);
             mData = cursor;
             showStateContent();
             onDataLoaded();
-        }
-
-        private void animateToPlaceholder() {
-            albumArt.setAlpha(0f);
-            albumArt.setImageResource(R.drawable.album_art_placeholder);
-            albumArt.animate().alpha(1f).setDuration(500).start();
         }
     };
 
