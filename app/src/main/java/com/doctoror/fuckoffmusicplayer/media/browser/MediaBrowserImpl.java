@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat.BrowserRoot;
@@ -178,32 +179,42 @@ public final class MediaBrowserImpl {
 
     private void loadChildrenGenres(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
+        mGenresProvider.loadOnce()
+                .map(this::mediaItemsFromGenresCursor)
+                .subscribe(result::sendResult);
+    }
 
-        mGenresProvider.loadOnce().subscribe((c) -> {
-            if (c != null) {
-                final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
-                for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                    mediaItems.add(createMediaItemGenre(c));
-                }
-                result.sendResult(mediaItems);
-                c.close();
+    @Nullable
+    private List<MediaItem> mediaItemsFromGenresCursor(@Nullable final Cursor c) {
+        List<MediaItem> mediaItems = null;
+        if (c != null) {
+            mediaItems = new ArrayList<>(c.getCount());
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                mediaItems.add(createMediaItemGenre(c));
             }
-        });
+            c.close();
+        }
+        return mediaItems;
     }
 
     private void loadChildrenRecentAlbums(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
-        mAlbumsProvider.loadRecentlyPlayedAlbumsOnce().subscribe((c) -> {
-            if (c != null) {
-                final List<MediaItem> mediaItems = new ArrayList<>(c.getCount());
-                for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-                    mediaItems.add(createMediaItemAlbum(c));
-                }
+        mAlbumsProvider.loadRecentlyPlayedAlbumsOnce()
+                .map(this::recentAlbumsFromCursor)
+                .subscribe(result::sendResult);
+    }
 
-                result.sendResult(mediaItems);
-                c.close();
+    @Nullable
+    private List<MediaItem> recentAlbumsFromCursor(@Nullable final Cursor c) {
+        List<MediaItem> mediaItems = null;
+        if (c != null) {
+            mediaItems = new ArrayList<>(c.getCount());
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                mediaItems.add(createMediaItemAlbum(c));
             }
-        });
+            c.close();
+        }
+        return mediaItems;
     }
 
     @NonNull
