@@ -41,20 +41,18 @@ import rx.Observable;
  */
 public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
 
+    private static final String EXTRA_ARTIST_ID = "EXTRA_ARTIST_ID";
+
     @NonNull
-    public static ArtistAlbumsFragment instantiate(@NonNull final Context context,
-            @NonNull final Long artistId) {
+    public static ArtistAlbumsFragment instantiate(final long artistId) {
         final ArtistAlbumsFragment fragment = new ArtistAlbumsFragment();
-        final Bundle extras = Henson.with(context).gotoArtistAlbumsFragment()
-                .artistId(artistId)
-                .build()
-                .getExtras();
+        final Bundle extras = new Bundle();
+        extras.putLong(EXTRA_ARTIST_ID, artistId);
         fragment.setArguments(extras);
         return fragment;
     }
 
-    @InjectExtra
-    Long artistId;
+    private long artistId;
 
     @Inject
     AlbumPlaylistFactory mPlaylistFactory;
@@ -65,7 +63,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Dart.inject(this, getArguments());
+        artistId = getArguments().getLong(EXTRA_ARTIST_ID);
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
     }
 

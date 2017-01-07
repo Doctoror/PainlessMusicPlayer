@@ -4,6 +4,7 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
+import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
 import android.content.Context;
@@ -21,20 +22,18 @@ import rx.Observable;
  */
 public final class GenreAlbumsFragment extends ConditionalAlbumListFragment {
 
+    private static final String EXTRA_GENRE_ID = "EXTRA_GENRE_ID";
+
     @NonNull
-    public static GenreAlbumsFragment instantiate(@NonNull final Context context,
-            @NonNull final Long genreId) {
+    public static GenreAlbumsFragment instantiate(final long genreId) {
         final GenreAlbumsFragment fragment = new GenreAlbumsFragment();
-        final Bundle extras = Henson.with(context).gotoGenreAlbumsFragment()
-                .genreId(genreId)
-                .build()
-                .getExtras();
+        final Bundle extras = new Bundle();
+        extras.putLong(EXTRA_GENRE_ID, genreId);
         fragment.setArguments(extras);
         return fragment;
     }
 
-    @InjectExtra
-    Long genreId;
+    private long genreId;
 
     @Inject
     AlbumsProvider mAlbumsProvider;
@@ -42,6 +41,7 @@ public final class GenreAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        genreId = getArguments().getLong(EXTRA_GENRE_ID);
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
     }
 
