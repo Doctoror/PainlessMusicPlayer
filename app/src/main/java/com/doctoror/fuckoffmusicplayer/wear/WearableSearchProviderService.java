@@ -13,22 +13,26 @@ import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
+import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.util.Box;
+import com.doctoror.fuckoffmusicplayer.util.RxUtils;
 
 import android.app.IntentService;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.PowerManager;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.io.IOException;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * Provides search for wear
@@ -40,6 +44,9 @@ public final class WearableSearchProviderService extends IntentService {
     private static final String ACTION_SEARCH = "ACTION_SEARCH";
     private static final String EXTRA_QUERY = "EXTRA_QUERY";
 
+    private static final Integer LIMIT = 8;
+    private static final Integer LIMIT_TRACKS = 15;
+
     public static void search(@NonNull final Context context,
             @NonNull final String query) {
         final Intent intent = new Intent(context, WearableSearchProviderService.class);
@@ -49,6 +56,15 @@ public final class WearableSearchProviderService extends IntentService {
     }
 
     private PowerManager.WakeLock mWakeLock;
+
+    @Inject
+    ArtistsProvider mArtistsProvider;
+
+    @Inject
+    AlbumsProvider mAlbumsProvider;
+
+    @Inject
+    TracksProvider mTracksProvider;
 
     public WearableSearchProviderService() {
         super(TAG);
@@ -60,6 +76,8 @@ public final class WearableSearchProviderService extends IntentService {
         final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         mWakeLock.acquire();
+
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
     }
 
     @Override
@@ -91,10 +109,9 @@ public final class WearableSearchProviderService extends IntentService {
         }
 
         final WearSearchData.Results results = new WearSearchData.Results();
-        final ContentResolver resolver = getContentResolver();
-        results.albums = queryAlbums(resolver, query);
-        results.artists = queryArtists(resolver, query);
-        results.tracks = queryTracks(resolver, query);
+        results.albums = queryAlbums(query);
+        results.artists = queryArtists(query);
+        results.tracks = queryTracks(query);
 
         final GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API).build();
@@ -154,92 +171,69 @@ public final class WearableSearchProviderService extends IntentService {
     }
 
     @NonNull
-    private static WearSearchData.Album[] queryAlbums(@NonNull final ContentResolver resolver,
-            @NonNull final String query) {
-        final Cursor c = resolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM},
-                query.isEmpty() ? null : MediaStore.Audio.Albums.ALBUM + " LIKE "
-                        + SqlUtils.escapeAndWrapForLikeArgument(query),
-                null,
-                MediaStore.Audio.Albums.ALBUM + " LIMIT 8");
-        if (c == null) {
-            return new WearSearchData.Album[0];
-        }
-        try {
-            final WearSearchData.Album[] results = new WearSearchData.Album[c.getCount()];
-            int i = 0;
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext(), i++) {
-                final WearSearchData.Album item = new WearSearchData.Album();
-                item.id = c.getLong(0);
-                item.title = c.getString(1);
-                results[i] = item;
-            }
-            return results;
-        } finally {
-            c.close();
-        }
+    private WearSearchData.Album[] queryAlbums(@NonNull final String query) {
+        final Box<WearSearchData.Album[]> resultsHolder = new Box<>();
+        RxUtils.subscribeBlocking(
+                mAlbumsProvider.load(query, LIMIT)
+                        .map(this::cursorToWearSearchDataAlbum), resultsHolder);
+        return resultsHolder.getValue();
     }
 
     @NonNull
-    private static WearSearchData.Artist[] queryArtists(@NonNull final ContentResolver resolver,
-            @NonNull final String query) {
-        final Cursor c = resolver.query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Audio.Artists._ID, MediaStore.Audio.Artists.ARTIST},
-                query.isEmpty() ? null : MediaStore.Audio.Artists.ARTIST + " LIKE "
-                        + SqlUtils.escapeAndWrapForLikeArgument(query),
-                null,
-                MediaStore.Audio.Artists.ARTIST + " LIMIT 8");
-        if (c == null) {
-            return new WearSearchData.Artist[0];
+    private WearSearchData.Album[] cursorToWearSearchDataAlbum(@NonNull final Cursor c) {
+        final WearSearchData.Album[] results = new WearSearchData.Album[c.getCount()];
+        int i = 0;
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext(), i++) {
+            final WearSearchData.Album item = new WearSearchData.Album();
+            item.id = c.getLong(AlbumsProvider.COLUMN_ID);
+            item.title = c.getString(AlbumsProvider.COLUMN_ALBUM);
+            results[i] = item;
         }
-        try {
-            final WearSearchData.Artist[] results = new WearSearchData.Artist[c.getCount()];
-            int i = 0;
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext(), i++) {
-                final WearSearchData.Artist item = new WearSearchData.Artist();
-                item.id = c.getLong(0);
-                item.title = c.getString(1);
-                results[i] = item;
-            }
-            return results;
-        } finally {
-            c.close();
-        }
+        return results;
     }
 
     @NonNull
-    private static WearSearchData.Track[] queryTracks(@NonNull final ContentResolver resolver,
-            @NonNull final String query) {
-        final String ef = TextUtils.isEmpty(query) ? null
-                : SqlUtils.escapeAndWrapForLikeArgument(query);
-        final StringBuilder selection = new StringBuilder(256);
-        selection.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC);
-        if (!TextUtils.isEmpty(ef)) {
-            selection.append(" AND ")
-                    .append(MediaStore.Audio.Media.TITLE)
-                    .append(" LIKE '%").append(ef).append("%'");
+    private WearSearchData.Artist[] queryArtists(@NonNull final String query) {
+        final Box<WearSearchData.Artist[]> resultsHolder = new Box<>();
+        RxUtils.subscribeBlocking(
+                mArtistsProvider.load(query, LIMIT)
+                        .map(this::cursorToWearSearchDataArtist), resultsHolder);
+        return resultsHolder.getValue();
+    }
+
+    @NonNull
+    private WearSearchData.Artist[] cursorToWearSearchDataArtist(@NonNull final Cursor c) {
+        final WearSearchData.Artist[] results = new WearSearchData.Artist[c.getCount()];
+        int i = 0;
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext(), i++) {
+            final WearSearchData.Artist item = new WearSearchData.Artist();
+            item.id = c.getLong(ArtistsProvider.COLUMN_ID);
+            item.title = c.getString(ArtistsProvider.COLUMN_ARTIST);
+            results[i] = item;
         }
-        final Cursor c = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Audio.Media._ID, MediaStore.Audio.Media.TITLE},
-                selection.toString(),
-                null,
-                MediaStore.Audio.Media.TITLE + " LIMIT 15");
-        if (c == null) {
-            return new WearSearchData.Track[0];
+        return results;
+    }
+
+    @NonNull
+    private WearSearchData.Track[] queryTracks(@NonNull final String query) {
+        final Box<WearSearchData.Track[]> resultsHolder = new Box<>();
+        RxUtils.subscribeBlocking(
+                mTracksProvider.load(query, LIMIT_TRACKS, false)
+                        .map(this::cursorToWearSearchDataTrack), resultsHolder);
+        return resultsHolder.getValue();
+    }
+
+    @NonNull
+    private WearSearchData.Track[] cursorToWearSearchDataTrack(@NonNull final Cursor c) {
+        final WearSearchData.Track[] results = new WearSearchData.Track[c.getCount()];
+        int i = 0;
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext(), i++) {
+            final WearSearchData.Track item = new WearSearchData.Track();
+            item.id = c.getLong(TracksProvider.COLUMN_ID);
+            item.title = c.getString(TracksProvider.COLUMN_TITLE);
+            results[i] = item;
         }
-        try {
-            final WearSearchData.Track[] results = new WearSearchData.Track[c.getCount()];
-            int i = 0;
-            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext(), i++) {
-                final WearSearchData.Track item = new WearSearchData.Track();
-                item.id = c.getLong(0);
-                item.title = c.getString(1);
-                results[i] = item;
-            }
-            return results;
-        } finally {
-            c.close();
-        }
+        return results;
     }
 
 }

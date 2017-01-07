@@ -33,11 +33,23 @@ public final class MediaStoreTracksProvider implements TracksProvider {
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return RxCursorLoader.create(mContentResolver, newParams(searchFilter)).asObservable();
+        return load(searchFilter, null, true);
+    }
+
+    @Override
+    public Observable<Cursor> load(@Nullable final String searchFilter,
+            @Nullable final Integer limit,
+            final boolean includeSearchByArtist) {
+        return RxCursorLoader
+                .create(mContentResolver, newParams(searchFilter, limit, includeSearchByArtist))
+                .asObservable();
     }
 
     @NonNull
-    private static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
+    private static RxCursorLoader.Query newParams(
+            @Nullable final String searchFilter,
+            @Nullable final Integer limit,
+            final boolean includeSearchByArtist) {
         final String wrapped = TextUtils.isEmpty(searchFilter) ? null
                 : SqlUtils.escapeAndWrapForLikeArgument(searchFilter);
         final StringBuilder selection = new StringBuilder(256);
@@ -46,21 +58,31 @@ public final class MediaStoreTracksProvider implements TracksProvider {
             selection.append(" AND ")
 
                     .append(MediaStore.Audio.Media.TITLE)
-                    .append(" LIKE ").append(wrapped).append(" OR ")
-
-                    .append(MediaStore.Audio.Media.ARTIST)
                     .append(" LIKE ").append(wrapped);
+
+            if (includeSearchByArtist) {
+                selection
+                        .append(" OR ")
+                        .append(MediaStore.Audio.Media.ARTIST)
+                        .append(" LIKE ").append(wrapped);
+            }
         }
-        return new RxCursorLoader.Query.Builder()
+        final RxCursorLoader.Query.Builder b = new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
                         MediaStore.Audio.Media._ID,
                         MediaStore.Audio.Media.TITLE,
                         MediaStore.Audio.Media.ARTIST
                 })
-                .setSortOrder(SORT_ORDER)
-                .setSelection(selection.toString())
-                .create();
+                .setSelection(selection.toString());
+
+        if (limit == null) {
+            b.setSortOrder(SORT_ORDER);
+        } else {
+            b.setSortOrder(SORT_ORDER + " LIMIT " + limit);
+        }
+
+        return b.create();
     }
 
 }

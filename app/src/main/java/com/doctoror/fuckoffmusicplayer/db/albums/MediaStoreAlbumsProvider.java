@@ -21,6 +21,8 @@ import rx.Single;
  */
 public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
+    private static final String SORT_ORDER = MediaStore.Audio.Albums.ALBUM;
+
     @NonNull
     private final ContentResolver mContentResolver;
 
@@ -35,7 +37,15 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return RxCursorLoader.create(mContentResolver, newParams(searchFilter)).asObservable();
+        return load(searchFilter, null);
+    }
+
+    @Override
+    public Observable<Cursor> load(
+            @Nullable final String searchFilter,
+            @Nullable final Integer limit) {
+        return RxCursorLoader.create(mContentResolver, newParams(searchFilter, limit))
+                .asObservable();
     }
 
     @Override
@@ -99,10 +109,18 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
      * @return params
      */
     @NonNull
-    private static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
-        return newParamsBuilder().setSelection(TextUtils.isEmpty(searchFilter) ? null :
-                MediaStore.Audio.Albums.ALBUM + " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(
-                        searchFilter)).create();
+    private static RxCursorLoader.Query newParams(@Nullable final String searchFilter,
+            @Nullable final Integer limit) {
+        final RxCursorLoader.Query.Builder b = newParamsBuilder()
+                .setSelection(TextUtils.isEmpty(searchFilter)
+                        ? null : MediaStore.Audio.Albums.ALBUM + " LIKE " + SqlUtils
+                        .escapeAndWrapForLikeArgument(searchFilter));
+
+        if (limit != null) {
+            b.setSortOrder(SORT_ORDER + " LIMIT " + limit);
+        }
+
+        return b.create();
     }
 
     /**
@@ -120,6 +138,6 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                         MediaStore.Audio.Albums.ALBUM_ART,
                         MediaStore.Audio.Albums.FIRST_YEAR
                 })
-                .setSortOrder(MediaStore.Audio.Albums.ALBUM);
+                .setSortOrder(SORT_ORDER);
     }
 }

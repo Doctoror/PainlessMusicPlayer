@@ -15,4 +15,9 @@ public interface TracksProvider {
     int COLUMN_ARTIST = 2;
 
     Observable<Cursor> load(@Nullable String searchFilter);
+
+    Observable<Cursor> load(
+            @Nullable String searchFilter,
+            @Nullable Integer limit,
+            boolean includeSearchByArtist);
 }

@@ -26,22 +26,36 @@ public final class MediaStoreArtistsProvider implements ArtistsProvider {
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter)).asObservable();
+        return load(searchFilter, null);
+    }
+
+    @Override
+    public Observable<Cursor> load(@Nullable final String searchFilter,
+            @Nullable final Integer limit) {
+        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter, limit))
+                .asObservable();
     }
 
     @NonNull
-    private static RxCursorLoader.Query newQuery(@Nullable final String searchFilter) {
-        return new RxCursorLoader.Query.Builder()
+    private static RxCursorLoader.Query newQuery(@Nullable final String searchFilter,
+            @Nullable final Integer limit) {
+        final RxCursorLoader.Query.Builder b = new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
                         MediaStore.Audio.Artists._ID,
                         MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
                         MediaStore.Audio.Artists.ARTIST
                 })
-                .setSortOrder(MediaStore.Audio.Artists.ARTIST)
                 .setSelection(TextUtils.isEmpty(searchFilter) ? null
                         : MediaStore.Audio.Artists.ARTIST + " LIKE "
-                                + SqlUtils.escapeAndWrapForLikeArgument(searchFilter))
-                .create();
+                                + SqlUtils.escapeAndWrapForLikeArgument(searchFilter));
+
+        if (limit == null) {
+            b.setSortOrder(MediaStore.Audio.Artists.ARTIST);
+        } else {
+            b.setSortOrder(MediaStore.Audio.Artists.ARTIST + " LIMIT " + limit);
+        }
+
+        return b.create();
     }
 }
