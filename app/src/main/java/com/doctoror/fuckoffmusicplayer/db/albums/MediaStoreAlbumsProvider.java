@@ -61,13 +61,6 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @Override
     public Observable<Cursor> loadForGenre(final long genreId) {
-//        final RxCursorLoader.Query query = newParamsBuilder()
-//                .setContentUri(MediaStore.Audio.Genres.Members.getContentUri(
-//                        MediaStoreVolumeNames.EXTERNAL, genreId))
-//                .setSelection(MediaStore.Audio.Media.IS_MUSIC + "!=0")
-//                .setSortOrder(MediaStore.Audio.Albums.FIRST_YEAR)
-//                .create();
-
         final RxCursorLoader.Query query = newParamsBuilder()
                 .setSelection(
                         "album_info._id IN (SELECT audio_meta.album_id FROM audio_meta, audio_genres_map "
