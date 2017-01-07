@@ -25,8 +25,9 @@ import com.doctoror.commons.playback.PlaybackState.State;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.db.playlist.RecentlyScannedPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
@@ -66,6 +67,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscription;
@@ -158,9 +161,14 @@ public final class PlaybackService extends Service {
 
     private PlaybackController mPlaybackController;
 
+    @Inject
+    RecentlyScannedPlaylistFactory mRecentlyScannedPlaylistFactory;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
+
         mDestroying = false;
         mErrorMessage = null;
         mPermissionReceivePlaybackState = getPackageName()
@@ -450,7 +458,7 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaylist.getIndex(), true, false);
         } else {
-            PlaylistUtils.play(this, new LivePlaylistRecentlyScanned(this).create());
+            PlaylistUtils.play(this, mRecentlyScannedPlaylistFactory.loadRecentlyScannedPlaylist());
         }
     }
 

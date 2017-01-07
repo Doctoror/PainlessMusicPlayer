@@ -1,20 +1,48 @@
 package com.doctoror.fuckoffmusicplayer.library.livelists;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 
-import android.support.annotation.WorkerThread;
-
-import java.util.List;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * Created by Yaroslav Mytkalyk on 08.11.16.
+ * A "Live Playlist"
  */
+final class LivePlaylist {
 
-interface LivePlaylist {
+    static final int TYPE_RECENTLY_PLAYED_ALBUMS = 0;
+    static final int TYPE_RECENTLY_SCANNED = 1;
+    static final int TYPE_RANDOM_PLAYLIST = 2;
 
-    CharSequence getTitle();
+    @IntDef({
+            TYPE_RECENTLY_PLAYED_ALBUMS,
+            TYPE_RECENTLY_SCANNED,
+            TYPE_RANDOM_PLAYLIST
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    @interface Type {
 
-    @WorkerThread
-    List<Media> create();
+    }
 
+    @Type
+    private final int mType;
+
+    @NonNull
+    private final CharSequence mTitle;
+
+    LivePlaylist(@Type final int type, @NonNull final CharSequence title) {
+        mType = type;
+        mTitle = title;
+    }
+
+    @Type
+    public int getType() {
+        return mType;
+    }
+
+    @NonNull
+    public CharSequence getTitle() {
+        return mTitle;
+    }
 }

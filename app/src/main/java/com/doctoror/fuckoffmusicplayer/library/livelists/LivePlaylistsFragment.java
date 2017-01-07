@@ -2,6 +2,8 @@ package com.doctoror.fuckoffmusicplayer.library.livelists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.playlist.RandomPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.RecentlyScannedPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -10,6 +12,7 @@ import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,13 +60,26 @@ public final class LivePlaylistsFragment extends Fragment {
     @Inject
     RecentPlaylistsManager mRecentPlaylistsManager;
 
+    @Inject
+    RecentlyScannedPlaylistFactory mRecentlyScannedPlaylistFactory;
+
+    @Inject
+    RandomPlaylistFactory mRandomPlaylistFactory;
+
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
-        mPlaylists.add(new LivePlaylistRecentAlbums(getResources()));
-        mPlaylists.add(new LivePlaylistRecentlyScanned(getActivity()));
-        mPlaylists.add(new LivePlaylistRandom(getActivity()));
+        final Context context = getActivity();
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
+
+        mPlaylists.add(new LivePlaylist(LivePlaylist.TYPE_RECENTLY_PLAYED_ALBUMS,
+                context.getText(R.string.Recently_played_albums)));
+
+        mPlaylists.add(new LivePlaylist(LivePlaylist.TYPE_RECENTLY_SCANNED,
+                context.getText(R.string.Recently_scanned)));
+
+        mPlaylists.add(new LivePlaylist(LivePlaylist.TYPE_RANDOM_PLAYLIST,
+                context.getText(R.string.Random_playlist)));
     }
 
     @Nullable
@@ -114,14 +130,28 @@ public final class LivePlaylistsFragment extends Fragment {
             return;
         }
 
-        if (livePlaylist instanceof LivePlaylistRecentAlbums) {
-            clearLoadingFlag();
-            goToRecentAlbumsActivity(context, position);
-            return;
-        }
+        switch (livePlaylist.getType()) {
+            case LivePlaylist.TYPE_RECENTLY_PLAYED_ALBUMS:
+                clearLoadingFlag();
+                goToRecentAlbumsActivity(context, position);
+                break;
 
+            case LivePlaylist.TYPE_RECENTLY_SCANNED:
+                loadPlaylistAndPlay(position,
+                        () -> mRecentlyScannedPlaylistFactory.loadRecentlyScannedPlaylist());
+                break;
+
+            case LivePlaylist.TYPE_RANDOM_PLAYLIST:
+                loadPlaylistAndPlay(position, () -> mRandomPlaylistFactory.randomPlaylist());
+                break;
+
+        }
+    }
+
+    private void loadPlaylistAndPlay(final int position,
+            @NonNull final LoadPlaylistAction action) {
         mLoadPlaylistSubscription = Observable.<List<Media>>create(
-                s -> s.onNext(livePlaylist.create()))
+                s -> s.onNext(action.load()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Media>>() {
@@ -227,5 +257,10 @@ public final class LivePlaylistsFragment extends Fragment {
                 startActivity(intent);
             }
         }
+    }
+
+    private interface LoadPlaylistAction {
+
+        List<Media> load();
     }
 }

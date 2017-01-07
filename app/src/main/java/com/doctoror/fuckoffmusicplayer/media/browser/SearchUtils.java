@@ -21,10 +21,10 @@ import com.doctoror.fuckoffmusicplayer.db.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.db.playlist.ArtistPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.db.playlist.GenrePlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.RandomPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.RecentlyScannedPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRandom;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -66,6 +66,12 @@ public final class SearchUtils {
     @Inject
     TrackPlaylistFactory trackPlaylistFactory;
 
+    @Inject
+    RecentlyScannedPlaylistFactory recentlyScannedPlaylistFactory;
+
+    @Inject
+    RandomPlaylistFactory randomPlaylistFactory;
+
     public SearchUtils(@NonNull final Context context) {
         mContext = context;
         DaggerHolder.getInstance(context).mainComponent().inject(this);
@@ -73,10 +79,10 @@ public final class SearchUtils {
 
     public void onPlayFromMediaId(@NonNull final String mediaId) {
         if (MediaBrowserImpl.MEDIA_ID_RANDOM.equals(mediaId)) {
-            final List<Media> playlist = new LivePlaylistRandom(mContext).create();
+            final List<Media> playlist = randomPlaylistFactory.randomPlaylist();
             play(mContext, playlist, 0);
         } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
-            final List<Media> playlist = new LivePlaylistRecentlyScanned(mContext).create();
+            final List<Media> playlist = recentlyScannedPlaylistFactory.loadRecentlyScannedPlaylist();
             play(mContext, playlist, 0);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM)) {
             onPlayFromAlbumId(mediaId);
