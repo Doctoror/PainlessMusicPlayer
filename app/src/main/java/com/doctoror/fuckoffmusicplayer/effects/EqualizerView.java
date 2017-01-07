@@ -172,7 +172,7 @@ public class EqualizerView extends RecyclerView {
     static final class VH extends ViewHolder {
 
         @BindView(R.id.bandText) TextView bandName;
-        @BindView(R.id.seekBar) SeekBar bandValue;
+        @BindView(R.id.bandSeekBar) SeekBar bandValue;
 
         VH(@NonNull final View itemView) {
             super(itemView);
