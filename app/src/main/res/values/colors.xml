@@ -24,7 +24,6 @@
     <color name="dividerBackground">#1f000000</color>
 
     <color name="greyControl">#60000000</color>
-    <color name="greyControlLight">#60ffffff</color>
     <color name="borderlessImageButton">#60000000</color>
 
 </resources>
