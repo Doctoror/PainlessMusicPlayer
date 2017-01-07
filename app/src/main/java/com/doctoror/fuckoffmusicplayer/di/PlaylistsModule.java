@@ -55,28 +55,28 @@ final class PlaylistsModule {
 
     @Provides
     @Singleton
-    PlaylistProviderArtists provideArtistPlaylistFactory(
+    PlaylistProviderArtists providePlaylistProviderArtists(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderArtistsMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    PlaylistProviderAlbums provideAlbumPlaylistFactory(
+    PlaylistProviderAlbums providePlaylistProviderAlbums(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderAlbumsMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    PlaylistProviderGenres provideGenrePlaylistFactory(
+    PlaylistProviderGenres providePlaylistProviderGenres(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderGenresMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    PlaylistProviderTracks provideTracksPlaylistFactory(
+    PlaylistProviderTracks providePlaylistProviderTracks(
             @NonNull final ContentResolver contentResolver,
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderTracksMediaStore(contentResolver, mediaProvider);
@@ -84,21 +84,21 @@ final class PlaylistsModule {
 
     @Provides
     @Singleton
-    PlaylistProviderFiles provideFilePlaylistFactory(
+    PlaylistProviderFiles providePlaylistProviderFiles(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderFilesMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    PlaylistProviderRandom provideRandomPlaylistFactory(
+    PlaylistProviderRandom providePlaylistProviderRandom(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderRandomMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    PlaylistProviderRecentlyScanned provideRecentlyScannedPlaylistFactory(
+    PlaylistProviderRecentlyScanned providePlaylistProviderRecentlyScanned(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderRecentlyScannedMediaStore(mediaProvider);
     }
