@@ -34,6 +34,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import rx.schedulers.Schedulers;
+
 /**
  * Provides search for wear
  */
@@ -173,9 +175,9 @@ public final class WearableSearchProviderService extends IntentService {
     @NonNull
     private WearSearchData.Album[] queryAlbums(@NonNull final String query) {
         final Box<WearSearchData.Album[]> resultsHolder = new Box<>();
-        RxUtils.subscribeBlocking(
-                mAlbumsProvider.load(query, LIMIT)
-                        .map(this::cursorToWearSearchDataAlbum), resultsHolder);
+        RxUtils.subscribeBlocking(mAlbumsProvider.load(query, LIMIT)
+                .subscribeOn(Schedulers.io())
+                .map(this::cursorToWearSearchDataAlbum), resultsHolder);
         return resultsHolder.getValue();
     }
 
@@ -195,9 +197,9 @@ public final class WearableSearchProviderService extends IntentService {
     @NonNull
     private WearSearchData.Artist[] queryArtists(@NonNull final String query) {
         final Box<WearSearchData.Artist[]> resultsHolder = new Box<>();
-        RxUtils.subscribeBlocking(
-                mArtistsProvider.load(query, LIMIT)
-                        .map(this::cursorToWearSearchDataArtist), resultsHolder);
+        RxUtils.subscribeBlocking(mArtistsProvider.load(query, LIMIT)
+                .subscribeOn(Schedulers.io())
+                .map(this::cursorToWearSearchDataArtist), resultsHolder);
         return resultsHolder.getValue();
     }
 
@@ -217,9 +219,9 @@ public final class WearableSearchProviderService extends IntentService {
     @NonNull
     private WearSearchData.Track[] queryTracks(@NonNull final String query) {
         final Box<WearSearchData.Track[]> resultsHolder = new Box<>();
-        RxUtils.subscribeBlocking(
-                mTracksProvider.load(query, LIMIT_TRACKS, false)
-                        .map(this::cursorToWearSearchDataTrack), resultsHolder);
+        RxUtils.subscribeBlocking(mTracksProvider.load(query, LIMIT_TRACKS, false)
+                .subscribeOn(Schedulers.io())
+                .map(this::cursorToWearSearchDataTrack), resultsHolder);
         return resultsHolder.getValue();
     }
 

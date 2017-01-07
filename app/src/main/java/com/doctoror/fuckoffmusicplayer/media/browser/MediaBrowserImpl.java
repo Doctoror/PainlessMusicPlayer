@@ -29,6 +29,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * Media browser implementation
  */
@@ -181,6 +184,8 @@ public final class MediaBrowserImpl {
         result.detach();
         mGenresProvider.loadOnce()
                 .map(this::mediaItemsFromGenresCursor)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result::sendResult);
     }
 
@@ -201,6 +206,8 @@ public final class MediaBrowserImpl {
         result.detach();
         mAlbumsProvider.loadRecentlyPlayedAlbumsOnce()
                 .map(this::recentAlbumsFromCursor)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result::sendResult);
     }
 

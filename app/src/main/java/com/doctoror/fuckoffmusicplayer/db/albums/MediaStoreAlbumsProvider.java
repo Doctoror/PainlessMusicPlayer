@@ -44,8 +44,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     public Observable<Cursor> load(
             @Nullable final String searchFilter,
             @Nullable final Integer limit) {
-        return RxCursorLoader.create(mContentResolver, newParams(searchFilter, limit))
-                .asObservable();
+        return RxCursorLoader.create(mContentResolver, newParams(searchFilter, limit));
     }
 
     @Override
@@ -56,7 +55,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setSelection(MediaStore.Audio.Media.IS_MUSIC + "!=0")
                 .create();
 
-        return RxCursorLoader.create(mContentResolver, query).asObservable();
+        return RxCursorLoader.create(mContentResolver, query);
     }
 
     @Override
@@ -68,13 +67,12 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                                 + genreId + ')')
                 .create();
 
-        return RxCursorLoader.create(mContentResolver, query).asObservable();
+        return RxCursorLoader.create(mContentResolver, query);
     }
 
     @Override
     public Observable<Cursor> loadRecentlyPlayedAlbums() {
-        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery())
-                .asObservable();
+        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery());
     }
 
     @Override

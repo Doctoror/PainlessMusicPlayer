@@ -27,7 +27,7 @@ public final class MediaStoreGenresProvider implements GenresProvider {
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter)).asObservable();
+        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter));
     }
 
     @Override

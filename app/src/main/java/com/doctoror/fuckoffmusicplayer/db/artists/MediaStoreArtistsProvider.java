@@ -32,8 +32,7 @@ public final class MediaStoreArtistsProvider implements ArtistsProvider {
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter,
             @Nullable final Integer limit) {
-        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter, limit))
-                .asObservable();
+        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter, limit));
     }
 
     @NonNull

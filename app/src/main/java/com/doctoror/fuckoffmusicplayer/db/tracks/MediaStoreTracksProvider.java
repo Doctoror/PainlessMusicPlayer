@@ -41,8 +41,7 @@ public final class MediaStoreTracksProvider implements TracksProvider {
             @Nullable final Integer limit,
             final boolean includeSearchByArtist) {
         return RxCursorLoader
-                .create(mContentResolver, newParams(searchFilter, limit, includeSearchByArtist))
-                .asObservable();
+                .create(mContentResolver, newParams(searchFilter, limit, includeSearchByArtist));
     }
 
     @NonNull
