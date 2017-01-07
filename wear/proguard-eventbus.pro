@@ -8,3 +8,5 @@
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
     <init>(java.lang.Throwable);
 }
+
+-keep class com.doctoror.fuckoffmusicplayer.wear.media.eventbus.** { *; }
