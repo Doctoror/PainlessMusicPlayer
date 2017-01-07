@@ -18,12 +18,12 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.ArtistPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.GenrePlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.RandomPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.RecentlyScannedPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderArtists;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderGenres;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandom;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
@@ -55,22 +55,22 @@ public final class SearchUtils {
     MediaProvider mediaProvider;
 
     @Inject
-    ArtistPlaylistFactory artistPlaylistFactory;
+    PlaylistProviderArtists artistPlaylistFactory;
 
     @Inject
-    AlbumPlaylistFactory albumPlaylistFactory;
+    PlaylistProviderAlbums albumPlaylistFactory;
 
     @Inject
-    GenrePlaylistFactory genrePlaylistFactory;
+    PlaylistProviderGenres genrePlaylistFactory;
 
     @Inject
-    TrackPlaylistFactory trackPlaylistFactory;
+    PlaylistProviderTracks trackPlaylistFactory;
 
     @Inject
-    RecentlyScannedPlaylistFactory recentlyScannedPlaylistFactory;
+    PlaylistProviderRecentlyScanned recentlyScannedPlaylistFactory;
 
     @Inject
-    RandomPlaylistFactory randomPlaylistFactory;
+    PlaylistProviderRandom randomPlaylistFactory;
 
     public SearchUtils(@NonNull final Context context) {
         mContext = context;
@@ -82,7 +82,7 @@ public final class SearchUtils {
             final List<Media> playlist = randomPlaylistFactory.randomPlaylist();
             play(mContext, playlist, 0);
         } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
-            final List<Media> playlist = recentlyScannedPlaylistFactory.loadRecentlyScannedPlaylist();
+            final List<Media> playlist = recentlyScannedPlaylistFactory.recentlyScannedPlaylist();
             play(mContext, playlist, 0);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM)) {
             onPlayFromAlbumId(mediaId);

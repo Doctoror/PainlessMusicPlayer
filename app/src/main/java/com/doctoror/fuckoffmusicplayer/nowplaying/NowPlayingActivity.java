@@ -28,7 +28,7 @@ import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
-import com.doctoror.fuckoffmusicplayer.db.playlist.FilePlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
@@ -163,7 +163,7 @@ public final class NowPlayingActivity extends BaseActivity {
     boolean hasListViewTransition;
 
     @Inject
-    FilePlaylistFactory mFilePlaylistFactory;
+    PlaylistProviderFiles mFilePlaylistFactory;
 
     private volatile boolean mSeekBarTracking;
 

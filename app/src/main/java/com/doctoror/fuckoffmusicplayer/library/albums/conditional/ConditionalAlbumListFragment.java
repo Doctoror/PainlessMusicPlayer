@@ -27,7 +27,7 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -142,7 +142,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
     View errorContainer;
 
     @Inject
-    AlbumPlaylistFactory mPlaylistFactory;
+    PlaylistProviderAlbums mPlaylistFactory;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {

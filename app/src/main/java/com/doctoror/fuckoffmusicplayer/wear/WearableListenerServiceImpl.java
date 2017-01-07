@@ -7,9 +7,9 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaylistFromSearch;
-import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.ArtistPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderArtists;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -32,13 +32,13 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
     private static final String TAG = "WearableListenerServiceImpl";
 
     @Inject
-    ArtistPlaylistFactory mArtistPlaylistFactory;
+    PlaylistProviderArtists mArtistPlaylistFactory;
 
     @Inject
-    AlbumPlaylistFactory mAlbumPlaylistFactory;
+    PlaylistProviderAlbums mAlbumPlaylistFactory;
 
     @Inject
-    TrackPlaylistFactory mTrackPlaylistFactory;
+    PlaylistProviderTracks mTrackPlaylistFactory;
 
     @Override
     public void onCreate() {
@@ -119,7 +119,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                         Log.w(TAG, e);
                         break;
                     }
-                    final List<Media> playlist = mTrackPlaylistFactory.forTracks(
+                    final List<Media> playlist = mTrackPlaylistFactory.fromTracks(
                             fromSearch.playlist, MediaStore.Audio.Media.TITLE);
                     if (playlist != null && !playlist.isEmpty()) {
                         int index = 0;

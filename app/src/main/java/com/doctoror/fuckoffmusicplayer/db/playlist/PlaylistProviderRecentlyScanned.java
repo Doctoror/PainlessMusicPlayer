@@ -5,11 +5,10 @@ import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import java.util.List;
 
 /**
- * Created by Yaroslav Mytkalyk on 06.01.17.
+ * Factory for creating "recently scanned" playlist
  */
+public interface PlaylistProviderRecentlyScanned {
 
-public interface RandomPlaylistFactory {
-
-    List<Media> randomPlaylist();
+    List<Media> recentlyScannedPlaylist();
 
 }

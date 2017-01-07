@@ -2,21 +2,19 @@ package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 
-import android.content.ContentResolver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import java.util.List;
 
-public interface ArtistPlaylistFactory {
+public interface PlaylistProviderTracks {
+
+    @Nullable
+    List<Media> fromTracks(@NonNull long[] trackIds, @Nullable String sortOrder);
 
     @Nullable
     @WorkerThread
-    List<Media> fromArtist(final long artistId);
+    List<Media> fromTracksSearch(@Nullable String query);
 
-
-    @Nullable
-    @WorkerThread
-    List<Media> fromArtistSearch(@Nullable String query);
 }

@@ -13,12 +13,12 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MediaStoreAlbumPlaylistFactory implements AlbumPlaylistFactory {
+public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderAlbums {
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public MediaStoreAlbumPlaylistFactory(@NonNull final MediaStoreMediaProvider mediaProvider) {
+    public PlaylistProviderAlbumsMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 

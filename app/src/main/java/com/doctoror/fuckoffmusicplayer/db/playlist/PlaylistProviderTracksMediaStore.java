@@ -23,7 +23,7 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 06.01.17.
  */
 
-public final class MediaStoreTrackPlaylistFactory implements TrackPlaylistFactory {
+public final class PlaylistProviderTracksMediaStore implements PlaylistProviderTracks {
 
     @NonNull
     private final ContentResolver mContentResolver;
@@ -31,7 +31,7 @@ public final class MediaStoreTrackPlaylistFactory implements TrackPlaylistFactor
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public MediaStoreTrackPlaylistFactory(
+    public PlaylistProviderTracksMediaStore(
             @NonNull final ContentResolver contentResolver,
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         mContentResolver = contentResolver;
@@ -40,7 +40,7 @@ public final class MediaStoreTrackPlaylistFactory implements TrackPlaylistFactor
 
     @Nullable
     @Override
-    public List<Media> forTracks(@NonNull final long[] trackIds, @Nullable final String sortOrder) {
+    public List<Media> fromTracks(@NonNull final long[] trackIds, @Nullable final String sortOrder) {
         return mMediaProvider
                 .load(SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, trackIds),
                         null,

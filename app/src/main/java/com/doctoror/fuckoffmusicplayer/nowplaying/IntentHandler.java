@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.FilePlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.commons.util.Log;
@@ -49,7 +49,7 @@ final class IntentHandler {
     }
 
     static void handleIntent(@NonNull final Activity activity,
-            @NonNull final FilePlaylistFactory playlistFactory,
+            @NonNull final PlaylistProviderFiles playlistFactory,
             @NonNull final Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             onActionView(activity, intent, playlistFactory);
@@ -60,7 +60,7 @@ final class IntentHandler {
 
     private static void onActionView(@NonNull final Activity activity,
             @NonNull final Intent intent,
-            @NonNull final FilePlaylistFactory playlistFactory) {
+            @NonNull final PlaylistProviderFiles playlistFactory) {
         rx.Observable.<List<Media>>create(s -> {
             try {
                 s.onNext(playlistFromActionView(playlistFactory, intent));
@@ -106,7 +106,7 @@ final class IntentHandler {
 
     @NonNull
     private static List<Media> playlistFromActionView(
-            @NonNull final FilePlaylistFactory playlistFactory,
+            @NonNull final PlaylistProviderFiles playlistFactory,
             @NonNull final Intent intent) throws IOException {
         final Uri data = intent.getData();
         if (data == null) {
@@ -131,10 +131,10 @@ final class IntentHandler {
 
     @NonNull
     private static List<Media> playlistFromFileActionView(
-            @NonNull final FilePlaylistFactory playlistFactory,
+            @NonNull final PlaylistProviderFiles playlistFactory,
             @NonNull final Uri data) throws IOException {
         try {
-            return playlistFactory.forFile(data);
+            return playlistFactory.fromFile(data);
         } catch (Exception e) {
             throw new IOException(e.getMessage(), e);
         }

@@ -2,20 +2,20 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.AlbumPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.ArtistPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.FilePlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.GenrePlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.MediaStoreAlbumPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.MediaStoreArtistPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.MediaStoreFilePlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.MediaStoreGenrePlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.MediaStoreRandomPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.MediaStoreRecentlyScannedPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.MediaStoreTrackPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.RandomPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.RecentlyScannedPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderArtists;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderGenres;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbumsMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderArtistsMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFilesMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderGenresMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandomMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScannedMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracksMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandom;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManagerImpl;
 
@@ -55,51 +55,51 @@ final class PlaylistsModule {
 
     @Provides
     @Singleton
-    ArtistPlaylistFactory provideArtistPlaylistFactory(
+    PlaylistProviderArtists provideArtistPlaylistFactory(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new MediaStoreArtistPlaylistFactory(mediaProvider);
+        return new PlaylistProviderArtistsMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    AlbumPlaylistFactory provideAlbumPlaylistFactory(
+    PlaylistProviderAlbums provideAlbumPlaylistFactory(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new MediaStoreAlbumPlaylistFactory(mediaProvider);
+        return new PlaylistProviderAlbumsMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    GenrePlaylistFactory provideGenrePlaylistFactory(
+    PlaylistProviderGenres provideGenrePlaylistFactory(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new MediaStoreGenrePlaylistFactory(mediaProvider);
+        return new PlaylistProviderGenresMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    TrackPlaylistFactory provideTracksPlaylistFactory(
+    PlaylistProviderTracks provideTracksPlaylistFactory(
             @NonNull final ContentResolver contentResolver,
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new MediaStoreTrackPlaylistFactory(contentResolver, mediaProvider);
+        return new PlaylistProviderTracksMediaStore(contentResolver, mediaProvider);
     }
 
     @Provides
     @Singleton
-    FilePlaylistFactory provideFilePlaylistFactory(
+    PlaylistProviderFiles provideFilePlaylistFactory(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new MediaStoreFilePlaylistFactory(mediaProvider);
+        return new PlaylistProviderFilesMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    RandomPlaylistFactory provideRandomPlaylistFactory(
+    PlaylistProviderRandom provideRandomPlaylistFactory(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new MediaStoreRandomPlaylistFactory(mediaProvider);
+        return new PlaylistProviderRandomMediaStore(mediaProvider);
     }
 
     @Provides
     @Singleton
-    RecentlyScannedPlaylistFactory provideRecentlyScannedPlaylistFactory(
+    PlaylistProviderRecentlyScanned provideRecentlyScannedPlaylistFactory(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new MediaStoreRecentlyScannedPlaylistFactory(mediaProvider);
+        return new PlaylistProviderRecentlyScannedMediaStore(mediaProvider);
     }
 }

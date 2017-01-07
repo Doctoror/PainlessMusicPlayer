@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.TrackPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
@@ -56,7 +56,7 @@ public final class TracksFragment extends LibraryListFragment {
     TracksProvider mTracksProvider;
 
     @Inject
-    TrackPlaylistFactory mPlaylistFactory;
+    PlaylistProviderTracks mPlaylistFactory;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -117,7 +117,7 @@ public final class TracksFragment extends LibraryListFragment {
                 }
             }
 
-            s.onNext(mPlaylistFactory.forTracks(tracks, MediaStoreTracksProvider.SORT_ORDER));
+            s.onNext(mPlaylistFactory.fromTracks(tracks, MediaStoreTracksProvider.SORT_ORDER));
 
         })
                 .subscribeOn(Schedulers.io())

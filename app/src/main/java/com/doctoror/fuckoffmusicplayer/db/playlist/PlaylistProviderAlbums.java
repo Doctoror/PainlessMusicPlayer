@@ -8,7 +8,7 @@ import android.support.annotation.WorkerThread;
 
 import java.util.List;
 
-public interface AlbumPlaylistFactory {
+public interface PlaylistProviderAlbums {
 
     @Nullable
     @WorkerThread

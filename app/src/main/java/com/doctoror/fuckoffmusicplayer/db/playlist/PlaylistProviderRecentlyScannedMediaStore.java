@@ -12,19 +12,19 @@ import java.util.List;
 /**
  * Created by Yaroslav Mytkalyk on 06.01.17.
  */
-public final class MediaStoreRecentlyScannedPlaylistFactory
-        implements RecentlyScannedPlaylistFactory {
+public final class PlaylistProviderRecentlyScannedMediaStore
+        implements PlaylistProviderRecentlyScanned {
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public MediaStoreRecentlyScannedPlaylistFactory(
+    public PlaylistProviderRecentlyScannedMediaStore(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 
     @Override
-    public List<Media> loadRecentlyScannedPlaylist() {
+    public List<Media> recentlyScannedPlaylist() {
         return mMediaProvider.load(
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,

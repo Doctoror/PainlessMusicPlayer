@@ -16,12 +16,12 @@ import java.util.List;
  * Created by Yaroslav Mytkalyk on 06.01.17.
  */
 
-public final class MediaStoreArtistPlaylistFactory implements ArtistPlaylistFactory {
+public final class PlaylistProviderArtistsMediaStore implements PlaylistProviderArtists {
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public MediaStoreArtistPlaylistFactory(@NonNull final MediaStoreMediaProvider mediaProvider) {
+    public PlaylistProviderArtistsMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 

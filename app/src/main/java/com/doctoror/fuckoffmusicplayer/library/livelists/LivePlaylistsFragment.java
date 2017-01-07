@@ -2,8 +2,8 @@ package com.doctoror.fuckoffmusicplayer.library.livelists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.RandomPlaylistFactory;
-import com.doctoror.fuckoffmusicplayer.db.playlist.RecentlyScannedPlaylistFactory;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandom;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
@@ -61,10 +61,10 @@ public final class LivePlaylistsFragment extends Fragment {
     RecentPlaylistsManager mRecentPlaylistsManager;
 
     @Inject
-    RecentlyScannedPlaylistFactory mRecentlyScannedPlaylistFactory;
+    PlaylistProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
 
     @Inject
-    RandomPlaylistFactory mRandomPlaylistFactory;
+    PlaylistProviderRandom mRandomPlaylistFactory;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -138,7 +138,7 @@ public final class LivePlaylistsFragment extends Fragment {
 
             case LivePlaylist.TYPE_RECENTLY_SCANNED:
                 loadPlaylistAndPlay(position,
-                        () -> mRecentlyScannedPlaylistFactory.loadRecentlyScannedPlaylist());
+                        () -> mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
                 break;
 
             case LivePlaylist.TYPE_RANDOM_PLAYLIST:

@@ -10,9 +10,9 @@ import java.util.List;
 /**
  * "File" playlist factory
  */
-public interface FilePlaylistFactory {
+public interface PlaylistProviderFiles {
 
     @NonNull
-    List<Media> forFile(@NonNull Uri uri) throws Exception;
+    List<Media> fromFile(@NonNull Uri uri) throws Exception;
 
 }

@@ -15,20 +15,20 @@ import java.util.List;
 /**
  * Created by Yaroslav Mytkalyk on 06.01.17.
  */
-public final class MediaStoreFilePlaylistFactory implements FilePlaylistFactory {
+public final class PlaylistProviderFilesMediaStore implements PlaylistProviderFiles {
 
     private static final String TAG = "MediaStoreFilePlaylistFactory";
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public MediaStoreFilePlaylistFactory(@NonNull final MediaStoreMediaProvider mediaProvider) {
+    public PlaylistProviderFilesMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 
     @NonNull
     @Override
-    public List<Media> forFile(@NonNull final Uri uri) throws Exception {
+    public List<Media> fromFile(@NonNull final Uri uri) throws Exception {
         final List<Media> playlist = mMediaProvider.load(MediaStore.Audio.Media.DATA.concat("=?"),
                 new String[]{uri.getPath()},
                 null,
