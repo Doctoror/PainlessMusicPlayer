@@ -18,12 +18,14 @@ package com.doctoror.fuckoffmusicplayer.appwidget;
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -37,10 +39,15 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
+import javax.inject.Inject;
+
 /**
  * Launcher {@link AppWidgetProvider}
  */
 public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
+
+    @Inject
+    PlaybackData mPlaybackData;
 
     private static void requestServiceStateUpdate(final Context context) {
         PlaybackServiceControl.resendState(context);
@@ -48,11 +55,12 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
         if (PlaybackService.ACTION_STATE_CHANGED.equals(intent.getAction())) {
             @PlaybackState.State
             final int state = intent.getIntExtra(PlaybackService.EXTRA_STATE,
                     PlaybackState.STATE_IDLE);
-            onStateChanged(context, state);
+            onStateChanged(context, mPlaybackData, state);
         } else {
             // Handle AppWidgetProvider broadcast
             super.onReceive(context, intent);
@@ -60,33 +68,33 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(final Context context,
-            final AppWidgetManager appWidgetManager,
-            final int[] appWidgetIds) {
+    public void onUpdate(@NonNull final Context context,
+            @NonNull final AppWidgetManager appWidgetManager,
+            @NonNull final int[] appWidgetIds) {
 
-        bindViews(context, appWidgetManager, appWidgetIds, PlaybackState.STATE_IDLE);
+        bindViews(context, mPlaybackData, appWidgetManager, appWidgetIds, PlaybackState.STATE_IDLE);
         requestServiceStateUpdate(context);
     }
 
-    private static void onStateChanged(final Context context,
+    private static void onStateChanged(@NonNull final Context context,
+            @NonNull final PlaybackData playbackData,
             final int state) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, SingleRowAppWidgetProvider.class));
 
-        bindViews(context, appWidgetManager, appWidgetIds, state);
+        bindViews(context, playbackData, appWidgetManager, appWidgetIds, state);
     }
 
-    private static void bindViews(final Context context,
-            final AppWidgetManager appWidgetManager,
-            final int[] appWidgetIds,
+    private static void bindViews(@NonNull final Context context,
+            @NonNull final PlaybackData playbackData,
+            @NonNull final AppWidgetManager appWidgetManager,
+            @NonNull final int[] appWidgetIds,
             @PlaybackState.State final int state) {
-        final CurrentPlaylist holder = CurrentPlaylist.getInstance(context);
-
         final RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.appwidget_single_row);
 
-        final Media media = holder.getMedia();
+        final Media media = PlaybackDataUtils.getCurrentMedia(playbackData);
         final boolean hasMedia = media != null;
 
         views.setImageViewResource(R.id.appwidget_btn_play_pause,

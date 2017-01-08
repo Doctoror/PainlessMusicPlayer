@@ -18,8 +18,9 @@ package com.doctoror.fuckoffmusicplayer.library;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -45,6 +46,8 @@ import android.widget.ViewAnimator;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,11 +86,16 @@ public final class LibraryActivity extends BaseActivity {
     @BindView(R.id.tabLayout)
     TabLayout mTabLayout;
 
+    @Inject
+    PlaybackData mPlaybackData;
+
     private int mPagerItem;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
+
         setContentView(R.layout.activity_library);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
@@ -151,7 +159,7 @@ public final class LibraryActivity extends BaseActivity {
     }
 
     private boolean hasPlaylist() {
-        final List<Media> playlist = CurrentPlaylist.getInstance(this).getPlaylist();
+        final List<Media> playlist = mPlaybackData.getPlaylist();
         return playlist != null && !playlist.isEmpty();
     }
 
@@ -173,6 +181,12 @@ public final class LibraryActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        invalidateOptionsMenu();
     }
 
     @Override

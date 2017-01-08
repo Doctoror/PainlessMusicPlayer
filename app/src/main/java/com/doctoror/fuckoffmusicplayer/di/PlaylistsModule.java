@@ -16,6 +16,8 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracksMediaSt
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandom;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataImpl;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManagerImpl;
 
@@ -101,5 +103,12 @@ final class PlaylistsModule {
     PlaylistProviderRecentlyScanned providePlaylistProviderRecentlyScanned(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistProviderRecentlyScannedMediaStore(mediaProvider);
+    }
+
+    @Provides
+    @Singleton
+    PlaybackData providePlaybackData(@NonNull final Context context,
+            @NonNull final RecentPlaylistsManager recentPlaylistsManager) {
+        return new PlaybackDataImpl(context, recentPlaylistsManager);
     }
 }

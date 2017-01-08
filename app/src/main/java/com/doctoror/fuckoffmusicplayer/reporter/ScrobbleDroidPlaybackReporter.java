@@ -2,7 +2,6 @@ package com.doctoror.fuckoffmusicplayer.reporter;
 
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.util.Objects;
 
@@ -17,11 +16,10 @@ import java.util.List;
  * {@link PlaybackReporter} for ScrobbleDroid
  * https://github.com/JJC1138/scrobbledroid/wiki/Developer-API
  */
-final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
+public final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
 
     private static final String ACTION = "net.jjc1138.android.scrobbler.action.MUSIC_STATUS";
     private static final String PLAYING = "playing";
-    private static final String ID = "id";
     private static final String ARTIST = "artist";
     private static final String TRACK = "track";
     private static final String SECS = "secs";
@@ -33,9 +31,10 @@ final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
     private Media mMedia;
     private boolean mIsPlaying;
 
-    ScrobbleDroidPlaybackReporter(@NonNull final Context context) {
+    ScrobbleDroidPlaybackReporter(@NonNull final Context context,
+            @Nullable final Media currentMedia) {
         mContext = context;
-        mMedia = CurrentPlaylist.getInstance(context).getMedia();
+        mMedia = currentMedia;
         mIsPlaying = PlaybackService.getLastKnownState() == PlaybackState.STATE_PLAYING;
     }
 

@@ -12,10 +12,8 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,20 +37,16 @@ final class WearableMediaPlaybackReporter implements PlaybackReporter {
     @NonNull
     private final GoogleApiClient mGoogleApiClient;
 
-    private Media mMedia;
-
-    WearableMediaPlaybackReporter(@NonNull final Context context,
+    WearableMediaPlaybackReporter(
             @NonNull final GoogleApiClient googleApiClient,
             @NonNull final RequestManager glide) {
         mGoogleApiClient = googleApiClient;
         mGlide = glide;
-        mMedia = CurrentPlaylist.getInstance(context).getMedia();
     }
 
     @Override
     public void reportTrackChanged(@NonNull final Media media,
             final int positionInPlaylist) {
-        mMedia = media;
         if (mGoogleApiClient.isConnected()) {
             final PutDataRequest request;
             try {

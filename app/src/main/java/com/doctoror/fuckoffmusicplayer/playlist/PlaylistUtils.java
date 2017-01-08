@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -32,29 +33,22 @@ public final class PlaylistUtils {
     }
 
     public static void play(@NonNull final Context context,
+            @NonNull final PlaybackData playbackData,
             @NonNull final List<Media> mediaList) {
         if (mediaList.isEmpty()) {
             throw new IllegalArgumentException("Will not play empty playlist");
         }
-        play(context, mediaList, 0);
+        play(context, playbackData, mediaList, 0);
     }
 
     public static void play(@NonNull final Context context,
+            @NonNull final PlaybackData playbackData,
             @NonNull final List<Media> mediaList,
             final int position) {
-        play(context, mediaList, mediaList.get(position), position);
-    }
-
-    public static void play(@NonNull final Context context,
-            @NonNull final List<Media> mediaList,
-            @NonNull final Media media,
-            final int position) {
-        final CurrentPlaylist playlist = CurrentPlaylist.getInstance(context);
-        playlist.setPlaylist(mediaList);
-        playlist.setMedia(media);
-        playlist.setIndex(position);
-        playlist.setPosition(0);
-        playlist.persistAsync();
+        playbackData.setPlaylist(mediaList);
+        playbackData.setPlaylistPosition(position);
+        playbackData.setMediaPosition(0);
+        playbackData.persistAsync();
 
         PlaybackServiceControl.play(context);
     }

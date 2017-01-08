@@ -17,12 +17,14 @@ package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistConfig;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
@@ -58,6 +60,9 @@ public final class TracksFragment extends LibraryListFragment {
     @Inject
     PlaylistProviderTracks mPlaylistFactory;
 
+    @Inject
+    PlaybackData mPlaybackData;
+
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,36 +95,43 @@ public final class TracksFragment extends LibraryListFragment {
         }
     }
 
-    private void playTrack(@NonNull final View itemView,
-            final int startPosition, final long trackId) {
-        Observable.<List<Media>>create((s) -> {
-            final long[] tracks;
-            synchronized (CURSOR_LOCK) {
-                final Cursor data = mData;
-                if (data != null) {
-                    int limit = 99;
-                    final int count = data.getCount();
-                    if (startPosition + limit > count) {
-                        limit = count - startPosition;
-                    }
-                    tracks = new long[limit];
-                    for (int trackIndex = 0, i = startPosition; i < startPosition + limit;
-                            trackIndex++, i++) {
-                        if (data.moveToPosition(i)) {
-                            tracks[trackIndex] = data.getLong(TracksProvider.COLUMN_ID);
-                        } else {
-                            throw new RuntimeException("Could not move Cursor to position " + i);
-                        }
-                    }
-                } else {
-                    s.onError(new IllegalStateException("Cursor is null"));
-                    return;
+    @NonNull
+    private long[] createLimitedPlaylist(final int startPosition) {
+        final long[] tracks;
+        synchronized (CURSOR_LOCK) {
+            final Cursor data = mData;
+            if (data != null) {
+                int limit = PlaylistConfig.MAX_PLAYLIST_SIZE;
+                final int count = data.getCount();
+                if (startPosition + limit > count) {
+                    limit = count - startPosition;
                 }
+                tracks = new long[limit];
+                for (int trackIndex = 0, i = startPosition; i < startPosition + limit;
+                        trackIndex++, i++) {
+                    if (data.moveToPosition(i)) {
+                        tracks[trackIndex] = data.getLong(TracksProvider.COLUMN_ID);
+                    } else {
+                        throw new RuntimeException("Could not move Cursor to position " + i);
+                    }
+                }
+            } else {
+                throw new IllegalStateException("Cursor is null");
             }
+        }
+        return tracks;
+    }
 
-            s.onNext(mPlaylistFactory.fromTracks(tracks, MediaStoreTracksProvider.SORT_ORDER));
+    @Nullable
+    private List<Media> playlistFromIds(@NonNull final long[] ids) {
+        return mPlaylistFactory.fromTracks(ids, MediaStoreTracksProvider.SORT_ORDER);
+    }
 
-        })
+    private void playTrack(@NonNull final View itemView,
+            final int startPosition,
+            final long trackId) {
+        Observable.<long[]>create(s -> createLimitedPlaylist(startPosition))
+                .map(this::playlistFromIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Media>>() {
@@ -137,7 +149,7 @@ public final class TracksFragment extends LibraryListFragment {
                     public void onNext(final List<Media> playlist) {
                         if (isAdded()) {
                             if (playlist != null && !playlist.isEmpty()) {
-                                PlaylistUtils.play(getActivity(), playlist, playlist.get(0), 0);
+                                PlaylistUtils.play(getActivity(), mPlaybackData, playlist, 0);
                                 NowPlayingActivity.start(getActivity(), null, itemView);
                             } else {
                                 Toast.makeText(getActivity(), R.string.The_playlist_is_empty,

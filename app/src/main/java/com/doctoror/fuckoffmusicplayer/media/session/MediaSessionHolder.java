@@ -1,12 +1,14 @@
 package com.doctoror.fuckoffmusicplayer.media.session;
 
 import com.bumptech.glide.Glide;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
+import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -18,6 +20,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import javax.inject.Inject;
 
 import rx.Observable;
 import rx.schedulers.Schedulers;
@@ -51,7 +55,11 @@ public final class MediaSessionHolder {
 
     private MediaSessionCompat mMediaSession;
 
+    @Inject
+    PlaybackData mPlaybackData;
+
     private MediaSessionHolder(@NonNull final Context context) {
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
         mContext = context;
     }
 
@@ -114,10 +122,10 @@ public final class MediaSessionHolder {
         final PlaybackReporter playbackReporter = PlaybackReporterFactory
                 .newMediaSessionReporter(mContext, mediaSession, Glide.with(mContext));
 
-        final CurrentPlaylist currentPlaylist = CurrentPlaylist.getInstance(mContext);
-        final Media current = currentPlaylist.getMedia();
+        final int position = mPlaybackData.getPlaylistPosition();
+        final Media current = CollectionUtils.getItemSafe(mPlaybackData.getPlaylist(), position);
         if (current != null) {
-            playbackReporter.reportTrackChanged(current, currentPlaylist.getIndex());
+            playbackReporter.reportTrackChanged(current, position);
         }
         playbackReporter.reportPlaybackStateChanged(PlaybackService.getLastKnownState(), null);
     }

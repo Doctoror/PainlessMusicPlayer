@@ -22,15 +22,17 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
@@ -47,7 +49,6 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
@@ -73,6 +74,8 @@ import android.widget.ImageView;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -96,8 +99,6 @@ public final class PlaylistActivity extends BaseActivity implements
     private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
 
     private RxPermissions mRxPermissions;
-
-    private CurrentPlaylist mCurrentPlaylist;
 
     private int mShortAnimTime;
     private int mMediumAnimTime;
@@ -155,10 +156,15 @@ public final class PlaylistActivity extends BaseActivity implements
 
     private boolean mCreatedWithInstanceState;
 
+    @Inject
+    PlaybackData mPlaybackData;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
+
         mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mMediumAnimTime = getResources().getInteger(android.R.integer.config_mediumAnimTime);
 
@@ -166,10 +172,8 @@ public final class PlaylistActivity extends BaseActivity implements
             setTitle(title);
         }
 
-        mCurrentPlaylist = CurrentPlaylist.getInstance(this);
-
         mAdapter = new PlaylistRecyclerAdapter(this, playlist);
-        mAdapter.setOnTrackClickListener(mOnTrackClickListener);
+        mAdapter.setTrackListener(mTrackListener);
         mAdapter.registerAdapterDataObserver(mAdapterDataObserver);
         mModel.setRecyclerAdpter(mAdapter);
 
@@ -320,9 +324,6 @@ public final class PlaylistActivity extends BaseActivity implements
             fab.post(() -> fab.requestLayout());
             mFabAnchorParams = null;
         }
-        if (isNowPlayingPlaylist) {
-            CurrentPlaylist.getInstance(this).addObserver(mPlaylistObserver);
-        }
     }
 
     @Override
@@ -332,9 +333,6 @@ public final class PlaylistActivity extends BaseActivity implements
         fab.setScaleY(1f);
         albumArtDim.setAlpha(1f);
         albumArt.clearColorFilter();
-        if (isNowPlayingPlaylist) {
-            CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
-        }
     }
 
     @Override
@@ -395,6 +393,7 @@ public final class PlaylistActivity extends BaseActivity implements
         finishIfNeeded();
     }
 
+    // TODO implement delete
     void onDeleteClickFromList(@NonNull final Media media) {
         mDeleteSession = new DeleteSession(media);
         DeleteFileDialogFragment.show(media, getFragmentManager(), TAG_DIALOG_DELETE);
@@ -414,16 +413,16 @@ public final class PlaylistActivity extends BaseActivity implements
 
     @OnClick(R.id.fab)
     public void onFabClick(@NonNull final View view) {
-        onPlayClick(view, playlist.get(0), 0);
+        onPlayClick(view, 0);
     }
 
     private void onPlayClick(@NonNull final View clickedView,
-            final Media media,
-            final int index) {
-        PlaylistUtils.play(this, playlist, media, index);
+            final int playlistPosition) {
 
+        PlaylistUtils.play(this, mPlaybackData, playlist, playlistPosition);
+        final Media media = CollectionUtils.getItemSafe(playlist, playlistPosition);
         final boolean shouldPassCoverView = mAppbarOffset == 0
-                && TextUtils.equals(mCoverUri, media.getAlbumArt());
+                && TextUtils.equals(mCoverUri, media != null ? media.getAlbumArt() : null);
         if (shouldPassCoverView) {
             prepareViewsAndExit(() -> NowPlayingActivity.start(this, albumArt, null));
         } else {
@@ -507,20 +506,13 @@ public final class PlaylistActivity extends BaseActivity implements
         }
     }
 
-    private final PlaylistRecyclerAdapter.OnTrackClickListener mOnTrackClickListener
-            = new PlaylistRecyclerAdapter.OnTrackClickListener() {
+    private final PlaylistRecyclerAdapter.TrackListener mTrackListener
+            = new PlaylistRecyclerAdapter.TrackListener() {
 
         @Override
         public void onTrackClick(@NonNull final View itemView,
-                @NonNull final Media media,
                 final int position) {
-            onPlayClick(itemView, media, position);
-        }
-
-        @Override
-        public void onTrackRemoved(final int position, @NonNull final Media media) {
-            playlist.remove(position);
-            onDeleteClickFromList(media);
+            onPlayClick(itemView, position);
         }
 
         @Override
@@ -529,7 +521,7 @@ public final class PlaylistActivity extends BaseActivity implements
                 Collections.swap(playlist, i, j);
             }
             if (isNowPlayingPlaylist) {
-                mCurrentPlaylist.swap(i, j);
+                mPlaybackData.setPlaylist(playlist);
             }
         }
     };
@@ -581,13 +573,11 @@ public final class PlaylistActivity extends BaseActivity implements
         @Override
         public void onSwiped(final RecyclerView.ViewHolder viewHolder, final int swipeDir) {
             final int pos = viewHolder.getAdapterPosition();
+            playlist.remove(pos);
             if (isNowPlayingPlaylist) {
-                final Object item = mAdapter.getItem(pos);
-                if (item instanceof Media) {
-                    mCurrentPlaylist.remove((Media) item);
-                }
+                mPlaybackData.setPlaylist(playlist);
             }
-            mAdapter.setItemRemoved(pos);
+            mAdapter.removeItem(pos);
         }
 
         @Override
@@ -627,45 +617,6 @@ public final class PlaylistActivity extends BaseActivity implements
             if (mAdapter.getItemCount() == 0 && !isFinishing()) {
                 onPlaylistEmpty();
             }
-        }
-    };
-
-    private final CurrentPlaylist.PlaylistObserver mPlaylistObserver
-            = new CurrentPlaylist.PlaylistObserver() {
-
-        @Override
-        public void onPlaylistChanged(@Nullable final List<Media> playlist) {
-            if (isNowPlayingPlaylist) {
-                final Intent intent = Henson.with(PlaylistActivity.this)
-                        .gotoPlaylistActivity()
-                        .hasCoverTransition(false)
-                        .hasItemViewTransition(false)
-                        .isNowPlayingPlaylist(true)
-                        .playlist(playlist)
-                        .build();
-                restart(intent);
-            }
-        }
-
-        @Override
-        public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
-            // Ignore. Ordering can only be chagned from this Activity, thus we know the current
-            // ordering.
-        }
-
-        @Override
-        public void onPositionChanged(final long position) {
-
-        }
-
-        @Override
-        public void onMediaChanged(final Media media) {
-
-        }
-
-        @Override
-        public void onMediaRemoved(final Media media) {
-
         }
     };
 

@@ -17,7 +17,9 @@ package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
@@ -34,31 +36,42 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
  * {@link NowPlayingActivity} intent handler
  */
-final class IntentHandler {
+public final class NowPlayingActivityIntentHandler {
 
     private static final String TAG = "IntentHandler";
 
-    private IntentHandler() {
+    @Inject
+    PlaybackData mPlaybackData;
 
+    @Inject
+    PlaylistProviderFiles mPlaylistProviderFiles;
+
+    @NonNull
+    private final Activity mActivity;
+
+    NowPlayingActivityIntentHandler(@NonNull final Activity activity) {
+        DaggerHolder.getInstance(activity).mainComponent().inject(this);
+        mActivity = activity;
     }
 
-    static void handleIntent(@NonNull final Activity activity,
-            @NonNull final PlaylistProviderFiles playlistFactory,
-            @NonNull final Intent intent) {
+    void handleIntent(@NonNull final Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            onActionView(activity, intent, playlistFactory);
+            onActionView(mActivity, mPlaybackData, intent, mPlaylistProviderFiles);
         } else if (MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH.equals(intent.getAction())) {
-            onActionPlayFromSearch(activity, intent);
+            onActionPlayFromSearch(mActivity, intent);
         }
     }
 
     private static void onActionView(@NonNull final Activity activity,
+            @NonNull final PlaybackData playbackData,
             @NonNull final Intent intent,
             @NonNull final PlaylistProviderFiles playlistFactory) {
         rx.Observable.<List<Media>>create(s -> {
@@ -88,7 +101,7 @@ final class IntentHandler {
                                         R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
                                         .show();
                             } else {
-                                PlaylistUtils.play(activity, playlist);
+                                PlaylistUtils.play(activity, playbackData, playlist);
                             }
                         }
                     }

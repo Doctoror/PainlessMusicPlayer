@@ -12,6 +12,7 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderArtists;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
@@ -39,6 +40,9 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
 
     @Inject
     PlaylistProviderTracks mTrackPlaylistFactory;
+
+    @Inject
+    PlaybackData mPlaybackData;
 
     @Override
     public void onCreate() {
@@ -138,10 +142,9 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
         }
     }
 
-    private void playPlaylist(@Nullable final List<Media> playlist,
-            final int position) {
+    private void playPlaylist(@Nullable final List<Media> playlist, final int position) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistUtils.play(this, playlist, position);
+            PlaylistUtils.play(this, mPlaybackData, playlist, position);
         }
     }
 }

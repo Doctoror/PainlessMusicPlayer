@@ -16,8 +16,10 @@
 package com.doctoror.fuckoffmusicplayer.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Collection utils
@@ -27,6 +29,17 @@ public final class CollectionUtils {
     private CollectionUtils() {
         throw new UnsupportedOperationException();
     }
+
+
+    @Nullable
+    public static <T> T getItemSafe(@Nullable final List<T> list,
+            final int position) {
+        if (list != null && position < list.size()) {
+            return list.get(position);
+        }
+        return null;
+    }
+
 
     @NonNull
     public static long[] toLongArray(@NonNull final Collection<Long> collection) {

@@ -29,14 +29,16 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScann
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
+import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
@@ -72,6 +74,7 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Subscription;
+import rx.functions.Action1;
 
 import static com.doctoror.commons.playback.PlaybackState.STATE_ERROR;
 import static com.doctoror.commons.playback.PlaybackState.STATE_IDLE;
@@ -131,8 +134,6 @@ public final class PlaybackService extends Service {
 
     private final MediaPlayer mMediaPlayer = MediaPlayerFactory.newMediaPlayer();
 
-    private CurrentPlaylist mPlaylist;
-
     private AudioEffects mAudioEffects;
 
     private RequestManager mGlide;
@@ -160,6 +161,10 @@ public final class PlaybackService extends Service {
     private String mPermissionReceivePlaybackState;
 
     private PlaybackController mPlaybackController;
+    private Subscription mPlaylistSubscription;
+
+    @Inject
+    PlaybackData mPlaybackData;
 
     @Inject
     PlaylistProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
@@ -173,9 +178,6 @@ public final class PlaybackService extends Service {
         mErrorMessage = null;
         mPermissionReceivePlaybackState = getPackageName()
                 .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
-
-        mPlaylist = CurrentPlaylist.getInstance(this);
-        mPlaylist.addObserver(mPlaylistObserver);
 
         final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
@@ -198,8 +200,8 @@ public final class PlaybackService extends Service {
             throw new IllegalStateException("MediaSession is null");
         }
 
-        mPlaybackReporter = PlaybackReporterFactory
-                .newUniversalReporter(this, mGoogleApiClientWear, mediaSession, mGlide);
+        mPlaybackReporter = PlaybackReporterFactory.newUniversalReporter(this, mGoogleApiClientWear,
+                mediaSession, mGlide, PlaybackDataUtils.getCurrentMedia(mPlaybackData));
 
         mPlaybackParams = PlaybackParams.getInstance(this);
 
@@ -210,6 +212,7 @@ public final class PlaybackService extends Service {
         mMediaPlayer.init(this);
 
         mGoogleApiClientWear.connect();
+        mPlaylistSubscription = mPlaybackData.playlistObservable().subscribe(mPlaylistAction);
     }
 
     @NonNull
@@ -232,8 +235,8 @@ public final class PlaybackService extends Service {
             }
         }
         if (created) {
-            mPlaybackController.setPlaylist(mPlaylist.getPlaylist());
-            mPlaybackController.setPositionInPlaylist(mPlaylist.getIndex());
+            mPlaybackController.setPlaylist(mPlaybackData.getPlaylist());
+            mPlaybackController.setPositionInPlaylist(mPlaybackData.getPlaylistPosition());
         }
         return mPlaybackController;
     }
@@ -407,19 +410,19 @@ public final class PlaybackService extends Service {
     }
 
     private void onActionSeek(final float positionPercent) {
-        final Media media = mPlaylist.getMedia();
+        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
         if (media != null) {
             final long duration = media.getDuration();
             if (duration > 0) {
                 final int position = (int) ((float) duration * positionPercent);
-                mPlaylist.setPosition(position);
+                mPlaybackData.setMediaPosition(position);
                 mMediaPlayer.seekTo(position);
             }
         }
     }
 
     private void onActionSeek(final long position) {
-        final Media media = mPlaylist.getMedia();
+        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
         if (media != null) {
             final long duration = media.getDuration();
             if (duration > 0 && position < duration) {
@@ -430,7 +433,7 @@ public final class PlaybackService extends Service {
 
     private void onActionPlayMediaFromPlaylist(final Intent intent) {
         final long mediaId = intent.getLongExtra(EXTRA_MEDIA_ID, 0);
-        final List<Media> playlist = mPlaylist.getPlaylist();
+        final List<Media> playlist = mPlaybackData.getPlaylist();
         if (playlist != null) {
             int mediaPosition = -1;
             for (int i = 0; i < playlist.size(); i++) {
@@ -454,16 +457,18 @@ public final class PlaybackService extends Service {
     }
 
     private void playCurrentOrNewPlaylist() {
-        final List<Media> playlist = mPlaylist.getPlaylist();
+        final List<Media> playlist = mPlaybackData.getPlaylist();
         if (playlist != null && !playlist.isEmpty()) {
-            play(playlist, mPlaylist.getIndex(), true, false);
+            play(playlist, mPlaybackData.getPlaylistPosition(), true, false);
         } else {
-            PlaylistUtils.play(this, mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
+            PlaylistUtils.play(this, mPlaybackData,
+                    mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
         }
     }
 
     private void playCurrent(final boolean mayContinueWhereStopped) {
-        play(mPlaylist.getPlaylist(), mPlaylist.getIndex(), mayContinueWhereStopped, false);
+        play(mPlaybackData.getPlaylist(), mPlaybackData.getPlaylistPosition(),
+                mayContinueWhereStopped, false);
     }
 
     private void playPrev(final boolean isUserAction) {
@@ -482,7 +487,7 @@ public final class PlaybackService extends Service {
         playCurrent(false);
     }
 
-    private void play(@Nullable final List<Media> list,final int position,
+    private void play(@Nullable final List<Media> list, final int position,
             final boolean mayContinueWhereStopped,
             final boolean fromPlaybackController) {
         if (list == null) {
@@ -504,12 +509,11 @@ public final class PlaybackService extends Service {
                 long seekPosition = 0;
                 // If restoring from stopped state, set seek position to what it was
                 if (mayContinueWhereStopped && mState == STATE_IDLE
-                        && media.equals(mPlaylist.getMedia())) {
-                    seekPosition = mPlaylist.getPosition();
+                        && media.equals(PlaybackDataUtils.getCurrentMedia(mPlaybackData))) {
+                    seekPosition = mPlaybackData.getMediaPosition();
                 }
-                mPlaylist.setIndex(position);
-                mPlaylist.setPosition(seekPosition);
-                mPlaylist.setMedia(media);
+                mPlaybackData.setPlaylistPosition(position);
+                mPlaybackData.setMediaPosition(seekPosition);
                 mCurrentTrack = media;
 
                 if (!fromPlaybackController) {
@@ -535,7 +539,7 @@ public final class PlaybackService extends Service {
     }
 
     private void showNotification() {
-        final Media media = mPlaylist.getMedia();
+        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
         if (media != null) {
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
@@ -551,9 +555,11 @@ public final class PlaybackService extends Service {
         stopForeground(true);
         mGoogleApiClientWear.disconnect();
         mMediaPlayer.stop();
-        mPlaylist.deleteObserver(mPlaylistObserver);
-        mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
-        mPlaylist.persistAsync();
+
+        mPlaylistSubscription.unsubscribe();
+        mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
+        mPlaybackData.persistAsync();
+
         mDestroying = true;
         mPlayOnFocusGain = false;
         unregisterReceiver(mBecomingNoisyReceiver);
@@ -602,18 +608,19 @@ public final class PlaybackService extends Service {
         sendBroadcast(intent, mPermissionReceivePlaybackState);
     }
 
-    private void updatePosition() {
+    private void updateMediaPosition() {
         if (mState == STATE_PLAYING) {
-            mPlaylist.setPosition(mMediaPlayer.getCurrentPosition());
+            mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
             mExecutor.submit(mRunnableReportCurrentPosition);
         }
     }
 
     @WorkerThread
     private void reportCurrentMedia() {
-        final Media media = mPlaylist.getMedia();
+        final int pos = mPlaybackData.getPlaylistPosition();
+        final Media media = CollectionUtils.getItemSafe(mPlaybackData.getPlaylist(), pos);
         if (media != null) {
-            mPlaybackReporter.reportTrackChanged(media, mPlaylist.getIndex());
+            mPlaybackReporter.reportTrackChanged(media, pos);
         }
     }
 
@@ -630,7 +637,7 @@ public final class PlaybackService extends Service {
 
     @WorkerThread
     private void reportCurrentPlaybackPosition() {
-        final Media media = mPlaylist.getMedia();
+        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
         if (media == null) {
             mPlaybackReporter.reportPositionChanged(0, 0);
         } else {
@@ -644,11 +651,15 @@ public final class PlaybackService extends Service {
 
     @WorkerThread
     private void reportCurrentPlaylist() {
-        final List<Media> playlist = mPlaylist.getPlaylist();
+        final List<Media> playlist = mPlaybackData.getPlaylist();
         if (playlist != null) {
             mPlaybackReporter.reportPlaylistChanged(playlist);
         }
     }
+
+    private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
+    private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
+    private final Runnable mRunnableReportCurrentPlaylist = this::reportCurrentPlaylist;
 
     private final GoogleApiClient.ConnectionCallbacks mGoogleApiClientCallbacks
             = new GoogleApiClient.ConnectionCallbacks() {
@@ -677,48 +688,33 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final CurrentPlaylist.PlaylistObserver mPlaylistObserver
-            = new CurrentPlaylist.PlaylistObserver() {
-
-        @Override
-        public void onPositionChanged(final long position) {
-            // Stub
-        }
-
-        @Override
-        public void onMediaChanged(final Media media) {
-            // Stub
-        }
-
-        @Override
-        public void onMediaRemoved(final Media media) {
-            if (mCurrentTrack != null && mCurrentTrack.getId() == media.getId()) {
-                final List<Media> playlist = mPlaylist.getPlaylist();
-                if (playlist != null && !playlist.isEmpty()) {
+    private final Action1<List<Media>> mPlaylistAction = p -> {
+        if (p == null || p.isEmpty()) {
+            mCurrentTrack = null;
+            AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
+            stopSelf();
+        } else {
+            // If playing some track
+            if (mCurrentTrack != null) {
+                // If this track is not present in new playlist
+                if (!p.contains(mCurrentTrack)) {
                     // Stop current and play the other track from playlist
                     restart();
-                    mExecutor.submit(mRunnableReportCurrentPlaylist);
-                } else {
-                    mCurrentTrack = null;
-                    AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
-                    stopSelf();
                 }
             }
-        }
 
-        @Override
-        public void onPlaylistChanged(@Nullable final List<Media> playlist) {
             final PlaybackController playbackController = getPlaybackController();
-            playbackController.setPlaylist(playlist);
-            playbackController.setPositionInPlaylist(mPlaylist.getIndex());
-            mExecutor.submit(mRunnableReportCurrentPlaylist);
-        }
+            playbackController.setPlaylist(p);
 
-        @Override
-        public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
-            final PlaybackController playbackController = getPlaybackController();
-            playbackController.setPlaylist(playlist);
-            playbackController.setPositionInPlaylist(mPlaylist.getIndex());
+            int pos = mPlaybackData.getPlaylistPosition();
+            final Media current = mCurrentTrack;
+            if (current != null) {
+                final int indexOf = p.indexOf(current);
+                if (indexOf != -1) {
+                    pos = indexOf;
+                }
+            }
+            playbackController.setPositionInPlaylist(pos);
             mExecutor.submit(mRunnableReportCurrentPlaylist);
         }
     };
@@ -747,7 +743,7 @@ public final class PlaybackService extends Service {
             setState(STATE_PLAYING);
             showNotification();
             mTimerSubscription = Observable.interval(1L, TimeUnit.SECONDS)
-                    .subscribe(o -> updatePosition());
+                    .subscribe(o -> updateMediaPosition());
         }
 
         @Override
@@ -808,10 +804,6 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
-    private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
-    private final Runnable mRunnableReportCurrentPlaylist = this::reportCurrentPlaylist;
-
     private final class AudioBecomingNoisyReceiver extends BroadcastReceiver {
 
         final IntentFilter mIntentFilter = new IntentFilter(
@@ -829,9 +821,11 @@ public final class PlaybackService extends Service {
     private interface PlaybackController {
 
         void playNext(boolean isUserAction);
+
         void playPrev(boolean isUserAction);
 
         void setPlaylist(@Nullable List<Media> playlist);
+
         void setPositionInPlaylist(int position);
     }
 

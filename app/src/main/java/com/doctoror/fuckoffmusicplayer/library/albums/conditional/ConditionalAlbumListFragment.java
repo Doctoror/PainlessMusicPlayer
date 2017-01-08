@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
@@ -143,6 +144,9 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
 
     @Inject
     PlaylistProviderAlbums mPlaylistFactory;
+
+    @Inject
+    PlaybackData mPlaybackData;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -284,7 +288,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
                     if (isAdded()) {
                         final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
-                            PlaylistUtils.play(activity, playlist);
+                            PlaylistUtils.play(activity, mPlaybackData, playlist);
                             prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
                                     albumArt, null), true);
                         } else {

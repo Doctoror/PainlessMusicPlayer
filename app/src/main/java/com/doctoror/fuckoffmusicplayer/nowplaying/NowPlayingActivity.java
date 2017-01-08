@@ -35,9 +35,10 @@ import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
+import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -77,6 +78,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscription;
+import rx.functions.Action1;
 
 /**
  * "Now Playing" activity
@@ -131,7 +134,12 @@ public final class NowPlayingActivity extends BaseActivity {
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
     private final Receiver mReceiver = new Receiver();
 
-    private CurrentPlaylist mPlaylist;
+    private NowPlayingActivityIntentHandler mIntentHandler;
+
+    private Subscription mPlaylistSubscription;
+    private Subscription mPlaylistPositionSubscription;
+    private Subscription mMediaPositionSubscription;
+
     private PlaybackParams mPlaybackParams;
 
     @PlaybackState.State
@@ -163,6 +171,9 @@ public final class NowPlayingActivity extends BaseActivity {
     boolean hasListViewTransition;
 
     @Inject
+    PlaybackData mPlaybackData;
+
+    @Inject
     PlaylistProviderFiles mFilePlaylistFactory;
 
     private volatile boolean mSeekBarTracking;
@@ -188,7 +199,6 @@ public final class NowPlayingActivity extends BaseActivity {
         mTransitionPostponed = false;
         mTransitionStarted = false;
 
-        mPlaylist = CurrentPlaylist.getInstance(this);
         mPlaybackParams = PlaybackParams.getInstance(this);
 
         final ActivityNowplayingBinding binding = DataBindingUtil.setContentView(
@@ -225,7 +235,8 @@ public final class NowPlayingActivity extends BaseActivity {
             }
         });
 
-        handleIntent(getIntent());
+        mIntentHandler = new NowPlayingActivityIntentHandler(this);
+        mIntentHandler.handleIntent(getIntent());
     }
 
     private void setAlbumArt(@Nullable final String artUri) {
@@ -324,11 +335,7 @@ public final class NowPlayingActivity extends BaseActivity {
     protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(@NonNull final Intent intent) {
-        IntentHandler.handleIntent(this, mFilePlaylistFactory, intent);
+        mIntentHandler.handleIntent(intent);
     }
 
     @Override
@@ -361,7 +368,7 @@ public final class NowPlayingActivity extends BaseActivity {
                         .hasCoverTransition(false)
                         .hasItemViewTransition(false)
                         .isNowPlayingPlaylist(true)
-                        .playlist(CurrentPlaylist.getInstance(this).getPlaylist())
+                        .playlist(mPlaybackData.getPlaylist())
                         .build();
                 playlistActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(playlistActivity);
@@ -375,17 +382,25 @@ public final class NowPlayingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        bindTrack(mPlaylist.getMedia(), mPlaylist.getPosition());
         bindState(PlaybackService.getLastKnownState());
-        mPlaylist.addObserver(mPlaylistObserver);
         registerReceiver(mReceiver, mReceiver.mIntentFilter);
         PlaybackServiceControl.resendState(this);
+
+        mPlaylistSubscription = mPlaybackData.playlistObservable().subscribe(mPlaylistAction);
+
+        mPlaylistPositionSubscription = mPlaybackData.playlistPositionObservable()
+                .subscribe(mPlaylistPositionAction);
+
+        mMediaPositionSubscription = mPlaybackData.mediaPositionObservable()
+                .subscribe(mMediaPositionAction);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        CurrentPlaylist.getInstance(this).deleteObserver(mPlaylistObserver);
+        mMediaPositionSubscription.unsubscribe();
+        mPlaylistPositionSubscription.unsubscribe();
+        mPlaylistSubscription.unsubscribe();
         unregisterReceiver(mReceiver);
     }
 
@@ -518,39 +533,19 @@ public final class NowPlayingActivity extends BaseActivity {
         mModel.setRepeatMode(value);
     }
 
-    private final CurrentPlaylist.PlaylistObserver mPlaylistObserver
-            = new CurrentPlaylist.PlaylistObserver() {
-
-        @Override
-        public void onPlaylistChanged(@Nullable final List<Media> playlist) {
-            // Nothing
-        }
-
-        @Override
-        public void onPlaylistOrderingChanged(@NonNull final List<Media> playlist) {
-            // Nothing
-        }
-
-        @Override
-        public void onPositionChanged(final long position) {
-            bindProgress(position);
-        }
-
-        @Override
-        public void onMediaChanged(final Media media) {
-            runOnUiThread(() -> bindTrack(media, 0));
-        }
-
-        @Override
-        public void onMediaRemoved(final Media media) {
-            final List<Media> playlist = mPlaylist.getPlaylist();
-            if (playlist == null || playlist.isEmpty()) {
-                if (!isFinishing()) {
-                    finish();
-                }
+    private final Action1<List<Media>> mPlaylistAction = p -> {
+        if (p == null || p.isEmpty()) {
+            if (!isFinishing()) {
+                finish();
             }
         }
     };
+
+    private final Action1<Integer> mPlaylistPositionAction = pos -> runOnUiThread(() -> bindTrack(
+            CollectionUtils.getItemSafe(mPlaybackData.getPlaylist(), pos),
+            mPlaybackData.getMediaPosition()));
+
+    private final Action1<Long> mMediaPositionAction = this::bindProgress;
 
     private final class Receiver extends BroadcastReceiver {
 

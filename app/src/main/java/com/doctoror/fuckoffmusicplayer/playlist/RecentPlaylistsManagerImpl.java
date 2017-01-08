@@ -107,7 +107,7 @@ public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager 
     }
 
     @Override
-    public void storeAlbumsSync(@NonNull final Collection<Long> albumIds) {
+    public void storeAlbums(@NonNull final Collection<Long> albumIds) {
         boolean result = false;
         for (final Long albumId : albumIds) {
             if (albumId > 0) {
@@ -115,8 +115,14 @@ public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager 
             }
         }
         if (result) {
-            persistBlocking();
+            persist();
         }
+    }
+
+    // For testing
+    void storeAlbumsSync(@NonNull final Collection<Long> albumIds) {
+        storeAlbums(albumIds);
+        persistBlocking();
     }
 
     private boolean storeAlbumInternal(final long albumId, boolean persist) {

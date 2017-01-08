@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_package = "com.doctoror.fuckoffmusicplayer.playback.data";
+
+message Media {
+  int64 id = 1;
+  string data = 2;
+  string title = 3;
+  int64 duration = 4;
+  string artist = 5;
+  int64 albumId = 6;
+  string album = 7;
+  string album_art = 8;
+  int32 track = 9;
+}
+
+message PlaybackData {
+  repeated Media playlist = 1;
+  int32 playlistPosition = 2;
+  int64 mediaPosition = 3;
+}

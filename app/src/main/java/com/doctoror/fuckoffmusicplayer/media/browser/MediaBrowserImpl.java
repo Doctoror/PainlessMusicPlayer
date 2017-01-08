@@ -4,7 +4,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 
@@ -64,6 +64,9 @@ public final class MediaBrowserImpl {
     @Inject
     RecentPlaylistsManager mRecentPlaylistsManager;
 
+    @Inject
+    PlaybackData mPlaybackData;
+
     MediaBrowserImpl(@NonNull final Context context) {
         mContext = context;
         DaggerHolder.getInstance(context).mainComponent().inject(this);
@@ -79,7 +82,7 @@ public final class MediaBrowserImpl {
         switch (parentId) {
             case MEDIA_ID_ROOT: {
                 final List<MediaItem> mediaItems = new ArrayList<>(5);
-                final List<Media> playlist = CurrentPlaylist.getInstance(mContext).getPlaylist();
+                final List<Media> playlist = mPlaybackData.getPlaylist();
                 if (playlist != null && !playlist.isEmpty()) {
                     mediaItems.add(createBrowsableMediaItemCurrentQueue());
                 }
@@ -96,7 +99,7 @@ public final class MediaBrowserImpl {
 
             case MEDIA_ID_CURENT_QUEUE: {
                 List<MediaItem> mediaItems = null;
-                final List<Media> playlist = CurrentPlaylist.getInstance(mContext).getPlaylist();
+                final List<Media> playlist = mPlaybackData.getPlaylist();
                 if (playlist != null && !playlist.isEmpty()) {
                     final int size = playlist.size();
                     mediaItems = new ArrayList<>(size);

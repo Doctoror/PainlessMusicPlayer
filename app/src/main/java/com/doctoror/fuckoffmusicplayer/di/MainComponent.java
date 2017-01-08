@@ -1,5 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
+import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
+import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsFragment;
@@ -11,9 +13,11 @@ import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsFragment
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
+import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
 import com.doctoror.fuckoffmusicplayer.wear.WearableListenerServiceImpl;
 import com.doctoror.fuckoffmusicplayer.wear.WearableSearchProviderService;
 
@@ -32,7 +36,13 @@ import dagger.Component;
 })
 public interface MainComponent {
 
+    void inject(LibraryActivity target);
+
+    void inject(PlaylistActivity target);
+
     void inject(NowPlayingActivity target);
+
+    void inject(NowPlayingActivityIntentHandler target);
 
     void inject(ArtistsFragment target);
 
@@ -52,8 +62,6 @@ public interface MainComponent {
 
     void inject(LivePlaylistsFragment target);
 
-    void inject(CurrentPlaylist target);
-
     void inject(MediaBrowserImpl target);
 
     void inject(WearableListenerServiceImpl target);
@@ -63,5 +71,9 @@ public interface MainComponent {
     void inject(PlaybackService target);
 
     void inject(WearableSearchProviderService target);
+
+    void inject(SingleRowAppWidgetProvider target);
+
+    void inject(MediaSessionHolder target);
 
 }

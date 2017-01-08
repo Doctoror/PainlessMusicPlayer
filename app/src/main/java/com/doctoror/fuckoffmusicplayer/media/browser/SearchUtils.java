@@ -26,7 +26,7 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScann
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
 
@@ -53,6 +53,9 @@ public final class SearchUtils {
 
     @Inject
     MediaProvider mediaProvider;
+
+    @Inject
+    PlaybackData mPlaybackData;
 
     @Inject
     PlaylistProviderArtists artistPlaylistFactory;
@@ -133,7 +136,7 @@ public final class SearchUtils {
 
     private void onPlayFromMediaId(final long mediaId) {
         int position = -1;
-        List<Media> playlist = CurrentPlaylist.getInstance(mContext).getPlaylist();
+        List<Media> playlist = mPlaybackData.getPlaylist();
         if (playlist != null && !playlist.isEmpty()) {
             final int size = playlist.size();
             for (int i = 0; i < size; i++) {
@@ -195,7 +198,7 @@ public final class SearchUtils {
     private void playFromSearch(@Nullable final List<Media> playlist,
             @Nullable final String query) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistUtils.play(mContext, playlist);
+            PlaylistUtils.play(mContext, mPlaybackData, playlist);
         } else {
             final String message = TextUtils.isEmpty(query)
                     ? mContext.getString(R.string.No_media_found)
@@ -209,7 +212,7 @@ public final class SearchUtils {
             @Nullable final List<Media> playlist,
             final int position) {
         if (playlist != null && !playlist.isEmpty()) {
-            PlaylistUtils.play(context, playlist, position);
+            PlaylistUtils.play(context, mPlaybackData, playlist, position);
         } else {
             PlaybackServiceControl
                     .stopWithError(context, context.getString(R.string.No_media_found));

@@ -75,6 +75,10 @@ public final class Media {
         return id;
     }
 
+    public long getAlbumId() {
+        return albumId;
+    }
+
     public Uri getData() {
         return data;
     }

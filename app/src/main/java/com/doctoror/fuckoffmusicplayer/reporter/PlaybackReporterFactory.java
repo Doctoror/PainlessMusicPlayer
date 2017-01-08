@@ -3,9 +3,11 @@ package com.doctoror.fuckoffmusicplayer.reporter;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.bumptech.glide.RequestManager;
+import com.doctoror.fuckoffmusicplayer.playlist.Media;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
 
 /**
@@ -18,14 +20,16 @@ public final class PlaybackReporterFactory {
     }
 
     @NonNull
-    public static PlaybackReporter newUniversalReporter(@NonNull final Context context,
+    public static PlaybackReporter newUniversalReporter(
+            @NonNull final Context context,
             @NonNull final GoogleApiClient wearApiClient,
             @NonNull final MediaSessionCompat mediaSession,
-            @NonNull final RequestManager glide) {
+            @NonNull final RequestManager glide,
+            @Nullable final Media currentMedia) {
         return new PlaybackReporterSet(
                 new MediaSessionPlaybackReporter(context, mediaSession, glide),
-                new WearableMediaPlaybackReporter(context, wearApiClient, glide),
-                new ScrobbleDroidPlaybackReporter(context));
+                new WearableMediaPlaybackReporter(wearApiClient, glide),
+                new ScrobbleDroidPlaybackReporter(context, currentMedia));
     }
 
     @NonNull

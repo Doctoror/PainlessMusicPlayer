@@ -3,7 +3,6 @@ package com.doctoror.fuckoffmusicplayer.reporter;
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playlist.CurrentPlaylist;
 import com.doctoror.fuckoffmusicplayer.playlist.Media;
 import com.doctoror.fuckoffmusicplayer.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.util.Objects;
@@ -48,10 +47,11 @@ final class SLSPlaybackReporter implements PlaybackReporter {
     @PlaybackState.State
     private int mState;
 
-    SLSPlaybackReporter(@NonNull final Context context) {
+    SLSPlaybackReporter(@NonNull final Context context,
+            @Nullable final Media currentMedia) {
         mContext = context;
         mSettings = Settings.getInstance(context);
-        mMedia = CurrentPlaylist.getInstance(context).getMedia();
+        mMedia = currentMedia;
         mState = PlaybackService.getLastKnownState();
     }
 
