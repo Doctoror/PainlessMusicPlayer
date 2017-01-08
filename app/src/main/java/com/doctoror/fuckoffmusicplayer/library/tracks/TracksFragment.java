@@ -15,7 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
-import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistConfig;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
@@ -130,33 +129,23 @@ public final class TracksFragment extends LibraryListFragment {
     private void playTrack(@NonNull final View itemView,
             final int startPosition,
             final long trackId) {
-        Observable.<long[]>create(s -> createLimitedPlaylist(startPosition))
+        Observable.<long[]>create(s -> s.onNext(createLimitedPlaylist(startPosition)))
                 .map(this::playlistFromIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Media>>() {
-                    @Override
-                    public void onCompleted() {
+                .subscribe(p -> onPlaylistLoaded(itemView, p));
+    }
 
-                    }
-
-                    @Override
-                    public void onError(final Throwable e) {
-                        Log.w("TracksFragment", e);
-                    }
-
-                    @Override
-                    public void onNext(final List<Media> playlist) {
-                        if (isAdded()) {
-                            if (playlist != null && !playlist.isEmpty()) {
-                                PlaylistUtils.play(getActivity(), mPlaybackData, playlist, 0);
-                                NowPlayingActivity.start(getActivity(), null, itemView);
-                            } else {
-                                Toast.makeText(getActivity(), R.string.The_playlist_is_empty,
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }
-                });
+    private void onPlaylistLoaded(@NonNull final View itemView,
+            @Nullable final List<Media> p) {
+        if (isAdded()) {
+            if (p != null && !p.isEmpty()) {
+                PlaylistUtils.play(getActivity(), mPlaybackData, p, 0);
+                NowPlayingActivity.start(getActivity(), null, itemView);
+            } else {
+                Toast.makeText(getActivity(), R.string.The_playlist_is_empty,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
