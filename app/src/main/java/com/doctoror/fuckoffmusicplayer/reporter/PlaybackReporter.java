@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface PlaybackReporter {
 
+    void onDestroy();
+
     @WorkerThread
     void reportTrackChanged(@NonNull Media media, int positionInQueue);
 

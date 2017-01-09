@@ -47,7 +47,7 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
+        DaggerHolder.getInstance(this).wearComponent().inject(this);
     }
 
     @Override

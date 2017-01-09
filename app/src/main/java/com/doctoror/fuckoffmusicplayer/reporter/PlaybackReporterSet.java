@@ -52,4 +52,12 @@ final class PlaybackReporterSet implements PlaybackReporter {
             mReporters[i].reportQueueChanged(queue);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < mReporters.length; i++) {
+            mReporters[i].onDestroy();
+        }
+    }
 }

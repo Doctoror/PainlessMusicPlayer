@@ -1,9 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.reporter;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import com.bumptech.glide.RequestManager;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.wear.WearableMediaPlaybackReporter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -22,20 +20,19 @@ public final class PlaybackReporterFactory {
     @NonNull
     public static PlaybackReporter newUniversalReporter(
             @NonNull final Context context,
-            @NonNull final GoogleApiClient wearApiClient,
             @NonNull final MediaSessionCompat mediaSession,
-            @NonNull final RequestManager glide,
             @Nullable final Media currentMedia) {
         return new PlaybackReporterSet(
-                new MediaSessionPlaybackReporter(context, mediaSession, glide),
-                new WearableMediaPlaybackReporter(wearApiClient, glide),
+                new MediaSessionPlaybackReporter(context, mediaSession),
+                new WearableMediaPlaybackReporter(context),
                 new ScrobbleDroidPlaybackReporter(context, currentMedia));
     }
 
     @NonNull
     public static PlaybackReporter newMediaSessionReporter(@NonNull final Context context,
-            @NonNull final MediaSessionCompat mediaSession,
-            @NonNull final RequestManager glide) {
-        return new MediaSessionPlaybackReporter(context, mediaSession, glide);
+            @NonNull final MediaSessionCompat mediaSession) {
+        return new MediaSessionPlaybackReporter(context, mediaSession);
     }
+
+
 }

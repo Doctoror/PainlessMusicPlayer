@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.reporter;
+package com.doctoror.fuckoffmusicplayer.wear;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Asset;
@@ -6,15 +6,23 @@ import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 import com.google.protobuf.nano.MessageNano;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
+import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -24,10 +32,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import javax.inject.Inject;
+
 /**
  * {@link PlaybackReporter} for wear
  */
-final class WearableMediaPlaybackReporter implements PlaybackReporter {
+public final class WearableMediaPlaybackReporter implements PlaybackReporter {
 
     private static final String TAG = "WearableMediaPlaybackReporter";
 
@@ -37,11 +47,46 @@ final class WearableMediaPlaybackReporter implements PlaybackReporter {
     @NonNull
     private final GoogleApiClient mGoogleApiClient;
 
-    WearableMediaPlaybackReporter(
-            @NonNull final GoogleApiClient googleApiClient,
-            @NonNull final RequestManager glide) {
-        mGoogleApiClient = googleApiClient;
-        mGlide = glide;
+    @Inject
+    PlaybackData mPlaybackData;
+
+    public WearableMediaPlaybackReporter(@NonNull final Context context) {
+        DaggerHolder.getInstance(context).wearComponent().inject(this);
+        mGlide = Glide.with(context);
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(new GoogleApiClientCallbacks())
+                .build();
+
+        mGoogleApiClient.connect();
+    }
+
+    private final class GoogleApiClientCallbacks implements GoogleApiClient.ConnectionCallbacks {
+
+        @Override
+        public void onConnected(@Nullable final Bundle bundle) {
+            final List<Media> queue = mPlaybackData.getQueue();
+            if (queue != null) {
+                reportQueueChanged(queue);
+                final int pos = mPlaybackData.getQueuePosition();
+                final Media media = CollectionUtils.getItemSafe(queue, pos);
+                if (media != null) {
+                    reportTrackChanged(media, pos);
+                    reportPositionChanged(media.getId(), mPlaybackData.getMediaPosition());
+                }
+                reportPlaybackStateChanged(PlaybackService.getLastKnownState(), null);
+            }
+        }
+
+        @Override
+        public void onConnectionSuspended(final int i) {
+            // ignored
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        mGoogleApiClient.disconnect();
     }
 
     @Override

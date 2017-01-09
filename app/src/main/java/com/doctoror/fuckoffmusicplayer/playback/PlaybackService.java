@@ -16,8 +16,6 @@
 package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.google.android.exoplayer2.audio.AudioTrack;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.Wearable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -50,7 +48,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
@@ -157,7 +154,6 @@ public final class PlaybackService extends Service {
 
     private CharSequence mErrorMessage;
 
-    private GoogleApiClient mGoogleApiClientWear;
     private String mPermissionReceivePlaybackState;
 
     private PlaybackController mPlaybackController;
@@ -187,10 +183,6 @@ public final class PlaybackService extends Service {
         mAudioEffects = AudioEffects.getInstance(this);
 
         mGlide = Glide.with(this);
-        mGoogleApiClientWear = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(mGoogleApiClientCallbacks)
-                .build();
 
         mMediaSessionHolder = MediaSessionHolder.getInstance(this);
         mMediaSessionHolder.openSession();
@@ -200,8 +192,8 @@ public final class PlaybackService extends Service {
             throw new IllegalStateException("MediaSession is null");
         }
 
-        mPlaybackReporter = PlaybackReporterFactory.newUniversalReporter(this, mGoogleApiClientWear,
-                mediaSession, mGlide, PlaybackDataUtils.getCurrentMedia(mPlaybackData));
+        mPlaybackReporter = PlaybackReporterFactory.newUniversalReporter(this,
+                mediaSession, PlaybackDataUtils.getCurrentMedia(mPlaybackData));
 
         mPlaybackParams = PlaybackParams.getInstance(this);
 
@@ -211,7 +203,6 @@ public final class PlaybackService extends Service {
         mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(this);
 
-        mGoogleApiClientWear.connect();
         mQueueSubscription = mPlaybackData.queueObservable().subscribe(mQueueChangedAction);
     }
 
@@ -561,10 +552,11 @@ public final class PlaybackService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopForeground(true);
-        mGoogleApiClientWear.disconnect();
         mMediaPlayer.stop();
 
         mQueueSubscription.unsubscribe();
+        mPlaybackReporter.onDestroy();
+
         mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
         mPlaybackData.persistAsync();
 
@@ -668,25 +660,6 @@ public final class PlaybackService extends Service {
     private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
     private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
     private final Runnable mRunnableReportCurrentPlaylist = this::reportCurrentPlaylist;
-
-    private final GoogleApiClient.ConnectionCallbacks mGoogleApiClientCallbacks
-            = new GoogleApiClient.ConnectionCallbacks() {
-
-        @Override
-        public void onConnected(@Nullable final Bundle bundle) {
-            mExecutor.submit(() -> {
-                reportCurrentPlaylist();
-                reportCurrentMedia();
-                reportCurrentPlaybackState();
-                reportCurrentPlaybackPosition();
-            });
-        }
-
-        @Override
-        public void onConnectionSuspended(final int i) {
-            // ignored
-        }
-    };
 
     private final BroadcastReceiver mResendStateReceiver = new BroadcastReceiver() {
 

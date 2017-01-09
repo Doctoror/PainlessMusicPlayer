@@ -79,4 +79,9 @@ public final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
     public void reportQueueChanged(@Nullable final List<Media> queue) {
         // Not supported
     }
+
+    @Override
+    public void onDestroy() {
+        // Don't care
+    }
 }

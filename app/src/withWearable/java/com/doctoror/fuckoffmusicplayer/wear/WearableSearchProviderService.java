@@ -79,7 +79,7 @@ public final class WearableSearchProviderService extends IntentService {
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         mWakeLock.acquire();
 
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
+        DaggerHolder.getInstance(this).wearComponent().inject(this);
     }
 
     @Override

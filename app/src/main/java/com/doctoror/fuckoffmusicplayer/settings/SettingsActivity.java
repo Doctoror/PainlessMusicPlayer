@@ -1,13 +1,8 @@
 package com.doctoror.fuckoffmusicplayer.settings;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.Wearable;
-
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.wear.WearSupportMessedUpDialogFragment;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -15,11 +10,9 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -35,8 +28,6 @@ import butterknife.ButterKnife;
 public final class SettingsActivity extends BaseActivity {
 
     private static final String TAG_DIALOG_DAYNIGHT_ACCURACY = "TAG_DIALOG_DAYNIGHT_ACCURACY";
-    private static final String TAG_DIALOG_GMS_PROBLEM = "TAG_DIALOG_GMS_PROBLEM";
-    private static final int REQUEST_CODE_RESOLVE_GMS = 1;
 
     private static final String EXTRA_STATE = "EXTRA_STATE";
 
@@ -48,13 +39,7 @@ public final class SettingsActivity extends BaseActivity {
 
     @InjectExtra
     @Nullable
-    Boolean suppressGmsWarnings;
-
-    @InjectExtra
-    @Nullable
     Boolean suppressDayNightWarnings;
-
-    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -65,13 +50,6 @@ public final class SettingsActivity extends BaseActivity {
 
         initView();
         initActionBar();
-        if (!suppressGmsWarnings()) {
-            initGoogleApiClient();
-        }
-    }
-
-    private boolean suppressGmsWarnings() {
-        return suppressGmsWarnings != null && suppressGmsWarnings;
     }
 
     private boolean suppressDayNightWarnings() {
@@ -95,7 +73,6 @@ public final class SettingsActivity extends BaseActivity {
         mRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
             getSettings().setThemeType(buttonIdToTheme(id));
             restart(Henson.with(SettingsActivity.this).gotoSettingsActivity()
-                    .suppressGmsWarnings(Boolean.TRUE)
                     .suppressDayNightWarnings(suppressDayNightWarnings)
                     .build());
         });
@@ -105,19 +82,10 @@ public final class SettingsActivity extends BaseActivity {
                 (cb, value) -> getSettings().setScrobbleEnabled(value));
     }
 
-    private void initGoogleApiClient() {
-        // Connect client to check of wear support is not messed up
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addOnConnectionFailedListener(mOnConnectionFailedListener)
-                .build();
-    }
-
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         final InstanceState instanceState = new InstanceState();
-        instanceState.suppressGmsWarnings = Boolean.TRUE;
         instanceState.suppressDayNightWarnings = suppressDayNightWarnings;
         outState.putParcelable(EXTRA_STATE, Parcels.wrap(instanceState));
     }
@@ -125,7 +93,6 @@ public final class SettingsActivity extends BaseActivity {
     private void restoreInstanceState(@Nullable final Bundle instanceState) {
         if (instanceState != null) {
             final InstanceState state = Parcels.unwrap(instanceState.getParcelable(EXTRA_STATE));
-            suppressGmsWarnings = state.suppressGmsWarnings;
             suppressDayNightWarnings = state.suppressDayNightWarnings;
         }
     }
@@ -179,52 +146,8 @@ public final class SettingsActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode,
-            final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_RESOLVE_GMS) {
-            // No matter the result, go through process again
-            mGoogleApiClient.connect();
-        }
-    }
-
-    private void onWearSupportMessedUp(@NonNull final ConnectionResult connectionResult) {
-        final int code = connectionResult.getErrorCode();
-        if (code != ConnectionResult.SUCCESS && code != ConnectionResult.SERVICE_UPDATING
-                && areFragmentTransactionsAllowed()) {
-            WearSupportMessedUpDialogFragment.show(this,
-                    getFragmentManager(),
-                    TAG_DIALOG_GMS_PROBLEM,
-                    connectionResult,
-                    REQUEST_CODE_RESOLVE_GMS);
-        }
-    }
-
-    private final GoogleApiClient.OnConnectionFailedListener mOnConnectionFailedListener
-            = this::onWearSupportMessedUp;
-
     @Parcel
     static final class InstanceState {
-
-        @Nullable
-        Boolean suppressGmsWarnings;
 
         @Nullable
         Boolean suppressDayNightWarnings;

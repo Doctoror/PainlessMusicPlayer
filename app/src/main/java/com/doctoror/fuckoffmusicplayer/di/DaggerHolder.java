@@ -25,14 +25,24 @@ public final class DaggerHolder {
     @NonNull
     private final MainComponent mMainComponent;
 
+    @NonNull
+    private final WearComponent mWearComponent;
+
     private DaggerHolder(@NonNull final Context context) {
         mMainComponent = DaggerMainComponent.builder()
                 .appContextModule(new AppContextModule(context))
                 .build();
+
+        mWearComponent = DaggerWearComponent.builder().build();
     }
 
     @NonNull
     public MainComponent mainComponent() {
         return mMainComponent;
+    }
+
+    @NonNull
+    public WearComponent wearComponent() {
+        return mWearComponent;
     }
 }

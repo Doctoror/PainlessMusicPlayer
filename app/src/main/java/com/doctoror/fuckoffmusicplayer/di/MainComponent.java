@@ -18,8 +18,6 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.wear.WearableListenerServiceImpl;
-import com.doctoror.fuckoffmusicplayer.wear.WearableSearchProviderService;
 
 import javax.inject.Singleton;
 
@@ -64,16 +62,11 @@ public interface MainComponent {
 
     void inject(MediaBrowserImpl target);
 
-    void inject(WearableListenerServiceImpl target);
-
     void inject(SearchUtils target);
 
     void inject(PlaybackService target);
 
-    void inject(WearableSearchProviderService target);
-
     void inject(SingleRowAppWidgetProvider target);
 
     void inject(MediaSessionHolder target);
-
 }

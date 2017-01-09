@@ -1,6 +1,5 @@
 package com.doctoror.fuckoffmusicplayer.media.session;
 
-import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
@@ -120,7 +119,7 @@ public final class MediaSessionHolder {
     @WorkerThread
     private void reportMediaAndState(@NonNull final MediaSessionCompat mediaSession) {
         final PlaybackReporter playbackReporter = PlaybackReporterFactory
-                .newMediaSessionReporter(mContext, mediaSession, Glide.with(mContext));
+                .newMediaSessionReporter(mContext, mediaSession);
 
         final int position = mPlaybackData.getQueuePosition();
         final Media current = CollectionUtils.getItemSafe(mPlaybackData.getQueue(), position);

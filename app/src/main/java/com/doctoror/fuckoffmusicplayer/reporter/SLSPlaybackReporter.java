@@ -102,6 +102,11 @@ final class SLSPlaybackReporter implements PlaybackReporter {
         // Not supported
     }
 
+    @Override
+    public void onDestroy() {
+        // Don't care
+    }
+
     private static int toSlsState(@PlaybackState.State final int prevState,
             @PlaybackState.State final int playbackState) {
         switch (playbackState) {

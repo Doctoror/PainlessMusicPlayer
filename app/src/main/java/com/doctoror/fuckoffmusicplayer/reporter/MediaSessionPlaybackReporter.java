@@ -1,5 +1,6 @@
 package com.doctoror.fuckoffmusicplayer.reporter;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.commons.playback.PlaybackState;
@@ -41,12 +42,11 @@ final class MediaSessionPlaybackReporter implements PlaybackReporter {
     private final RequestManager mGlide;
 
     MediaSessionPlaybackReporter(@NonNull final Context context,
-            @NonNull final MediaSessionCompat mediaSession,
-            @NonNull final RequestManager glide) {
+            @NonNull final MediaSessionCompat mediaSession) {
         mDisplayMetrics = context.getResources().getDisplayMetrics();
         mAlbumThumbHolder = AlbumThumbHolder.getInstance(context);
         mMediaSession = mediaSession;
-        mGlide = glide;
+        mGlide = Glide.with(context);
     }
 
     @Override
@@ -129,6 +129,11 @@ final class MediaSessionPlaybackReporter implements PlaybackReporter {
     @Override
     public void reportQueueChanged(@Nullable final List<Media> queue) {
         // Not supported
+    }
+
+    @Override
+    public void onDestroy() {
+        // Don't care
     }
 
     @PlaybackStateCompat.State
