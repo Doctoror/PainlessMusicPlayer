@@ -487,11 +487,12 @@ public final class PlaybackService extends Service {
         playCurrent(false);
     }
 
-    private void play(@Nullable final List<Media> list, final int position,
+    private void play(@Nullable final List<Media> queue,
+            final int position,
             final boolean mayContinueWhereStopped,
             final boolean fromPlaybackController) {
-        if (list == null) {
-            throw new IllegalArgumentException("Playlist is null");
+        if (queue == null) {
+            throw new IllegalArgumentException("Play queue is null");
         }
 
         ensureFocusRequested();
@@ -499,7 +500,11 @@ public final class PlaybackService extends Service {
             return;
         }
 
-        final Media media = list.get(position);
+        Media media = CollectionUtils.getItemSafe(queue, position);
+        if (media == null) {
+            media = queue.get(0);
+        }
+        final Media finalMedia = media;
         if (mState == STATE_PAUSED && mCurrentTrack != null
                 && media.getId() == mCurrentTrack.getId()) {
             mMediaPlayer.play();
@@ -509,12 +514,15 @@ public final class PlaybackService extends Service {
                 long seekPosition = 0;
                 // If restoring from stopped state, set seek position to what it was
                 if (mayContinueWhereStopped && mState == STATE_IDLE
-                        && media.equals(PlaybackDataUtils.getCurrentMedia(mPlaybackData))) {
+                        && finalMedia.equals(PlaybackDataUtils.getCurrentMedia(mPlaybackData))) {
                     seekPosition = mPlaybackData.getMediaPosition();
+                    if (seekPosition >= finalMedia.getDuration() - 100) {
+                        seekPosition = 0;
+                    }
                 }
                 mPlaybackData.setPlayQueuePosition(position);
                 mPlaybackData.setMediaPosition(seekPosition);
-                mCurrentTrack = media;
+                mCurrentTrack = finalMedia;
 
                 if (!fromPlaybackController) {
                     getPlaybackController().setPositionInQueue(position);
@@ -524,7 +532,7 @@ public final class PlaybackService extends Service {
                 reportCurrentPlaybackPosition();
 
                 mMediaPlayer.stop();
-                mMediaPlayer.load(media.getData());
+                mMediaPlayer.load(finalMedia.getData());
                 if (seekPosition != 0) {
                     mMediaPlayer.seekTo(seekPosition);
                 }
