@@ -24,16 +24,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 
 /**
- * Created by Yaroslav Mytkalyk on 30.10.16.
+ * Shows a Dialog that asks to confirm file deletion
  */
-
 public final class DeleteFileDialogFragment extends DialogFragment {
 
     private static final String EXTRA_MEDIA = "EXTRA_MEDIA";
@@ -76,7 +74,8 @@ public final class DeleteFileDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
-                .setMessage(getString(R.string.Are_you_sure_you_want_to_delete_s, media.getTitle()))
+                .setMessage(getString(R.string.Are_you_sure_you_want_to_permanently_delete_s,
+                        media.getTitle()))
                 .setPositiveButton(R.string.Delete, (d, w) -> onDeleteClick())
                 .setNegativeButton(R.string.Cancel, (d, w) -> onDeleteCancel())
                 .create();

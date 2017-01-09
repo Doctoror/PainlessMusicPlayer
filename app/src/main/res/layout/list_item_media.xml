@@ -29,7 +29,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" tools:layout_editor_absoluteY="31dp"
+        app:layout_constraintGuide_percent="0.5"
+        tools:layout_editor_absoluteY="31dp"
         tools:layout_editor_absoluteX="0dp"/>
 
     <TextView
@@ -49,12 +50,24 @@
         tools:text="Title"
         tools:ignore="SelectableText"/>
 
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/Menu"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:src="@drawable/ic_more_vert_black_24dp"/>
+
     <TextView
         android:id="@+id/textDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="16dp"
-        android:paddingEnd="16dp"
         android:paddingBottom="12dp"
         android:layout_marginTop="2dp"
         android:lines="1"
@@ -63,10 +76,11 @@
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="12sp"
         android:gravity="end"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:text="3:28"
-        tools:ignore="RtlSymmetry,SelectableText"
-        app:layout_constraintTop_toTopOf="@+id/guideline50percent"/>
+        android:textIsSelectable="false"
+        app:layout_constraintRight_toLeftOf="@id/btnMenu"
+        app:layout_constraintEnd_toStartOf="@id/btnMenu"
+        app:layout_constraintTop_toTopOf="@+id/guideline50percent"
+        tools:text="3:28"/>
 
     <TextView
         android:id="@+id/textArtist"
@@ -82,6 +96,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/textDuration"
         tools:text="Artist"
-        tools:ignore="SelectableText" app:layout_constraintTop_toTopOf="@+id/guideline50percent"/>
+        tools:ignore="SelectableText"
+        app:layout_constraintTop_toTopOf="@+id/guideline50percent"/>
 
 </android.support.constraint.ConstraintLayout>

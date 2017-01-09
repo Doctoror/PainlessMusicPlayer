@@ -3,7 +3,6 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
-import com.doctoror.fuckoffmusicplayer.widget.TwoLineItemViewHolder;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
@@ -15,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.BindDimen;
@@ -27,9 +27,17 @@ import butterknife.ButterKnife;
 final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
         ItemTouchHelperViewHolder {
 
-    @BindView(R.id.textTitle) TextView textTitle;
-    @BindView(R.id.textArtist) TextView textArtist;
-    @BindView(R.id.textDuration) TextView textDuration;
+    @BindView(R.id.btnMenu)
+    ImageView btnMenu;
+
+    @BindView(R.id.textTitle)
+    TextView textTitle;
+
+    @BindView(R.id.textArtist)
+    TextView textArtist;
+
+    @BindView(R.id.textDuration)
+    TextView textDuration;
 
     @Nullable
     private final Drawable mDefaultBackground;

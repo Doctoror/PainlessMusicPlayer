@@ -17,43 +17,41 @@ package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
+import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * "Playlist" recycler adapter
  */
-final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, PlaylistItemViewHolder> {
+final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Media, PlaylistItemViewHolder> {
 
     interface TrackListener {
 
         void onTrackClick(@NonNull View itemView, int position);
 
+        void onTrackDeleteClick(@NonNull Media item);
+
         void onTracksSwapped(int i, int j);
     }
 
+    private final Context mContext;
+
     private TrackListener mTrackListener;
 
-    PlaylistRecyclerAdapter(@NonNull final Context context,
-            @NonNull final List<Media> items) {
-        super(context, toObjectList(items), true);
-    }
-
-    public void setPlaylist(@Nullable final List<Media> items) {
-        setItems(items == null ? null : toObjectList(items));
-    }
-
-    @NonNull
-    private static List<Object> toObjectList(@NonNull final List<Media> items) {
-        return new ArrayList<>(items);
+    PlaylistRecyclerAdapter(@NonNull final Context context, @NonNull final List<Media> items) {
+        super(context, items);
+        mContext = context;
     }
 
     boolean onItemMove(final int fromPosition, final int toPosition) {
@@ -72,16 +70,35 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Playlist
         return true;
     }
 
-    boolean canRemove(final int position) {
-        return getItem(position) instanceof Media;
-    }
-
-    boolean canDrag(final int position) {
-        return getItem(position) instanceof Media;
-    }
-
     void setTrackListener(@NonNull final TrackListener trackListener) {
         mTrackListener = trackListener;
+    }
+
+    private void onMenuClick(@NonNull final View itemView, final int position) {
+        final Media item = getItem(position);
+
+        final PopupMenu popup = new PopupMenu(itemView.getContext(), itemView);
+        final Menu popupMenu = popup.getMenu();
+
+        final MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.list_item_media, popupMenu);
+
+        popup.setOnMenuItemClickListener(menuItem -> onMenuItemClick(menuItem, item));
+        popup.show();
+    }
+
+    private boolean onMenuItemClick(@NonNull final MenuItem menuItem,
+            @NonNull final Media item) {
+        switch (menuItem.getItemId()) {
+            case R.id.actionDelete:
+                if (mTrackListener != null) {
+                    mTrackListener.onTrackDeleteClick(item);
+                }
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     private void onTrackClick(@NonNull final View itemView, final int position) {
@@ -98,7 +115,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Playlist
 
     @Override
     public void onBindViewHolder(final PlaylistItemViewHolder viewHolder, final int position) {
-        final Media item = (Media) getItem(position);
+        final Media item = getItem(position);
         viewHolder.textTitle.setText(item.title);
         viewHolder.textArtist.setText(item.artist);
         BindingAdapters.setFormattedDuration(viewHolder.textDuration, item.duration / 1000L);
@@ -108,13 +125,13 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Object, Playlist
     public PlaylistItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final PlaylistItemViewHolder vh = new PlaylistItemViewHolder(
                 getLayoutInflater().inflate(R.layout.list_item_media, parent, false));
-        vh.itemView.setOnClickListener(v -> {
-            final int position = vh.getAdapterPosition();
-            final Object item = getItem(position);
-            if (item instanceof Media) {
-                onTrackClick(vh.itemView, position);
-            }
-        });
+
+        vh.btnMenu.setImageDrawable(DrawableUtils.getTintedDrawableFromAttrTint(mContext,
+                R.drawable.ic_more_vert_black_24dp,
+                android.R.attr.textColorPrimary));
+
+        vh.itemView.setOnClickListener(v -> onTrackClick(vh.itemView, vh.getAdapterPosition()));
+        vh.btnMenu.setOnClickListener(v -> onMenuClick(vh.btnMenu, vh.getAdapterPosition()));
         return vh;
     }
 }

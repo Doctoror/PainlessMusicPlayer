@@ -207,7 +207,7 @@ public final class PlaylistActivity extends BaseActivity implements
             mFinishWhenDialogDismissed = state.finishWhenDialogDismissed;
             mFabAnchorParams = state.fabAnchorParams;
             playlist = state.playlist;
-            mAdapter.setPlaylist(playlist);
+            mAdapter.setItems(playlist);
 
             fab.setScaleX(1f);
             fab.setScaleY(1f);
@@ -375,6 +375,8 @@ public final class PlaylistActivity extends BaseActivity implements
                 .subscribe(result -> {
                     if (result) {
                         if (!isFinishingAfterTransition()) {
+                            mAdapter.removeItem(media);
+                            playlist.remove(media);
                             FileManagerService.delete(getApplicationContext(), media);
                         }
                     }
@@ -391,12 +393,6 @@ public final class PlaylistActivity extends BaseActivity implements
     @Override
     public void onDeleteDialogDismiss() {
         finishIfNeeded();
-    }
-
-    // TODO implement delete
-    void onDeleteClickFromList(@NonNull final Media media) {
-        mDeleteSession = new DeleteSession(media);
-        DeleteFileDialogFragment.show(media, getFragmentManager(), TAG_DIALOG_DELETE);
     }
 
     void onPlaylistEmpty() {
@@ -516,6 +512,12 @@ public final class PlaylistActivity extends BaseActivity implements
         }
 
         @Override
+        public void onTrackDeleteClick(@NonNull final Media item) {
+            mDeleteSession = new DeleteSession(item);
+            DeleteFileDialogFragment.show(item, getFragmentManager(), TAG_DIALOG_DELETE);
+        }
+
+        @Override
         public void onTracksSwapped(final int i, final int j) {
             if (i < playlist.size() && j < playlist.size()) {
                 Collections.swap(playlist, i, j);
@@ -561,10 +563,9 @@ public final class PlaylistActivity extends BaseActivity implements
         @Override
         public int getMovementFlags(final RecyclerView recyclerView,
                 final RecyclerView.ViewHolder viewHolder) {
-            final int position = viewHolder.getAdapterPosition();
-            final int swipeFlags = mAdapter.canRemove(position) ? ItemTouchHelper.LEFT : 0;
+            final int swipeFlags = ItemTouchHelper.LEFT;
             int dragFlags = 0;
-            if (mAdapter.canDrag(position) && mAdapter.getItemCount() > 1) {
+            if (mAdapter.getItemCount() > 1) {
                 dragFlags |= ItemTouchHelper.UP | ItemTouchHelper.DOWN;
             }
             return makeMovementFlags(dragFlags, swipeFlags);

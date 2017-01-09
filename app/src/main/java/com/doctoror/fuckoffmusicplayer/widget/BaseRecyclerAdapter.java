@@ -42,29 +42,14 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         this(context, (List<T>) null);
     }
 
-    public BaseRecyclerAdapter(@NonNull final Context context, @Nullable final List<T> items) {
-        this(context, items, false);
-    }
-
     public BaseRecyclerAdapter(@NonNull final Context context, @Nullable final T[] items) {
-        this(context, items == null ? null : Arrays.asList(items), true);
+        this(context, items == null ? null : Arrays.asList(items));
     }
 
-    /**
-     * Constructor with ability to avoid shadow copy in case the input is already a shadow copy
-     * created by subclass or when shadow copy is not needed
-     *
-     * @param context Context to get {@link LayoutInflater} from
-     * @param items   initial items
-     * @param nocopy  if true, will not create defensive copy of input
-     */
-    protected BaseRecyclerAdapter(@NonNull final Context context, @Nullable final List<T> items,
-            final boolean nocopy) {
+    public BaseRecyclerAdapter(@NonNull final Context context, @Nullable final List<T> items) {
         mLayoutInflater = LayoutInflater.from(context);
         if (items == null) {
-            mItems = null;
-        } else if (nocopy) {
-            mItems = items;
+            mItems = new ArrayList<>(15);
         } else {
             mItems = new ArrayList<>(items);
         }

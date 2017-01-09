@@ -62,7 +62,8 @@
     <string name="s_removed_from_playlist">“%1$s” removed from playlist</string>
     <string name="Delete">Delete</string>
 
-    <string name="Are_you_sure_you_want_to_delete_s">Are you sure you want to delete “%1$s”?
+    <string name="Are_you_sure_you_want_to_permanently_delete_s">Are you sure you want to
+        permanently delete “%1$s”?
     </string>
 
     <string name="Cancel">Cancel</string>
@@ -98,6 +99,8 @@
     <string name="Ignore">Ignore</string>
     <string name="Fix">Fix</string>
     <string name="Failed_to_start_resolution">Failed to start resolution</string>
+
+    <string name="Menu">Menu</string>
 
     <string name="Google_Play_Services_are_missing">Google Play Services are not installed</string>
     <string name="Google_Play_Services_are_disabled">Google Play Services are disabled</string>

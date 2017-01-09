@@ -18,11 +18,13 @@ package com.doctoror.fuckoffmusicplayer.util;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.AttrRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.widget.ImageView;
 
 /**
  * Drawable utils
@@ -31,6 +33,14 @@ public final class DrawableUtils {
 
     private DrawableUtils() {
 
+    }
+
+    @Nullable
+    public static Drawable getTintedDrawableFromAttrTint(@NonNull final Context context,
+            @DrawableRes final int res,
+            @AttrRes final int tintAttr) {
+        return getTintedDrawable(context, res,
+                ThemeUtils.getColorStateList(context.getTheme(), tintAttr));
     }
 
     @Nullable
