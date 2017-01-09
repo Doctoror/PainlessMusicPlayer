@@ -31,12 +31,12 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;
@@ -71,6 +71,7 @@ import android.transition.Transition;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
@@ -156,6 +157,7 @@ public final class QueueActivity extends BaseActivity implements
     private int mAppbarOffset;
 
     private boolean mCreatedWithInstanceState;
+    private Toast mToastRemovedFromQueue;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -479,6 +481,16 @@ public final class QueueActivity extends BaseActivity implements
         mAdapter.unregisterAdapterDataObserver(mAdapterDataObserver);
     }
 
+    private void showToastRemovedFromQueue(@NonNull final Media media) {
+        if (mToastRemovedFromQueue != null
+                && mToastRemovedFromQueue.getView().getWindowToken() != null) {
+            mToastRemovedFromQueue.cancel();
+        }
+        mToastRemovedFromQueue = Toast.makeText(this,
+                getString(R.string.s_removed_from_queue, media.getTitle()), Toast.LENGTH_SHORT);
+        mToastRemovedFromQueue.show();
+    }
+
     @Parcel
     static final class State {
 
@@ -574,11 +586,13 @@ public final class QueueActivity extends BaseActivity implements
         @Override
         public void onSwiped(final RecyclerView.ViewHolder viewHolder, final int swipeDir) {
             final int pos = viewHolder.getAdapterPosition();
+            final Media media = mAdapter.getItem(pos);
             queue.remove(pos);
             if (isNowPlayingQueue) {
                 mPlaybackData.setPlayQueue(queue);
             }
             mAdapter.removeItem(pos);
+            showToastRemovedFromQueue(media);
         }
 
         @Override
