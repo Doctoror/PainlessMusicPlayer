@@ -36,7 +36,7 @@
     <string name="artist_album_separator"><![CDATA[ / ]]></string>
 
     <string name="Now_Playing">Now Playing</string>
-    <string name="Playlist">Playlist</string>
-    <string name="The_playlist_is_empty">The playlist is empty</string>
+    <string name="Queue">Queue</string>
+    <string name="The_queue_is_empty">The queue is empty</string>
 
 </resources>

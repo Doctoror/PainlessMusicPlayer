@@ -22,8 +22,8 @@ import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
 
 import android.app.Activity;
@@ -115,24 +115,24 @@ public final class AlbumsFragment extends LibraryListFragment {
         Observable.<List<Media>>create(s -> s.onNext(mAlbumPlaylistFactory.fromAlbum(albumId)))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((playlist) -> {
+                .subscribe((queue) -> {
                     if (isAdded()) {
-                        if (playlist != null && !playlist.isEmpty()) {
+                        if (queue != null && !queue.isEmpty()) {
                             final Activity activity = getActivity();
-                            final Intent intent = Henson.with(activity).gotoPlaylistActivity()
+                            final Intent intent = Henson.with(activity).gotoQueueActivity()
                                     .hasCoverTransition(true)
                                     .hasItemViewTransition(false)
-                                    .isNowPlayingPlaylist(false)
-                                    .playlist(playlist)
+                                    .isNowPlayingQueue(false)
+                                    .queue(queue)
                                     .title(albumName)
                                     .build();
 
                             final ActivityOptionsCompat options = ActivityOptionsCompat
                                     .makeSceneTransitionAnimation(activity, view,
-                                            PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
+                                            QueueActivity.TRANSITION_NAME_ALBUM_ART);
                             startActivity(intent, options.toBundle());
                         } else {
-                            Toast.makeText(getActivity(), R.string.The_playlist_is_empty,
+                            Toast.makeText(getActivity(), R.string.The_queue_is_empty,
                                     Toast.LENGTH_SHORT)
                                     .show();
                         }

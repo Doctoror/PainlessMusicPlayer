@@ -12,7 +12,7 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -46,11 +46,11 @@ final class WearableMediaPlaybackReporter implements PlaybackReporter {
 
     @Override
     public void reportTrackChanged(@NonNull final Media media,
-            final int positionInPlaylist) {
+            final int positionInQueue) {
         if (mGoogleApiClient.isConnected()) {
             final PutDataRequest request;
             try {
-                request = newPutMediaRequest(media, positionInPlaylist);
+                request = newPutMediaRequest(media, positionInQueue);
             } catch (IOException e) {
                 Log.w(TAG, e);
                 return;
@@ -117,20 +117,20 @@ final class WearableMediaPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaylistChanged(@Nullable final List<Media> playlist) {
-        if (mGoogleApiClient.isConnected() && playlist != null && !playlist.isEmpty()) {
-            final int size = playlist.size();
-            final WearPlaybackData.Media[] wMedias = new WearPlaybackData.Media[playlist.size()];
+    public void reportQueueChanged(@Nullable final List<Media> queue) {
+        if (mGoogleApiClient.isConnected() && queue != null && !queue.isEmpty()) {
+            final int size = queue.size();
+            final WearPlaybackData.Media[] wMedias = new WearPlaybackData.Media[queue.size()];
             for (int i = 0; i < size; i++) {
-                wMedias[i] = toWearableMedia(playlist.get(i), 0);
+                wMedias[i] = toWearableMedia(queue.get(i), 0);
             }
 
             final PutDataRequest request;
             try {
-                request = PutDataRequest.create(DataPaths.Paths.PLAYLIST);
-                final WearPlaybackData.Playlist wPlaylist = new WearPlaybackData.Playlist();
-                wPlaylist.media = wMedias;
-                request.setData(ProtoUtils.toByteArray(wPlaylist));
+                request = PutDataRequest.create(DataPaths.Paths.QUEUE);
+                final WearPlaybackData.Queue wQueue = new WearPlaybackData.Queue();
+                wQueue.media = wMedias;
+                request.setData(ProtoUtils.toByteArray(wQueue));
             } catch (IOException e) {
                 Log.w(TAG, e);
                 return;
@@ -143,9 +143,9 @@ final class WearableMediaPlaybackReporter implements PlaybackReporter {
 
     @NonNull
     private static PutDataRequest newPutMediaRequest(@NonNull final Media media,
-            final int positionInPlaylist) throws IOException {
+            final int positionInQueue) throws IOException {
         final PutDataRequest request = PutDataRequest.create(DataPaths.Paths.MEDIA);
-        request.setData(ProtoUtils.toByteArray(toWearableMedia(media, positionInPlaylist)));
+        request.setData(ProtoUtils.toByteArray(toWearableMedia(media, positionInQueue)));
         return request;
     }
 
@@ -168,14 +168,14 @@ final class WearableMediaPlaybackReporter implements PlaybackReporter {
 
     @NonNull
     private static WearPlaybackData.Media toWearableMedia(@NonNull final Media media,
-            final int positionInPlaylist) {
+            final int positionInQueue) {
         final WearPlaybackData.Media m = new WearPlaybackData.Media();
         m.id = media.getId();
         m.album = media.getAlbum();
         m.artist = media.getArtist();
         m.title = media.getTitle();
         m.duration = media.getDuration();
-        m.positionInPlaylist = positionInPlaylist;
+        m.positionInQueue = positionInQueue;
         return m;
     }
 

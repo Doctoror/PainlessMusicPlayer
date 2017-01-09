@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
+import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManagerImpl;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

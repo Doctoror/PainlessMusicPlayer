@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.playlist;
+package com.doctoror.fuckoffmusicplayer.queue;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 /**
  * View holder for media in playlist
  */
-final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
+final class QueueItemViewHolder extends RecyclerView.ViewHolder implements
         ItemTouchHelperViewHolder {
 
     @BindView(R.id.btnMenu)
@@ -48,7 +48,7 @@ final class PlaylistItemViewHolder extends RecyclerView.ViewHolder implements
 
     private Drawable mSelectedBackground;
 
-    PlaylistItemViewHolder(@NonNull final View itemView) {
+    QueueItemViewHolder(@NonNull final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
 

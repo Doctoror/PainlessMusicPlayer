@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.wear.playlist;
+package com.doctoror.fuckoffmusicplayer.wear.queue;
 
 import com.doctoror.commons.wear.nano.WearPlaybackData;
-import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaylist;
+import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventQueue;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,18 +29,18 @@ import android.support.annotation.WorkerThread;
 /**
  * Holds current playlist
  */
-public final class PlaylistHolder {
+public final class QueueHolder {
 
     // Is not a leak since it's an application context
     @SuppressLint("StaticFieldLeak")
-    private static volatile PlaylistHolder sInstance;
+    private static volatile QueueHolder sInstance;
 
     @NonNull
-    public static PlaylistHolder getInstance(@NonNull final Context context) {
+    public static QueueHolder getInstance(@NonNull final Context context) {
         if (sInstance == null) {
-            synchronized (PlaylistHolder.class) {
+            synchronized (QueueHolder.class) {
                 if (sInstance == null) {
-                    sInstance = new PlaylistHolder(context.getApplicationContext());
+                    sInstance = new QueueHolder(context.getApplicationContext());
                 }
             }
         }
@@ -50,28 +50,28 @@ public final class PlaylistHolder {
     @NonNull
     private final Context mContext;
 
-    private WearPlaybackData.Playlist mPlaylist;
+    private WearPlaybackData.Queue mQueue;
 
-    private PlaylistHolder(@NonNull final Context context) {
+    private QueueHolder(@NonNull final Context context) {
         mContext = context;
-        mPlaylist = PlaylistPersister.read(context);
+        mQueue = QueuePersister.read(context);
     }
 
     @WorkerThread
-    public synchronized void setPlaylist(@Nullable final WearPlaybackData.Playlist playlist) {
-        if (mPlaylist != playlist) {
-            mPlaylist = playlist;
-            notifyChanged(playlist);
-            PlaylistPersister.persist(mContext, playlist);
+    public synchronized void setQueue(@Nullable final WearPlaybackData.Queue queue) {
+        if (mQueue != queue) {
+            mQueue = queue;
+            notifyChanged(queue);
+            QueuePersister.persist(mContext, queue);
         }
     }
 
     @Nullable
-    public WearPlaybackData.Playlist getPlaylist() {
-        return mPlaylist;
+    public WearPlaybackData.Queue getQueue() {
+        return mQueue;
     }
 
-    private void notifyChanged(@Nullable final WearPlaybackData.Playlist playlist) {
-        EventBus.getDefault().post(new EventPlaylist(playlist));
+    private void notifyChanged(@Nullable final WearPlaybackData.Queue queue) {
+        EventBus.getDefault().post(new EventQueue(queue));
     }
 }

@@ -3,37 +3,37 @@
 package com.doctoror.commons.wear.nano;
 
 @SuppressWarnings("hiding")
-public interface WearPlaylistFromSearch {
+public interface WearQueueFromSearch {
 
-  public static final class Playlist extends
+  public static final class Queue extends
       com.google.protobuf.nano.MessageNano {
 
-    private static volatile Playlist[] _emptyArray;
-    public static Playlist[] emptyArray() {
+    private static volatile Queue[] _emptyArray;
+    public static Queue[] emptyArray() {
       // Lazily initializes the empty array
       if (_emptyArray == null) {
         synchronized (
             com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
           if (_emptyArray == null) {
-            _emptyArray = new Playlist[0];
+            _emptyArray = new Queue[0];
           }
         }
       }
       return _emptyArray;
     }
 
-    // repeated int64 playlist = 1;
-    public long[] playlist;
+    // repeated int64 queue = 1;
+    public long[] queue;
 
     // optional int64 selectedId = 2;
     public long selectedId;
 
-    public Playlist() {
+    public Queue() {
       clear();
     }
 
-    public Playlist clear() {
-      playlist = com.google.protobuf.nano.WireFormatNano.EMPTY_LONG_ARRAY;
+    public Queue clear() {
+      queue = com.google.protobuf.nano.WireFormatNano.EMPTY_LONG_ARRAY;
       selectedId = 0L;
       cachedSize = -1;
       return this;
@@ -42,9 +42,9 @@ public interface WearPlaylistFromSearch {
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
         throws java.io.IOException {
-      if (this.playlist != null && this.playlist.length > 0) {
-        for (int i = 0; i < this.playlist.length; i++) {
-          output.writeInt64(1, this.playlist[i]);
+      if (this.queue != null && this.queue.length > 0) {
+        for (int i = 0; i < this.queue.length; i++) {
+          output.writeInt64(1, this.queue[i]);
         }
       }
       if (this.selectedId != 0L) {
@@ -56,15 +56,15 @@ public interface WearPlaylistFromSearch {
     @Override
     protected int computeSerializedSize() {
       int size = super.computeSerializedSize();
-      if (this.playlist != null && this.playlist.length > 0) {
+      if (this.queue != null && this.queue.length > 0) {
         int dataSize = 0;
-        for (int i = 0; i < this.playlist.length; i++) {
-          long element = this.playlist[i];
+        for (int i = 0; i < this.queue.length; i++) {
+          long element = this.queue[i];
           dataSize += com.google.protobuf.nano.CodedOutputByteBufferNano
               .computeInt64SizeNoTag(element);
         }
         size += dataSize;
-        size += 1 * this.playlist.length;
+        size += 1 * this.queue.length;
       }
       if (this.selectedId != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
@@ -74,7 +74,7 @@ public interface WearPlaylistFromSearch {
     }
 
     @Override
-    public Playlist mergeFrom(
+    public Queue mergeFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
@@ -91,10 +91,10 @@ public interface WearPlaylistFromSearch {
           case 8: {
             int arrayLength = com.google.protobuf.nano.WireFormatNano
                 .getRepeatedFieldArrayLength(input, 8);
-            int i = this.playlist == null ? 0 : this.playlist.length;
+            int i = this.queue == null ? 0 : this.queue.length;
             long[] newArray = new long[i + arrayLength];
             if (i != 0) {
-              java.lang.System.arraycopy(this.playlist, 0, newArray, 0, i);
+              java.lang.System.arraycopy(this.queue, 0, newArray, 0, i);
             }
             for (; i < newArray.length - 1; i++) {
               newArray[i] = input.readInt64();
@@ -102,7 +102,7 @@ public interface WearPlaylistFromSearch {
             }
             // Last one without readTag.
             newArray[i] = input.readInt64();
-            this.playlist = newArray;
+            this.queue = newArray;
             break;
           }
           case 10: {
@@ -116,15 +116,15 @@ public interface WearPlaylistFromSearch {
               arrayLength++;
             }
             input.rewindToPosition(startPos);
-            int i = this.playlist == null ? 0 : this.playlist.length;
+            int i = this.queue == null ? 0 : this.queue.length;
             long[] newArray = new long[i + arrayLength];
             if (i != 0) {
-              java.lang.System.arraycopy(this.playlist, 0, newArray, 0, i);
+              java.lang.System.arraycopy(this.queue, 0, newArray, 0, i);
             }
             for (; i < newArray.length; i++) {
               newArray[i] = input.readInt64();
             }
-            this.playlist = newArray;
+            this.queue = newArray;
             input.popLimit(limit);
             break;
           }
@@ -136,15 +136,15 @@ public interface WearPlaylistFromSearch {
       }
     }
 
-    public static Playlist parseFrom(byte[] data)
+    public static Queue parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
-      return com.google.protobuf.nano.MessageNano.mergeFrom(new Playlist(), data);
+      return com.google.protobuf.nano.MessageNano.mergeFrom(new Queue(), data);
     }
 
-    public static Playlist parseFrom(
+    public static Queue parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
-      return new Playlist().mergeFrom(input);
+      return new Queue().mergeFrom(input);
     }
   }
 }

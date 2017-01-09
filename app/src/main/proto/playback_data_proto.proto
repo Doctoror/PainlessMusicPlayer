@@ -15,7 +15,7 @@ message Media {
 }
 
 message PlaybackData {
-  repeated Media playlist = 1;
-  int32 playlistPosition = 2;
+  repeated Media queue = 1;
+  int32 queuePosition = 2;
   int64 mediaPosition = 3;
 }

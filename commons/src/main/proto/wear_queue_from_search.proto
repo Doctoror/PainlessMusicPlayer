@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option java_package = "com.doctoror.commons.wear";
 
-message Playlist {
-  repeated int64 playlist = 1;
+message Queue {
+  repeated int64 queue = 1;
   int64 selectedId = 2;
 }

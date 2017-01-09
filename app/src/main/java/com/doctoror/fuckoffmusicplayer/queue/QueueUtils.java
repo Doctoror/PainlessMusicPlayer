@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.playlist;
+package com.doctoror.fuckoffmusicplayer.queue;
 
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
@@ -26,9 +26,9 @@ import java.util.List;
 /**
  * Playlist utils
  */
-public final class PlaylistUtils {
+public final class QueueUtils {
 
-    private PlaylistUtils() {
+    private QueueUtils() {
         throw new UnsupportedOperationException();
     }
 
@@ -45,8 +45,8 @@ public final class PlaylistUtils {
             @NonNull final PlaybackData playbackData,
             @NonNull final List<Media> mediaList,
             final int position) {
-        playbackData.setPlaylist(mediaList);
-        playbackData.setPlaylistPosition(position);
+        playbackData.setPlayQueue(mediaList);
+        playbackData.setPlayQueuePosition(position);
         playbackData.setMediaPosition(0);
         playbackData.persistAsync();
 

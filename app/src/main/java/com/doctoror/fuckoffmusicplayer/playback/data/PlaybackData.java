@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,25 +30,25 @@ import rx.Observable;
 public interface PlaybackData {
 
     @NonNull
-    Observable<List<Media>> playlistObservable();
+    Observable<List<Media>> queueObservable();
 
     @NonNull
-    Observable<Integer> playlistPositionObservable();
+    Observable<Integer> queuePositionObservable();
 
     @NonNull
     Observable<Long> mediaPositionObservable();
 
     @Nullable
-    List<Media> getPlaylist();
+    List<Media> getQueue();
 
     @NonNull
-    Integer getPlaylistPosition();
+    Integer getQueuePosition();
 
     @NonNull
     Long getMediaPosition();
 
-    void setPlaylist(@Nullable List<Media> playlist);
-    void setPlaylistPosition(int position);
+    void setPlayQueue(@Nullable List<Media> queue);
+    void setPlayQueuePosition(int position);
     void setMediaPosition(long position);
 
     void persistAsync();

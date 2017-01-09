@@ -42,7 +42,7 @@ public final class DataPaths {
         public static final String MEDIA = "/playback/media";
         public static final String PLAYBACK_STATE = "/playback/state";
         public static final String PLAYBACK_POSITION = "/playback/position";
-        public static final String PLAYLIST = "/playback/playlist";
+        public static final String QUEUE = "/playback/queue";
     }
 
     public static final class Messages {
@@ -51,7 +51,7 @@ public final class DataPaths {
             throw new UnsupportedOperationException();
         }
 
-        public static final String PLAY_FROM_PLAYLIST = "/message/play/from_playlist";
+        public static final String PLAY_FROM_QUEUE = "/message/play/from_queue";
         public static final String PLAY_PAUSE = "/message/playpause";
         public static final String PREV = "/message/prev";
         public static final String NEXT = "/message/next";

@@ -36,7 +36,7 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.f2prateek.dart.Dart;
@@ -136,8 +136,8 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private NowPlayingActivityIntentHandler mIntentHandler;
 
-    private Subscription mPlaylistSubscription;
-    private Subscription mPlaylistPositionSubscription;
+    private Subscription mQueueSubscription;
+    private Subscription mQueuePositionSubscription;
     private Subscription mMediaPositionSubscription;
 
     private PlaybackParams mPlaybackParams;
@@ -174,7 +174,7 @@ public final class NowPlayingActivity extends BaseActivity {
     PlaybackData mPlaybackData;
 
     @Inject
-    PlaylistProviderFiles mFilePlaylistFactory;
+    PlaylistProviderFiles mFilePlaylistProvider;
 
     private volatile boolean mSeekBarTracking;
 
@@ -362,16 +362,16 @@ public final class NowPlayingActivity extends BaseActivity {
                 startActivity(new Intent(this, AudioEffectsActivity.class));
                 return true;
 
-            case R.id.actionPlaylist:
-                final Intent playlistActivity = Henson.with(this)
-                        .gotoPlaylistActivity()
+            case R.id.actionQueue:
+                final Intent intent = Henson.with(this)
+                        .gotoQueueActivity()
                         .hasCoverTransition(false)
                         .hasItemViewTransition(false)
-                        .isNowPlayingPlaylist(true)
-                        .playlist(mPlaybackData.getPlaylist())
+                        .isNowPlayingQueue(true)
+                        .queue(mPlaybackData.getQueue())
                         .build();
-                playlistActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(playlistActivity);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
 
             default:
@@ -386,10 +386,10 @@ public final class NowPlayingActivity extends BaseActivity {
         registerReceiver(mReceiver, mReceiver.mIntentFilter);
         PlaybackServiceControl.resendState(this);
 
-        mPlaylistSubscription = mPlaybackData.playlistObservable().subscribe(mPlaylistAction);
+        mQueueSubscription = mPlaybackData.queueObservable().subscribe(mQueueAction);
 
-        mPlaylistPositionSubscription = mPlaybackData.playlistPositionObservable()
-                .subscribe(mPlaylistPositionAction);
+        mQueuePositionSubscription = mPlaybackData.queuePositionObservable()
+                .subscribe(mQueuePositionAction);
 
         mMediaPositionSubscription = mPlaybackData.mediaPositionObservable()
                 .subscribe(mMediaPositionAction);
@@ -399,8 +399,8 @@ public final class NowPlayingActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         mMediaPositionSubscription.unsubscribe();
-        mPlaylistPositionSubscription.unsubscribe();
-        mPlaylistSubscription.unsubscribe();
+        mQueuePositionSubscription.unsubscribe();
+        mQueueSubscription.unsubscribe();
         unregisterReceiver(mReceiver);
     }
 
@@ -514,10 +514,10 @@ public final class NowPlayingActivity extends BaseActivity {
         @PlaybackParams.RepeatMode final int value;
         switch (mPlaybackParams.getRepeatMode()) {
             case PlaybackParams.REPEAT_MODE_NONE:
-                value = PlaybackParams.REPEAT_MODE_PLAYLIST;
+                value = PlaybackParams.REPEAT_MODE_QUEUE;
                 break;
 
-            case PlaybackParams.REPEAT_MODE_PLAYLIST:
+            case PlaybackParams.REPEAT_MODE_QUEUE:
                 value = PlaybackParams.REPEAT_MODE_TRACK;
                 break;
 
@@ -533,7 +533,7 @@ public final class NowPlayingActivity extends BaseActivity {
         mModel.setRepeatMode(value);
     }
 
-    private final Action1<List<Media>> mPlaylistAction = p -> {
+    private final Action1<List<Media>> mQueueAction = p -> {
         if (p == null || p.isEmpty()) {
             if (!isFinishing()) {
                 finish();
@@ -541,8 +541,8 @@ public final class NowPlayingActivity extends BaseActivity {
         }
     };
 
-    private final Action1<Integer> mPlaylistPositionAction = pos -> runOnUiThread(() -> bindTrack(
-            CollectionUtils.getItemSafe(mPlaybackData.getPlaylist(), pos),
+    private final Action1<Integer> mQueuePositionAction = pos -> runOnUiThread(() -> bindTrack(
+            CollectionUtils.getItemSafe(mPlaybackData.getQueue(), pos),
             mPlaybackData.getMediaPosition()));
 
     private final Action1<Long> mMediaPositionAction = this::bindProgress;

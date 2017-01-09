@@ -34,8 +34,8 @@ import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
@@ -99,7 +99,7 @@ public final class PlaybackService extends Service {
     public static final String EXTRA_STATE = "EXTRA_STATE";
 
     static final String ACTION_RESEND_STATE = "ACTION_RESEND_STATE";
-    static final String ACTION_PLAY_MEDIA_FROM_PLAYLIST = "ACTION_PLAY_MEDIA_FROM_PLAYLIST";
+    static final String ACTION_PLAY_MEDIA_FROM_QUEUE = "ACTION_PLAY_MEDIA_FROM_QUEUE";
     static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
     static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
     static final String ACTION_PLAY = "ACTION_PLAY";
@@ -161,7 +161,7 @@ public final class PlaybackService extends Service {
     private String mPermissionReceivePlaybackState;
 
     private PlaybackController mPlaybackController;
-    private Subscription mPlaylistSubscription;
+    private Subscription mQueueSubscription;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -212,7 +212,7 @@ public final class PlaybackService extends Service {
         mMediaPlayer.init(this);
 
         mGoogleApiClientWear.connect();
-        mPlaylistSubscription = mPlaybackData.playlistObservable().subscribe(mPlaylistAction);
+        mQueueSubscription = mPlaybackData.queueObservable().subscribe(mQueueChangedAction);
     }
 
     @NonNull
@@ -235,8 +235,8 @@ public final class PlaybackService extends Service {
             }
         }
         if (created) {
-            mPlaybackController.setPlaylist(mPlaybackData.getPlaylist());
-            mPlaybackController.setPositionInPlaylist(mPlaybackData.getPlaylistPosition());
+            mPlaybackController.setQueue(mPlaybackData.getQueue());
+            mPlaybackController.setPositionInQueue(mPlaybackData.getQueuePosition());
         }
         return mPlaybackController;
     }
@@ -292,8 +292,8 @@ public final class PlaybackService extends Service {
                     onActionSeek(intent);
                     break;
 
-                case ACTION_PLAY_MEDIA_FROM_PLAYLIST:
-                    onActionPlayMediaFromPlaylist(intent);
+                case ACTION_PLAY_MEDIA_FROM_QUEUE:
+                    onActionPlayMediaFromQueue(intent);
                     break;
 
                 case Intent.ACTION_MEDIA_BUTTON:
@@ -351,7 +351,7 @@ public final class PlaybackService extends Service {
 
             case STATE_IDLE:
             case STATE_ERROR:
-                playCurrentOrNewPlaylist();
+                playCurrentOrNewQueue();
                 break;
 
             case STATE_LOADING:
@@ -371,7 +371,7 @@ public final class PlaybackService extends Service {
     }
 
     private void onActionPlayAnything() {
-        playCurrentOrNewPlaylist();
+        playCurrentOrNewQueue();
     }
 
     private void onActionPause() {
@@ -431,13 +431,13 @@ public final class PlaybackService extends Service {
         }
     }
 
-    private void onActionPlayMediaFromPlaylist(final Intent intent) {
+    private void onActionPlayMediaFromQueue(final Intent intent) {
         final long mediaId = intent.getLongExtra(EXTRA_MEDIA_ID, 0);
-        final List<Media> playlist = mPlaybackData.getPlaylist();
-        if (playlist != null) {
+        final List<Media> queue = mPlaybackData.getQueue();
+        if (queue != null) {
             int mediaPosition = -1;
-            for (int i = 0; i < playlist.size(); i++) {
-                final Media m = playlist.get(i);
+            for (int i = 0; i < queue.size(); i++) {
+                final Media m = queue.get(i);
                 if (m.getId() == mediaId) {
                     mediaPosition = i;
                     break;
@@ -446,7 +446,7 @@ public final class PlaybackService extends Service {
             if (mediaPosition == -1) {
                 Log.w(TAG, "Media with id " + mediaId + " not found in current playlist");
             } else {
-                play(playlist, mediaPosition, false, false);
+                play(queue, mediaPosition, false, false);
             }
         }
     }
@@ -456,18 +456,18 @@ public final class PlaybackService extends Service {
         setState(STATE_PAUSED);
     }
 
-    private void playCurrentOrNewPlaylist() {
-        final List<Media> playlist = mPlaybackData.getPlaylist();
+    private void playCurrentOrNewQueue() {
+        final List<Media> playlist = mPlaybackData.getQueue();
         if (playlist != null && !playlist.isEmpty()) {
-            play(playlist, mPlaybackData.getPlaylistPosition(), true, false);
+            play(playlist, mPlaybackData.getQueuePosition(), true, false);
         } else {
-            PlaylistUtils.play(this, mPlaybackData,
+            QueueUtils.play(this, mPlaybackData,
                     mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
         }
     }
 
     private void playCurrent(final boolean mayContinueWhereStopped) {
-        play(mPlaybackData.getPlaylist(), mPlaybackData.getPlaylistPosition(),
+        play(mPlaybackData.getQueue(), mPlaybackData.getQueuePosition(),
                 mayContinueWhereStopped, false);
     }
 
@@ -512,12 +512,12 @@ public final class PlaybackService extends Service {
                         && media.equals(PlaybackDataUtils.getCurrentMedia(mPlaybackData))) {
                     seekPosition = mPlaybackData.getMediaPosition();
                 }
-                mPlaybackData.setPlaylistPosition(position);
+                mPlaybackData.setPlayQueuePosition(position);
                 mPlaybackData.setMediaPosition(seekPosition);
                 mCurrentTrack = media;
 
                 if (!fromPlaybackController) {
-                    getPlaybackController().setPositionInPlaylist(position);
+                    getPlaybackController().setPositionInQueue(position);
                 }
 
                 reportCurrentMedia();
@@ -556,7 +556,7 @@ public final class PlaybackService extends Service {
         mGoogleApiClientWear.disconnect();
         mMediaPlayer.stop();
 
-        mPlaylistSubscription.unsubscribe();
+        mQueueSubscription.unsubscribe();
         mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
         mPlaybackData.persistAsync();
 
@@ -617,8 +617,8 @@ public final class PlaybackService extends Service {
 
     @WorkerThread
     private void reportCurrentMedia() {
-        final int pos = mPlaybackData.getPlaylistPosition();
-        final Media media = CollectionUtils.getItemSafe(mPlaybackData.getPlaylist(), pos);
+        final int pos = mPlaybackData.getQueuePosition();
+        final Media media = CollectionUtils.getItemSafe(mPlaybackData.getQueue(), pos);
         if (media != null) {
             mPlaybackReporter.reportTrackChanged(media, pos);
         }
@@ -651,9 +651,9 @@ public final class PlaybackService extends Service {
 
     @WorkerThread
     private void reportCurrentPlaylist() {
-        final List<Media> playlist = mPlaybackData.getPlaylist();
+        final List<Media> playlist = mPlaybackData.getQueue();
         if (playlist != null) {
-            mPlaybackReporter.reportPlaylistChanged(playlist);
+            mPlaybackReporter.reportQueueChanged(playlist);
         }
     }
 
@@ -688,7 +688,7 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final Action1<List<Media>> mPlaylistAction = p -> {
+    private final Action1<List<Media>> mQueueChangedAction = p -> {
         if (p == null || p.isEmpty()) {
             mCurrentTrack = null;
             AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
@@ -704,9 +704,9 @@ public final class PlaybackService extends Service {
             }
 
             final PlaybackController playbackController = getPlaybackController();
-            playbackController.setPlaylist(p);
+            playbackController.setQueue(p);
 
-            int pos = mPlaybackData.getPlaylistPosition();
+            int pos = mPlaybackData.getQueuePosition();
             final Media current = mCurrentTrack;
             if (current != null) {
                 final int indexOf = p.indexOf(current);
@@ -714,7 +714,7 @@ public final class PlaybackService extends Service {
                     pos = indexOf;
                 }
             }
-            playbackController.setPositionInPlaylist(pos);
+            playbackController.setPositionInQueue(pos);
             mExecutor.submit(mRunnableReportCurrentPlaylist);
         }
     };
@@ -824,46 +824,46 @@ public final class PlaybackService extends Service {
 
         void playPrev(boolean isUserAction);
 
-        void setPlaylist(@Nullable List<Media> playlist);
+        void setQueue(@Nullable List<Media> queue);
 
-        void setPositionInPlaylist(int position);
+        void setPositionInQueue(int position);
     }
 
     private class PlaybackControllerNormal implements PlaybackController {
 
         private final Object LOCK = new Object();
 
-        private List<Media> mPlaylist;
+        private List<Media> mQueue;
         private int mPosition;
 
         @Nullable
-        protected final List<Media> getPlaylist() {
-            return mPlaylist;
+        protected final List<Media> getQueue() {
+            return mQueue;
         }
 
         @Override
         public void playPrev(final boolean isUserAction) {
             synchronized (LOCK) {
-                if (mPlaylist != null && !mPlaylist.isEmpty()) {
+                if (mQueue != null && !mQueue.isEmpty()) {
                     final int repeatMode = mPlaybackParams.getRepeatMode();
                     switch (repeatMode) {
                         case PlaybackParams.REPEAT_MODE_NONE:
                             if (!isUserAction && mPosition == 0) {
-                                onPlay(mPlaylist, mPosition);
+                                onPlay(mQueue, mPosition);
                             } else {
-                                onPlay(mPlaylist, prevPos(mPlaylist, mPosition));
+                                onPlay(mQueue, prevPos(mQueue, mPosition));
                             }
                             break;
 
-                        case PlaybackParams.REPEAT_MODE_PLAYLIST:
-                            onPlay(mPlaylist, prevPos(mPlaylist, mPosition));
+                        case PlaybackParams.REPEAT_MODE_QUEUE:
+                            onPlay(mQueue, prevPos(mQueue, mPosition));
                             break;
 
                         case PlaybackParams.REPEAT_MODE_TRACK:
                             if (isUserAction) {
-                                onPlay(mPlaylist, prevPos(mPlaylist, mPosition));
+                                onPlay(mQueue, prevPos(mQueue, mPosition));
                             } else {
-                                onPlay(mPlaylist, mPosition);
+                                onPlay(mQueue, mPosition);
                             }
                             break;
                     }
@@ -874,26 +874,26 @@ public final class PlaybackService extends Service {
         @Override
         public void playNext(final boolean isUserAction) {
             synchronized (LOCK) {
-                if (mPlaylist != null && !mPlaylist.isEmpty()) {
+                if (mQueue != null && !mQueue.isEmpty()) {
                     final int repeatMode = mPlaybackParams.getRepeatMode();
                     switch (repeatMode) {
                         case PlaybackParams.REPEAT_MODE_NONE:
-                            if (!isUserAction && mPosition == mPlaylist.size() - 1) {
+                            if (!isUserAction && mPosition == mQueue.size() - 1) {
                                 stopSelf();
                             } else {
-                                onPlay(mPlaylist, nextPos(mPlaylist, mPosition));
+                                onPlay(mQueue, nextPos(mQueue, mPosition));
                             }
                             break;
 
-                        case PlaybackParams.REPEAT_MODE_PLAYLIST:
-                            onPlay(mPlaylist, nextPos(mPlaylist, mPosition));
+                        case PlaybackParams.REPEAT_MODE_QUEUE:
+                            onPlay(mQueue, nextPos(mQueue, mPosition));
                             break;
 
                         case PlaybackParams.REPEAT_MODE_TRACK:
                             if (isUserAction) {
-                                onPlay(mPlaylist, nextPos(mPlaylist, mPosition));
+                                onPlay(mQueue, nextPos(mQueue, mPosition));
                             } else {
-                                onPlay(mPlaylist, mPosition);
+                                onPlay(mQueue, mPosition);
                             }
                             break;
                     }
@@ -911,14 +911,14 @@ public final class PlaybackService extends Service {
         }
 
         @Override
-        public void setPlaylist(final List<Media> playlist) {
+        public void setQueue(final List<Media> queue) {
             synchronized (LOCK) {
-                mPlaylist = playlist;
+                mQueue = queue;
             }
         }
 
         @Override
-        public void setPositionInPlaylist(final int position) {
+        public void setPositionInQueue(final int position) {
             synchronized (LOCK) {
                 mPosition = position;
             }
@@ -954,11 +954,11 @@ public final class PlaybackService extends Service {
         private final SparseIntArray mShuffledPositions = new SparseIntArray();
 
         @Override
-        public void setPlaylist(@Nullable final List<Media> playlist) {
+        public void setQueue(@Nullable final List<Media> queue) {
             synchronized (mLock) {
-                rebuildShuffledPositions(playlist == null ? 0 : playlist.size());
+                rebuildShuffledPositions(queue == null ? 0 : queue.size());
             }
-            super.setPlaylist(playlist);
+            super.setQueue(queue);
         }
 
         @Override

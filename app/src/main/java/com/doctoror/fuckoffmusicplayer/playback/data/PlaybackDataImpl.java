@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 
@@ -38,12 +38,12 @@ import rx.subjects.BehaviorSubject;
  */
 public final class PlaybackDataImpl implements PlaybackData {
 
-    private final BehaviorSubject<List<Media>> mPlaylistSubject = BehaviorSubject.create();
-    private final BehaviorSubject<Integer> mPlaylistPositionSubject = BehaviorSubject.create();
+    private final BehaviorSubject<List<Media>> mQueueSubject = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> mQueuePositionSubject = BehaviorSubject.create();
     private final BehaviorSubject<Long> mMediaPositionSubject = BehaviorSubject.create();
 
-    private final Object mPlaylistSubjectLock = new Object();
-    private final Object mPlaylistPositionSubjectLock = new Object();
+    private final Object mQueueSubjectLock = new Object();
+    private final Object mQueuePositionSubjectLock = new Object();
     private final Object mMediaPositionSubjectLock = new Object();
 
     @NonNull
@@ -61,14 +61,14 @@ public final class PlaybackDataImpl implements PlaybackData {
 
     @NonNull
     @Override
-    public Observable<List<Media>> playlistObservable() {
-        return mPlaylistSubject.asObservable();
+    public Observable<List<Media>> queueObservable() {
+        return mQueueSubject.asObservable();
     }
 
     @NonNull
     @Override
-    public Observable<Integer> playlistPositionObservable() {
-        return mPlaylistPositionSubject.asObservable();
+    public Observable<Integer> queuePositionObservable() {
+        return mQueuePositionSubject.asObservable();
     }
 
     @NonNull
@@ -79,18 +79,18 @@ public final class PlaybackDataImpl implements PlaybackData {
 
     @Nullable
     @Override
-    public List<Media> getPlaylist() {
-        synchronized (mPlaylistSubjectLock) {
-            final List<Media> playlist = mPlaylistSubject.getValue();
-            return playlist != null ? new ArrayList<>(playlist) : null;
+    public List<Media> getQueue() {
+        synchronized (mQueueSubjectLock) {
+            final List<Media> queue = mQueueSubject.getValue();
+            return queue != null ? new ArrayList<>(queue) : null;
         }
     }
 
     @NonNull
     @Override
-    public Integer getPlaylistPosition() {
-        synchronized (mPlaylistPositionSubjectLock) {
-            final Integer value = mPlaylistPositionSubject.getValue();
+    public Integer getQueuePosition() {
+        synchronized (mQueuePositionSubjectLock) {
+            final Integer value = mQueuePositionSubject.getValue();
             return value != null ? value : 0;
         }
     }
@@ -105,30 +105,30 @@ public final class PlaybackDataImpl implements PlaybackData {
     }
 
     @Override
-    public void setPlaylist(@Nullable final List<Media> playlist) {
-        synchronized (mPlaylistSubjectLock) {
-            final List<Media> newPlaylist = playlist != null ? new ArrayList<>(playlist) : null;
-            final int pos = getPlaylistPosition();
-            final Media current = CollectionUtils.getItemSafe(getPlaylist(), pos);
+    public void setPlayQueue(@Nullable final List<Media> queue) {
+        synchronized (mQueueSubjectLock) {
+            final List<Media> newQueue = queue != null ? new ArrayList<>(queue) : null;
+            final int pos = getQueuePosition();
+            final Media current = CollectionUtils.getItemSafe(getQueue(), pos);
 
-            mPlaylistSubject.onNext(newPlaylist);
-            Observable.create(s -> storeToRecentAlbums(newPlaylist))
+            mQueueSubject.onNext(newQueue);
+            Observable.create(s -> storeToRecentAlbums(newQueue))
                     .subscribeOn(Schedulers.computation())
                     .subscribe();
 
-            if (newPlaylist != null && current != null) {
-                final int newPos = newPlaylist.indexOf(current);
+            if (newQueue != null && current != null) {
+                final int newPos = newQueue.indexOf(current);
                 if (newPos != -1 && pos != newPos) {
-                    setPlaylistPosition(newPos);
+                    setPlayQueuePosition(newPos);
                 }
             }
         }
     }
 
     @Override
-    public void setPlaylistPosition(final int position) {
-        synchronized (mPlaylistPositionSubjectLock) {
-            mPlaylistPositionSubject.onNext(position);
+    public void setPlayQueuePosition(final int position) {
+        synchronized (mQueuePositionSubjectLock) {
+            mQueuePositionSubject.onNext(position);
         }
     }
 
@@ -145,21 +145,21 @@ public final class PlaybackDataImpl implements PlaybackData {
     }
 
     /**
-     * Finds albums in playlist and stores them in recently played albums.
+     * Finds albums in queue and stores them in recently played albums.
      * Album is a sequence of tracks with the same album id.
      * Single playlist can be a concatination of multiple albums.
      *
-     * @param playlist The playlist to process
+     * @param queue The queue to process
      */
     @WorkerThread
-    private void storeToRecentAlbums(@Nullable final List<Media> playlist) {
-        if (playlist != null && !playlist.isEmpty()) {
+    private void storeToRecentAlbums(@Nullable final List<Media> queue) {
+        if (queue != null && !queue.isEmpty()) {
             final Set<Long> albums = new LinkedHashSet<>();
             final long THRESHOLD = 4; // number of items per single album
-            long prevAlbumId = playlist.get(0).getAlbumId();
+            long prevAlbumId = queue.get(0).getAlbumId();
             int sequence = 1;
-            for (int i = 1; i < playlist.size(); i++) {
-                final long albumId = playlist.get(i).getAlbumId();
+            for (int i = 1; i < queue.size(); i++) {
+                final long albumId = queue.get(i).getAlbumId();
                 if (albumId == prevAlbumId) {
                     sequence++;
                 } else {

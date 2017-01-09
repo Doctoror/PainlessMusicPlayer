@@ -5,7 +5,7 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
@@ -122,8 +122,8 @@ public final class MediaSessionHolder {
         final PlaybackReporter playbackReporter = PlaybackReporterFactory
                 .newMediaSessionReporter(mContext, mediaSession, Glide.with(mContext));
 
-        final int position = mPlaybackData.getPlaylistPosition();
-        final Media current = CollectionUtils.getItemSafe(mPlaybackData.getPlaylist(), position);
+        final int position = mPlaybackData.getQueuePosition();
+        final Media current = CollectionUtils.getItemSafe(mPlaybackData.getQueue(), position);
         if (current != null) {
             playbackReporter.reportTrackChanged(current, position);
         }

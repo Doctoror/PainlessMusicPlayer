@@ -34,7 +34,7 @@ final class RootNavigationAdapter
     }
 
     static final int ID_NOW_PLAYING = 0;
-    static final int ID_PLAYLIST = 1;
+    static final int ID_QUEUE = 1;
     static final int ID_SEARCH = 2;
 
     @NonNull
@@ -48,7 +48,7 @@ final class RootNavigationAdapter
         mItems[0] = new Item(ID_NOW_PLAYING, context.getString(R.string.Now_Playing),
                 context.getDrawable(R.drawable.ic_play_arrow_white_24dp));
 
-        mItems[1] = new Item(ID_PLAYLIST, context.getString(R.string.Playlist),
+        mItems[1] = new Item(ID_QUEUE, context.getString(R.string.Queue),
                 context.getDrawable(R.drawable.ic_playlist_play_white_24dp));
 
         mItems[2] = new Item(ID_SEARCH, context.getString(R.string.Search),

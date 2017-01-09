@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.wear.playlist;
+package com.doctoror.fuckoffmusicplayer.wear.queue;
 
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 /**
  * Recycler view adapter for playlsit
  */
-final class PlaylistListAdapter extends BaseRecyclerAdapter
+final class QueueListAdapter extends BaseRecyclerAdapter
         <WearPlaybackData.Media, TwoLineItemViewHolder> {
 
     interface OnMediaClickListener {
@@ -37,7 +37,7 @@ final class PlaylistListAdapter extends BaseRecyclerAdapter
 
     private OnMediaClickListener mListener;
 
-    PlaylistListAdapter(@NonNull final Context context) {
+    QueueListAdapter(@NonNull final Context context) {
         super(context);
     }
 

@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.db.media;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.net.Uri;
 import android.provider.MediaStore;

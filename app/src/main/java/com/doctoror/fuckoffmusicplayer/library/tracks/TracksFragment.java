@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistConfig;
+import com.doctoror.fuckoffmusicplayer.db.playlist.QueueConfig;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
@@ -24,8 +24,8 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -39,7 +39,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
-import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -100,7 +99,7 @@ public final class TracksFragment extends LibraryListFragment {
         synchronized (CURSOR_LOCK) {
             final Cursor data = mData;
             if (data != null) {
-                int limit = PlaylistConfig.MAX_PLAYLIST_SIZE;
+                int limit = QueueConfig.MAX_PLAYLIST_SIZE;
                 final int count = data.getCount();
                 if (startPosition + limit > count) {
                     limit = count - startPosition;
@@ -140,10 +139,10 @@ public final class TracksFragment extends LibraryListFragment {
             @Nullable final List<Media> p) {
         if (isAdded()) {
             if (p != null && !p.isEmpty()) {
-                PlaylistUtils.play(getActivity(), mPlaybackData, p, 0);
+                QueueUtils.play(getActivity(), mPlaybackData, p, 0);
                 NowPlayingActivity.start(getActivity(), null, itemView);
             } else {
-                Toast.makeText(getActivity(), R.string.The_playlist_is_empty,
+                Toast.makeText(getActivity(), R.string.The_queue_is_empty,
                         Toast.LENGTH_LONG).show();
             }
         }

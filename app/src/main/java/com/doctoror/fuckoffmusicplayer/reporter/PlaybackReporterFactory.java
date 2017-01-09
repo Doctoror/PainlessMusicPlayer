@@ -3,7 +3,7 @@ package com.doctoror.fuckoffmusicplayer.reporter;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.bumptech.glide.RequestManager;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

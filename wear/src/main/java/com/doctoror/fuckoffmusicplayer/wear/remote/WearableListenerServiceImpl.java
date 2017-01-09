@@ -33,7 +33,7 @@ import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventSearchResults;
 import com.doctoror.fuckoffmusicplayer.wear.media.MediaHolder;
-import com.doctoror.fuckoffmusicplayer.wear.playlist.PlaylistHolder;
+import com.doctoror.fuckoffmusicplayer.wear.queue.QueueHolder;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -106,8 +106,8 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                             onPlaybackPositionItemChanged(item);
                             break;
 
-                        case DataPaths.Paths.PLAYLIST:
-                            onPlaylistChanged(item);
+                        case DataPaths.Paths.QUEUE:
+                            onQueueChanged(item);
                             break;
                     }
                 }
@@ -196,15 +196,15 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
         }
     }
 
-    private void onPlaylistChanged(@NonNull final DataItem stateItem) {
+    private void onQueueChanged(@NonNull final DataItem stateItem) {
         final byte[] data = stateItem.getData();
         if (data == null) {
-            PlaylistHolder.getInstance(this).setPlaylist(null);
+            QueueHolder.getInstance(this).setQueue(null);
             return;
         }
         try {
-            final WearPlaybackData.Playlist p = WearPlaybackData.Playlist.parseFrom(data);
-            PlaylistHolder.getInstance(this).setPlaylist(p);
+            final WearPlaybackData.Queue p = WearPlaybackData.Queue.parseFrom(data);
+            QueueHolder.getInstance(this).setQueue(p);
         } catch (InvalidProtocolBufferNanoException e) {
             Log.w(TAG, e);
         }

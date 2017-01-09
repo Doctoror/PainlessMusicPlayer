@@ -3,7 +3,7 @@ package com.doctoror.fuckoffmusicplayer.db.playlist;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreVolumeNames;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
@@ -66,13 +66,13 @@ public final class PlaylistProviderTracksMediaStore implements PlaylistProviderT
         final List<Media> playlist = mMediaProvider.load(sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK,
-                PlaylistConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_PLAYLIST_SIZE);
 
         for (final Media media : playlist) {
             ids.add(media.getId());
         }
 
-        if (!TextUtils.isEmpty(query) && playlist.size() < PlaylistConfig.MAX_PLAYLIST_SIZE) {
+        if (!TextUtils.isEmpty(query) && playlist.size() < QueueConfig.MAX_PLAYLIST_SIZE) {
             // Search in genres for tracks with media ids that do not match found ids
             Cursor c = mContentResolver.query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
                     new String[]{BaseColumns._ID},
@@ -98,7 +98,7 @@ public final class PlaylistProviderTracksMediaStore implements PlaylistProviderT
                         SelectionUtils.notInSelection(MediaStore.Audio.Media._ID, ids),
                         null,
                         "RANDOM()",
-                        PlaylistConfig.MAX_PLAYLIST_SIZE - ids.size()));
+                        QueueConfig.MAX_PLAYLIST_SIZE - ids.size()));
             }
         }
 

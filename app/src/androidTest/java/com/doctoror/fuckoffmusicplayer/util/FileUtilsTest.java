@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import org.junit.Test;
 

@@ -25,8 +25,8 @@
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/actionPlaylist"
-        android:title="@string/Playlist"
+        android:id="@+id/actionQueue"
+        android:title="@string/Queue"
         android:icon="@drawable/ic_playlist_play_white_24dp"
         android:orderInCategory="1"
         app:showAsAction="ifRoom"/>

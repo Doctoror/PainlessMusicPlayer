@@ -3,7 +3,7 @@ package com.doctoror.fuckoffmusicplayer.db.playlist;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreVolumeNames;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -31,6 +31,6 @@ public final class PlaylistProviderGenresMediaStore implements PlaylistProviderG
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()",
-                PlaylistConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_PLAYLIST_SIZE);
     }
 }

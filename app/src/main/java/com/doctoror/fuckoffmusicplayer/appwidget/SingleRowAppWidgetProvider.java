@@ -25,7 +25,7 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataUtils;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;

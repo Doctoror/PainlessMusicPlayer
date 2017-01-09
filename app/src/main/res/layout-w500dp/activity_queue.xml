@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivityModel"/>
+            type="com.doctoror.fuckoffmusicplayer.queue.QueueActivityModel"/>
     </data>
 
     <FrameLayout
@@ -31,7 +31,7 @@
         tools:ignore="InconsistentLayout">
 
         <include
-            layout="@layout/activity_playlist_card"
+            layout="@layout/activity_queue_card"
             app:model="@{model}"/>
 
     </FrameLayout>

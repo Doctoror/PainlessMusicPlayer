@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.playlist;
+package com.doctoror.fuckoffmusicplayer.queue;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * "Playlist" recycler adapter
  */
-final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Media, PlaylistItemViewHolder> {
+final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemViewHolder> {
 
     interface TrackListener {
 
@@ -49,7 +49,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Media, PlaylistI
 
     private TrackListener mTrackListener;
 
-    PlaylistRecyclerAdapter(@NonNull final Context context, @NonNull final List<Media> items) {
+    QueueRecyclerAdapter(@NonNull final Context context, @NonNull final List<Media> items) {
         super(context, items);
         mContext = context;
     }
@@ -114,7 +114,7 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Media, PlaylistI
     }
 
     @Override
-    public void onBindViewHolder(final PlaylistItemViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(final QueueItemViewHolder viewHolder, final int position) {
         final Media item = getItem(position);
         viewHolder.textTitle.setText(item.title);
         viewHolder.textArtist.setText(item.artist);
@@ -122,8 +122,8 @@ final class PlaylistRecyclerAdapter extends BaseRecyclerAdapter<Media, PlaylistI
     }
 
     @Override
-    public PlaylistItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        final PlaylistItemViewHolder vh = new PlaylistItemViewHolder(
+    public QueueItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+        final QueueItemViewHolder vh = new QueueItemViewHolder(
                 getLayoutInflater().inflate(R.layout.list_item_media, parent, false));
 
         vh.btnMenu.setImageDrawable(DrawableUtils.getTintedDrawableFromAttrTint(mContext,

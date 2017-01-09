@@ -21,7 +21,7 @@ import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.app.Notification;
 import android.app.PendingIntent;

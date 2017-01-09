@@ -24,7 +24,7 @@ import com.google.android.gms.wearable.Wearable;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.DataPaths;
-import com.doctoror.commons.wear.nano.WearPlaylistFromSearch;
+import com.doctoror.commons.wear.nano.WearQueueFromSearch;
 import com.doctoror.commons.wear.nano.WearSearchData;
 import com.doctoror.fuckoffmusicplayer.R;
 
@@ -115,8 +115,8 @@ public final class RemoteControl {
                 ByteBuffer.allocate(4).putFloat(seekPercent).array());
     }
 
-    public void playMediaFromPlaylist(final long mediaId) {
-        sendMessageIfPossible(DataPaths.Messages.PLAY_FROM_PLAYLIST,
+    public void playMediaFromQueue(final long mediaId) {
+        sendMessageIfPossible(DataPaths.Messages.PLAY_FROM_QUEUE,
                 ByteBuffer.allocate(8).putLong(mediaId).array());
     }
 
@@ -137,16 +137,16 @@ public final class RemoteControl {
 
     public void playTrack(@NonNull final WearSearchData.Track[] tracks,
             final long trackId) {
-        final WearPlaylistFromSearch.Playlist playlist = new WearPlaylistFromSearch.Playlist();
+        final WearQueueFromSearch.Queue queue = new WearQueueFromSearch.Queue();
         final long[] trackIds = new long[tracks.length];
         for (int i = 0; i < tracks.length; i++) {
             trackIds[i] = tracks[i].id;
         }
-        playlist.playlist = trackIds;
-        playlist.selectedId = trackId;
+        queue.queue = trackIds;
+        queue.selectedId = trackId;
         final byte[] data;
         try {
-            data = ProtoUtils.toByteArray(playlist);
+            data = ProtoUtils.toByteArray(queue);
         } catch (IOException e) {
             Log.w(TAG, e);
             return;

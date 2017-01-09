@@ -12,7 +12,7 @@ message PlaybackPosition {
 }
 
 message Media {
-  int32 positionInPlaylist = 1;
+  int32 positionInQueue = 1;
   int64 id = 2;
   string title = 3;
   int64 duration = 4;
@@ -20,6 +20,6 @@ message Media {
   string album = 6;
 }
 
-message Playlist {
+message Queue {
   repeated Media media = 1;
 }

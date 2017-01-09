@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.reporter;
 
 import com.doctoror.commons.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,10 +21,10 @@ final class PlaybackReporterSet implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media, final int positionInPlaylist) {
+    public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
         //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < mReporters.length; i++) {
-            mReporters[i].reportTrackChanged(media, positionInPlaylist);
+            mReporters[i].reportTrackChanged(media, positionInQueue);
         }
     }
 
@@ -46,10 +46,10 @@ final class PlaybackReporterSet implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaylistChanged(@Nullable final List<Media> playlist) {
+    public void reportQueueChanged(@Nullable final List<Media> queue) {
         //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < mReporters.length; i++) {
-            mReporters[i].reportPlaylistChanged(playlist);
+            mReporters[i].reportQueueChanged(queue);
         }
     }
 }

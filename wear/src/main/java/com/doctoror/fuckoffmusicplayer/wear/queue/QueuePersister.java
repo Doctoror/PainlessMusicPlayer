@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.wear.playlist;
+package com.doctoror.fuckoffmusicplayer.wear.queue;
 
 import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
@@ -23,28 +23,28 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Helper for persiting playlsit
+ * Helper for persiting play queue
  */
-final class PlaylistPersister {
+final class QueuePersister {
 
-    private static final String FILE_NAME_PLAYLIST = "playlist";
+    private static final String FILE_NAME_QUEUE = "queue";
 
-    private PlaylistPersister() {
+    private QueuePersister() {
         throw new UnsupportedOperationException();
     }
 
     static void persist(@NonNull final Context context,
-            @Nullable final WearPlaybackData.Playlist playlist) {
-        if (playlist != null) {
-            ProtoUtils.writeToFile(context, FILE_NAME_PLAYLIST, playlist);
+            @Nullable final WearPlaybackData.Queue queue) {
+        if (queue != null) {
+            ProtoUtils.writeToFile(context, FILE_NAME_QUEUE, queue);
         } else {
-            context.deleteFile(FILE_NAME_PLAYLIST);
+            context.deleteFile(FILE_NAME_QUEUE);
         }
     }
 
     @Nullable
-    static WearPlaybackData.Playlist read(@NonNull final Context context) {
-        return ProtoUtils.readFromFile(context, FILE_NAME_PLAYLIST,
-                new WearPlaybackData.Playlist());
+    static WearPlaybackData.Queue read(@NonNull final Context context) {
+        return ProtoUtils.readFromFile(context, FILE_NAME_QUEUE,
+                new WearPlaybackData.Queue());
     }
 }

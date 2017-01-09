@@ -55,12 +55,12 @@ public final class PlaybackParams {
     private static final String FILE_NAME = "playback_params";
 
     public static final int REPEAT_MODE_NONE = 0;
-    public static final int REPEAT_MODE_PLAYLIST = 1;
+    public static final int REPEAT_MODE_QUEUE = 1;
     public static final int REPEAT_MODE_TRACK = 2;
 
     @IntDef({
             REPEAT_MODE_NONE,
-            REPEAT_MODE_PLAYLIST,
+            REPEAT_MODE_QUEUE,
             REPEAT_MODE_TRACK
     })
     @Retention(RetentionPolicy.SOURCE)
@@ -80,7 +80,7 @@ public final class PlaybackParams {
     private boolean mShuffleEnabled;
 
     @RepeatMode
-    private int mRepeatMode = REPEAT_MODE_PLAYLIST;
+    private int mRepeatMode = REPEAT_MODE_QUEUE;
 
     private PlaybackParams(@NonNull final Context context) {
         mContext = context;

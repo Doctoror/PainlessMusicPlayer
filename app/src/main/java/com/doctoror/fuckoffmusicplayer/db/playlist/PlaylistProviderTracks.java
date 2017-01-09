@@ -1,6 +1,6 @@
 package com.doctoror.fuckoffmusicplayer.db.playlist;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

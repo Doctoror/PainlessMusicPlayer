@@ -59,7 +59,7 @@
     <string name="s_kHz">%1$s kHz</string>
     <string name="Effects">Effects</string>
 
-    <string name="s_removed_from_playlist">“%1$s” removed from playlist</string>
+    <string name="s_removed_from_queue">“%1$s” removed from queue</string>
     <string name="Delete">Delete</string>
 
     <string name="Are_you_sure_you_want_to_permanently_delete_s">Are you sure you want to

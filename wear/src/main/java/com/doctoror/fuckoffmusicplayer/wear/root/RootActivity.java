@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.wear.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityRootBinding;
 import com.doctoror.fuckoffmusicplayer.wear.nowplaying.NowPlayingFragment;
-import com.doctoror.fuckoffmusicplayer.wear.playlist.PlaylistFragment;
+import com.doctoror.fuckoffmusicplayer.wear.queue.QueueFragment;
 import com.doctoror.fuckoffmusicplayer.wear.search.SearchFragment;
 import com.doctoror.fuckoffmusicplayer.wear.util.GooglePlayServicesUtil;
 
@@ -160,8 +160,8 @@ public final class RootActivity extends WearableActivity {
                 showFragmentNowPlaying();
                 break;
 
-            case RootNavigationAdapter.ID_PLAYLIST:
-                showFragmentPlaylist();
+            case RootNavigationAdapter.ID_QUEUE:
+                showFragmentQueue();
                 break;
 
             case RootNavigationAdapter.ID_SEARCH:
@@ -187,8 +187,8 @@ public final class RootActivity extends WearableActivity {
         showFragment(NowPlayingFragment.class.getCanonicalName());
     }
 
-    private void showFragmentPlaylist() {
-        showFragment(PlaylistFragment.class.getCanonicalName());
+    private void showFragmentQueue() {
+        showFragment(QueueFragment.class.getCanonicalName());
     }
 
     private void showFragmentSearch() {

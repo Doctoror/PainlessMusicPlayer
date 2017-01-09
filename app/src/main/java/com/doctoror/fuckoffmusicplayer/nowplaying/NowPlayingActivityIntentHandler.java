@@ -20,9 +20,9 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
@@ -101,7 +101,7 @@ public final class NowPlayingActivityIntentHandler {
                                         R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
                                         .show();
                             } else {
-                                PlaylistUtils.play(activity, playbackData, playlist);
+                                QueueUtils.play(activity, playbackData, playlist);
                             }
                         }
                     }

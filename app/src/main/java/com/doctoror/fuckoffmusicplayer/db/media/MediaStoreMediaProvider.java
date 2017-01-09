@@ -1,6 +1,6 @@
 package com.doctoror.fuckoffmusicplayer.db.media;
 
-import com.doctoror.fuckoffmusicplayer.playlist.*;
+import com.doctoror.fuckoffmusicplayer.queue.*;
 
 import android.content.ContentResolver;
 import android.database.Cursor;

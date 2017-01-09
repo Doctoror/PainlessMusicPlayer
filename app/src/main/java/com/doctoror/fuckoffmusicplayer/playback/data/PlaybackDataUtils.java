@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 
 import android.support.annotation.NonNull;
@@ -33,6 +33,6 @@ public final class PlaybackDataUtils {
     @Nullable
     public static Media getCurrentMedia(@NonNull final PlaybackData playbackData) {
         return CollectionUtils
-                .getItemSafe(playbackData.getPlaylist(), playbackData.getPlaylistPosition());
+                .getItemSafe(playbackData.getQueue(), playbackData.getQueuePosition());
     }
 }

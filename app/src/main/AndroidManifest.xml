@@ -72,9 +72,9 @@
             android:label="@string/Recently_played_albums"/>
 
         <activity
-            android:name=".playlist.PlaylistActivity"
+            android:name=".queue.QueueActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:label="@string/Playlist"/>
+            android:label="@string/Queue"/>
 
         <activity
             android:name=".effects.AudioEffectsActivity"

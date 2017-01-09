@@ -5,7 +5,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -50,7 +50,7 @@ final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media, final int positionInPlaylist) {
+    public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
         final MediaMetadataCompat.Builder b = new MediaMetadataCompat.Builder()
                 .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
                         Long.toString(media.getId()))
@@ -127,7 +127,7 @@ final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaylistChanged(@Nullable final List<Media> playlist) {
+    public void reportQueueChanged(@Nullable final List<Media> queue) {
         // Not supported
     }
 

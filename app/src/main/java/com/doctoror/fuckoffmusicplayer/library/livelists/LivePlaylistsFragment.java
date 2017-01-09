@@ -6,8 +6,8 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandom;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 
 import android.app.Activity;
@@ -216,17 +216,17 @@ public final class LivePlaylistsFragment extends Fragment {
             clearLoadingFlag();
         } else {
             final Intent intent = Henson.with(activity)
-                    .gotoPlaylistActivity()
+                    .gotoQueueActivity()
                     .hasCoverTransition(false)
                     .hasItemViewTransition(true)
-                    .isNowPlayingPlaylist(false)
-                    .playlist(playlist)
+                    .isNowPlayingQueue(false)
+                    .queue(playlist)
                     .build();
 
             if (itemView != null) {
                 final ActivityOptionsCompat options = ActivityOptionsCompat
                         .makeSceneTransitionAnimation(activity, itemView,
-                                PlaylistActivity.TRANSITION_NAME_ROOT);
+                                QueueActivity.TRANSITION_NAME_ROOT);
 
                 startActivity(intent, options.toBundle());
             } else {

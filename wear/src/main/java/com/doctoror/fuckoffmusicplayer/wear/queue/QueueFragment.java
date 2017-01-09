@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.wear.playlist;
+package com.doctoror.fuckoffmusicplayer.wear.queue;
 
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.databinding.FragmentPlaylistBinding;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentQueueBinding;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventAlbumArt;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventMedia;
-import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaylist;
+import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventQueue;
 import com.doctoror.fuckoffmusicplayer.wear.media.MediaHolder;
 import com.doctoror.fuckoffmusicplayer.wear.remote.RemoteControl;
 import com.doctoror.fuckoffmusicplayer.wear.root.RootActivity;
@@ -49,26 +49,26 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * "Playlist" screen
+ * "Queue" screen
  */
-public final class PlaylistFragment extends Fragment {
+public final class QueueFragment extends Fragment {
 
-    private final PlaylistFragmentModel mModel = new PlaylistFragmentModel();
+    private final QueueFragmentModel mModel = new QueueFragmentModel();
 
     private MediaHolder mMediaHolder;
-    private PlaylistHolder mPlaylistHolder;
+    private QueueHolder mQueueHolder;
 
-    private PlaylistListAdapter mAdapter;
+    private QueueListAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMediaHolder = MediaHolder.getInstance(getActivity());
-        mPlaylistHolder = PlaylistHolder.getInstance(getActivity());
+        mQueueHolder = QueueHolder.getInstance(getActivity());
 
-        mAdapter = new PlaylistListAdapter(getActivity());
-        mAdapter.setOnMediaClickListener(this::playMediaFromPlaylist);
+        mAdapter = new QueueListAdapter(getActivity());
+        mAdapter.setOnMediaClickListener(this::playMediaFromQueue);
         mModel.setAdapter(mAdapter);
         mModel.setIsEmpty(true);
     }
@@ -77,8 +77,8 @@ public final class PlaylistFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
-        final FragmentPlaylistBinding binding = DataBindingUtil
-                .inflate(inflater, R.layout.fragment_playlist, container, false);
+        final FragmentQueueBinding binding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_queue, container, false);
         binding.setModel(mModel);
         mRecyclerView = binding.list;
         return binding.getRoot();
@@ -88,7 +88,7 @@ public final class PlaylistFragment extends Fragment {
     public void onStart() {
         super.onStart();
         mModel.setBackground(albumArtOrStub(mMediaHolder.getAlbumArt()));
-        bindPlaylist(mPlaylistHolder.getPlaylist(), mMediaHolder.getMedia());
+        bindQueue(mQueueHolder.getQueue(), mMediaHolder.getMedia());
         EventBus.getDefault().register(this);
     }
 
@@ -100,9 +100,9 @@ public final class PlaylistFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMedia(@NonNull final EventMedia event) {
-        // If playlist is a fake list of single media, update it
+        // If queue is a fake list of single media, update it
         if (mAdapter.getItemCount() == 1) {
-            bindPlaylist(mPlaylistHolder.getPlaylist(), event.media);
+            bindQueue(mQueueHolder.getQueue(), event.media);
         }
     }
 
@@ -112,12 +112,12 @@ public final class PlaylistFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventPlaylist(@NonNull final EventPlaylist event) {
-        bindPlaylist(event.playlist, mMediaHolder.getMedia());
+    public void onEventQueue(@NonNull final EventQueue event) {
+        bindQueue(event.queue, mMediaHolder.getMedia());
     }
 
-    private void playMediaFromPlaylist(final long mediaId) {
-        RemoteControl.getInstance().playMediaFromPlaylist(mediaId);
+    private void playMediaFromQueue(final long mediaId) {
+        RemoteControl.getInstance().playMediaFromQueue(mediaId);
         final Activity activity = getActivity();
         if (activity instanceof RootActivity) {
             ((RootActivity) activity).goToNowPlaying();
@@ -125,22 +125,22 @@ public final class PlaylistFragment extends Fragment {
     }
 
     @MainThread
-    private void bindPlaylist(@Nullable final WearPlaybackData.Playlist playlist,
+    private void bindQueue(@Nullable final WearPlaybackData.Queue queue,
             @Nullable final WearPlaybackData.Media media) {
-        mAdapter.setItems(makePlaylist(playlist, media));
+        mAdapter.setItems(makeQueue(queue, media));
         mModel.setIsEmpty(mAdapter.getItemCount() == 0);
-        if (mRecyclerView != null && media != null && playlist != null) {
-            mRecyclerView.scrollToPosition(media.positionInPlaylist);
+        if (mRecyclerView != null && media != null && queue != null) {
+            mRecyclerView.scrollToPosition(media.positionInQueue);
         }
     }
 
     @NonNull
-    private static List<WearPlaybackData.Media> makePlaylist(
-            @Nullable final WearPlaybackData.Playlist playlist,
+    private static List<WearPlaybackData.Media> makeQueue(
+            @Nullable final WearPlaybackData.Queue queue,
             @Nullable final WearPlaybackData.Media media) {
         List<WearPlaybackData.Media> p = null;
-        if (playlist != null) {
-            final WearPlaybackData.Media[] medias = playlist.media;
+        if (queue != null) {
+            final WearPlaybackData.Media[] medias = queue.media;
             if (medias != null && medias.length != 0) {
                 p = Arrays.asList(medias);
             }

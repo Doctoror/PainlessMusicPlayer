@@ -27,8 +27,8 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -82,11 +82,11 @@ public final class SearchUtils {
 
     public void onPlayFromMediaId(@NonNull final String mediaId) {
         if (MediaBrowserImpl.MEDIA_ID_RANDOM.equals(mediaId)) {
-            final List<Media> playlist = randomPlaylistFactory.randomPlaylist();
-            play(mContext, playlist, 0);
+            final List<Media> queue = randomPlaylistFactory.randomPlaylist();
+            play(mContext, queue, 0);
         } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
-            final List<Media> playlist = recentlyScannedPlaylistFactory.recentlyScannedPlaylist();
-            play(mContext, playlist, 0);
+            final List<Media> queue = recentlyScannedPlaylistFactory.recentlyScannedPlaylist();
+            play(mContext, queue, 0);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM)) {
             onPlayFromAlbumId(mediaId);
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE)) {
@@ -114,8 +114,8 @@ public final class SearchUtils {
             Log.w(TAG, "Album id is not a number " + albumId, e);
         }
         if (id != -1) {
-            final List<Media> playlist = albumPlaylistFactory.fromAlbum(id);
-            play(mContext, playlist, 0);
+            final List<Media> queue = albumPlaylistFactory.fromAlbum(id);
+            play(mContext, queue, 0);
         }
     }
 
@@ -129,18 +129,18 @@ public final class SearchUtils {
             Log.w(TAG, "Genre id is not a number " + genreId, e);
         }
         if (id != -1) {
-            final List<Media> playlist = genrePlaylistFactory.fromGenre(id);
-            play(mContext, playlist, 0);
+            final List<Media> queue = genrePlaylistFactory.fromGenre(id);
+            play(mContext, queue, 0);
         }
     }
 
     private void onPlayFromMediaId(final long mediaId) {
         int position = -1;
-        List<Media> playlist = mPlaybackData.getPlaylist();
-        if (playlist != null && !playlist.isEmpty()) {
-            final int size = playlist.size();
+        List<Media> queue = mPlaybackData.getQueue();
+        if (queue != null && !queue.isEmpty()) {
+            final int size = queue.size();
             for (int i = 0; i < size; i++) {
-                if (playlist.get(i).getId() == mediaId) {
+                if (queue.get(i).getId() == mediaId) {
                     position = i;
                     break;
                 }
@@ -150,10 +150,10 @@ public final class SearchUtils {
         // If this media is not found in current playlist
         if (position == -1) {
             position = 0;
-            playlist = mediaProvider.load(mediaId);
+            queue = mediaProvider.load(mediaId);
         }
 
-        play(mContext, playlist, position);
+        play(mContext, queue, position);
     }
 
     public void onPlayFromSearch(@Nullable final String query,
@@ -178,27 +178,27 @@ public final class SearchUtils {
             album = extras == null ? null : extras.getString(MediaStore.EXTRA_MEDIA_ALBUM);
         }
 
-        List<Media> playlist = null;
+        List<Media> queue = null;
         if (isArtistFocus) {
-            playlist = artistPlaylistFactory.fromArtistSearch(TextUtils.isEmpty(artist)
+            queue = artistPlaylistFactory.fromArtistSearch(TextUtils.isEmpty(artist)
                     ? query : artist);
         } else if (isAlbumFocus) {
-            playlist = albumPlaylistFactory.fromAlbumSearch(TextUtils.isEmpty(album)
+            queue = albumPlaylistFactory.fromAlbumSearch(TextUtils.isEmpty(album)
                     ? query : album);
         }
 
-        if (playlist == null || playlist.isEmpty()) {
+        if (queue == null || queue.isEmpty()) {
             // No focus found, search by query for song title
-            playlist = trackPlaylistFactory.fromTracksSearch(query);
+            queue = trackPlaylistFactory.fromTracksSearch(query);
         }
 
-        playFromSearch(playlist, query);
+        playFromSearch(queue, query);
     }
 
-    private void playFromSearch(@Nullable final List<Media> playlist,
+    private void playFromSearch(@Nullable final List<Media> queue,
             @Nullable final String query) {
-        if (playlist != null && !playlist.isEmpty()) {
-            PlaylistUtils.play(mContext, mPlaybackData, playlist);
+        if (queue != null && !queue.isEmpty()) {
+            QueueUtils.play(mContext, mPlaybackData, queue);
         } else {
             final String message = TextUtils.isEmpty(query)
                     ? mContext.getString(R.string.No_media_found)
@@ -209,10 +209,10 @@ public final class SearchUtils {
     }
 
     private void play(@NonNull final Context context,
-            @Nullable final List<Media> playlist,
+            @Nullable final List<Media> queue,
             final int position) {
-        if (playlist != null && !playlist.isEmpty()) {
-            PlaylistUtils.play(context, mPlaybackData, playlist, position);
+        if (queue != null && !queue.isEmpty()) {
+            QueueUtils.play(context, mPlaybackData, queue, position);
         } else {
             PlaybackServiceControl
                     .stopWithError(context, context.getString(R.string.No_media_found));

@@ -49,7 +49,7 @@ public final class PlaybackServiceIntentFactory {
     }
 
     @NonNull
-    public static Intent intentResendState(@NonNull final Context context) {
+    public static Intent intentResendState() {
         return new Intent(PlaybackService.ACTION_RESEND_STATE);
     }
 
@@ -70,9 +70,9 @@ public final class PlaybackServiceIntentFactory {
     }
 
     @NonNull
-    public static Intent intentPlayMediaFromPlaylist(@NonNull final Context context,
+    public static Intent intentPlayMediaFromQueue(@NonNull final Context context,
             final long mediaId) {
-        final Intent intent = intentAction(context, PlaybackService.ACTION_PLAY_MEDIA_FROM_PLAYLIST);
+        final Intent intent = intentAction(context, PlaybackService.ACTION_PLAY_MEDIA_FROM_QUEUE);
         intent.putExtra(PlaybackService.EXTRA_MEDIA_ID, mediaId);
         return intent;
     }

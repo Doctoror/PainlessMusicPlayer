@@ -13,7 +13,7 @@ public final class PlaybackServiceControl {
     }
 
     public static void resendState(@NonNull final Context context) {
-        context.sendBroadcast(PlaybackServiceIntentFactory.intentResendState(context));
+        context.sendBroadcast(PlaybackServiceIntentFactory.intentResendState());
     }
 
     public static void playPause(@NonNull final Context context) {
@@ -55,9 +55,9 @@ public final class PlaybackServiceControl {
         context.startService(PlaybackServiceIntentFactory.intentSeek(context, positionPercent));
     }
 
-    public static void playMediaFromPlaylist(@NonNull final Context context,
+    public static void playMediaFromQueue(@NonNull final Context context,
             final long mediaId) {
         context.startService(PlaybackServiceIntentFactory
-                .intentPlayMediaFromPlaylist(context, mediaId));
+                .intentPlayMediaFromQueue(context, mediaId));
     }
 }

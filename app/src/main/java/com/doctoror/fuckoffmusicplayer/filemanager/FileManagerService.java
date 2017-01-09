@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.filemanager;
 
 import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.FileUtils;
 
 import org.parceler.Parcels;

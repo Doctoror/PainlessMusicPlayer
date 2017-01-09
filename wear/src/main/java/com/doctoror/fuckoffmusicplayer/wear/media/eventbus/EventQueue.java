@@ -20,14 +20,14 @@ import com.doctoror.commons.wear.nano.WearPlaybackData;
 import android.support.annotation.Nullable;
 
 /**
- * Event for playlist change
+ * Event for queue change
  */
-public final class EventPlaylist {
+public final class EventQueue {
 
     @Nullable
-    public final WearPlaybackData.Playlist playlist;
+    public final WearPlaybackData.Queue queue;
 
-    public EventPlaylist(@Nullable final WearPlaybackData.Playlist playlist) {
-        this.playlist = playlist;
+    public EventQueue(@Nullable final WearPlaybackData.Queue queue) {
+        this.queue = queue;
     }
 }

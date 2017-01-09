@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.reporter;
 
 import com.doctoror.commons.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +15,7 @@ import java.util.List;
 public interface PlaybackReporter {
 
     @WorkerThread
-    void reportTrackChanged(@NonNull Media media, int positionInPlaylist);
+    void reportTrackChanged(@NonNull Media media, int positionInQueue);
 
     @WorkerThread
     void reportPlaybackStateChanged(
@@ -26,5 +26,5 @@ public interface PlaybackReporter {
     void reportPositionChanged(long mediaId, long position);
 
     @WorkerThread
-    void reportPlaylistChanged(@Nullable List<Media> playlist);
+    void reportQueueChanged(@Nullable List<Media> queue);
 }

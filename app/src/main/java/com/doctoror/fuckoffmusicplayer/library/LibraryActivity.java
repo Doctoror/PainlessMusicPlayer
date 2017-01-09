@@ -20,7 +20,7 @@ import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -150,7 +150,7 @@ public final class LibraryActivity extends BaseActivity {
                     .debounce(400, TimeUnit.MILLISECONDS)
                     .subscribe(t -> mSearchSubject.onNext(t.toString()));
 
-            menu.findItem(R.id.actionNowPlaying).setVisible(hasPlaylist());
+            menu.findItem(R.id.actionNowPlaying).setVisible(hasPlayQueue());
         } else {
             menu.findItem(R.id.search).setVisible(false);
             menu.findItem(R.id.actionNowPlaying).setVisible(false);
@@ -158,9 +158,9 @@ public final class LibraryActivity extends BaseActivity {
         return true;
     }
 
-    private boolean hasPlaylist() {
-        final List<Media> playlist = mPlaybackData.getPlaylist();
-        return playlist != null && !playlist.isEmpty();
+    private boolean hasPlayQueue() {
+        final List<Media> queue = mPlaybackData.getQueue();
+        return queue != null && !queue.isEmpty();
     }
 
     @Override

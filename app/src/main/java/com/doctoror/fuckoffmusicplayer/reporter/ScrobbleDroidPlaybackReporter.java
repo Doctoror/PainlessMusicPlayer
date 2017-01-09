@@ -2,7 +2,7 @@ package com.doctoror.fuckoffmusicplayer.reporter;
 
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.Objects;
 
 import android.content.Context;
@@ -39,7 +39,7 @@ public final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media, final int positionInPlaylist) {
+    public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
         if (!Objects.equals(mMedia, media)) {
             mMedia = media;
             if (mIsPlaying) {
@@ -76,7 +76,7 @@ public final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaylistChanged(@Nullable final List<Media> playlist) {
+    public void reportQueueChanged(@Nullable final List<Media> queue) {
         // Not supported
     }
 }

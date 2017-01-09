@@ -17,7 +17,7 @@ import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.wear.WearableListenerServiceImpl;
 import com.doctoror.fuckoffmusicplayer.wear.WearableSearchProviderService;
 
@@ -38,7 +38,7 @@ public interface MainComponent {
 
     void inject(LibraryActivity target);
 
-    void inject(PlaylistActivity target);
+    void inject(QueueActivity target);
 
     void inject(NowPlayingActivity target);
 

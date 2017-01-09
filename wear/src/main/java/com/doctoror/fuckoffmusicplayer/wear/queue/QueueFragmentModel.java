@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.wear.playlist;
+package com.doctoror.fuckoffmusicplayer.wear.queue;
 
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -23,9 +23,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * Data binding model for {@link PlaylistFragment} view
+ * Data binding model for {@link QueueFragment} view
  */
-public final class PlaylistFragmentModel {
+public final class QueueFragmentModel {
 
     private final ObservableBoolean mIsEmpty = new ObservableBoolean();
     private final ObservableField<Drawable> mBackground = new ObservableField<>();

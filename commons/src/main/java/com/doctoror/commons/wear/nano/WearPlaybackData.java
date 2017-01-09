@@ -205,8 +205,8 @@ public interface WearPlaybackData {
       return _emptyArray;
     }
 
-    // optional int32 positionInPlaylist = 1;
-    public int positionInPlaylist;
+    // optional int32 positionInQueue = 1;
+    public int positionInQueue;
 
     // optional int64 id = 2;
     public long id;
@@ -228,7 +228,7 @@ public interface WearPlaybackData {
     }
 
     public Media clear() {
-      positionInPlaylist = 0;
+      positionInQueue = 0;
       id = 0L;
       title = "";
       duration = 0L;
@@ -241,8 +241,8 @@ public interface WearPlaybackData {
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
         throws java.io.IOException {
-      if (this.positionInPlaylist != 0) {
-        output.writeInt32(1, this.positionInPlaylist);
+      if (this.positionInQueue != 0) {
+        output.writeInt32(1, this.positionInQueue);
       }
       if (this.id != 0L) {
         output.writeInt64(2, this.id);
@@ -265,9 +265,9 @@ public interface WearPlaybackData {
     @Override
     protected int computeSerializedSize() {
       int size = super.computeSerializedSize();
-      if (this.positionInPlaylist != 0) {
+      if (this.positionInQueue != 0) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt32Size(1, this.positionInPlaylist);
+            .computeInt32Size(1, this.positionInQueue);
       }
       if (this.id != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
@@ -308,7 +308,7 @@ public interface WearPlaybackData {
             break;
           }
           case 8: {
-            this.positionInPlaylist = input.readInt32();
+            this.positionInQueue = input.readInt32();
             break;
           }
           case 16: {
@@ -347,17 +347,17 @@ public interface WearPlaybackData {
     }
   }
 
-  public static final class Playlist extends
+  public static final class Queue extends
       com.google.protobuf.nano.MessageNano {
 
-    private static volatile Playlist[] _emptyArray;
-    public static Playlist[] emptyArray() {
+    private static volatile Queue[] _emptyArray;
+    public static Queue[] emptyArray() {
       // Lazily initializes the empty array
       if (_emptyArray == null) {
         synchronized (
             com.google.protobuf.nano.InternalNano.LAZY_INIT_LOCK) {
           if (_emptyArray == null) {
-            _emptyArray = new Playlist[0];
+            _emptyArray = new Queue[0];
           }
         }
       }
@@ -367,11 +367,11 @@ public interface WearPlaybackData {
     // repeated .Media media = 1;
     public com.doctoror.commons.wear.nano.WearPlaybackData.Media[] media;
 
-    public Playlist() {
+    public Queue() {
       clear();
     }
 
-    public Playlist clear() {
+    public Queue clear() {
       media = com.doctoror.commons.wear.nano.WearPlaybackData.Media.emptyArray();
       cachedSize = -1;
       return this;
@@ -407,7 +407,7 @@ public interface WearPlaybackData {
     }
 
     @Override
-    public Playlist mergeFrom(
+    public Queue mergeFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
       while (true) {
@@ -445,15 +445,15 @@ public interface WearPlaybackData {
       }
     }
 
-    public static Playlist parseFrom(byte[] data)
+    public static Queue parseFrom(byte[] data)
         throws com.google.protobuf.nano.InvalidProtocolBufferNanoException {
-      return com.google.protobuf.nano.MessageNano.mergeFrom(new Playlist(), data);
+      return com.google.protobuf.nano.MessageNano.mergeFrom(new Queue(), data);
     }
 
-    public static Playlist parseFrom(
+    public static Queue parseFrom(
             com.google.protobuf.nano.CodedInputByteBufferNano input)
         throws java.io.IOException {
-      return new Playlist().mergeFrom(input);
+      return new Queue().mergeFrom(input);
     }
   }
 }

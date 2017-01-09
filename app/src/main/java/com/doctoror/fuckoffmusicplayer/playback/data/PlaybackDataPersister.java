@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.playback.data;
 
 import com.doctoror.commons.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 
 import android.content.Context;
@@ -73,8 +73,8 @@ final class PlaybackDataPersister {
     private static void restoreFromProto(
             @NonNull final PlaybackDataProto.PlaybackData proto,
             @NonNull final PlaybackData target) {
-        target.setPlaylist(toMediaList(proto.playlist));
-        target.setPlaylistPosition(proto.playlistPosition);
+        target.setPlayQueue(toMediaList(proto.queue));
+        target.setPlayQueuePosition(proto.queuePosition);
         target.setMediaPosition(proto.mediaPosition);
     }
 
@@ -108,8 +108,8 @@ final class PlaybackDataPersister {
     private static PlaybackDataProto.PlaybackData toProtoPlaybackData(
             @NonNull final PlaybackData playbackData) {
         final PlaybackDataProto.PlaybackData pp = new PlaybackDataProto.PlaybackData();
-        pp.playlist = toProtoMediaList(playbackData.getPlaylist());
-        pp.playlistPosition = playbackData.getPlaylistPosition();
+        pp.queue = toProtoMediaList(playbackData.getQueue());
+        pp.queuePosition = playbackData.getQueuePosition();
         pp.mediaPosition = playbackData.getMediaPosition();
         return pp;
     }

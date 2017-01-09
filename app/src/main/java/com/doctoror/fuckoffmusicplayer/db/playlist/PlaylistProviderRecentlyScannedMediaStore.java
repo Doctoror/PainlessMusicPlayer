@@ -2,7 +2,7 @@ package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -29,6 +29,6 @@ public final class PlaylistProviderRecentlyScannedMediaStore
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 MediaStore.Audio.Media.DATE_ADDED + " DESC",
-                PlaylistConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_PLAYLIST_SIZE);
     }
 }

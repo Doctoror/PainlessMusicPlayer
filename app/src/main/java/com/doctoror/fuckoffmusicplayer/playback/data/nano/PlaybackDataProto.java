@@ -226,11 +226,11 @@ public interface PlaybackDataProto {
       return _emptyArray;
     }
 
-    // repeated .Media playlist = 1;
-    public com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media[] playlist;
+    // repeated .Media queue = 1;
+    public com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media[] queue;
 
-    // optional int32 playlistPosition = 2;
-    public int playlistPosition;
+    // optional int32 queuePosition = 2;
+    public int queuePosition;
 
     // optional int64 mediaPosition = 3;
     public long mediaPosition;
@@ -240,8 +240,8 @@ public interface PlaybackDataProto {
     }
 
     public PlaybackData clear() {
-      playlist = com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media.emptyArray();
-      playlistPosition = 0;
+      queue = com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media.emptyArray();
+      queuePosition = 0;
       mediaPosition = 0L;
       cachedSize = -1;
       return this;
@@ -250,16 +250,16 @@ public interface PlaybackDataProto {
     @Override
     public void writeTo(com.google.protobuf.nano.CodedOutputByteBufferNano output)
         throws java.io.IOException {
-      if (this.playlist != null && this.playlist.length > 0) {
-        for (int i = 0; i < this.playlist.length; i++) {
-          com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media element = this.playlist[i];
+      if (this.queue != null && this.queue.length > 0) {
+        for (int i = 0; i < this.queue.length; i++) {
+          com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media element = this.queue[i];
           if (element != null) {
             output.writeMessage(1, element);
           }
         }
       }
-      if (this.playlistPosition != 0) {
-        output.writeInt32(2, this.playlistPosition);
+      if (this.queuePosition != 0) {
+        output.writeInt32(2, this.queuePosition);
       }
       if (this.mediaPosition != 0L) {
         output.writeInt64(3, this.mediaPosition);
@@ -270,18 +270,18 @@ public interface PlaybackDataProto {
     @Override
     protected int computeSerializedSize() {
       int size = super.computeSerializedSize();
-      if (this.playlist != null && this.playlist.length > 0) {
-        for (int i = 0; i < this.playlist.length; i++) {
-          com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media element = this.playlist[i];
+      if (this.queue != null && this.queue.length > 0) {
+        for (int i = 0; i < this.queue.length; i++) {
+          com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media element = this.queue[i];
           if (element != null) {
             size += com.google.protobuf.nano.CodedOutputByteBufferNano
               .computeMessageSize(1, element);
           }
         }
       }
-      if (this.playlistPosition != 0) {
+      if (this.queuePosition != 0) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt32Size(2, this.playlistPosition);
+            .computeInt32Size(2, this.queuePosition);
       }
       if (this.mediaPosition != 0L) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
@@ -308,11 +308,11 @@ public interface PlaybackDataProto {
           case 10: {
             int arrayLength = com.google.protobuf.nano.WireFormatNano
                 .getRepeatedFieldArrayLength(input, 10);
-            int i = this.playlist == null ? 0 : this.playlist.length;
+            int i = this.queue == null ? 0 : this.queue.length;
             com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media[] newArray =
                 new com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media[i + arrayLength];
             if (i != 0) {
-              java.lang.System.arraycopy(this.playlist, 0, newArray, 0, i);
+              java.lang.System.arraycopy(this.queue, 0, newArray, 0, i);
             }
             for (; i < newArray.length - 1; i++) {
               newArray[i] = new com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media();
@@ -322,11 +322,11 @@ public interface PlaybackDataProto {
             // Last one without readTag.
             newArray[i] = new com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto.Media();
             input.readMessage(newArray[i]);
-            this.playlist = newArray;
+            this.queue = newArray;
             break;
           }
           case 16: {
-            this.playlistPosition = input.readInt32();
+            this.queuePosition = input.readInt32();
             break;
           }
           case 24: {

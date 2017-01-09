@@ -2,7 +2,7 @@ package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 
 import android.provider.MediaStore;
@@ -48,6 +48,6 @@ public final class PlaylistProviderArtistsMediaStore implements PlaylistProvider
         return mMediaProvider.load(sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK,
-                PlaylistConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_PLAYLIST_SIZE);
     }
 }

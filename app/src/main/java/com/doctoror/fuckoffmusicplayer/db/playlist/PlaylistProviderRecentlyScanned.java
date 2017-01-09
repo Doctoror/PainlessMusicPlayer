@@ -1,6 +1,6 @@
 package com.doctoror.fuckoffmusicplayer.db.playlist;
 
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import java.util.List;
 

@@ -31,9 +31,9 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playlist.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.PlaylistUtils;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
@@ -258,21 +258,21 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
                     if (isAdded()) {
                         final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
-                            final Intent intent = Henson.with(activity).gotoPlaylistActivity()
+                            final Intent intent = Henson.with(activity).gotoQueueActivity()
                                     .hasCoverTransition(false)
                                     .hasItemViewTransition(false)
-                                    .isNowPlayingPlaylist(false)
-                                    .playlist(playlist)
+                                    .isNowPlayingQueue(false)
+                                    .queue(playlist)
                                     .title(playlistName)
                                     .build();
 
                             final ActivityOptionsCompat options = ActivityOptionsCompat
                                     .makeSceneTransitionAnimation(activity, itemView,
-                                            PlaylistActivity.TRANSITION_NAME_ROOT);
+                                            QueueActivity.TRANSITION_NAME_ROOT);
 
                             startActivity(intent, options.toBundle());
                         } else {
-                            Toast.makeText(activity, R.string.The_playlist_is_empty,
+                            Toast.makeText(activity, R.string.The_queue_is_empty,
                                     Toast.LENGTH_SHORT)
                                     .show();
                         }
@@ -288,11 +288,11 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
                     if (isAdded()) {
                         final Activity activity = getActivity();
                         if (playlist != null && !playlist.isEmpty()) {
-                            PlaylistUtils.play(activity, mPlaybackData, playlist);
+                            QueueUtils.play(activity, mPlaybackData, playlist);
                             prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
                                     albumArt, null), true);
                         } else {
-                            Toast.makeText(activity, R.string.The_playlist_is_empty,
+                            Toast.makeText(activity, R.string.The_queue_is_empty,
                                     Toast.LENGTH_SHORT)
                                     .show();
                         }

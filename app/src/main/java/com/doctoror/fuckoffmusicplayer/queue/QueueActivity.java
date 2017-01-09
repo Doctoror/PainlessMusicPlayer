@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.playlist;
+package com.doctoror.fuckoffmusicplayer.queue;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -23,6 +23,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
@@ -83,7 +84,7 @@ import butterknife.OnClick;
 /**
  * "Playlist" activity
  */
-public final class PlaylistActivity extends BaseActivity implements
+public final class QueueActivity extends BaseActivity implements
         DeleteFileDialogFragment.Callback {
 
     public static final String TRANSITION_NAME_ALBUM_ART
@@ -94,8 +95,8 @@ public final class PlaylistActivity extends BaseActivity implements
     private static final String EXTRA_STATE = "EXTRA_STATE";
     private static final String TAG_DIALOG_DELETE = "TAG_DIALOG_DELETE";
 
-    private final PlaylistActivityModel mModel = new PlaylistActivityModel();
-    private PlaylistRecyclerAdapter mAdapter;
+    private final QueueActivityModel mModel = new QueueActivityModel();
+    private QueueRecyclerAdapter mAdapter;
     private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
 
     private RxPermissions mRxPermissions;
@@ -104,10 +105,10 @@ public final class PlaylistActivity extends BaseActivity implements
     private int mMediumAnimTime;
 
     @InjectExtra
-    List<Media> playlist;
+    List<Media> queue;
 
     @InjectExtra
-    boolean isNowPlayingPlaylist;
+    boolean isNowPlayingQueue;
 
     @Nullable
     @InjectExtra
@@ -172,13 +173,13 @@ public final class PlaylistActivity extends BaseActivity implements
             setTitle(title);
         }
 
-        mAdapter = new PlaylistRecyclerAdapter(this, playlist);
+        mAdapter = new QueueRecyclerAdapter(this, queue);
         mAdapter.setTrackListener(mTrackListener);
         mAdapter.registerAdapterDataObserver(mAdapterDataObserver);
         mModel.setRecyclerAdpter(mAdapter);
 
-        final com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding binding
-                = DataBindingUtil.setContentView(this, R.layout.activity_playlist);
+        final ActivityQueueBinding binding
+                = DataBindingUtil.setContentView(this, R.layout.activity_queue);
         binding.setModel(mModel);
 
         ButterKnife.bind(this);
@@ -192,7 +193,7 @@ public final class PlaylistActivity extends BaseActivity implements
         mFinishWhenDialogDismissed = false;
 
         if (TransitionUtils.supportsActivityTransitions()) {
-            PlaylistActivityLollipop.applyTransitions(this, cardView != null);
+            QueueActivityLollipop.applyTransitions(this, cardView != null);
         }
 
         mCreatedWithInstanceState = savedInstanceState != null;
@@ -206,8 +207,8 @@ public final class PlaylistActivity extends BaseActivity implements
             mDeleteSession = state.deleteSession;
             mFinishWhenDialogDismissed = state.finishWhenDialogDismissed;
             mFabAnchorParams = state.fabAnchorParams;
-            playlist = state.playlist;
-            mAdapter.setItems(playlist);
+            queue = state.queue;
+            mAdapter.setItems(queue);
 
             fab.setScaleX(1f);
             fab.setScaleY(1f);
@@ -222,7 +223,7 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (TransitionUtils.supportsActivityTransitions()) {
-            PlaylistActivityLollipop.addEnterTransitionListener(this);
+            QueueActivityLollipop.addEnterTransitionListener(this);
         }
     }
 
@@ -242,20 +243,19 @@ public final class PlaylistActivity extends BaseActivity implements
             }
         });
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperImpl(
-                (PlaylistRecyclerAdapter) mModel.getRecyclerAdapter().get()));
+                (QueueRecyclerAdapter) mModel.getRecyclerAdapter().get()));
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void initAlbumArtAndToolbar(
-            @NonNull final com.doctoror.fuckoffmusicplayer.databinding.ActivityPlaylistBinding binding) {
+    private void initAlbumArtAndToolbar(@NonNull final ActivityQueueBinding binding) {
         setSupportActionBar(toolbar);
-        ViewCompat.setTransitionName(binding.getRoot(), PlaylistActivity.TRANSITION_NAME_ROOT);
-        ViewCompat.setTransitionName(albumArt, PlaylistActivity.TRANSITION_NAME_ALBUM_ART);
+        ViewCompat.setTransitionName(binding.getRoot(), QueueActivity.TRANSITION_NAME_ROOT);
+        ViewCompat.setTransitionName(albumArt, QueueActivity.TRANSITION_NAME_ALBUM_ART);
 
         String pic = null;
-        final int size = playlist.size();
+        final int size = queue.size();
         for (int i = 0; i < size; i++) {
-            final Media media = playlist.get(i);
+            final Media media = queue.get(i);
             pic = media.albumArt;
             if (pic != null) {
                 break;
@@ -339,7 +339,7 @@ public final class PlaylistActivity extends BaseActivity implements
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         final State state = new State();
-        state.playlist = playlist;
+        state.queue = queue;
         state.deleteSession = mDeleteSession;
         state.finishWhenDialogDismissed = mFinishWhenDialogDismissed;
         state.fabAnchorParams = mFabAnchorParams;
@@ -376,7 +376,7 @@ public final class PlaylistActivity extends BaseActivity implements
                     if (result) {
                         if (!isFinishingAfterTransition()) {
                             mAdapter.removeItem(media);
-                            playlist.remove(media);
+                            queue.remove(media);
                             FileManagerService.delete(getApplicationContext(), media);
                         }
                     }
@@ -395,7 +395,7 @@ public final class PlaylistActivity extends BaseActivity implements
         finishIfNeeded();
     }
 
-    void onPlaylistEmpty() {
+    void onQueueEmpty() {
         mFinishWhenDialogDismissed = true;
         finishIfNeeded();
     }
@@ -413,10 +413,10 @@ public final class PlaylistActivity extends BaseActivity implements
     }
 
     private void onPlayClick(@NonNull final View clickedView,
-            final int playlistPosition) {
+            final int queuePosition) {
 
-        PlaylistUtils.play(this, mPlaybackData, playlist, playlistPosition);
-        final Media media = CollectionUtils.getItemSafe(playlist, playlistPosition);
+        QueueUtils.play(this, mPlaybackData, queue, queuePosition);
+        final Media media = CollectionUtils.getItemSafe(queue, queuePosition);
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media != null ? media.getAlbumArt() : null);
         if (shouldPassCoverView) {
@@ -482,7 +482,7 @@ public final class PlaylistActivity extends BaseActivity implements
     @Parcel
     static final class State {
 
-        List<Media> playlist;
+        List<Media> queue;
         boolean finishWhenDialogDismissed;
         DeleteSession deleteSession;
         CoordinatorLayoutUtil.AnchorParams fabAnchorParams;
@@ -502,8 +502,8 @@ public final class PlaylistActivity extends BaseActivity implements
         }
     }
 
-    private final PlaylistRecyclerAdapter.TrackListener mTrackListener
-            = new PlaylistRecyclerAdapter.TrackListener() {
+    private final QueueRecyclerAdapter.TrackListener mTrackListener
+            = new QueueRecyclerAdapter.TrackListener() {
 
         @Override
         public void onTrackClick(@NonNull final View itemView,
@@ -519,11 +519,11 @@ public final class PlaylistActivity extends BaseActivity implements
 
         @Override
         public void onTracksSwapped(final int i, final int j) {
-            if (i < playlist.size() && j < playlist.size()) {
-                Collections.swap(playlist, i, j);
+            if (i < queue.size() && j < queue.size()) {
+                Collections.swap(queue, i, j);
             }
-            if (isNowPlayingPlaylist) {
-                mPlaybackData.setPlaylist(playlist);
+            if (isNowPlayingQueue) {
+                mPlaybackData.setPlayQueue(queue);
             }
         }
     };
@@ -531,9 +531,9 @@ public final class PlaylistActivity extends BaseActivity implements
     private final class ItemTouchHelperImpl extends ItemTouchHelper.SimpleCallback {
 
         @NonNull
-        private final PlaylistRecyclerAdapter mAdapter;
+        private final QueueRecyclerAdapter mAdapter;
 
-        ItemTouchHelperImpl(@NonNull final PlaylistRecyclerAdapter adapter) {
+        ItemTouchHelperImpl(@NonNull final QueueRecyclerAdapter adapter) {
             super(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT);
             mAdapter = adapter;
         }
@@ -574,9 +574,9 @@ public final class PlaylistActivity extends BaseActivity implements
         @Override
         public void onSwiped(final RecyclerView.ViewHolder viewHolder, final int swipeDir) {
             final int pos = viewHolder.getAdapterPosition();
-            playlist.remove(pos);
-            if (isNowPlayingPlaylist) {
-                mPlaybackData.setPlaylist(playlist);
+            queue.remove(pos);
+            if (isNowPlayingQueue) {
+                mPlaybackData.setPlayQueue(queue);
             }
             mAdapter.removeItem(pos);
         }
@@ -616,13 +616,13 @@ public final class PlaylistActivity extends BaseActivity implements
 
         private void checkIfEmpty() {
             if (mAdapter.getItemCount() == 0 && !isFinishing()) {
-                onPlaylistEmpty();
+                onQueueEmpty();
             }
         }
     };
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private static final class PlaylistActivityLollipop {
+    private static final class QueueActivityLollipop {
 
         static void applyTransitions(@NonNull final BaseActivity activity,
                 final boolean hasCardView) {
@@ -633,13 +633,13 @@ public final class PlaylistActivity extends BaseActivity implements
                     : new VerticalGateTransition());
         }
 
-        static void addEnterTransitionListener(@NonNull final PlaylistActivity playlistActivity) {
-            final Transition enter = playlistActivity.getWindow().getSharedElementEnterTransition();
+        static void addEnterTransitionListener(@NonNull final QueueActivity activity) {
+            final Transition enter = activity.getWindow().getSharedElementEnterTransition();
             if (enter != null) {
                 enter.addListener(new TransitionListenerAdapter() {
                     @Override
                     public void onTransitionEnd(final Transition transition) {
-                        playlistActivity.onEnterTransitionFinished();
+                        activity.onEnterTransitionFinished();
                     }
                 });
             }
