@@ -78,6 +78,29 @@ public final class SelectionUtils {
     }
 
     /**
+     * Builds IN selection
+     *
+     * @param column    the column name to build selection for
+     * @param arguments the arguments
+     * @return the IN selection
+     */
+    @NonNull
+    public static <T> String inSelection(@NonNull final String column,
+            @NonNull final Iterable<T> arguments) {
+        //noinspection ConstantConditions
+        if (column == null || column.isEmpty()) {
+            throw new IllegalArgumentException("column must not be null or empty");
+        }
+        final StringBuilder selection = new StringBuilder(256);
+        selection.append(column);
+        selection.append(" IN ");
+        selection.append('(');
+        appendCommaSeparatedArguments(selection, arguments);
+        selection.append(')');
+        return selection.toString();
+    }
+
+    /**
      * Builds IN selection with long args
      *
      * @param column    the column name to build selection for
