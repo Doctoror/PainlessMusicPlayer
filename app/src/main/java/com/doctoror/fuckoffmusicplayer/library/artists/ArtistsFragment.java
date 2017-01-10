@@ -62,12 +62,12 @@ public final class ArtistsFragment extends LibraryListFragment {
 
     @Override
     protected void onDataLoaded(@Nullable final Cursor data) {
-        mAdapter.swapCursor(data);
+        mAdapter.changeCursor(data);
     }
 
     @Override
     protected void onDataReset() {
-        mAdapter.swapCursor(null);
+        mAdapter.changeCursor(null);
     }
 
     private void openArtist(@NonNull final View itemView, final long artistId,

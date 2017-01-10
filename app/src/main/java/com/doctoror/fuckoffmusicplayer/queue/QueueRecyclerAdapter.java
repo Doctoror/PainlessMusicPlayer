@@ -75,14 +75,13 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
     }
 
     private void onMenuClick(@NonNull final View itemView, final int position) {
-        final Media item = getItem(position);
-
         final PopupMenu popup = new PopupMenu(itemView.getContext(), itemView);
         final Menu popupMenu = popup.getMenu();
 
         final MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.list_item_media, popupMenu);
 
+        final Media item = getItem(position);
         popup.setOnMenuItemClickListener(menuItem -> onMenuItemClick(menuItem, item));
         popup.show();
     }
@@ -131,7 +130,7 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
                 android.R.attr.textColorPrimary));
 
         vh.itemView.setOnClickListener(v -> onTrackClick(vh.itemView, vh.getAdapterPosition()));
-        vh.btnMenu.setOnClickListener(v -> onMenuClick(vh.btnMenu, vh.getAdapterPosition()));
+        vh.btnMenu.setOnClickListener(v -> onMenuClick(v, vh.getAdapterPosition()));
         return vh;
     }
 }

@@ -19,12 +19,12 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.widget.ImageView;
 
 /**
  * Drawable utils
@@ -53,11 +53,30 @@ public final class DrawableUtils {
     }
 
     @Nullable
+    public static Drawable getTintedDrawable(@NonNull final Context context,
+            @DrawableRes final int res,
+            @ColorInt final int tint) {
+        final Drawable d = ResourcesCompat.getDrawable(context.getResources(), res,
+                context.getTheme());
+        return getTintedDrawable(d, tint);
+    }
+
+    @Nullable
     public static Drawable getTintedDrawable(@Nullable Drawable drawable,
             @Nullable final ColorStateList tint) {
         if (drawable != null) {
             drawable = DrawableCompat.wrap(drawable);
             DrawableCompat.setTintList(drawable, tint);
+        }
+        return drawable;
+    }
+
+    @Nullable
+    public static Drawable getTintedDrawable(@Nullable Drawable drawable,
+            @ColorInt final int tint) {
+        if (drawable != null) {
+            drawable = DrawableCompat.wrap(drawable);
+            DrawableCompat.setTint(drawable, tint);
         }
         return drawable;
     }

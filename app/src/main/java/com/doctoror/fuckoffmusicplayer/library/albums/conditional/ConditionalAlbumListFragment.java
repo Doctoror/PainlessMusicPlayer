@@ -233,7 +233,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
             mOldSubscription = null;
         }
 
-        mAdapter.swapCursor(null);
+        mAdapter.changeCursor(null);
     }
 
     @Nullable
@@ -454,7 +454,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         @Override
         public void onNext(final Cursor cursor) {
             loadAlbumArt(cursor);
-            mAdapter.swapCursor(cursor);
+            mAdapter.changeCursor(cursor);
             mData = cursor;
             showStateContent();
             onDataLoaded();

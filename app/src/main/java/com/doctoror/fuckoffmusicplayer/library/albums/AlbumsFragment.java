@@ -52,6 +52,8 @@ import rx.schedulers.Schedulers;
  */
 public final class AlbumsFragment extends LibraryListFragment {
 
+    private static final String TAG_DIALOG_DELETE = "AlbumsFragment.TAG_DIALOG_DELETE";
+
     private AlbumsRecyclerAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
@@ -68,7 +70,18 @@ public final class AlbumsFragment extends LibraryListFragment {
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
 
         mAdapter = new AlbumsRecyclerAdapter(getActivity(), Glide.with(this));
-        mAdapter.setOnAlbumClickListener(this::onAlbumClick);
+        mAdapter.setOnAlbumClickListener(new AlbumsRecyclerAdapter.OnAlbumClickListener() {
+
+            @Override
+            public void onAlbumClick(final View albumArtView, final long id, final String album) {
+                AlbumsFragment.this.onAlbumClick(albumArtView, id, album);
+            }
+
+            @Override
+            public void onAlbumDeleteClick(final long id, @NonNull final String name) {
+                AlbumsFragment.this.onAlbumDeleteClick(id, name);
+            }
+        });
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_albums_found));
     }
@@ -101,12 +114,16 @@ public final class AlbumsFragment extends LibraryListFragment {
 
     @Override
     protected void onDataLoaded(@Nullable final Cursor data) {
-        mAdapter.swapCursor(data);
+        mAdapter.changeCursor(data);
     }
 
     @Override
     protected void onDataReset() {
-        mAdapter.swapCursor(null);
+        mAdapter.changeCursor(null);
+    }
+
+    private void onAlbumDeleteClick(final long albumId, @NonNull final String name) {
+        DeleteAlbumDialogFragment.show(getFragmentManager(), TAG_DIALOG_DELETE, albumId, name);
     }
 
     private void onAlbumClick(@NonNull final View view,

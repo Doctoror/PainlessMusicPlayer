@@ -81,7 +81,7 @@ public final class TracksFragment extends LibraryListFragment {
     protected void onDataLoaded(@Nullable final Cursor data) {
         synchronized (CURSOR_LOCK) {
             mData = data;
-            mAdapter.swapCursor(data);
+            mAdapter.changeCursor(data);
         }
     }
 
@@ -89,7 +89,7 @@ public final class TracksFragment extends LibraryListFragment {
     protected void onDataReset() {
         synchronized (CURSOR_LOCK) {
             mData = null;
-            mAdapter.swapCursor(null);
+            mAdapter.changeCursor(null);
         }
     }
 

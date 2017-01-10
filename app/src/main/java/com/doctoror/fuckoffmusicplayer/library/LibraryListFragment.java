@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.library;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
 import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
 
@@ -139,12 +140,7 @@ public abstract class LibraryListFragment extends Fragment {
         mModel.setEmptyMessage(emptyMessage);
     }
 
-    private final Observer<Cursor> mObserver = new Observer<Cursor>() {
-
-        @Override
-        public void onCompleted() {
-            onDataReset();
-        }
+    private final Observer<Cursor> mObserver = new ObserverAdapter<Cursor>() {
 
         @Override
         public void onError(final Throwable e) {

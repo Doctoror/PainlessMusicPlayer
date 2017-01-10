@@ -20,18 +20,25 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.widget.AlbumViewHolder;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.l4digital.fastscroll.FastScroller;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 /**
  * "Albums" recycler adapter
@@ -47,6 +54,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
 
     interface OnAlbumClickListener {
         void onAlbumClick(View albumArtView, long id, String album);
+        void onAlbumDeleteClick(long id, @NonNull String name);
     }
 
     private OnAlbumClickListener mOnAlbumClickListener;
@@ -67,6 +75,39 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
             mOnAlbumClickListener.onAlbumClick(view, id, album);
         }
     }
+
+    private void onMenuClick(@NonNull final View btnView, final int position) {
+        final PopupMenu popup = new PopupMenu(btnView.getContext(), btnView);
+        final Menu popupMenu = popup.getMenu();
+
+        final MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.list_item_album, popupMenu);
+
+        final long id = getItemId(position);
+        final Cursor item = getCursor();
+
+        if (item.moveToPosition(position)) {
+            final String albumName = item.getString(AlbumsProvider.COLUMN_ALBUM);
+            popup.setOnMenuItemClickListener(menuItem -> onMenuItemClick(menuItem, id, albumName));
+            popup.show();
+        }
+    }
+
+    private boolean onMenuItemClick(@NonNull final MenuItem menuItem,
+            final long itemId,
+            @NonNull final String name) {
+        switch (menuItem.getItemId()) {
+            case R.id.actionDelete:
+                if (mOnAlbumClickListener != null) {
+                    mOnAlbumClickListener.onAlbumDeleteClick(itemId, name);
+                }
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
 
     @Override
     public void onBindViewHolder(final AlbumViewHolder viewHolder, final Cursor cursor) {
@@ -97,6 +138,12 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
                         item.getString(AlbumsProvider.COLUMN_ALBUM));
             }
         });
+
+        vh.btnMenu.setImageDrawable(DrawableUtils.getTintedDrawable(vh.btnMenu.getContext(),
+                R.drawable.ic_more_vert_black_24dp, Color.WHITE));
+
+        vh.btnMenu.setOnClickListener(v -> onMenuClick(v, vh.getAdapterPosition()));
+
         return vh;
     }
 

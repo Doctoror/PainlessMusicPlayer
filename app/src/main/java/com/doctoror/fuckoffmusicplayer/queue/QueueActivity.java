@@ -379,7 +379,7 @@ public final class QueueActivity extends BaseActivity implements
                         if (!isFinishingAfterTransition()) {
                             mAdapter.removeItem(media);
                             queue.remove(media);
-                            FileManagerService.delete(getApplicationContext(), media);
+                            FileManagerService.deleteMedia(getApplicationContext(), media);
                         }
                     }
                     mDeleteSession = null;
