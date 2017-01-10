@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.doctoror.fuckoffmusicplayer">
 
-
-    <application>
+    <application
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
 
-        <service android:name=".wear.WearableListenerServiceImpl">
+        <service android:name=".wear.WearableListenerServiceImpl"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <!-- listeners receive events that match the action and data filters -->
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED"/>
