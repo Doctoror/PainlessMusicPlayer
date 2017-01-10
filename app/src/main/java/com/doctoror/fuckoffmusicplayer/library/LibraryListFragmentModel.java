@@ -29,7 +29,7 @@ public final class LibraryListFragmentModel {
 
     private CharSequence mEmptyMessage;
     private final ObservableInt mDisplayedChild = new ObservableInt();
-    private final ObservableField<String> mErrorText = new ObservableField<>();
+    private final ObservableField<CharSequence> mErrorText = new ObservableField<>();
     private final ObservableField<RecyclerView.Adapter> mRecyclerAdapter = new ObservableField<>();
 
     @Nullable
@@ -47,7 +47,7 @@ public final class LibraryListFragmentModel {
     }
 
     @NonNull
-    public ObservableField<String> getErrorText() {
+    public ObservableField<CharSequence> getErrorText() {
         return mErrorText;
     }
 
@@ -64,7 +64,7 @@ public final class LibraryListFragmentModel {
         mDisplayedChild.set(displayedChild);
     }
 
-    public void setErrorText(@Nullable final String errorText) {
+    public void setErrorText(@Nullable final CharSequence errorText) {
         mErrorText.set(errorText);
     }
 

@@ -78,7 +78,7 @@ public final class TracksFragment extends LibraryListFragment {
     }
 
     @Override
-    protected void onDataLoaded(@Nullable final Cursor data) {
+    protected void onDataLoaded(@NonNull final Cursor data) {
         synchronized (CURSOR_LOCK) {
             mData = data;
             mAdapter.changeCursor(data);

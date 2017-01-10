@@ -26,11 +26,11 @@ import android.support.v7.widget.RecyclerView;
 
 public final class ConditionalAlbumListModel {
 
-    private final ObservableField<String> mErrorText = new ObservableField<>();
+    private final ObservableField<CharSequence> mErrorText = new ObservableField<>();
     private final ObservableField<RecyclerView.Adapter> mRecyclerAdpter = new ObservableField<>();
 
     @NonNull
-    public ObservableField<String> getErrorText() {
+    public ObservableField<CharSequence> getErrorText() {
         return mErrorText;
     }
 
@@ -43,7 +43,7 @@ public final class ConditionalAlbumListModel {
         mRecyclerAdpter.set(adapter);
     }
 
-    void setErrorText(@Nullable final String errorText) {
+    void setErrorText(@Nullable final CharSequence errorText) {
         mErrorText.set(errorText);
     }
 

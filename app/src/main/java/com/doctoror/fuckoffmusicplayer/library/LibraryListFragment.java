@@ -128,7 +128,7 @@ public abstract class LibraryListFragment extends Fragment {
 
     protected abstract Observable<Cursor> load(@Nullable final String filter);
 
-    protected abstract void onDataLoaded(@Nullable Cursor data);
+    protected abstract void onDataLoaded(@NonNull Cursor data);
 
     protected abstract void onDataReset();
 
@@ -150,7 +150,7 @@ public abstract class LibraryListFragment extends Fragment {
             }
             onDataReset();
             if (isAdded()) {
-                mModel.setErrorText(getString(R.string.Failed_to_load_data_s, e));
+                mModel.setErrorText(getText(R.string.Failed_connecting_to_Media_Store));
                 mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
             }
         }
@@ -162,7 +162,7 @@ public abstract class LibraryListFragment extends Fragment {
                 mOldSubscription.unsubscribe();
                 mOldSubscription = null;
             }
-            mModel.setDisplayedChild(cursor != null && cursor.getCount() != 0
+            mModel.setDisplayedChild(cursor.getCount() != 0
                     ? ANIMATOR_CHILD_CONTENT : ANIMATOR_CHILD_EMPTY);
         }
     };

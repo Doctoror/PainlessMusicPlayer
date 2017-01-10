@@ -61,7 +61,7 @@ public final class GenresFragment extends LibraryListFragment {
     }
 
     @Override
-    protected void onDataLoaded(@Nullable final Cursor data) {
+    protected void onDataLoaded(@NonNull final Cursor data) {
         mAdapter.changeCursor(data);
     }
 

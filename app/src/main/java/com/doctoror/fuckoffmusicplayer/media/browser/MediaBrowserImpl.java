@@ -186,6 +186,7 @@ public final class MediaBrowserImpl {
     private void loadChildrenGenres(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
         mGenresProvider.loadOnce()
+                .onErrorReturn(t -> null)
                 .map(this::mediaItemsFromGenresCursor)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -208,6 +209,7 @@ public final class MediaBrowserImpl {
     private void loadChildrenRecentAlbums(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
         mAlbumsProvider.loadRecentlyPlayedAlbumsOnce()
+                .onErrorReturn(t -> null)
                 .map(this::recentAlbumsFromCursor)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

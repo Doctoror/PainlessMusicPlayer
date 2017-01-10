@@ -37,6 +37,7 @@ import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 
@@ -370,7 +371,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         }
     }
 
-    private void loadAlbumArt(@Nullable final Cursor cursor) {
+    private void loadAlbumArt(@NonNull final Cursor cursor) {
         if (albumArt != null) {
             final String pic = findAlbumArt(cursor);
             if (TextUtils.isEmpty(pic)) {
@@ -407,13 +408,11 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
     }
 
     @Nullable
-    private String findAlbumArt(@Nullable final Cursor cursor) {
-        if (cursor != null) {
-            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                final String art = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
-                if (!TextUtils.isEmpty(art)) {
-                    return art;
-                }
+    private String findAlbumArt(@NonNull final Cursor cursor) {
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            final String art = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
+            if (!TextUtils.isEmpty(art)) {
+                return art;
             }
         }
         return null;
@@ -425,15 +424,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         albumArt.animate().alpha(1f).setDuration(500).start();
     }
 
-    private final Observer<Cursor> mObserver = new Observer<Cursor>() {
-
-        @Override
-        public void onCompleted() {
-            if (mData != null) {
-                mData.close();
-                mData = null;
-            }
-        }
+    private final Observer<Cursor> mObserver = new ObserverAdapter<Cursor>() {
 
         @Override
         public void onError(final Throwable e) {
@@ -446,7 +437,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
                 mData = null;
             }
             if (isAdded()) {
-                mModel.setErrorText(getString(R.string.Failed_to_load_data_s, e));
+                mModel.setErrorText(getText(R.string.Failed_connecting_to_Media_Store));
                 showStateError();
             }
         }

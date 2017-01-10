@@ -49,6 +49,7 @@
     <string name="No_media_found">No media found</string>
 
     <string name="Failed_to_load_data_s">Failed to load data: %1$s</string>
+    <string name="Failed_connecting_to_Media_Store">Failed connecting to Media Store</string>
     <string name="Search">Search</string>
 
     <string name="Failed_to_start_playback">Failed to start playback</string>
