@@ -33,13 +33,36 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import static org.junit.Assert.*;
+
 /**
  * {@link FileUtils} test
  */
 public final class FileUtilsTest {
 
     @Test
-    public void testDeleteFile() throws Exception {
+    public void testDeleteMediaFile() throws Exception {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Tests will not work with runtime permissions
+            return;
+        }
+
+        final File file = createTestFile();
+        try {
+            final Media media = mediaForFile(file, 0);
+            FileUtils.deleteMediaFile(media);
+
+            assertFalse(FileUtils.fileForMedia(media).exists());
+        } finally {
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+            //noinspection ResultOfMethodCallIgnored
+            file.getParentFile().delete();
+        }
+    }
+
+    @Test
+    public void testDeleteMediaFromMediaStore() throws Exception {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Tests will not work with runtime permissions
             return;
@@ -49,12 +72,36 @@ public final class FileUtilsTest {
         final File file = createTestFile();
         try {
             final long id = insertToMediaStore(resolver, file);
-            if (id == -1) {
-                throw new RuntimeException("Could not insert test file to MediaStore");
-            }
-
             final Media media = mediaForFile(file, id);
-            FileUtils.delete(resolver, media);
+            FileUtils.deleteMediaFromMediaStore(resolver, media);
+
+            assertFalse(existsInMediaStore(resolver, id));
+
+        } finally {
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+            //noinspection ResultOfMethodCallIgnored
+            file.getParentFile().delete();
+        }
+    }
+
+    @Test
+    public void testDeleteMedia() throws Exception {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Tests will not work with runtime permissions
+            return;
+        }
+
+        final ContentResolver resolver = InstrumentationRegistry.getContext().getContentResolver();
+        final File file = createTestFile();
+        try {
+            final long id = insertToMediaStore(resolver, file);
+            final Media media = mediaForFile(file, id);
+            FileUtils.deleteMedia(resolver, media);
+
+            assertFalse(FileUtils.fileForMedia(media).exists());
+            assertFalse(existsInMediaStore(resolver, id));
+
         } finally {
             //noinspection ResultOfMethodCallIgnored
             file.delete();
@@ -113,7 +160,14 @@ public final class FileUtilsTest {
         values.put(MediaStore.Audio.Media.MIME_TYPE, "audio/m4a");
 
         final Uri uri = resolver.insert(contentUri, values);
-        return uri != null ? Long.valueOf(uri.getLastPathSegment()) : -1;
+        final long result = uri != null ? Long.valueOf(uri.getLastPathSegment()) : -1;
+        if (result == -1) {
+            throw new RuntimeException("Could not insert test file to MediaStore");
+        }
+        if (!existsInMediaStore(resolver, result)) {
+            throw new RuntimeException("Could not insert test file to MediaStore");
+        }
+        return result;
     }
 
     @NonNull
@@ -130,5 +184,23 @@ public final class FileUtilsTest {
         fieldData.set(media, Uri.parse(file.toURI().toString()));
 
         return media;
+    }
+
+    private boolean existsInMediaStore(@NonNull final ContentResolver resolver, final long id) {
+        final Cursor c = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Audio.Media._ID},
+                MediaStore.Audio.Media._ID + '=' + id,
+                null,
+                null);
+        if (c != null) {
+            try {
+                if (c.moveToFirst()) {
+                    return c.getLong(0) == id;
+                }
+            } finally {
+                c.close();
+            }
+        }
+        return false;
     }
 }
