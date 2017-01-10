@@ -92,24 +92,9 @@
     <string name="Shuffle">Shuffle</string>
     <string name="Repeat">Repeat</string>
 
-    <string name="This_app_wont_support_Android_Wear_because_s">
-        This app won’t support Android wear because %1$s
-    </string>
-
-    <string name="Dismiss">Dismiss</string>
-    <string name="Ignore">Ignore</string>
-    <string name="Fix">Fix</string>
-    <string name="Failed_to_start_resolution">Failed to start resolution</string>
-
     <string name="Failed_to_delete_album">Failed to delete album</string>
     <string name="Failed_to_delete_s">Failed to delete “%1$s”</string>
 
     <string name="Menu">Menu</string>
-
-    <string name="Google_Play_Services_are_missing">Google Play Services are not installed</string>
-    <string name="Google_Play_Services_are_disabled">Google Play Services are disabled</string>
-    <string name="Google_Play_Services_are_invalid">Google Play Services are not working</string>
-    <string name="Google_Play_Services_are_outdated">Google Play Services are outdated
-    </string>
 
 </resources>
