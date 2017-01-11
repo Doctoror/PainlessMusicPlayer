@@ -447,7 +447,13 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
             loadAlbumArt(cursor);
             mAdapter.changeCursor(cursor);
             mData = cursor;
-            showStateContent();
+
+            if (cursor.getCount() == 0) {
+                mModel.setErrorText(getText(R.string.No_albums_here));
+                showStateError();
+            } else {
+                showStateContent();
+            }
             onDataLoaded();
         }
     };
