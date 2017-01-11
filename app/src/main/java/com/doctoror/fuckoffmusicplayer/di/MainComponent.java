@@ -2,7 +2,7 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
-import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
+import com.doctoror.fuckoffmusicplayer.home.RootActivity;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsFragment;
@@ -35,7 +35,7 @@ import dagger.Component;
 })
 public interface MainComponent {
 
-    void inject(LibraryActivity target);
+    void inject(RootActivity target);
 
     void inject(QueueActivity target);
 

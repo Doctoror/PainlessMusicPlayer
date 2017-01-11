@@ -31,7 +31,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
-import com.doctoror.fuckoffmusicplayer.library.LibraryActivity;
+import com.doctoror.fuckoffmusicplayer.home.RootActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
@@ -187,7 +187,7 @@ public final class NowPlayingActivity extends BaseActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             final Intent intent = Intent.makeMainActivity(
-                    new ComponentName(this, LibraryActivity.class));
+                    new ComponentName(this, RootActivity.class));
             startActivity(intent);
             return;
         }

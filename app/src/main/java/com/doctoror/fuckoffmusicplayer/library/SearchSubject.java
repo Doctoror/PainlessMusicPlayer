@@ -25,7 +25,7 @@ import rx.subjects.BehaviorSubject;
 /**
  * Holds and emits current search query
  */
-final class SearchSubject {
+public final class SearchSubject {
 
     private static final SearchSubject INSTANCE = new SearchSubject();
 
@@ -40,14 +40,14 @@ final class SearchSubject {
 
     }
 
-    void onNext(@Nullable final String searchQuery) {
+    public void onNext(@Nullable final String searchQuery) {
         if (!TextUtils.equals(mSubject.getValue(), searchQuery)) {
             mSubject.onNext(searchQuery);
         }
     }
 
     @Nullable
-    String getValue() {
+    public String getValue() {
         return mSubject.getValue();
     }
 

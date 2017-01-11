@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/navigationGroupLibrary"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navigationArtists"
+            android:title="@string/Artists"/>
+
+        <item
+            android:id="@+id/navigationAlbums"
+            android:title="@string/Albums"/>
+
+        <item
+            android:id="@+id/navigationGenres"
+            android:title="@string/Genres"/>
+
+        <item
+            android:id="@+id/navigationTracks"
+            android:title="@string/Tracks"/>
+
+    </group>
+
+    <group
+        android:id="@+id/navigationGroupPlaylists"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navigationPlaylists"
+            android:title="@string/Playlists"/>
+
+    </group>
+
+    <group
+        android:id="@+id/navigationGroupBottom"
+        android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/navigationSettings"
+            android:title="@string/Settings"/>
+
+    </group>
+
+</menu>
