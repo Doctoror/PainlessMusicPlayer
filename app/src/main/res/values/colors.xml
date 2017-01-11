@@ -26,4 +26,6 @@
     <color name="greyControl">#60000000</color>
     <color name="borderlessImageButton">#60000000</color>
 
+    <color name="tranclucentBackgroundLight">#12000000</color>
+
 </resources>

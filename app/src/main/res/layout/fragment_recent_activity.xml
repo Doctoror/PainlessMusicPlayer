@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.library.LibraryListFragmentModel"/>
+            type="com.doctoror.fuckoffmusicplayer.home.RecentActivityFragmentModel"/>
     </data>
 
     <ViewAnimator
@@ -59,23 +59,13 @@
             android:text="@{model.errorText}"
             tools:ignore="SelectableText"/>
 
-        <FrameLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <!-- The parent ViewGroup must be a CoordinatorLayout, FrameLayout, or RelativeLayout in
-            order for the FastScroller to be properly displayed on top of the RecyclerView.-->
-            <com.l4digital.fastscroll.FastScrollRecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:handleColor="?attr/colorAccent"
-                app:bubbleColor="?attr/colorAccent"
-                app:bubbleTextColor="@android:color/white"
-                app:hideScrollbar="false"
-                app:recyclerAdapter="@{model.recyclerAdapter}"/>
-
-        </FrameLayout>
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            app:recyclerAdapter="@{model.recyclerAdapter}"/>
 
     </ViewAnimator>
 

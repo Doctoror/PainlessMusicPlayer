@@ -41,10 +41,23 @@
         android:gravity="center"
         android:background="#66000000"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"
+        android:paddingRight="20dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="20dp"
         android:ellipsize="end"
         android:textColor="@android:color/white"
         tools:text="Some Album Name Some Album Name Some Album Name"
         tools:ignore="SelectableText"/>
+
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:minWidth="24dp"
+        android:minHeight="48dp"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="@string/Menu"
+        tools:src="@drawable/ic_more_vert_black_24dp"/>
 
 </com.doctoror.aspectratiolayout.AspectRatioLayout>

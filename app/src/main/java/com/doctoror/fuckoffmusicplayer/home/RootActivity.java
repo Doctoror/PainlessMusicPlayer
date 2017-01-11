@@ -64,7 +64,7 @@ public final class RootActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
-    private int mNavigationItem = R.id.navigationArtists;
+    private int mNavigationItem = R.id.navigationRecentActivity;
 
     private Integer mDrawerClosedAction;
 
@@ -77,11 +77,6 @@ public final class RootActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-
-        if (savedInstanceState == null) {
-            mNavigationItem = getSettings().getLibraryTab();
-        }
-
         mNavigationView.setNavigationItemSelectedListener(new NavigationListener());
         mNavigationView.setCheckedItem(mNavigationItem);
 
@@ -108,6 +103,7 @@ public final class RootActivity extends BaseActivity {
                 .unwrap(savedInstanceState.getParcelable(KEY_INSTANCE_STATE));
         if (state != null) {
             mNavigationItem = state.navigationItem;
+            setTitle(state.title);
         }
     }
 
@@ -116,6 +112,7 @@ public final class RootActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         final InstanceState state = new InstanceState();
         state.navigationItem = mNavigationItem;
+        state.title = getTitle().toString();
         outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(state));
     }
 
@@ -125,36 +122,14 @@ public final class RootActivity extends BaseActivity {
         mActionBarDrawerToggle.syncState();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.actionNowPlaying:
-                startActivity(Henson.with(this)
-                        .gotoNowPlayingActivity()
-                        .hasCoverTransition(false)
-                        .hasListViewTransition(false)
-                        .build());
-                return true;
-
-            case R.id.actionSettings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // TODO rename
-        getSettings().setLibraryTab(mNavigationItem);
-    }
-
     private void performDrawerClosedAction() {
         if (mDrawerClosedAction != null) {
             switch (mDrawerClosedAction) {
+                case R.id.navigationRecentActivity:
+                    setMainFragment(RecentActivityFragment.class.getCanonicalName());
+                    setTitle(R.string.Recent_Activity);
+                    break;
+
                 case R.id.navigationArtists:
                     setMainFragment(ArtistsFragment.class.getCanonicalName());
                     setTitle(R.string.Artists);
@@ -213,6 +188,7 @@ public final class RootActivity extends BaseActivity {
             final int id = item.getItemId();
             final boolean result;
             switch (id) {
+                case R.id.navigationRecentActivity:
                 case R.id.navigationArtists:
                 case R.id.navigationAlbums:
                 case R.id.navigationGenres:
@@ -223,6 +199,7 @@ public final class RootActivity extends BaseActivity {
 
                 default:
                     result = false;
+                    break;
             }
 
             if (result) {
@@ -239,5 +216,6 @@ public final class RootActivity extends BaseActivity {
     static final class InstanceState {
 
         int navigationItem;
+        String title;
     }
 }

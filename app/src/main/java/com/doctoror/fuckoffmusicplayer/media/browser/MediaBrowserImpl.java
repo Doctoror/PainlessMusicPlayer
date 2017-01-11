@@ -168,7 +168,7 @@ public final class MediaBrowserImpl {
     private MediaItem createMediaItemRecent() {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MEDIA_ID_RECENT)
-                .setTitle(mContext.getText(R.string.Recently_scanned))
+                .setTitle(mContext.getText(R.string.Recently_added))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }

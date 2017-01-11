@@ -6,6 +6,10 @@
         android:checkableBehavior="single">
 
         <item
+            android:id="@+id/navigationRecentActivity"
+            android:title="@string/Recent_Activity"/>
+
+        <item
             android:id="@+id/navigationArtists"
             android:title="@string/Artists"/>
 

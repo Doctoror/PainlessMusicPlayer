@@ -16,4 +16,5 @@
 -->
 <resources>
     <integer name="albums_grid_columns">5</integer>
+    <integer name="recent_activity_grid_columns">6</integer>
 </resources>

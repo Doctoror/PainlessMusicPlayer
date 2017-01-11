@@ -11,7 +11,11 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArraySet;
 import android.text.TextUtils;
+
+import java.util.Collection;
+import java.util.Set;
 
 import rx.Observable;
 import rx.Single;
@@ -72,25 +76,75 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @Override
     public Observable<Cursor> loadRecentlyPlayedAlbums() {
-        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery());
+        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery(null));
     }
 
     @Override
     public Single<Cursor> loadRecentlyPlayedAlbumsOnce() {
-        return RxCursorLoader.single(mContentResolver, newRecentlyPlayedAlbumsQuery());
+        return loadRecentlyPlayedAlbumsOnce(null);
+    }
+
+    @Override
+    public Single<Cursor> loadRecentlyPlayedAlbumsOnce(@Nullable final Integer limit) {
+        return RxCursorLoader.single(mContentResolver, newRecentlyPlayedAlbumsQuery(limit));
     }
 
     @NonNull
-    private RxCursorLoader.Query newRecentlyPlayedAlbumsQuery() {
+    private RxCursorLoader.Query newRecentlyPlayedAlbumsQuery(@Nullable final Integer limit) {
         final long[] recentlyPlayedAlbums = mRecentPlaylistsManager.getRecentAlbums();
+        String sortOrder = SelectionUtils.orderByLongField(MediaStore.Audio.Albums._ID,
+                recentlyPlayedAlbums);
+        if (!TextUtils.isEmpty(sortOrder) && limit != null) {
+            sortOrder += " LIMIT " + limit;
+        }
         final RxCursorLoader.Query.Builder query = newParamsBuilder();
         query
                 .setSelection(SelectionUtils.inSelectionLong(MediaStore.Audio.Albums._ID,
                         recentlyPlayedAlbums))
 
-                .setSortOrder(SelectionUtils.orderByLongField(MediaStore.Audio.Albums._ID,
-                        recentlyPlayedAlbums));
+                .setSortOrder(sortOrder);
         return query.create();
+    }
+
+    @Override
+    public Single<Cursor> loadRecentlyScannedAlbumsOnce(final int limit) {
+        final RxCursorLoader.Query recentTracksQuery = new RxCursorLoader.Query.Builder()
+                .setContentUri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+                .setProjection(new String[]{
+                        MediaStore.Audio.Media.ALBUM_ID,
+                        MediaStore.Audio.Media.DATE_ADDED
+                })
+                .setSortOrder(MediaStore.Audio.Media.DATE_ADDED)
+                .create();
+
+        return RxCursorLoader.single(mContentResolver, recentTracksQuery)
+                .map(c -> albumIds(c, limit))
+                .flatMap(this::loadAlbumsOrderedByIds);
+    }
+
+    @NonNull
+    private Collection<Long> albumIds(@NonNull final Cursor c, final int limit) {
+        final Set<Long> ids = new ArraySet<>(limit);
+        if (limit == 0) {
+            return ids;
+        }
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+            final long id = c.getLong(0);
+            if (id > 0) {
+                ids.add(id);
+                if (ids.size() == limit) {
+                    return ids;
+                }
+            }
+        }
+        return ids;
+    }
+
+    private Single<Cursor> loadAlbumsOrderedByIds(@NonNull final Collection<Long> ids) {
+        final RxCursorLoader.Query.Builder query = newParamsBuilder()
+                .setSelection(SelectionUtils.inSelection(MediaStore.Audio.Albums._ID, ids))
+                .setSortOrder(SelectionUtils.orderByField(MediaStore.Audio.Albums._ID, ids));
+        return RxCursorLoader.single(mContentResolver, query.create());
     }
 
     /**

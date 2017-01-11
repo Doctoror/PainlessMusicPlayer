@@ -68,7 +68,7 @@
     </string>
 
     <string name="Cancel">Cancel</string>
-    <string name="Recently_scanned">Recently scanned</string>
+    <string name="Recently_added">Recently added</string>
     <string name="Recently_played_albums">Recently played albums</string>
     <string name="Random_playlist">Random playlist</string>
 
@@ -89,6 +89,7 @@
 
     <string name="Navigation_drawer">Navigation drawer</string>
 
+    <string name="Recent_Activity">Recent Activity</string>
     <string name="Library">Library</string>
     <string name="Artists">Artists</string>
     <string name="Albums">Albums</string>

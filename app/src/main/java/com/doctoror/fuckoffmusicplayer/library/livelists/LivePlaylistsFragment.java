@@ -76,7 +76,7 @@ public final class LivePlaylistsFragment extends Fragment {
                 context.getText(R.string.Recently_played_albums)));
 
         mPlaylists.add(new LivePlaylist(LivePlaylist.TYPE_RECENTLY_SCANNED,
-                context.getText(R.string.Recently_scanned)));
+                context.getText(R.string.Recently_added)));
 
         mPlaylists.add(new LivePlaylist(LivePlaylist.TYPE_RANDOM_PLAYLIST,
                 context.getText(R.string.Random_playlist)));

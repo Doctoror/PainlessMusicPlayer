@@ -2,6 +2,7 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
+import com.doctoror.fuckoffmusicplayer.home.RecentActivityFragment;
 import com.doctoror.fuckoffmusicplayer.home.RootActivity;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
@@ -38,6 +39,8 @@ public interface MainComponent {
     void inject(RootActivity target);
 
     void inject(QueueActivity target);
+
+    void inject(RecentActivityFragment target);
 
     void inject(NowPlayingActivity target);
 

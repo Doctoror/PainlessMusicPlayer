@@ -20,9 +20,8 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.AlbumViewHolder;
+import com.doctoror.fuckoffmusicplayer.widget.AlbumWithMenuViewHolder;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.l4digital.fastscroll.FastScroller;
 
@@ -43,8 +42,8 @@ import android.widget.PopupMenu;
 /**
  * "Albums" recycler adapter
  */
-final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHolder>
-    implements FastScroller.SectionIndexer {
+final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMenuViewHolder>
+        implements FastScroller.SectionIndexer {
 
     @NonNull
     private final LayoutInflater mLayoutInflater;
@@ -53,13 +52,16 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
     private final RequestManager mRequestManager;
 
     interface OnAlbumClickListener {
+
         void onAlbumClick(View albumArtView, long id, String album);
+
         void onAlbumDeleteClick(long id, @NonNull String name);
     }
 
     private OnAlbumClickListener mOnAlbumClickListener;
 
-    AlbumsRecyclerAdapter(final Context context, @NonNull final RequestManager requestManager) {
+    AlbumsRecyclerAdapter(final Context context,
+            @NonNull final RequestManager requestManager) {
         super(null);
         mLayoutInflater = LayoutInflater.from(context);
         mRequestManager = requestManager;
@@ -110,7 +112,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
 
 
     @Override
-    public void onBindViewHolder(final AlbumViewHolder viewHolder, final Cursor cursor) {
+    public void onBindViewHolder(final AlbumWithMenuViewHolder viewHolder, final Cursor cursor) {
         viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
         final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {
@@ -127,9 +129,9 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumViewHol
     }
 
     @Override
-    public AlbumViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        final AlbumViewHolder vh = new AlbumViewHolder(
-                mLayoutInflater.inflate(R.layout.recycler_item_album, parent, false));
+    public AlbumWithMenuViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+        final AlbumWithMenuViewHolder vh = new AlbumWithMenuViewHolder(
+                mLayoutInflater.inflate(R.layout.recycler_item_album_with_menu, parent, false));
         vh.itemView.setOnClickListener(v -> {
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(vh.getAdapterPosition())) {

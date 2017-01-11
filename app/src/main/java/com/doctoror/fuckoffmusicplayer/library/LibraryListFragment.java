@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.library;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
@@ -70,9 +71,6 @@ public abstract class LibraryListFragment extends Fragment {
     private static final int ANIMATOR_CHILD_ERROR = 3;
     private static final int ANIMATOR_CHILD_CONTENT = 4;
 
-    // Request once per-app instance
-    private static boolean sPermissionRequested;
-
     private final BehaviorSubject<String> mSearchSubject = BehaviorSubject.create();
     private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
 
@@ -82,7 +80,7 @@ public abstract class LibraryListFragment extends Fragment {
     private Subscription mSubscription;
 
     private boolean mHasPermissions;
-    private boolean mPermissionRequested = sPermissionRequested;
+    private boolean mPermissionRequested = RuntimePermissions.arePermissionsRequested();
     private boolean mSearchIconified = true;
 
     private RxPermissions mRxPermissions;
@@ -103,7 +101,8 @@ public abstract class LibraryListFragment extends Fragment {
         if (state != null) {
             mSearchIconified = state.searchIconified;
             mSearchSubject.onNext(state.searchQuery);
-            mPermissionRequested = state.permissionsRequested || sPermissionRequested;
+            mPermissionRequested = state.permissionsRequested ||
+                    RuntimePermissions.arePermissionsRequested();
         }
     }
 
@@ -163,7 +162,8 @@ public abstract class LibraryListFragment extends Fragment {
     }
 
     private void requestPermission() {
-        sPermissionRequested = mPermissionRequested = true;
+        mPermissionRequested = true;
+        RuntimePermissions.setPermissionsRequested(true);
         getRxPermissions().request(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     mHasPermissions = granted;
@@ -200,7 +200,8 @@ public abstract class LibraryListFragment extends Fragment {
                 SoftInputManager.hideSoftInput(getActivity());
             }
         });
-        binding.btnRequest.setOnClickListener(v -> requestPermission());
+        binding.getRoot().findViewById(R.id.btnRequest)
+                .setOnClickListener(v -> requestPermission());
         return binding.getRoot();
     }
 

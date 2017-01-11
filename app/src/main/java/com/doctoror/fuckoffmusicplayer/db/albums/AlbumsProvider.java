@@ -24,5 +24,8 @@ public interface AlbumsProvider {
     Observable<Cursor> loadRecentlyPlayedAlbums();
 
     Single<Cursor> loadRecentlyPlayedAlbumsOnce();
+    Single<Cursor> loadRecentlyPlayedAlbumsOnce(@Nullable Integer limit);
+
+    Single<Cursor> loadRecentlyScannedAlbumsOnce(int limit);
 
 }

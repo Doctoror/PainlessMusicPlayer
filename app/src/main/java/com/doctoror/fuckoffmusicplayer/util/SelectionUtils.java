@@ -17,6 +17,8 @@ package com.doctoror.fuckoffmusicplayer.util;
 
 import android.support.annotation.NonNull;
 
+import java.util.Collection;
+
 /**
  * Selection utils
  */
@@ -50,6 +52,33 @@ public final class SelectionUtils {
                 order.append(',');
             }
             order.append(column).append('=').append(arguments[i]).append(" DESC");
+        }
+        return order.toString();
+    }
+
+    /**
+     * Returns ordering by long field
+     *
+     * @param column    the column name to build ordering for
+     * @param arguments the arguments
+     * @return  ordering by long field
+     */
+    @NonNull
+    public static <T> String orderByField(@NonNull final String column,
+            @NonNull final Collection<T> arguments) {
+        //noinspection ConstantConditions
+        if (column == null || column.isEmpty()) {
+            throw new IllegalArgumentException("column must not be null or empty");
+        }
+        final StringBuilder order = new StringBuilder(256);
+        boolean first = true;
+        for (final Object arg : arguments) {
+            if (first) {
+                first = false;
+            } else {
+                order.append(',');
+            }
+            order.append(column).append('=').append(arg.toString()).append(" DESC");
         }
         return order.toString();
     }

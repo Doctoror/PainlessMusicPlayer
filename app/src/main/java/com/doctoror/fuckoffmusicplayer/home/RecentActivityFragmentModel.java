@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Yaroslav Mytkalyk
+ * Copyright (C) 2017 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.library;
+package com.doctoror.fuckoffmusicplayer.home;
 
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
@@ -22,9 +22,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * Data binding model for {@link LibraryListFragment}
+ * Data binding model for {@link RecentActivityFragment}
  */
-public final class LibraryListFragmentModel {
+public final class RecentActivityFragmentModel {
 
     private final ObservableInt mDisplayedChild = new ObservableInt();
     private final ObservableField<CharSequence> mErrorText = new ObservableField<>();

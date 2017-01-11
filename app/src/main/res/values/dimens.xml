@@ -19,7 +19,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_vertical_margin_2x">32dp</dimen>
-    <dimen name="activity_vertical_margin_3x">48dp</dimen>
 
     <dimen name="activity_library_permission_denied_drawable_padding">0dp</dimen>
     <dimen name="activity_library_permission_denied_button_margin">8dp</dimen>
@@ -31,6 +30,7 @@
     <dimen name="activity_nowplaying_controls_margin_secondary">0dp</dimen>
 
     <dimen name="album_grid_spacing">2dp</dimen>
+    <dimen name="recent_activity_grid_spacing">4dp</dimen>
     <dimen name="list_drag_selected_item_elevation">48dp</dimen>
 
     <dimen name="collapsingToolbarHeightConditionalAlbums">140dp</dimen>
