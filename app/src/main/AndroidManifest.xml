@@ -122,7 +122,7 @@
 
         </provider>
 
-        <service android:name=".filemanager.FileManagerService"/>
+        <service android:name=".media.manager.MediaManagerService"/>
 
         <service android:name=".playback.PlaybackService"
             android:exported="false">

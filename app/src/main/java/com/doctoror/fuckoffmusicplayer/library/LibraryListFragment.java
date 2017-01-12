@@ -75,6 +75,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     private Subscription mOldSubscription;
     private Subscription mSubscription;
 
+    private boolean mCanShowEmptyView = true;
     private boolean mSearchIconified = true;
 
     @Override
@@ -204,6 +205,10 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
 
     protected abstract void onDataReset();
 
+    protected final void setCanShowEmptyView(final boolean canShowEmptyView) {
+        mCanShowEmptyView = canShowEmptyView;
+    }
+
     protected final void setRecyclerAdapter(@Nullable final RecyclerView.Adapter<?> adapter) {
         mModel.setRecyclerAdapter(adapter);
     }
@@ -233,7 +238,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
                 mOldSubscription.unsubscribe();
                 mOldSubscription = null;
             }
-            mModel.setDisplayedChild(cursor.getCount() == 0
+            mModel.setDisplayedChild(cursor.getCount() == 0 && mCanShowEmptyView
                     ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
         }
     };

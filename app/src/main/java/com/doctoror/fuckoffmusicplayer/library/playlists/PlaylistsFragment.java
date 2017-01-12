@@ -89,6 +89,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        setCanShowEmptyView(false);
 
         mAdapter = new PlaylistsRecyclerAdapter(getActivity(),
                 generateLivePlaylists(getResources()));

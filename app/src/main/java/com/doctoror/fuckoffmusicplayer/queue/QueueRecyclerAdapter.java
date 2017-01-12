@@ -54,6 +54,16 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
         mContext = context;
     }
 
+    void removeItemWithId(final long id) {
+        for (int i = 0; i < getItemCount(); i++) {
+            final Media item = getItem(i);
+            if (item.getId() == id) {
+                removeItem(i);
+                break;
+            }
+        }
+    }
+
     boolean onItemMove(final int fromPosition, final int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {

@@ -26,6 +26,8 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProvider;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProviderMediaStore;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.media.manager.MediaManager;
+import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerFactory;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 
 import android.content.ContentResolver;
@@ -72,6 +74,12 @@ final class MediaStoreProvidersModule {
     PlaylistsProvider providePlaylistsProvider(@NonNull final ContentResolver resolver,
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new PlaylistsProviderMediaStore(resolver, mediaProvider);
+    }
+
+    @Provides
+    @Singleton
+    MediaManager provideMediaManager(@NonNull final ContentResolver resolver) {
+        return MediaManagerFactory.getDefault(resolver);
     }
 
 }

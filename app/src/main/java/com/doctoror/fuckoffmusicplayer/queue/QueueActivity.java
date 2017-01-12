@@ -25,8 +25,6 @@ import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.filemanager.DeleteFileDialogFragment;
-import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
@@ -41,12 +39,10 @@ import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -74,6 +70,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -85,8 +82,8 @@ import butterknife.OnClick;
 /**
  * "Playlist" activity
  */
-public final class QueueActivity extends BaseActivity implements
-        DeleteFileDialogFragment.Callback {
+public final class QueueActivity extends BaseActivity
+        implements DeleteMediaDialogFragment.Callback {
 
     public static final String TRANSITION_NAME_ALBUM_ART
             = "PlaylistActivity.TRANSITION_NAME_ALBUM_ART";
@@ -99,8 +96,6 @@ public final class QueueActivity extends BaseActivity implements
     private final QueueActivityModel mModel = new QueueActivityModel();
     private QueueRecyclerAdapter mAdapter;
     private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
-
-    private RxPermissions mRxPermissions;
 
     private int mShortAnimTime;
     private int mMediumAnimTime;
@@ -150,9 +145,6 @@ public final class QueueActivity extends BaseActivity implements
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    private boolean mFinishWhenDialogDismissed;
-    private DeleteSession mDeleteSession;
-
     private String mCoverUri;
     private int mAppbarOffset;
 
@@ -192,8 +184,6 @@ public final class QueueActivity extends BaseActivity implements
         initAlbumArtAndToolbar(binding);
         initRecyclerView();
 
-        mFinishWhenDialogDismissed = false;
-
         if (TransitionUtils.supportsActivityTransitions()) {
             QueueActivityLollipop.applyTransitions(this, cardView != null);
         }
@@ -206,18 +196,12 @@ public final class QueueActivity extends BaseActivity implements
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
             final State state = Parcels.unwrap(savedInstanceState.getParcelable(EXTRA_STATE));
-            mDeleteSession = state.deleteSession;
-            mFinishWhenDialogDismissed = state.finishWhenDialogDismissed;
             mFabAnchorParams = state.fabAnchorParams;
             queue = state.queue;
             mAdapter.setItems(queue);
 
             fab.setScaleX(1f);
             fab.setScaleY(1f);
-
-            if (mDeleteSession != null && mDeleteSession.permissionRequested) {
-                onDeleteClick(mDeleteSession.media);
-            }
         }
     }
 
@@ -342,8 +326,6 @@ public final class QueueActivity extends BaseActivity implements
         super.onSaveInstanceState(outState);
         final State state = new State();
         state.queue = queue;
-        state.deleteSession = mDeleteSession;
-        state.finishWhenDialogDismissed = mFinishWhenDialogDismissed;
         state.fabAnchorParams = mFabAnchorParams;
         outState.putParcelable(EXTRA_STATE, Parcels.wrap(state));
     }
@@ -359,54 +341,23 @@ public final class QueueActivity extends BaseActivity implements
         }
     }
 
-    @NonNull
-    private RxPermissions getRxPermissions() {
-        if (mRxPermissions == null) {
-            mRxPermissions = new RxPermissions(this);
+    @Override
+    public void onPerformDelete(final long id) {
+        if (!isFinishingAfterTransition()) {
+            mAdapter.removeItemWithId(id);
+
+            final Iterator<Media> i = queue.iterator();
+            while (i.hasNext()) {
+                if (i.next().getId() == id) {
+                    i.remove();
+                    break;
+                }
+            }
         }
-        return mRxPermissions;
-    }
-
-    @Override
-    public void onDeleteClick(@NonNull final Media media) {
-        if (mDeleteSession == null) {
-            mDeleteSession = new DeleteSession(media);
-        }
-        mDeleteSession.permissionRequested = true;
-        getRxPermissions().request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe(result -> {
-                    if (result) {
-                        if (!isFinishingAfterTransition()) {
-                            mAdapter.removeItem(media);
-                            queue.remove(media);
-                            FileManagerService.deleteMedia(getApplicationContext(), media);
-                        }
-                    }
-                    mDeleteSession = null;
-                    finishIfNeeded();
-                });
-    }
-
-    @Override
-    public void onDeleteCancel() {
-        mDeleteSession = null;
-    }
-
-    @Override
-    public void onDeleteDialogDismiss() {
-        finishIfNeeded();
     }
 
     void onQueueEmpty() {
-        mFinishWhenDialogDismissed = true;
-        finishIfNeeded();
-    }
-
-    private void finishIfNeeded() {
-        if (mFinishWhenDialogDismissed && mDeleteSession == null) {
-            mFinishWhenDialogDismissed = false;
-            ActivityCompat.finishAfterTransition(this);
-        }
+        ActivityCompat.finishAfterTransition(this);
     }
 
     @OnClick(R.id.fab)
@@ -495,23 +446,7 @@ public final class QueueActivity extends BaseActivity implements
     static final class State {
 
         List<Media> queue;
-        boolean finishWhenDialogDismissed;
-        DeleteSession deleteSession;
         CoordinatorLayoutUtil.AnchorParams fabAnchorParams;
-    }
-
-    @Parcel
-    static final class DeleteSession {
-
-        Media media;
-        boolean permissionRequested;
-
-        DeleteSession() {
-        }
-
-        DeleteSession(final Media media) {
-            this.media = media;
-        }
     }
 
     private final QueueRecyclerAdapter.TrackListener mTrackListener
@@ -525,8 +460,8 @@ public final class QueueActivity extends BaseActivity implements
 
         @Override
         public void onTrackDeleteClick(@NonNull final Media item) {
-            mDeleteSession = new DeleteSession(item);
-            DeleteFileDialogFragment.show(item, getFragmentManager(), TAG_DIALOG_DELETE);
+            DeleteMediaDialogFragment.show(QueueActivity.this, getFragmentManager(),
+                    TAG_DIALOG_DELETE, item.getId(), item.getTitle());
         }
 
         @Override

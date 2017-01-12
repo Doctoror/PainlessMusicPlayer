@@ -13,16 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.filemanager;
+package com.doctoror.fuckoffmusicplayer.media.manager;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
-import com.doctoror.fuckoffmusicplayer.util.FileUtils;
-
-import org.parceler.Parcels;
 
 import android.Manifest;
 import android.app.IntentService;
@@ -39,31 +34,30 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
- * Service for managing files
+ * Service for managing media
  */
-public final class FileManagerService extends IntentService {
+public final class MediaManagerService extends IntentService {
 
-    private static final String TAG = "FileManagerService";
+    private static final String TAG = "MediaManagerService";
 
     private static final String ACTION_MEDIA_DELETE = "ACTION_MEDIA_DELETE";
-    private static final String EXTRA_MEDIA = "EXTRA_MEDIA";
+    private static final String EXTRA_TARGET_ID = "EXTRA_TARGET_ID";
 
     private static final String ACTION_ALBUM_DELETE = "ACTION_ALBUM_DELETE";
-    private static final String EXTRA_TARGET_ID = "EXTRA_TARGET_ID";
 
     private static final String ACTION_PLAYLIST_DELETE = "ACTION_PLAYLIST_DELETE";
 
     public static void deleteMedia(@NonNull final Context context,
-            @NonNull final Media media) {
-        final Intent intent = new Intent(context, FileManagerService.class);
+            final long id) {
+        final Intent intent = new Intent(context, MediaManagerService.class);
         intent.setAction(ACTION_MEDIA_DELETE);
-        intent.putExtra(EXTRA_MEDIA, Parcels.wrap(media));
+        intent.putExtra(EXTRA_TARGET_ID, id);
         context.startService(intent);
     }
 
     public static void deleteAlbum(@NonNull final Context context,
             final long albumId) {
-        final Intent intent = new Intent(context, FileManagerService.class);
+        final Intent intent = new Intent(context, MediaManagerService.class);
         intent.setAction(ACTION_ALBUM_DELETE);
         intent.putExtra(EXTRA_TARGET_ID, albumId);
         context.startService(intent);
@@ -71,16 +65,16 @@ public final class FileManagerService extends IntentService {
 
     public static void deletePlaylist(@NonNull final Context context,
             final long playlistId) {
-        final Intent intent = new Intent(context, FileManagerService.class);
+        final Intent intent = new Intent(context, MediaManagerService.class);
         intent.setAction(ACTION_PLAYLIST_DELETE);
         intent.putExtra(EXTRA_TARGET_ID, playlistId);
         context.startService(intent);
     }
 
     @Inject
-    PlaylistProviderAlbums mPlaylistProviderAlbums;
+    MediaManager mMediaManager;
 
-    public FileManagerService() {
+    public MediaManagerService() {
         super(TAG);
     }
 
@@ -122,18 +116,14 @@ public final class FileManagerService extends IntentService {
             return;
         }
 
-        final Media media = Parcels.unwrap(intent.getParcelableExtra(EXTRA_MEDIA));
-        if (media == null) {
-            throw new IllegalArgumentException("EXTRA_MEDIA must not be null");
-        }
+        final long targetId = getTargetId(intent);
         try {
-            FileUtils.deleteMedia(getContentResolver(), media);
+            mMediaManager.deleteMedia(targetId);
         } catch (Exception e) {
             Log.w(TAG, e);
 
             final Context context = getApplicationContext();
-            Observable.create(s -> Toast.makeText(context,
-                    context.getString(R.string.Failed_to_delete_s, media.getTitle()),
+            Observable.create(s -> Toast.makeText(context, R.string.Failed_to_delete_media,
                     Toast.LENGTH_LONG).show())
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe();
@@ -149,7 +139,7 @@ public final class FileManagerService extends IntentService {
 
         final long albumId = getTargetId(intent);
         try {
-            FileUtils.deleteAlbum(getContentResolver(), mPlaylistProviderAlbums, albumId);
+            mMediaManager.deleteAlbum(albumId);
         } catch (Exception e) {
             Log.w(TAG, e);
 
@@ -170,7 +160,7 @@ public final class FileManagerService extends IntentService {
 
         final long targetId = getTargetId(intent);
         try {
-            FileUtils.deletePlaylist(getContentResolver(), targetId);
+            mMediaManager.deletePlaylist(targetId);
         } catch (Exception e) {
             Log.w(TAG, e);
 

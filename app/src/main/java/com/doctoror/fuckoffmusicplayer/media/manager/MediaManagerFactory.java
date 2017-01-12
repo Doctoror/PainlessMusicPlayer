@@ -13,32 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.util;
+package com.doctoror.fuckoffmusicplayer.media.manager;
 
 import android.content.ContentResolver;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
-
-import java.io.IOException;
 
 /**
- * {@link MediaStore} utils
+ * {@link MediaManager} factory
  */
-public final class MediaStoreUtils {
+public final class MediaManagerFactory {
 
-    private MediaStoreUtils() {
+    private MediaManagerFactory() {
         throw new UnsupportedOperationException();
     }
 
-    @WorkerThread
-    public static void deletePlaylist(@NonNull final ContentResolver resolver,
-            final long targetId) throws IOException {
-        final int count = resolver.delete(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
-                MediaStore.Audio.Playlists._ID + "=" + targetId, null);
-        if (count != 1) {
-            throw new IOException(
-                    "Unexpected count when deleting playlist from MediaStore, count = " + count);
-        }
+    @NonNull
+    public static MediaManager getDefault(@NonNull final ContentResolver contentResolver) {
+        return new MediaManagerSet(
+                new MediaManagerFile(contentResolver),
+                new MediaManagerMediaStore(contentResolver));
     }
+
 }
