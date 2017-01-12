@@ -11,6 +11,7 @@ import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistsFragment;
+import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
@@ -53,6 +54,8 @@ public interface MainComponent {
     void inject(GenresFragment target);
 
     void inject(TracksFragment target);
+
+    void inject(PlaylistsFragment target);
 
     void inject(ConditionalAlbumListFragment target);
 

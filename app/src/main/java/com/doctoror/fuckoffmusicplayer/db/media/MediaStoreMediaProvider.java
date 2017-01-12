@@ -46,6 +46,11 @@ public final class MediaStoreMediaProvider implements MediaProvider {
                 null);
     }
 
+    @NonNull
+    public String[] projection() {
+        return MediaQuery.PROJECTION;
+    }
+
     public List<Media> load(@NonNull final Uri contentUri,
             @Nullable final String selection,
             @Nullable final String[] selectionArgs,

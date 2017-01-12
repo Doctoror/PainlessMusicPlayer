@@ -6,6 +6,9 @@ import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.db.artists.MediaStoreArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.db.genres.MediaStoreGenresProvider;
+import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProvider;
+import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProviderMediaStore;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
@@ -21,7 +24,6 @@ import dagger.Provides;
 /**
  * Created by Yaroslav Mytkalyk on 06.01.17.
  */
-
 @Module
 final class MediaStoreProvidersModule {
 
@@ -48,6 +50,13 @@ final class MediaStoreProvidersModule {
     @Singleton
     TracksProvider provideTracksProvider(@NonNull final ContentResolver resolver) {
         return new MediaStoreTracksProvider(resolver);
+    }
+
+    @Provides
+    @Singleton
+    PlaylistsProvider providePlaylistsProvider(@NonNull final ContentResolver resolver,
+            @NonNull final MediaStoreMediaProvider mediaProvider) {
+        return new PlaylistsProviderMediaStore(resolver, mediaProvider);
     }
 
 }

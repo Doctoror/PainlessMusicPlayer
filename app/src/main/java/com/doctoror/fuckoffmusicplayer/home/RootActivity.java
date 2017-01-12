@@ -23,6 +23,7 @@ import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
 import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistsFragment;
+import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
@@ -130,6 +131,11 @@ public final class RootActivity extends BaseActivity {
                     setTitle(R.string.Recent_Activity);
                     break;
 
+                case R.id.navigationPlaylists:
+                    setMainFragment(PlaylistsFragment.class.getCanonicalName());
+                    setTitle(R.string.Playlists);
+                    break;
+
                 case R.id.navigationArtists:
                     setMainFragment(ArtistsFragment.class.getCanonicalName());
                     setTitle(R.string.Artists);
@@ -148,11 +154,6 @@ public final class RootActivity extends BaseActivity {
                 case R.id.navigationTracks:
                     setMainFragment(TracksFragment.class.getCanonicalName());
                     setTitle(R.string.Tracks);
-                    break;
-
-                case R.id.navigationPlaylists:
-                    setMainFragment(LivePlaylistsFragment.class.getCanonicalName());
-                    setTitle(R.string.Playlists);
                     break;
 
                 case R.id.navigationSettings:
