@@ -349,6 +349,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         } else {
             appBar.setExpanded(true, false);
         }
+        setAppBarCollapsibleIfNeeded();
     }
 
     private void showStateEmpty() {
@@ -363,6 +364,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         } else {
             appBar.setExpanded(true, false);
         }
+        setAppBarCollapsibleIfNeeded();
     }
 
     private void showStateContent() {
@@ -370,6 +372,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         progress.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
         errorContainer.setVisibility(View.GONE);
+        setAppBarCollapsibleIfNeeded();
     }
 
     @OnClick(R.id.fab)
@@ -395,11 +398,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         if (albumArt != null) {
             final String pic = findAlbumArt(cursor);
             if (TextUtils.isEmpty(pic)) {
-                Glide.clear(albumArt);
-                //Must be a delay of from here. TODO Why?
-                Observable.timer(300, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe((l) ->
-                        animateToPlaceholder());
+                setPlaceholderAlbumArt();
             } else {
                 mRequestManager.load(pic)
                         .dontTransform()
@@ -425,6 +424,14 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
                         .into(albumArt);
             }
         }
+    }
+
+    private void setPlaceholderAlbumArt() {
+        Glide.clear(albumArt);
+        //Must be a delay of from here. TODO Why?
+        Observable.timer(300, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((l) -> animateToPlaceholder());
     }
 
     @Nullable
