@@ -3,14 +3,13 @@ package com.doctoror.fuckoffmusicplayer.di;
 import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.home.RecentActivityFragment;
-import com.doctoror.fuckoffmusicplayer.home.RootActivity;
+import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
@@ -37,7 +36,7 @@ import dagger.Component;
 })
 public interface MainComponent {
 
-    void inject(RootActivity target);
+    void inject(HomeActivity target);
 
     void inject(QueueActivity target);
 
@@ -64,8 +63,6 @@ public interface MainComponent {
     void inject(GenreAlbumsFragment target);
 
     void inject(RecentAlbumsFragment target);
-
-    void inject(LivePlaylistsFragment target);
 
     void inject(MediaBrowserImpl target);
 

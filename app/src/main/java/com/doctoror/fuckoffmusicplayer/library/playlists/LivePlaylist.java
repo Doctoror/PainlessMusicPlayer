@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.library.livelists;
+package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -11,9 +11,9 @@ import java.lang.annotation.RetentionPolicy;
  */
 final class LivePlaylist {
 
-    static final int TYPE_RECENTLY_PLAYED_ALBUMS = 0;
-    static final int TYPE_RECENTLY_SCANNED = 1;
-    static final int TYPE_RANDOM_PLAYLIST = 2;
+    static final int TYPE_RECENTLY_PLAYED_ALBUMS = -1;
+    static final int TYPE_RECENTLY_SCANNED = -2;
+    static final int TYPE_RANDOM_PLAYLIST = -3;
 
     @IntDef({
             TYPE_RECENTLY_PLAYED_ALBUMS,

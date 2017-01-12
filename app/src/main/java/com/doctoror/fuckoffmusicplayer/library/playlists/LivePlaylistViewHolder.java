@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.library.livelists;
+package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import com.doctoror.fuckoffmusicplayer.R;
 

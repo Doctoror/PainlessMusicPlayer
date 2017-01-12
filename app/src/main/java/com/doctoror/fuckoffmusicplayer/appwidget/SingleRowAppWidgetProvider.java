@@ -19,7 +19,7 @@ import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.home.RootActivity;
+import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
@@ -197,7 +197,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
                     .hasListViewTransition(false)
                     .build();
         } else {
-            coverIntent = new Intent(context, RootActivity.class);
+            coverIntent = new Intent(context, HomeActivity.class);
         }
         views.setOnClickPendingIntent(R.id.appwidget_img_albumart, PendingIntent.getActivity(
                 context, 0, coverIntent, PendingIntent.FLAG_UPDATE_CURRENT));

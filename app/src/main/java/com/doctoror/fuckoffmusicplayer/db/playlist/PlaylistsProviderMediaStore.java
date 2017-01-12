@@ -67,6 +67,7 @@ public final class PlaylistsProviderMediaStore implements PlaylistsProvider {
                 medaIdsCursor.moveToNext(), i++) {
             ids[i] = medaIdsCursor.getLong(0);
         }
+        medaIdsCursor.close();
         return ids;
     }
 

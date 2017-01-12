@@ -16,13 +16,11 @@
 package com.doctoror.fuckoffmusicplayer.home;
 
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
-import com.doctoror.fuckoffmusicplayer.library.livelists.LivePlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
@@ -50,7 +48,7 @@ import butterknife.ButterKnife;
 /**
  * "Library" activity
  */
-public final class RootActivity extends BaseActivity {
+public final class HomeActivity extends BaseActivity {
 
     private static final String KEY_INSTANCE_STATE = "INSTANCE_STATE";
 
@@ -74,7 +72,7 @@ public final class RootActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         DaggerHolder.getInstance(this).mainComponent().inject(this);
 
-        setContentView(R.layout.activity_root);
+        setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
