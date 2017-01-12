@@ -81,18 +81,9 @@
         <item quantity="other">%1$d albums</item>
     </plurals>
 
-    <string-array name="activity_library_tabs">
-        <item>Artists</item>
-        <item>Albums</item>
-        <item>Genres</item>
-        <item>Tracks</item>
-        <item>Playlists</item>
-    </string-array>
-
     <string name="Navigation_drawer">Navigation drawer</string>
 
     <string name="Recent_Activity">Recent Activity</string>
-    <string name="Library">Library</string>
     <string name="Artists">Artists</string>
     <string name="Albums">Albums</string>
     <string name="Genres">Genres</string>
