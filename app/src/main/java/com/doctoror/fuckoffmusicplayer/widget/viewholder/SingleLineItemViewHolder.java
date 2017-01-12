@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.widget;
+package com.doctoror.fuckoffmusicplayer.widget.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

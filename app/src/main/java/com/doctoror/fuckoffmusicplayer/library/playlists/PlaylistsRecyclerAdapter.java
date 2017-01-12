@@ -20,7 +20,7 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProvider;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.SingleLineWithIconItemViewHolder;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
 import com.l4digital.fastscroll.FastScroller;
 
 import android.content.Context;
@@ -29,7 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
@@ -38,7 +37,7 @@ import java.util.List;
  * Playlists recycler view adapter
  */
 final class PlaylistsRecyclerAdapter
-        extends CursorRecyclerViewAdapter<SingleLineWithIconItemViewHolder>
+        extends CursorRecyclerViewAdapter<SingleLineItemIconViewHolder>
         implements FastScroller.SectionIndexer {
 
     interface OnPlaylistClickListener {
@@ -113,7 +112,7 @@ final class PlaylistsRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final SingleLineWithIconItemViewHolder viewHolder,
+    public void onBindViewHolder(final SingleLineItemIconViewHolder viewHolder,
             final int position) {
         if (position < mLivePlaylists.size()) {
             onBindViewHolderLivePlaylist(viewHolder, mLivePlaylists.get(position));
@@ -128,20 +127,20 @@ final class PlaylistsRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final SingleLineWithIconItemViewHolder viewHolder,
+    public void onBindViewHolder(final SingleLineItemIconViewHolder viewHolder,
             final Cursor cursor) {
         viewHolder.text.setText(cursor.getString(PlaylistsProvider.COLUMN_NAME));
     }
 
-    private void onBindViewHolderLivePlaylist(final SingleLineWithIconItemViewHolder viewHolder,
+    private void onBindViewHolderLivePlaylist(final SingleLineItemIconViewHolder viewHolder,
             @NonNull final LivePlaylist livePlaylist) {
         viewHolder.text.setText(livePlaylist.getTitle());
     }
 
     @Override
-    public SingleLineWithIconItemViewHolder onCreateViewHolder(final ViewGroup parent,
+    public SingleLineItemIconViewHolder onCreateViewHolder(final ViewGroup parent,
             final int viewType) {
-        final SingleLineWithIconItemViewHolder vh = new SingleLineWithIconItemViewHolder(
+        final SingleLineItemIconViewHolder vh = new SingleLineItemIconViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_single_line_icon, parent, false));
         vh.icon.setImageDrawable(mIcon);
         vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));

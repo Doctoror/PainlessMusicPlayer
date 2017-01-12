@@ -20,7 +20,7 @@ import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.SingleLineWithIconItemViewHolder;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
 import com.l4digital.fastscroll.FastScroller;
 
 import android.content.Context;
@@ -36,7 +36,7 @@ import android.view.ViewGroup;
  * Created by Yaroslav Mytkalyk on 17.10.16.
  */
 final class GenresRecyclerAdapter
-        extends CursorRecyclerViewAdapter<SingleLineWithIconItemViewHolder>
+        extends CursorRecyclerViewAdapter<SingleLineItemIconViewHolder>
         implements FastScroller.SectionIndexer {
 
     interface OnGenreClickListener {
@@ -70,15 +70,15 @@ final class GenresRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final SingleLineWithIconItemViewHolder viewHolder,
+    public void onBindViewHolder(final SingleLineItemIconViewHolder viewHolder,
             final Cursor cursor) {
         viewHolder.text.setText(cursor.getString(GenresProvider.COLUMN_NAME));
     }
 
     @Override
-    public SingleLineWithIconItemViewHolder onCreateViewHolder(
+    public SingleLineItemIconViewHolder onCreateViewHolder(
             final ViewGroup parent, final int viewType) {
-        final SingleLineWithIconItemViewHolder vh = new SingleLineWithIconItemViewHolder(
+        final SingleLineItemIconViewHolder vh = new SingleLineItemIconViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_single_line_icon, parent, false));
         vh.icon.setImageDrawable(mIcon);
         vh.itemView.setOnClickListener(v -> {

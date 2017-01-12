@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.widget;
-
-import com.doctoror.fuckoffmusicplayer.R;
+package com.doctoror.fuckoffmusicplayer.widget.viewholder;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -29,13 +27,12 @@ import butterknife.ButterKnife;
 /**
  * "Album" ViewHolder
  */
-public final class AlbumWithMenuViewHolder extends RecyclerView.ViewHolder {
+public final class AlbumViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(android.R.id.text1) public TextView text1;
     @BindView(android.R.id.icon) public ImageView image;
-    @BindView(R.id.btnMenu) public ImageView btnMenu;
 
-    public AlbumWithMenuViewHolder(@NonNull final View itemView) {
+    public AlbumViewHolder(@NonNull final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }

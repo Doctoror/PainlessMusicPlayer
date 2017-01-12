@@ -21,7 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.AlbumWithMenuViewHolder;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumWithMenuViewHolder;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.l4digital.fastscroll.FastScroller;
 
