@@ -39,25 +39,16 @@
         <include layout="@layout/include_permission_denied"/>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin_2x"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:text="@{model.emptyMessage}"/>
+            style="@style/LibraryEmptyView"
+            android:text="@{model.emptyMessage}"
+            app:drawableTop="@{@drawable/ic_library_music_black_96dp}"
+            app:tintAttr="@{android.R.attr.textColorSecondary}"/>
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin_2x"
-            android:gravity="center"
-            android:textSize="16sp"
-            android:text="@{model.errorText}"
-            tools:ignore="SelectableText"/>
+            style="@style/LibraryEmptyView"
+            android:text="@string/Failed_connecting_to_Media_Store"
+            app:drawableTop="@{@drawable/ic_broken_image_black_96dp}"
+            app:tintAttr="@{android.R.attr.textColorSecondary}"/>
 
         <FrameLayout
             android:layout_width="match_parent"

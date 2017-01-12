@@ -25,6 +25,7 @@ import android.content.res.ColorStateList;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingComponent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -110,6 +111,21 @@ public final class BindingAdapters {
     public static void setRecyclerAdapter(@NonNull final RecyclerView recyclerView,
             @Nullable final RecyclerView.Adapter<?> adapter) {
         recyclerView.setAdapter(adapter);
+    }
+
+    @BindingAdapter({"drawableTop", "tintAttr"})
+    public static void setDrawableTopTintedFromAttr(@NonNull final TextView textView,
+            @Nullable Drawable top,
+            @AttrRes final int tintAttr) {
+        final Drawable[] drawables = textView.getCompoundDrawables();
+        if (top != null) {
+            top = DrawableUtils.getTintedDrawableFromAttrTint(textView.getContext(), top, tintAttr);
+        }
+        textView.setCompoundDrawablesWithIntrinsicBounds(
+                drawables[0],
+                top,
+                drawables[2],
+                drawables[3]);
     }
 
     @BindingAdapter({"src", "tintNormal", "useActivatedSrcTint"})

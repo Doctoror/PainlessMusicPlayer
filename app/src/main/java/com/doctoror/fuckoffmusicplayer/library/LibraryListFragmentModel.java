@@ -27,7 +27,6 @@ import android.support.v7.widget.RecyclerView;
 public final class LibraryListFragmentModel {
 
     private final ObservableInt mDisplayedChild = new ObservableInt();
-    private final ObservableField<CharSequence> mErrorText = new ObservableField<>();
     private final ObservableField<CharSequence> mEmptyMessage = new ObservableField<>();
     private final ObservableField<RecyclerView.Adapter> mRecyclerAdapter = new ObservableField<>();
 
@@ -46,11 +45,6 @@ public final class LibraryListFragmentModel {
     }
 
     @NonNull
-    public ObservableField<CharSequence> getErrorText() {
-        return mErrorText;
-    }
-
-    @NonNull
     public ObservableField<RecyclerView.Adapter> getRecyclerAdapter() {
         return mRecyclerAdapter;
     }
@@ -62,9 +56,4 @@ public final class LibraryListFragmentModel {
     public void setDisplayedChild(final int displayedChild) {
         mDisplayedChild.set(displayedChild);
     }
-
-    public void setErrorText(@Nullable final CharSequence errorText) {
-        mErrorText.set(errorText);
-    }
-
 }

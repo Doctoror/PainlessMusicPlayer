@@ -222,7 +222,6 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
             }
             onDataReset();
             if (isAdded()) {
-                mModel.setErrorText(getText(R.string.Failed_connecting_to_Media_Store));
                 mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
             }
         }
@@ -234,8 +233,8 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
                 mOldSubscription.unsubscribe();
                 mOldSubscription = null;
             }
-            mModel.setDisplayedChild(cursor.getCount() != 0
-                    ? ANIMATOR_CHILD_CONTENT : ANIMATOR_CHILD_EMPTY);
+            mModel.setDisplayedChild(cursor.getCount() == 0
+                    ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
         }
     };
 

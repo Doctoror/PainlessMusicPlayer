@@ -44,6 +44,13 @@ public final class DrawableUtils {
     }
 
     @Nullable
+    public static Drawable getTintedDrawableFromAttrTint(@NonNull final Context context,
+            @Nullable final Drawable src,
+            @AttrRes final int tintAttr) {
+        return getTintedDrawable(src, ThemeUtils.getColorStateList(context.getTheme(), tintAttr));
+    }
+
+    @Nullable
     public static Drawable getTintedDrawable(@NonNull final Context context,
             @DrawableRes final int res,
             @Nullable final ColorStateList tint) {
