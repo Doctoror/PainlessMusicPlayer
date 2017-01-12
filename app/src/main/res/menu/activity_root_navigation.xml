@@ -3,13 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <group
-        android:id="@+id/navigationGroupLibrary"
+        android:id="@+id/navigationGroupPlaylists"
         android:checkableBehavior="single"
         tools:ignore="UnusedIds">
 
         <item
             android:id="@+id/navigationRecentActivity"
             android:title="@string/Recent_Activity"/>
+
+        <item
+            android:id="@+id/navigationPlaylists"
+            android:title="@string/Playlists"/>
+
+    </group>
+
+    <group
+        android:id="@+id/navigationGroupLibrary"
+        android:checkableBehavior="single"
+        tools:ignore="UnusedIds">
 
         <item
             android:id="@+id/navigationArtists"
@@ -26,17 +37,6 @@
         <item
             android:id="@+id/navigationTracks"
             android:title="@string/Tracks"/>
-
-    </group>
-
-    <group
-        android:id="@+id/navigationGroupPlaylists"
-        android:checkableBehavior="single"
-        tools:ignore="UnusedIds">
-
-        <item
-            android:id="@+id/navigationPlaylists"
-            android:title="@string/Playlists"/>
 
     </group>
 
