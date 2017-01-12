@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <group
         android:id="@+id/navigationGroupLibrary"
-        android:checkableBehavior="single">
+        android:checkableBehavior="single"
+        tools:ignore="UnusedIds">
 
         <item
             android:id="@+id/navigationRecentActivity"
@@ -29,7 +31,8 @@
 
     <group
         android:id="@+id/navigationGroupPlaylists"
-        android:checkableBehavior="single">
+        android:checkableBehavior="single"
+        tools:ignore="UnusedIds">
 
         <item
             android:id="@+id/navigationPlaylists"
@@ -39,7 +42,8 @@
 
     <group
         android:id="@+id/navigationGroupBottom"
-        android:checkableBehavior="none">
+        android:checkableBehavior="none"
+        tools:ignore="UnusedIds">
 
         <item
             android:id="@+id/navigationSettings"
