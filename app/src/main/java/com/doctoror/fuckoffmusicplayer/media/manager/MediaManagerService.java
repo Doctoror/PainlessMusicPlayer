@@ -18,6 +18,8 @@ package com.doctoror.fuckoffmusicplayer.media.manager;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.Manifest;
 import android.app.IntentService;
@@ -74,6 +76,9 @@ public final class MediaManagerService extends IntentService {
     @Inject
     MediaManager mMediaManager;
 
+    @Inject
+    PlaybackData mPlaybackData;
+
     public MediaManagerService() {
         super(TAG);
     }
@@ -117,6 +122,7 @@ public final class MediaManagerService extends IntentService {
         }
 
         final long targetId = getTargetId(intent);
+        QueueUtils.removeMediasFromCurrentQueue(mPlaybackData, targetId);
         try {
             mMediaManager.deleteMedia(targetId);
         } catch (Exception e) {
@@ -138,6 +144,8 @@ public final class MediaManagerService extends IntentService {
         }
 
         final long albumId = getTargetId(intent);
+        QueueUtils.removeAlbumFromCurrentQueue(getContentResolver(), mPlaybackData, albumId);
+
         try {
             mMediaManager.deleteAlbum(albumId);
         } catch (Exception e) {

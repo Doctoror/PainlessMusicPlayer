@@ -65,7 +65,7 @@ public final class MediaManagerMediaStore implements MediaManager {
     }
 
     @NonNull
-    private static long[] getAlbumMediaIds(@NonNull final ContentResolver resolver,
+    public static long[] getAlbumMediaIds(@NonNull final ContentResolver resolver,
             final long id) throws IOException {
         final Cursor c = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 new String[] {MediaStore.Audio.Media._ID},
