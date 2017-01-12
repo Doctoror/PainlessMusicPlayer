@@ -112,7 +112,8 @@ public final class AlbumsFragment extends LibraryListFragment {
     }
 
     private void onAlbumDeleteClick(final long albumId, @NonNull final String name) {
-        DeleteAlbumDialogFragment.show(getFragmentManager(), TAG_DIALOG_DELETE, albumId, name);
+        DeleteAlbumDialogFragment.show(getActivity(), getFragmentManager(), TAG_DIALOG_DELETE,
+                albumId, name);
     }
 
     private void onAlbumClick(@NonNull final View view,

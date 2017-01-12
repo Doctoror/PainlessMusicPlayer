@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2017 Yaroslav Mytkalyk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
@@ -44,6 +59,8 @@ import rx.schedulers.Schedulers;
  * "Playlsits" fragment
  */
 public final class PlaylistsFragment extends LibraryListFragment {
+
+    private static final String TAG_DIALOG_DELETE = "PlaylistsFragment.TAG_DIALOG_DELETE";
 
     private PlaylistsRecyclerAdapter mAdapter;
 
@@ -285,6 +302,11 @@ public final class PlaylistsFragment extends LibraryListFragment {
             implements PlaylistsRecyclerAdapter.OnPlaylistClickListener {
 
         @Override
+        public void onLivePlaylistClick(final LivePlaylist playlist, final int position) {
+            loadLivePlaylistAndPlay(playlist, position);
+        }
+
+        @Override
         public void onPlaylistClick(final long id, final String name, final int position) {
             mPlaylistsProvider.loadQueue(id)
                     .subscribeOn(Schedulers.io())
@@ -297,8 +319,12 @@ public final class PlaylistsFragment extends LibraryListFragment {
         }
 
         @Override
-        public void onLivePlaylistClick(final LivePlaylist playlist, final int position) {
-            loadLivePlaylistAndPlay(playlist, position);
+        public void onPlaylistDeleteClick(final long id, final String name) {
+            DeletePlaylistDialogFragment.show(getActivity(),
+                    getFragmentManager(),
+                    TAG_DIALOG_DELETE,
+                    id,
+                    name);
         }
     }
 

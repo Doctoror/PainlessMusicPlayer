@@ -93,6 +93,7 @@
     <string name="Shuffle">Shuffle</string>
     <string name="Repeat">Repeat</string>
 
+    <string name="Failed_to_delete_playlist">Failed to delete playlist</string>
     <string name="Failed_to_delete_album">Failed to delete album</string>
     <string name="Failed_to_delete_s">Failed to delete “%1$s”</string>
 

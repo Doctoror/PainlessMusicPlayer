@@ -49,7 +49,9 @@ public final class FileManagerService extends IntentService {
     private static final String EXTRA_MEDIA = "EXTRA_MEDIA";
 
     private static final String ACTION_ALBUM_DELETE = "ACTION_ALBUM_DELETE";
-    private static final String EXTRA_ALBUM_ID = "EXTRA_ALBUM_ID";
+    private static final String EXTRA_TARGET_ID = "EXTRA_TARGET_ID";
+
+    private static final String ACTION_PLAYLIST_DELETE = "ACTION_PLAYLIST_DELETE";
 
     public static void deleteMedia(@NonNull final Context context,
             @NonNull final Media media) {
@@ -63,7 +65,15 @@ public final class FileManagerService extends IntentService {
             final long albumId) {
         final Intent intent = new Intent(context, FileManagerService.class);
         intent.setAction(ACTION_ALBUM_DELETE);
-        intent.putExtra(EXTRA_ALBUM_ID, albumId);
+        intent.putExtra(EXTRA_TARGET_ID, albumId);
+        context.startService(intent);
+    }
+
+    public static void deletePlaylist(@NonNull final Context context,
+            final long playlistId) {
+        final Intent intent = new Intent(context, FileManagerService.class);
+        intent.setAction(ACTION_PLAYLIST_DELETE);
+        intent.putExtra(EXTRA_TARGET_ID, playlistId);
         context.startService(intent);
     }
 
@@ -90,7 +100,19 @@ public final class FileManagerService extends IntentService {
             case ACTION_ALBUM_DELETE:
                 onActionAlbumDelete(intent);
                 break;
+
+            case ACTION_PLAYLIST_DELETE:
+                onActionPlaylistDelete(intent);
+                break;
         }
+    }
+
+    private long getTargetId(@NonNull final Intent intent) {
+        if (!intent.hasExtra(EXTRA_TARGET_ID)) {
+            throw new IllegalArgumentException("EXTRA_TARGET_ID is not passed");
+        }
+
+        return intent.getLongExtra(EXTRA_TARGET_ID, 0L);
     }
 
     private void onActionMediaDelete(@NonNull final Intent intent) {
@@ -125,11 +147,7 @@ public final class FileManagerService extends IntentService {
             return;
         }
 
-        if (!intent.hasExtra(EXTRA_ALBUM_ID)) {
-            throw new IllegalArgumentException("EXTRA_ALBUM_ID is not passed");
-        }
-
-        final long albumId = intent.getLongExtra(EXTRA_ALBUM_ID, 0L);
+        final long albumId = getTargetId(intent);
         try {
             FileUtils.deleteAlbum(getContentResolver(), mPlaylistProviderAlbums, albumId);
         } catch (Exception e) {
@@ -138,6 +156,27 @@ public final class FileManagerService extends IntentService {
             final Context context = getApplicationContext();
             Observable.create(s -> Toast.makeText(context,
                     R.string.Failed_to_delete_album, Toast.LENGTH_LONG).show())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe();
+        }
+    }
+
+    private void onActionPlaylistDelete(@NonNull final Intent intent) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Log.w(TAG, "WRITE_EXTERNAL_STORAGE permission not granted");
+            return;
+        }
+
+        final long targetId = getTargetId(intent);
+        try {
+            FileUtils.deletePlaylist(getContentResolver(), targetId);
+        } catch (Exception e) {
+            Log.w(TAG, e);
+
+            final Context context = getApplicationContext();
+            Observable.create(s -> Toast.makeText(context, R.string.Failed_to_delete_playlist,
+                    Toast.LENGTH_LONG).show())
                     .subscribeOn(AndroidSchedulers.mainThread())
                     .subscribe();
         }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.library.albums;
+package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import com.doctoror.fuckoffmusicplayer.filemanager.FileManagerService;
 import com.doctoror.fuckoffmusicplayer.library.DeleteItemDialogFragment;
@@ -25,24 +25,23 @@ import android.support.annotation.NonNull;
 /**
  * Created by Yaroslav Mytkalyk on 09.01.17.
  */
-public final class DeleteAlbumDialogFragment extends DeleteItemDialogFragment {
-
+public final class DeletePlaylistDialogFragment extends DeleteItemDialogFragment {
 
     public static void show(@NonNull final Context context,
             @NonNull final FragmentManager fragmentManager,
             @NonNull final String tag,
-            final long albumId,
-            @NonNull final String albumName) {
+            final long id,
+            @NonNull final String name) {
         DeleteItemDialogFragment.show(context,
-                DeleteAlbumDialogFragment.class,
+                DeletePlaylistDialogFragment.class,
                 fragmentManager,
                 tag,
-                albumId,
-                albumName);
+                id,
+                name);
     }
 
     @Override
     protected void performDelete() {
-        FileManagerService.deleteAlbum(getActivity(), getTargetId());
+        FileManagerService.deletePlaylist(getActivity(), getTargetId());
     }
 }

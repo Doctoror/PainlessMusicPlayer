@@ -20,9 +20,11 @@ import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.content.ContentResolver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.util.ArraySet;
 
@@ -41,6 +43,42 @@ public final class FileUtils {
 
     private FileUtils() {
         throw new UnsupportedOperationException();
+    }
+
+    public static void deletePlaylist(@NonNull final ContentResolver resolver,
+            final long id) throws IOException {
+        deletePlaylistFile(resolver, id);
+        MediaStoreUtils.deletePlaylist(resolver, id);
+    }
+
+    private static void deletePlaylistFile(@NonNull final ContentResolver resolver,
+            final long id) throws IOException {
+        final String path = getPlaylistPath(resolver, id);
+        if (path != null) {
+            final File target = new File(path);
+            deleteFile(target);
+        }
+    }
+
+    @Nullable
+    private static String getPlaylistPath(@NonNull final ContentResolver resolver,
+            final long id) throws IOException {
+        final Cursor c = resolver.query(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+                new String[] {MediaStore.Audio.Playlists.DATA},
+                MediaStore.Audio.Playlists._ID + '=' + id,
+                null,
+                null);
+        if (c == null) {
+            throw new IOException("Failed to query playlist");
+        }
+        try {
+            if (!c.moveToFirst()) {
+                throw new IOException("Failed to query playlist");
+            }
+            return c.getString(0);
+        } finally {
+            c.close();
+        }
     }
 
     @WorkerThread
@@ -133,6 +171,11 @@ public final class FileUtils {
     @WorkerThread
     static void deleteMediaFile(@NonNull final Media media) throws IOException {
         final File file = fileForMedia(media);
+        deleteFile(file);
+    }
+
+    @WorkerThread
+    static void deleteFile(@NonNull final File file) throws IOException {
         if (!file.exists()) {
             throw new IOException("File does not exist: " + file);
         }

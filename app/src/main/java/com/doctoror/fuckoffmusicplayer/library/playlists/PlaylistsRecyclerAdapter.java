@@ -18,8 +18,8 @@ package com.doctoror.fuckoffmusicplayer.library.playlists;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProvider;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconMenuViewHolder;
 import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
 import com.l4digital.fastscroll.FastScroller;
 
@@ -28,8 +28,14 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import java.util.List;
 
@@ -37,14 +43,20 @@ import java.util.List;
  * Playlists recycler view adapter
  */
 final class PlaylistsRecyclerAdapter
-        extends CursorRecyclerViewAdapter<SingleLineItemIconViewHolder>
+        extends CursorRecyclerViewAdapter<RecyclerView.ViewHolder>
         implements FastScroller.SectionIndexer {
 
     interface OnPlaylistClickListener {
 
-        void onPlaylistClick(long id, String name, int position);
         void onLivePlaylistClick(LivePlaylist playlist, int position);
+
+        void onPlaylistClick(long id, String name, int position);
+
+        void onPlaylistDeleteClick(long id, String name);
     }
+
+    private static final int VIEW_TYPE_PLAYLIST_LIVE = 0;
+    private static final int VIEW_TYPE_PLAYLIST = 1;
 
     @NonNull
     private final List<LivePlaylist> mLivePlaylists;
@@ -55,6 +67,9 @@ final class PlaylistsRecyclerAdapter
     @Nullable
     private final Drawable mIcon;
 
+    @Nullable
+    private final Drawable mIconMenu;
+
     private OnPlaylistClickListener mClickListener;
 
     PlaylistsRecyclerAdapter(@NonNull final Context context,
@@ -62,8 +77,16 @@ final class PlaylistsRecyclerAdapter
         super(null);
         mLayoutInflater = LayoutInflater.from(context);
         mLivePlaylists = livePlaylists;
-        mIcon = DrawableUtils.getTintedDrawable(context, R.drawable.ic_queue_music_black_40dp,
-                ThemeUtils.getColorStateList(context.getTheme(), android.R.attr.textColorPrimary));
+        mIcon = DrawableUtils.getTintedDrawableFromAttrTint(context,
+                R.drawable.ic_queue_music_black_40dp, android.R.attr.textColorPrimary);
+
+        mIconMenu = DrawableUtils.getTintedDrawableFromAttrTint(context,
+                R.drawable.ic_more_vert_black_24dp, android.R.attr.textColorPrimary);
+    }
+
+    @Override
+    public int getItemViewType(final int position) {
+        return position < mLivePlaylists.size() ? VIEW_TYPE_PLAYLIST_LIVE : VIEW_TYPE_PLAYLIST;
     }
 
     @Override
@@ -77,6 +100,17 @@ final class PlaylistsRecyclerAdapter
             return mLivePlaylists.get(position).getType();
         }
         return super.getItemId(position - mLivePlaylists.size());
+    }
+
+    @Nullable
+    private Cursor getCursorItem(final int position) {
+        if (getItemViewType(position) == VIEW_TYPE_PLAYLIST) {
+            final Cursor cursor = getCursor();
+            if (cursor.moveToPosition(position - mLivePlaylists.size())) {
+                return cursor;
+            }
+        }
+        return null;
     }
 
     void setOnPlaylistClickListener(@Nullable final OnPlaylistClickListener clickListener) {
@@ -111,11 +145,46 @@ final class PlaylistsRecyclerAdapter
         }
     }
 
+    private void onMenuClick(@NonNull final View btnView, final int position) {
+        if (getItemViewType(position) == VIEW_TYPE_PLAYLIST) {
+            final PopupMenu popup = new PopupMenu(btnView.getContext(), btnView);
+            final Menu popupMenu = popup.getMenu();
+
+            final MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.list_item_playlist, popupMenu);
+
+            final Cursor item = getCursorItem(position);
+            if (item != null) {
+                final long id = item.getLong(PlaylistsProvider.COLUMN_ID);
+                final String name = item.getString(PlaylistsProvider.COLUMN_NAME);
+                popup.setOnMenuItemClickListener(
+                        menuItem -> onMenuItemClick(menuItem, id, name));
+                popup.show();
+            }
+        }
+    }
+
+    private boolean onMenuItemClick(@NonNull final MenuItem menuItem,
+            final long itemId,
+            @NonNull final String name) {
+        switch (menuItem.getItemId()) {
+            case R.id.actionDelete:
+                if (mClickListener != null) {
+                    mClickListener.onPlaylistDeleteClick(itemId, name);
+                }
+                return true;
+
+            default:
+                return false;
+        }
+    }
+
     @Override
-    public void onBindViewHolder(final SingleLineItemIconViewHolder viewHolder,
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
             final int position) {
         if (position < mLivePlaylists.size()) {
-            onBindViewHolderLivePlaylist(viewHolder, mLivePlaylists.get(position));
+            onBindViewHolderLivePlaylist((SingleLineItemIconViewHolder) viewHolder,
+                    mLivePlaylists.get(position));
         } else {
             final Cursor cursor = getCursor();
             final int cursorPos = position - mLivePlaylists.size();
@@ -127,9 +196,9 @@ final class PlaylistsRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final SingleLineItemIconViewHolder viewHolder,
-            final Cursor cursor) {
-        viewHolder.text.setText(cursor.getString(PlaylistsProvider.COLUMN_NAME));
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final Cursor cursor) {
+        final SingleLineItemIconMenuViewHolder vh = (SingleLineItemIconMenuViewHolder) viewHolder;
+        vh.text.setText(cursor.getString(PlaylistsProvider.COLUMN_NAME));
     }
 
     private void onBindViewHolderLivePlaylist(final SingleLineItemIconViewHolder viewHolder,
@@ -138,11 +207,39 @@ final class PlaylistsRecyclerAdapter
     }
 
     @Override
-    public SingleLineItemIconViewHolder onCreateViewHolder(final ViewGroup parent,
+    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent,
             final int viewType) {
+        switch (viewType) {
+            case VIEW_TYPE_PLAYLIST_LIVE:
+                return onCreateViewHolderLivePlaylist(parent);
+
+            case VIEW_TYPE_PLAYLIST:
+                return onCreateViewHolderPlaylist(parent);
+
+            default:
+                throw new IllegalArgumentException("Unexpected viewType: " + viewType);
+        }
+    }
+
+    @NonNull
+    private RecyclerView.ViewHolder onCreateViewHolderLivePlaylist(final ViewGroup parent) {
         final SingleLineItemIconViewHolder vh = new SingleLineItemIconViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_single_line_icon, parent, false));
         vh.icon.setImageDrawable(mIcon);
+        vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
+        return vh;
+    }
+
+    @NonNull
+    private RecyclerView.ViewHolder onCreateViewHolderPlaylist(final ViewGroup parent) {
+        final SingleLineItemIconMenuViewHolder vh = new SingleLineItemIconMenuViewHolder(
+                mLayoutInflater.inflate(R.layout.list_item_single_line_icon_with_menu, parent,
+                        false));
+
+        vh.icon.setImageDrawable(mIcon);
+        vh.btnMenu.setImageDrawable(mIconMenu);
+
+        vh.btnMenu.setOnClickListener(v -> onMenuClick(v, vh.getAdapterPosition()));
         vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
         return vh;
     }
