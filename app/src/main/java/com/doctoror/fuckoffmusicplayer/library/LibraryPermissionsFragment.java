@@ -94,9 +94,14 @@ public abstract class LibraryPermissionsFragment extends Fragment {
                 });
     }
 
+
     protected abstract void onPermissionGranted();
 
     protected abstract void onPermissionDenied();
+
+    protected final boolean hasPermissions() {
+        return mHasPermissions;
+    }
 
     @Override
     public void onStart() {

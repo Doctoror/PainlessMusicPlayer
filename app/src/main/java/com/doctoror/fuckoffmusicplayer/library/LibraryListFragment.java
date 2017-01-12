@@ -17,19 +17,16 @@ package com.doctoror.fuckoffmusicplayer.library;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.RuntimePermissions;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
 import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -59,7 +56,7 @@ import rx.subjects.BehaviorSubject;
 /**
  * Fragment used for library list
  */
-public abstract class LibraryListFragment extends Fragment {
+public abstract class LibraryListFragment extends LibraryPermissionsFragment {
 
     private static final String TAG = "LibraryListFragment";
 
@@ -74,16 +71,11 @@ public abstract class LibraryListFragment extends Fragment {
     private final BehaviorSubject<String> mSearchSubject = BehaviorSubject.create();
     private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
 
-    private Subscription mPermissionTimerSubscription;
     private Subscription mSearchSubscription;
     private Subscription mOldSubscription;
     private Subscription mSubscription;
 
-    private boolean mHasPermissions;
-    private boolean mPermissionRequested = RuntimePermissions.arePermissionsRequested();
     private boolean mSearchIconified = true;
-
-    private RxPermissions mRxPermissions;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -101,8 +93,6 @@ public abstract class LibraryListFragment extends Fragment {
         if (state != null) {
             mSearchIconified = state.searchIconified;
             mSearchSubject.onNext(state.searchQuery);
-            mPermissionRequested = state.permissionsRequested ||
-                    RuntimePermissions.arePermissionsRequested();
         }
     }
 
@@ -112,7 +102,6 @@ public abstract class LibraryListFragment extends Fragment {
         final InstanceState state = new InstanceState();
         state.searchIconified = mSearchIconified;
         state.searchQuery = mSearchSubject.getValue();
-        state.permissionsRequested = mPermissionRequested;
         outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(state));
     }
 
@@ -120,7 +109,7 @@ public abstract class LibraryListFragment extends Fragment {
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_library_list, menu);
-        if (mHasPermissions) {
+        if (hasPermissions()) {
             final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
             searchView.setQuery(mSearchSubject.getValue(), false);
             searchView.setOnCloseListener(() -> {
@@ -139,49 +128,15 @@ public abstract class LibraryListFragment extends Fragment {
         }
     }
 
-    @NonNull
-    private RxPermissions getRxPermissions() {
-        if (mRxPermissions == null) {
-            mRxPermissions = new RxPermissions(getActivity());
-        }
-        return mRxPermissions;
-    }
-
-    private void requestPermissionIfNeeded() {
-        mHasPermissions = ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        if (mHasPermissions) {
-            onPermissionGranted();
-        } else if (mPermissionRequested) {
-            onPermissionDenied();
-        } else {
-            mPermissionTimerSubscription = Observable.timer(500, TimeUnit.MILLISECONDS)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(l -> requestPermission());
-        }
-    }
-
-    private void requestPermission() {
-        mPermissionRequested = true;
-        RuntimePermissions.setPermissionsRequested(true);
-        getRxPermissions().request(Manifest.permission.READ_EXTERNAL_STORAGE)
-                .subscribe(granted -> {
-                    mHasPermissions = granted;
-                    if (granted) {
-                        onPermissionGranted();
-                    } else {
-                        onPermissionDenied();
-                    }
-                });
-    }
-
-    private void onPermissionGranted() {
+    @Override
+    protected void onPermissionGranted() {
         mModel.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
         mSearchSubscription = mSearchSubject.asObservable().subscribe(mSearchQueryObserver);
         getActivity().invalidateOptionsMenu();
     }
 
-    private void onPermissionDenied() {
+    @Override
+    protected void onPermissionDenied() {
         mModel.setDisplayedChild(ANIMATOR_CHILD_PERMISSION_DENIED);
     }
 
@@ -210,19 +165,9 @@ public abstract class LibraryListFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        requestPermissionIfNeeded();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         onDataReset();
-        if (mPermissionTimerSubscription != null) {
-            mPermissionTimerSubscription.unsubscribe();
-            mPermissionTimerSubscription = null;
-        }
 
         if (mSearchSubscription != null) {
             mSearchSubscription.unsubscribe();
@@ -301,7 +246,6 @@ public abstract class LibraryListFragment extends Fragment {
 
         String searchQuery;
         boolean searchIconified;
-        boolean permissionsRequested;
     }
 
 }
