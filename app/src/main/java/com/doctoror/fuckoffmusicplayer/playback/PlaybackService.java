@@ -625,11 +625,6 @@ public final class PlaybackService extends Service {
     }
 
     @WorkerThread
-    private void reportCurrentPlaybackState() {
-        reportPlaybackState(mState, mErrorMessage);
-    }
-
-    @WorkerThread
     private void reportPlaybackState(@State final int state,
             @Nullable final CharSequence errorMessage) {
         mPlaybackReporter.reportPlaybackStateChanged(state, errorMessage);
