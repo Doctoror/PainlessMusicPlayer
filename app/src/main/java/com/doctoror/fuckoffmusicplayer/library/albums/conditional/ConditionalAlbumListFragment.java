@@ -143,6 +143,9 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
     @BindView(R.id.errorContainer)
     View errorContainer;
 
+    @BindView(R.id.emptyContainer)
+    View emptyContainer;
+
     @Inject
     PlaylistProviderAlbums mPlaylistFactory;
 
@@ -338,10 +341,27 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         fab.setVisibility(View.GONE);
         progress.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
+        emptyContainer.setVisibility(View.GONE);
         errorContainer.setVisibility(View.VISIBLE);
         if (cardView == null) {
             // Collapse for non-card-view
             appBar.setExpanded(false, false);
+        } else {
+            appBar.setExpanded(true, false);
+        }
+    }
+
+    private void showStateEmpty() {
+        fab.setVisibility(View.GONE);
+        progress.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+        emptyContainer.setVisibility(View.VISIBLE);
+        errorContainer.setVisibility(View.GONE);
+        if (cardView == null) {
+            // Collapse for non-card-view
+            appBar.setExpanded(false, false);
+        } else {
+            appBar.setExpanded(true, false);
         }
     }
 
@@ -437,7 +457,6 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
                 mData = null;
             }
             if (isAdded()) {
-                mModel.setErrorText(getText(R.string.Failed_connecting_to_Media_Store));
                 showStateError();
             }
         }
@@ -449,8 +468,7 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
             mData = cursor;
 
             if (cursor.getCount() == 0) {
-                mModel.setErrorText(getText(R.string.No_albums_here));
-                showStateError();
+                showStateEmpty();
             } else {
                 showStateContent();
             }

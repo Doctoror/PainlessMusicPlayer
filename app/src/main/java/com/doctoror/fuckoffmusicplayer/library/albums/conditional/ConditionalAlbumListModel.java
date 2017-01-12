@@ -21,18 +21,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 /**
- * Created by Yaroslav Mytkalyk on 25.10.16.
+ * {@link ConditionalAlbumListFragment} model
  */
-
 public final class ConditionalAlbumListModel {
 
-    private final ObservableField<CharSequence> mErrorText = new ObservableField<>();
     private final ObservableField<RecyclerView.Adapter> mRecyclerAdpter = new ObservableField<>();
-
-    @NonNull
-    public ObservableField<CharSequence> getErrorText() {
-        return mErrorText;
-    }
 
     @NonNull
     public ObservableField<RecyclerView.Adapter> getRecyclerAdapter() {
@@ -42,9 +35,4 @@ public final class ConditionalAlbumListModel {
     void setRecyclerAdpter(@Nullable final RecyclerView.Adapter<?> adapter) {
         mRecyclerAdpter.set(adapter);
     }
-
-    void setErrorText(@Nullable final CharSequence errorText) {
-        mErrorText.set(errorText);
-    }
-
 }
