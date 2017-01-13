@@ -41,15 +41,13 @@ Does not support FLAC.
 
 ##Screenshots
 
+![screenshot](/screenshots/recent_activity.png?raw=true)
 ![screenshot](/screenshots/now_playing.png?raw=true)
 ![screenshot](/screenshots/albums.png?raw=true)
 ![screenshot](/screenshots/effects.png?raw=true)
 ![screenshot](/screenshots/notification.png?raw=true)
 ![screenshot](/screenshots/lock_screen.png?raw=true)
 ![screenshot](/screenshots/settings.png?raw=true)
-![screenshot](/screenshots/wear_round_now_playing.png?raw=true)
-![screenshot](/screenshots/wear_round_playlist.png?raw=true)
-![screenshot](/screenshots/wear_round_search.png?raw=true)
 
 ##License
 
