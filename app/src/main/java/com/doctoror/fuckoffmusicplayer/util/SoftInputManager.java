@@ -21,13 +21,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 /**
- * Created by Yaroslav Mytkalyk on 18.10.16.
+ * Soft input manager
  */
-
 public final class SoftInputManager {
 
     private SoftInputManager() {
-
+        throw new UnsupportedOperationException();
     }
 
     public static void hideSoftInput(@NonNull final Activity activity) {

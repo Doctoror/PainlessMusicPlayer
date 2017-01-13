@@ -175,6 +175,8 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     @Override
     public void onStop() {
         super.onStop();
+        SoftInputManager.hideSoftInput(getActivity());
+
         onDataReset();
 
         if (mSearchSubscription != null) {
