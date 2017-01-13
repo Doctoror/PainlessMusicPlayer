@@ -33,7 +33,6 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
@@ -47,11 +46,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
@@ -112,10 +108,10 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
-    private final Receiver mReceiver = new Receiver();
 
     private NowPlayingActivityIntentHandler mIntentHandler;
 
+    private Subscription mPlaybackStateSubscription;
     private Subscription mQueueSubscription;
     private Subscription mQueuePositionSubscription;
     private Subscription mMediaPositionSubscription;
@@ -362,9 +358,8 @@ public final class NowPlayingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        bindState(PlaybackService.getLastKnownState());
-        registerReceiver(mReceiver, mReceiver.mIntentFilter);
-        PlaybackServiceControl.resendState(this);
+        mPlaybackStateSubscription = mPlaybackData.playbackStateObservable()
+                .subscribe(this::bindState);
 
         mQueueSubscription = mPlaybackData.queueObservable().subscribe(mQueueAction);
 
@@ -381,7 +376,7 @@ public final class NowPlayingActivity extends BaseActivity {
         mMediaPositionSubscription.unsubscribe();
         mQueuePositionSubscription.unsubscribe();
         mQueueSubscription.unsubscribe();
-        unregisterReceiver(mReceiver);
+        mPlaybackStateSubscription.unsubscribe();
     }
 
     void bindTrack(@Nullable Media track, final long position) {
@@ -527,20 +522,6 @@ public final class NowPlayingActivity extends BaseActivity {
     };
 
     private final Action1<Long> mMediaPositionAction = this::bindProgress;
-
-    private final class Receiver extends BroadcastReceiver {
-
-        final IntentFilter mIntentFilter = new IntentFilter(PlaybackService.ACTION_STATE_CHANGED);
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            switch (intent.getAction()) {
-                case PlaybackService.ACTION_STATE_CHANGED:
-                    bindState(intent.getIntExtra(PlaybackService.EXTRA_STATE, 0));
-                    break;
-            }
-        }
-    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static final class NowPlayingActivityLollipop {
