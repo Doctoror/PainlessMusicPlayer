@@ -90,7 +90,7 @@
             android:layout_marginTop="12dp"
             android:paddingStart="16dp"
             android:paddingLeft="16dp"
-            android:text="@string/Send_playback_details_to_Simple_Lastfm_Scrobbler"
+            android:text="@string/Send_playback_details_to_Lastfm_Scrobbler"
             tools:ignore="RtlSymmetry"/>
 
     </LinearLayout>

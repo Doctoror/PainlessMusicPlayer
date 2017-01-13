@@ -37,8 +37,8 @@
     <string name="Dark">Dark</string>
 
     <string name="Scrobbling">Scrobbling</string>
-    <string name="Send_playback_details_to_Simple_Lastfm_Scrobbler">Send playback details to Simple
-        Last.fm Scrobbler
+    <string name="Send_playback_details_to_Lastfm_Scrobbler">Send playback details to Last.fm
+        Scrobbler
     </string>
 
     <string name="No_tracks_found">No tracks found</string>
