@@ -51,17 +51,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:paddingStart="16dp"
         android:paddingTop="12dp"
         android:lines="1"
         android:ellipsize="end"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp"
+        android:textIsSelectable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnMenu"
         app:layout_constraintBottom_toTopOf="@id/guideline50percent"
         tools:text="Title"
-        tools:ignore="SelectableText"/>
+        tools:ignore="RtlSymmetry"/>
 
     <TextView
         android:id="@+id/textDuration"

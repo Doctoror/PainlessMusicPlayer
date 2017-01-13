@@ -24,6 +24,22 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+        <item name="switchStyle">@style/SwitchStyle</item>
+        <item name="checkboxStyle">@style/CheckBoxStyle</item>
+        <item name="radioButtonStyle">@style/RadiobButtonStyle</item>
+    </style>
+
+    <style name="TextViewStyle" parent="@android:style/Widget.TextView">
+    </style>
+
+    <style name="SwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+    </style>
+
+    <style name="CheckBoxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
+    </style>
+
+    <style name="RadiobButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
     </style>
 
     <style name="AppTheme.NoActionBar">

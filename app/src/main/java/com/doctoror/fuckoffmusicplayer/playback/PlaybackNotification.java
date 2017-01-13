@@ -33,6 +33,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
+import android.view.View;
 
 import java.util.concurrent.ExecutionException;
 
@@ -53,18 +54,6 @@ final class PlaybackNotification {
             @NonNull final Media media,
             @PlaybackState.State final int state,
             @NonNull final MediaSessionCompat mediaSession) {
-        final PendingIntent prevIntent = PendingIntent.getService(context, 1,
-                PlaybackServiceIntentFactory.intentPrev(context),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        final PendingIntent nextIntent = PendingIntent.getService(context, 2,
-                PlaybackServiceIntentFactory.intentNext(context),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
-                PlaybackServiceIntentFactory.intentPlayPause(context),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
         Bitmap art = null;
         final String artLocation = media.getAlbumArt();
         if (!TextUtils.isEmpty(artLocation)) {
@@ -110,9 +99,36 @@ final class PlaybackNotification {
                 .setOngoing(true)
                 .setSmallIcon(state == PlaybackState.STATE_PLAYING ? R.drawable.ic_stat_play
                         : R.drawable.ic_stat_pause)
-                .setLargeIcon(art)
-                .addAction(R.drawable.ic_fast_rewind_white_24dp,
-                        context.getText(R.string.Previous), prevIntent);
+                .setLargeIcon(art);
+
+        addAction1(context, b);
+        addAction2(context, b, state);
+        addAction3(context, b);
+
+        return b.build();
+    }
+
+    private static void addAction1(@NonNull final Context context,
+            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+        final int direction = context.getResources().getInteger(R.integer.layoutDirection);
+        switch (direction) {
+            case View.LAYOUT_DIRECTION_RTL:
+                addActionNext(context, b);
+                break;
+
+            case View.LAYOUT_DIRECTION_LTR:
+            default:
+                addActionPrev(context, b);
+                break;
+        }
+    }
+
+    private static void addAction2(@NonNull final Context context,
+            @NonNull final android.support.v4.app.NotificationCompat.Builder b,
+            @PlaybackState.State final int state) {
+        final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
+                PlaybackServiceIntentFactory.intentPlayPause(context),
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (state == PlaybackState.STATE_PLAYING) {
             b.addAction(R.drawable.ic_pause_white_24dp, context.getText(R.string.Pause),
@@ -121,11 +137,41 @@ final class PlaybackNotification {
             b.addAction(R.drawable.ic_play_arrow_white_24dp, context.getText(R.string.Play),
                     middleActionIntent);
         }
+    }
+
+    private static void addAction3(@NonNull final Context context,
+            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+        final int direction = context.getResources().getInteger(R.integer.layoutDirection);
+        switch (direction) {
+            case View.LAYOUT_DIRECTION_RTL:
+                addActionPrev(context, b);
+                break;
+
+            case View.LAYOUT_DIRECTION_LTR:
+            default:
+                addActionNext(context, b);
+                break;
+        }
+    }
+
+    private static void addActionPrev(@NonNull final Context context,
+            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+        final PendingIntent prevIntent = PendingIntent.getService(context, 1,
+                PlaybackServiceIntentFactory.intentPrev(context),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        b.addAction(R.drawable.ic_fast_rewind_white_24dp,
+                context.getText(R.string.Previous), prevIntent);
+    }
+
+    private static void addActionNext(@NonNull final Context context,
+            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+        final PendingIntent nextIntent = PendingIntent.getService(context, 2,
+                PlaybackServiceIntentFactory.intentNext(context),
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         b.addAction(R.drawable.ic_fast_forward_white_24dp, context.getText(R.string.Next),
                 nextIntent);
-
-        return b.build();
     }
 
 }

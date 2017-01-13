@@ -41,6 +41,7 @@
         android:weightSum="1">
 
         <TextView
+            style="@style/TextViewStyle"
             android:id="@+id/appwidget_text_title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -48,7 +49,7 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:textColor="@android:color/white"
-            android:gravity="center_vertical"
+            android:gravity="start|center_vertical"
             android:lines="1"
             android:ellipsize="end"
             android:textIsSelectable="false"
@@ -56,6 +57,7 @@
             tools:text="Title"/>
 
         <TextView
+            style="@style/TextViewStyle"
             android:id="@+id/appwidget_text_artist"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -63,7 +65,7 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:textColor="@android:color/white"
-            android:gravity="center_vertical"
+            android:gravity="start|center_vertical"
             android:lines="1"
             android:ellipsize="end"
             android:textIsSelectable="false"
