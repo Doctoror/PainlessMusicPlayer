@@ -21,19 +21,15 @@ import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableLong;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 
 /**
- * Created by Yaroslav Mytkalyk on 21.10.16.
+ * {@link NowPlayingActivity} model
  */
-
 public final class NowPlayingActivityModel extends BaseObservable {
 
-    private String mArt;
     private String mTitle;
     private String mArtistAndAlbum;
-    private Drawable mStateIcon;
     private long mDuration;
 
     private final ObservableLong mElapsedTime = new ObservableLong();
@@ -43,14 +39,6 @@ public final class NowPlayingActivityModel extends BaseObservable {
     private final ObservableBoolean mShuffleEnabled = new ObservableBoolean();
 
     private final ObservableInt mRepeatMode = new ObservableInt();
-
-    public String getArt() {
-        return mArt;
-    }
-
-    public void setArt(final String art) {
-        mArt = art;
-    }
 
     public String getTitle() {
         return mTitle;
@@ -66,14 +54,6 @@ public final class NowPlayingActivityModel extends BaseObservable {
 
     public void setArtistAndAlbum(final String artistAndAlbum) {
         mArtistAndAlbum = artistAndAlbum;
-    }
-
-    public Drawable getStateIcon() {
-        return mStateIcon;
-    }
-
-    public void setStateIcon(final Drawable stateIcon) {
-        mStateIcon = stateIcon;
     }
 
     public ObservableInt getProgress() {
