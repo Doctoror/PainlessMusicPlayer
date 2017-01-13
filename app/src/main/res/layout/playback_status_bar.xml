@@ -45,7 +45,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:scaleType="centerCrop"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:placeholder="@{@drawable/album_art_placeholder}"
