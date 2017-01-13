@@ -103,7 +103,7 @@ public final class PlaylistsProviderMediaStore implements PlaylistsProvider {
                         MediaStore.Audio.Playlists._ID,
                         MediaStore.Audio.Playlists.NAME
                 })
-                .setSelection(TextUtils.isEmpty(filter) ? null : MediaStore.Audio.Albums.ALBUM
+                .setSelection(TextUtils.isEmpty(filter) ? null : MediaStore.Audio.Playlists.NAME
                         + " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(filter))
                 .setSortOrder(MediaStore.Audio.Playlists.DEFAULT_SORT_ORDER)
                 .create();
