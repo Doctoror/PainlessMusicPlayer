@@ -40,6 +40,7 @@
             android:fitsSystemWindows="true">
 
             <android.support.design.widget.CollapsingToolbarLayout
+                style="@style/CollapsingToolbarLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?android:attr/windowBackground"

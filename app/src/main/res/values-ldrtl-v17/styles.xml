@@ -28,8 +28,10 @@
         <item name="android:textDirection">rtl</item>
     </style>
 
-    <style name="RadiobButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+    <style name="CollapsingToolbarLayoutStyle">
         <item name="android:textDirection">rtl</item>
+        <item name="expandedTitleGravity">right|bottom</item>
+        <item name="collapsedTitleGravity">right|center_vertical</item>
     </style>
 
 </resources>

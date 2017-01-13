@@ -30,17 +30,11 @@
         <item name="radioButtonStyle">@style/RadiobButtonStyle</item>
     </style>
 
-    <style name="TextViewStyle" parent="@android:style/Widget.TextView">
-    </style>
-
-    <style name="SwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
-    </style>
-
-    <style name="CheckBoxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
-    </style>
-
-    <style name="RadiobButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
-    </style>
+    <style name="TextViewStyle" parent="@android:style/Widget.TextView"/>
+    <style name="SwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch"/>
+    <style name="CheckBoxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox"/>
+    <style name="RadiobButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton"/>
+    <style name="CollapsingToolbarLayoutStyle"/>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
