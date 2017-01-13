@@ -40,8 +40,8 @@
             android:scaleType="centerCrop"
             android:fitsSystemWindows="false"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:colorFilter="@{@color/translucentBackgroundDimmer}"
             tools:src="@drawable/album_art_placeholder"
@@ -53,8 +53,8 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -76,7 +76,6 @@
             android:minEms="2"
             android:textIsSelectable="false"
             android:textColor="@android:color/white"
-            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:formattedDuration="@{model.elapsedTime / 1000}"
@@ -95,7 +94,6 @@
             android:textIsSelectable="false"
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:formattedDuration="@{model.duration / 1000}"
             tools:text="0:00"/>
@@ -106,9 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             app:layout_constraintStart_toEndOf="@id/textPosition"
-            app:layout_constraintLeft_toRightOf="@+id/textPosition"
             app:layout_constraintEnd_toStartOf="@id/textDuration"
-            app:layout_constraintRight_toLeftOf="@+id/textDuration"
             app:layout_constraintBottom_toBottomOf="@+id/textDuration"
             app:layout_constraintTop_toTopOf="@+id/textDuration"
             android:max="200"
@@ -121,8 +117,8 @@
             android:layout_margin="24dp"
             android:background="@drawable/color_accent_circle"
             android:contentDescription="@string/Previous"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/seekBar"
             app:srcRes="@{model.btnPlayRes}"
             tools:src="@drawable/ic_play_arrow_white_36dp"/>
@@ -136,7 +132,6 @@
             android:background="@drawable/grey_circle_48dp"
             android:src="@drawable/ic_fast_rewind_white_24dp"
             android:contentDescription="@string/Previous"
-            app:layout_constraintRight_toLeftOf="@id/btnPlay"
             app:layout_constraintEnd_toStartOf="@id/btnPlay"
             app:layout_constraintTop_toTopOf="@id/btnPlay"
             app:layout_constraintBottom_toBottomOf="@id/btnPlay"/>
@@ -151,7 +146,6 @@
             android:src="@drawable/ic_fast_forward_white_24dp"
             android:contentDescription="@string/Next"
             app:layout_constraintStart_toEndOf="@id/btnPlay"
-            app:layout_constraintLeft_toRightOf="@id/btnPlay"
             app:layout_constraintTop_toTopOf="@id/btnPlay"
             app:layout_constraintBottom_toBottomOf="@id/btnPlay"/>
 
@@ -169,7 +163,6 @@
             app:tintNormal="@{@android:color/white}"
             app:useActivatedSrcTint="@{true}"
             app:layout_constraintStart_toEndOf="@id/btnNext"
-            app:layout_constraintLeft_toRightOf="@id/btnNext"
             app:layout_constraintTop_toTopOf="@id/btnPlay"
             app:layout_constraintBottom_toBottomOf="@id/btnPlay"
             tools:src="@drawable/ic_shuffle_black_24dp"/>
@@ -188,7 +181,6 @@
             app:tintNormal="@{@android:color/white}"
             app:useActivatedSrcTint="@{true}"
             app:layout_constraintEnd_toStartOf="@id/btnPrev"
-            app:layout_constraintRight_toLeftOf="@id/btnPrev"
             app:layout_constraintTop_toTopOf="@id/btnPlay"
             app:layout_constraintBottom_toBottomOf="@id/btnPlay"
             tools:src="@drawable/ic_repeat_black_24dp"/>
@@ -208,8 +200,8 @@
             app:text="@{model.title}"
             app:layout_constraintTop_toBottomOf="@id/toolbarContainer"
             app:layout_constraintBottom_toTopOf="@+id/textArtistAlbum"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="Text 1"
             tools:ignore="SelectableText"/>
@@ -228,8 +220,8 @@
             app:text="@{model.artistAndAlbum}"
             app:layout_constraintTop_toBottomOf="@id/textTitle"
             app:layout_constraintBottom_toTopOf="@id/btnPlay"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="Artist/Album"
             tools:ignore="SelectableText"/>
