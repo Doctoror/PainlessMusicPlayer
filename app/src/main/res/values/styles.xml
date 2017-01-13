@@ -28,12 +28,16 @@
         <item name="switchStyle">@style/SwitchStyle</item>
         <item name="checkboxStyle">@style/CheckBoxStyle</item>
         <item name="radioButtonStyle">@style/RadiobButtonStyle</item>
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextView</item>
     </style>
 
     <style name="TextViewStyle" parent="@android:style/Widget.TextView"/>
+    <style name="AutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView"/>
+
     <style name="SwitchStyle" parent="Widget.AppCompat.CompoundButton.Switch"/>
     <style name="CheckBoxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox"/>
     <style name="RadiobButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton"/>
+
     <style name="CollapsingToolbarLayoutStyle"/>
 
     <style name="AppTheme.NoActionBar">

@@ -28,6 +28,10 @@
         <item name="android:textDirection">rtl</item>
     </style>
 
+    <style name="AutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textDirection">rtl</item>
+    </style>
+
     <style name="CollapsingToolbarLayoutStyle">
         <item name="android:textDirection">rtl</item>
         <item name="expandedTitleGravity">right|bottom</item>
