@@ -10,13 +10,15 @@ Min API level 16
  - Albums browser
  - Genres browser
  - Tracks browser
+ - Playlists browser
  - Live playlists (Recently played albums, recently scanned, random playlist)
- - Search
+ - List filters
  - Seek
  - Themes (Light, Dark and DayNight theme)
  - Equalizer and Bass Boost effects
+ - Playback modes (suffle/repeat)
  - Removing from playlist
- - Deleting files (remove from playlist to see a delete button)
+ - Deleting files, albums and playlist
  - Home screen widget
  - Notifies now playing using [Scrobble Droid API](https://github.com/JJC1138/scrobbledroid)
  - Android Wear app
@@ -24,7 +26,6 @@ Min API level 16
  - Remote controls support (headset, car audio)
  
 Missing features you might expect from a Music Player
- - No shuffle, repeat track mode
  - No folder browser
  - No tag editor
  - No album art fetching from network (supports only built-in album art from MediaStore)
