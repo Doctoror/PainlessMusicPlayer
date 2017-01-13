@@ -100,35 +100,15 @@ public final class NowPlayingActivity extends BaseActivity {
                 .hasCoverTransition(albumArt != null)
                 .hasListViewTransition(listItemView != null)
                 .build();
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Bundle options = null;
         if (albumArt != null) {
-            final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, albumArt, TRANSITION_NAME_ALBUM_ART);
-            try {
-                activity.startActivity(intent, options.toBundle());
-            } catch (IllegalArgumentException e) {
-                // TODO why?
-                //Process: com.doctoror.fuckoffmusicplayer.debug, PID: 2025
-                //java.lang.IllegalArgumentException
-                //at android.os.Parcel.readException(Parcel.java:1688)
-                //at android.os.Parcel.readException(Parcel.java:1637)
-                //at android.app.ActivityManagerProxy.isTopOfTask(ActivityManagerNative.java:5505)
-                //at android.app.Activity.isTopOfTask(Activity.java:5978)
-                //at android.app.Activity.cancelInputsAndStartExitTransition(Activity.java:4267)
-                //at android.app.Activity.startActivityForResult(Activity.java:4244)
-                //at android.support.v4.app.BaseFragmentActivityJB.startActivityForResult(BaseFragmentActivityJB.java:50)
-                //at android.support.v4.app.FragmentActivity.startActivityForResult(FragmentActivity.java:79)
-                //at android.app.Activity.startActivity(Activity.java:4518)
-                //at com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity.start(NowPlayingActivity.java:99)
-                activity.startActivity(intent);
-            }
+            options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, albumArt,
+                    TRANSITION_NAME_ALBUM_ART).toBundle();
         } else if (listItemView != null) {
-            final ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(activity, listItemView, TRANSITION_NAME_ROOT);
-            activity.startActivity(intent, options.toBundle());
-        } else {
-            activity.startActivity(intent);
+            options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, listItemView,
+                    TRANSITION_NAME_ROOT).toBundle();
         }
+        activity.startActivity(intent, options);
     }
 
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
@@ -541,9 +521,10 @@ public final class NowPlayingActivity extends BaseActivity {
         }
     };
 
-    private final Action1<Integer> mQueuePositionAction = pos -> runOnUiThread(() -> bindTrack(
-            CollectionUtils.getItemSafe(mPlaybackData.getQueue(), pos),
-            mPlaybackData.getMediaPosition()));
+    private final Action1<Integer> mQueuePositionAction = pos -> {
+        final Media media = CollectionUtils.getItemSafe(mPlaybackData.getQueue(), pos);
+        runOnUiThread(() -> bindTrack(media, mPlaybackData.getMediaPosition()));
+    };
 
     private final Action1<Long> mMediaPositionAction = this::bindProgress;
 

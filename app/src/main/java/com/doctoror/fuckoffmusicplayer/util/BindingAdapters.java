@@ -27,8 +27,10 @@ import android.databinding.DataBindingComponent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -126,6 +128,18 @@ public final class BindingAdapters {
                 top,
                 drawables[2],
                 drawables[3]);
+    }
+
+    @BindingAdapter({"srcRes", "tintAttr"})
+    public static void setSrcResTintedFromAttr(@NonNull final ImageView imageView,
+            @DrawableRes final int res,
+            @AttrRes final int tintAttr) {
+        Drawable src = ContextCompat.getDrawable(imageView.getContext(), res);
+        if (src != null) {
+            src = DrawableUtils
+                    .getTintedDrawableFromAttrTint(imageView.getContext(), src, tintAttr);
+        }
+        imageView.setImageDrawable(src);
     }
 
     @BindingAdapter({"src", "tintNormal", "useActivatedSrcTint"})

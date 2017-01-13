@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
+import com.doctoror.fuckoffmusicplayer.home.PlaybackStatusFragment;
 import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerService;
 import com.doctoror.fuckoffmusicplayer.home.RecentActivityFragment;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
@@ -70,6 +71,8 @@ public interface MainComponent {
     void inject(TracksFragment target);
 
     void inject(PlaylistsFragment target);
+
+    void inject(PlaybackStatusFragment target);
 
     void inject(ConditionalAlbumListFragment target);
 

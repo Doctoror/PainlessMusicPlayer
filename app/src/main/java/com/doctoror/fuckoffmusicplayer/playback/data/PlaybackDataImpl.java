@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
+import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
@@ -41,10 +43,12 @@ public final class PlaybackDataImpl implements PlaybackData {
     private final BehaviorSubject<List<Media>> mQueueSubject = BehaviorSubject.create();
     private final BehaviorSubject<Integer> mQueuePositionSubject = BehaviorSubject.create();
     private final BehaviorSubject<Long> mMediaPositionSubject = BehaviorSubject.create();
+    private final BehaviorSubject<Integer> mPlaybackStateSubject = BehaviorSubject.create();
 
     private final Object mQueueSubjectLock = new Object();
     private final Object mQueuePositionSubjectLock = new Object();
     private final Object mMediaPositionSubjectLock = new Object();
+    private final Object mPlaybackStateSubjectLock = new Object();
 
     @NonNull
     private final Context mContext;
@@ -56,6 +60,7 @@ public final class PlaybackDataImpl implements PlaybackData {
             @NonNull final RecentPlaylistsManager recentPlaylistsManager) {
         mContext = context;
         mRecentPlaylistsManager = recentPlaylistsManager;
+        mPlaybackStateSubject.onNext(PlaybackService.getLastKnownState());
         PlaybackDataPersister.restoreFromFile(context, this);
     }
 
@@ -75,6 +80,12 @@ public final class PlaybackDataImpl implements PlaybackData {
     @Override
     public Observable<Long> mediaPositionObservable() {
         return mMediaPositionSubject.asObservable();
+    }
+
+    @NonNull
+    @Override
+    public Observable<Integer> playbackStateObservable() {
+        return mPlaybackStateSubject.asObservable();
     }
 
     @Nullable
@@ -101,6 +112,16 @@ public final class PlaybackDataImpl implements PlaybackData {
         synchronized (mMediaPositionSubjectLock) {
             final Long value = mMediaPositionSubject.getValue();
             return value != null ? value : 0L;
+        }
+    }
+
+    @NonNull
+    @Override
+    public Integer getPlaybackState() {
+        synchronized (mPlaybackStateSubjectLock) {
+            final Integer value = mPlaybackStateSubject.getValue();
+            //noinspection WrongConstant
+            return value != null ? value : PlaybackState.STATE_IDLE;
         }
     }
 
@@ -136,6 +157,13 @@ public final class PlaybackDataImpl implements PlaybackData {
     public void setMediaPosition(final long position) {
         synchronized (mMediaPositionSubjectLock) {
             mMediaPositionSubject.onNext(position);
+        }
+    }
+
+    @Override
+    public void setPlaybackState(@PlaybackState.State final int state) {
+        synchronized (mPlaybackStateSubjectLock) {
+            mPlaybackStateSubject.onNext(state);
         }
     }
 

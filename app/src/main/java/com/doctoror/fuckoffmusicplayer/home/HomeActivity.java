@@ -23,6 +23,8 @@ import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
 import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
 import org.parceler.Parcel;
@@ -42,8 +44,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscription;
 
 /**
  * "Library" activity
@@ -53,6 +60,9 @@ public final class HomeActivity extends BaseActivity {
     private static final String KEY_INSTANCE_STATE = "INSTANCE_STATE";
 
     private ActionBarDrawerToggle mActionBarDrawerToggle;
+
+    @BindView(R.id.playbackStatusCard)
+    View mPlaybackStatusCard;
 
     @BindView(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
@@ -66,6 +76,11 @@ public final class HomeActivity extends BaseActivity {
     private int mNavigationItem = R.id.navigationRecentActivity;
 
     private Integer mDrawerClosedAction;
+
+    @Inject
+    PlaybackData mPlaybackData;
+
+    private Subscription mMediaSubscription;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -119,6 +134,28 @@ public final class HomeActivity extends BaseActivity {
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mActionBarDrawerToggle.syncState();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mMediaSubscription = mPlaybackData.queuePositionObservable()
+                .subscribe(this::onQueuePositionChanged);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mMediaSubscription != null) {
+            mMediaSubscription.unsubscribe();
+            mMediaSubscription = null;
+        }
+    }
+
+    private void onQueuePositionChanged(final int position) {
+        final List<Media> queue = mPlaybackData.getQueue();
+        mPlaybackStatusCard.setVisibility(queue != null && position < queue.size()
+                ? View.VISIBLE : View.GONE);
     }
 
     private void performDrawerClosedAction() {

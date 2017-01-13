@@ -45,7 +45,7 @@ final class PlaybackNotification {
     private static final String TAG = "PlaybackNotification";
 
     private PlaybackNotification() {
-
+        throw new UnsupportedOperationException();
     }
 
     @NonNull
@@ -78,8 +78,6 @@ final class PlaybackNotification {
                 .hasCoverTransition(false)
                 .hasListViewTransition(false)
                 .build();
-
-        contentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         final NotificationCompat.Style style = new NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.getSessionToken())

@@ -598,6 +598,7 @@ public final class PlaybackService extends Service {
             mState = state;
             sLastKnownState = state;
             mExecutor.submit(() -> reportPlaybackState(state, mErrorMessage));
+            mPlaybackData.setPlaybackState(state);
             broadcastState();
         }
     }

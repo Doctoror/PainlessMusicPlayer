@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Copyright 2017 Yaroslav Mytkalyk
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="model"
+            type="com.doctoror.fuckoffmusicplayer.home.PlaybackStatusBarModel"/>
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?attr/selectableItemBackground">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline50percent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5"/>
+
+        <ImageView
+            android:id="@+id/albumArt"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:placeholder="@{@drawable/album_art_placeholder}"
+            app:imageUri="@{model.imageUri}"
+            tools:src="@drawable/album_art_placeholder"
+            tools:ignore="ContentDescription"/>
+
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginEnd="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcRes="@{model.btnPlayRes}"
+            app:tintAttr="@{android.R.attr.textColorPrimary}"
+            tools:src="@drawable/ic_play_arrow_white_24dp"
+            tools:ignore="ContentDescription"/>
+
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="12dp"
+            android:lines="1"
+            android:ellipsize="end"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="16sp"
+            android:textIsSelectable="false"
+            app:layout_constraintStart_toEndOf="@id/albumArt"
+            app:layout_constraintEnd_toStartOf="@id/btnPlay"
+            app:layout_constraintBottom_toTopOf="@id/guideline50percent"
+            app:text="@{model.title}"
+            tools:text="Title"
+            tools:ignore="RtlSymmetry"/>
+
+        <TextView
+            android:id="@+id/textArtist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:paddingBottom="12dp"
+            android:lines="1"
+            android:ellipsize="end"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="14sp"
+            android:textIsSelectable="false"
+            app:layout_constraintTop_toTopOf="@id/guideline50percent"
+            app:layout_constraintStart_toEndOf="@id/albumArt"
+            app:layout_constraintEnd_toStartOf="@id/btnPlay"
+            app:text="@{model.artist}"
+            tools:text="Artist"
+            tools:ignore="RtlSymmetry"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

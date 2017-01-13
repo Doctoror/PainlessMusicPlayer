@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
+import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.support.annotation.NonNull;
@@ -38,6 +39,9 @@ public interface PlaybackData {
     @NonNull
     Observable<Long> mediaPositionObservable();
 
+    @NonNull
+    Observable<Integer> playbackStateObservable();
+
     @Nullable
     List<Media> getQueue();
 
@@ -47,6 +51,11 @@ public interface PlaybackData {
     @NonNull
     Long getMediaPosition();
 
+    @NonNull
+    @PlaybackState.State
+    Integer getPlaybackState();
+
+    void setPlaybackState(@PlaybackState.State int state);
     void setPlayQueue(@Nullable List<Media> queue);
     void setPlayQueuePosition(int position);
     void setMediaPosition(long position);

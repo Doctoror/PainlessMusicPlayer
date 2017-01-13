@@ -44,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:src="@drawable/ic_more_vert_black_24dp"/>
+        tools:src="@drawable/ic_more_vert_black_24dp" tools:layout_editor_absoluteX="272dp"/>
 
     <TextView
         android:id="@+id/textTitle"
@@ -60,9 +60,9 @@
         android:textIsSelectable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnMenu"
-        app:layout_constraintBottom_toTopOf="@id/guideline50percent"
+        app:layout_constraintBottom_toTopOf="@+id/guideline50percent"
         tools:text="Title"
-        tools:ignore="RtlSymmetry"/>
+        tools:ignore="RtlSymmetry" tools:layout_editor_absoluteX="0dp"/>
 
     <TextView
         android:id="@+id/textDuration"
@@ -79,7 +79,7 @@
         android:textIsSelectable="false"
         app:layout_constraintEnd_toStartOf="@id/btnMenu"
         app:layout_constraintTop_toTopOf="@+id/guideline50percent"
-        tools:text="3:28"/>
+        tools:text="3:28" tools:layout_editor_absoluteX="243dp"/>
 
     <TextView
         android:id="@+id/textArtist"
@@ -92,10 +92,10 @@
         android:ellipsize="end"
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="14sp"
-        app:layout_constraintTop_toTopOf="@id/guideline50percent"
+        app:layout_constraintTop_toTopOf="@+id/guideline50percent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/textDuration"
         tools:text="Artist"
-        tools:ignore="SelectableText"/>
+        tools:ignore="SelectableText" tools:layout_editor_absoluteX="0dp"/>
 
 </android.support.constraint.ConstraintLayout>
