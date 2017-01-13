@@ -24,6 +24,7 @@ Min API level 16
  - Android Wear app
  - Android Auto support
  - Remote controls support (headset, car audio)
+ - RTL support
  
 Missing features you might expect from a Music Player
  - No folder browser
