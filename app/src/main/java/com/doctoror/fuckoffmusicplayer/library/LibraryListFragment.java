@@ -19,6 +19,7 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
+import com.doctoror.fuckoffmusicplayer.util.SearchViewUtils;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
 import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
@@ -42,6 +43,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -111,7 +113,11 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_library_list, menu);
         if (hasPermissions()) {
-            final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+            final SearchView searchView = (SearchView) menu.findItem(R.id.actionFilter)
+                    .getActionView();
+            SearchViewUtils.setSearchIcon(searchView, R.drawable.ic_filter_list_white_24dp);
+            searchView.setQueryHint(getText(R.string.Filter));
+
             searchView.setQuery(mSearchSubject.getValue(), false);
             searchView.setOnCloseListener(() -> {
                 mSearchIconified = true;
@@ -119,13 +125,14 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
             });
             searchView.setOnSearchClickListener((v) -> mSearchIconified = false);
             searchView.setIconified(mSearchIconified);
+
             RxSearchView
                     .queryTextChanges(searchView)
                     .debounce(400, TimeUnit.MILLISECONDS)
                     .subscribe(t -> mSearchSubject.onNext(t.toString()));
 
         } else {
-            menu.findItem(R.id.search).setVisible(false);
+            menu.findItem(R.id.actionFilter).setVisible(false);
         }
     }
 
