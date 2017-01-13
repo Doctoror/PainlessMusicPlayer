@@ -26,10 +26,10 @@ import android.database.Cursor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.util.ArraySet;
 import android.text.TextUtils;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import rx.Observable;
@@ -129,7 +129,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                         MediaStore.Audio.Media.ALBUM_ID,
                         MediaStore.Audio.Media.DATE_ADDED
                 })
-                .setSortOrder(MediaStore.Audio.Media.DATE_ADDED)
+                .setSortOrder(MediaStore.Audio.Media.DATE_ADDED + " DESC")
                 .create();
 
         return RxCursorLoader.single(mContentResolver, recentTracksQuery)
@@ -139,7 +139,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @NonNull
     private Collection<Long> albumIds(@NonNull final Cursor c, final int limit) {
-        final Set<Long> ids = new ArraySet<>(limit);
+        final Set<Long> ids = new LinkedHashSet<>(limit);
         if (limit == 0) {
             return ids;
         }
