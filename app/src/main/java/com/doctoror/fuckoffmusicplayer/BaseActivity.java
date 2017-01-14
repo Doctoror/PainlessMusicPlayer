@@ -28,17 +28,25 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
+import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Subscription;
+
 public abstract class BaseActivity extends AppCompatActivity {
+
+    private final Collection<Subscription> mSubscriptions = new ArraySet<>();
 
     @Theme.ThemeType
     private int mThemeUsed;
@@ -60,6 +68,23 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         mFragmentTransactionsAllowed = true;
         mFinishingAfterTransition = false;
+    }
+
+    /**
+     * Register a {@link Subscription} that will be unsubscribed onStop()
+     *
+     * @param subscription the {@link Subscription} to register
+     * @return the registered {@link Subscription}
+     */
+    @NonNull
+    @MainThread
+    public Subscription registerOnStartSubscription(@NonNull final Subscription subscription) {
+        //noinspection ConstantConditions
+        if (subscription == null) {
+            throw new NullPointerException("subscription must not be null");
+        }
+        mSubscriptions.add(subscription);
+        return subscription;
     }
 
     public Settings getSettings() {
@@ -96,6 +121,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mFragmentTransactionsAllowed = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        for (final Subscription s : mSubscriptions) {
+            s.unsubscribe();
+        }
+        mSubscriptions.clear();
     }
 
     @Override

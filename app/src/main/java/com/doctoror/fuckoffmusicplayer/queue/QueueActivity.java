@@ -21,12 +21,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
@@ -53,6 +55,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.support.v13.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
@@ -310,6 +314,10 @@ public final class QueueActivity extends BaseActivity
             fab.post(() -> fab.requestLayout());
             mFabAnchorParams = null;
         }
+        if (isNowPlayingQueue) {
+            registerOnStartSubscription(mPlaybackData.playbackStateObservable()
+                    .subscribe(this::onPlaybackStateChanged));
+        }
     }
 
     @Override
@@ -363,6 +371,19 @@ public final class QueueActivity extends BaseActivity
     @OnClick(R.id.fab)
     public void onFabClick(@NonNull final View view) {
         onPlayClick(view, 0);
+    }
+
+    @WorkerThread
+    private void onPlaybackStateChanged(@PlaybackState.State final int state) {
+        final Media media = state == PlaybackState.STATE_PLAYING
+            ? PlaybackDataUtils.getCurrentMedia(mPlaybackData) : null;
+        //noinspection WrongThread
+        runOnUiThread(() -> onNowPlayingMediaChanged(media));
+    }
+
+    @UiThread
+    private void onNowPlayingMediaChanged(@Nullable final Media media) {
+        mAdapter.setNowPlayingId(media != null ? media.getId() : 0);
     }
 
     private void onPlayClick(@NonNull final View clickedView,

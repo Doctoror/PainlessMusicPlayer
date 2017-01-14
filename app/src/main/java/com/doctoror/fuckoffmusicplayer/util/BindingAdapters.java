@@ -135,6 +135,13 @@ public final class BindingAdapters {
             @DrawableRes final int res,
             @AttrRes final int tintAttr) {
         Drawable src = ContextCompat.getDrawable(imageView.getContext(), res);
+        setSrcTintedFromAttr(imageView, src, tintAttr);
+    }
+
+    @BindingAdapter({"src", "tintAttr"})
+    public static void setSrcTintedFromAttr(@NonNull final ImageView imageView,
+            @Nullable Drawable src,
+            @AttrRes final int tintAttr) {
         if (src != null) {
             src = DrawableUtils
                     .getTintedDrawableFromAttrTint(imageView.getContext(), src, tintAttr);

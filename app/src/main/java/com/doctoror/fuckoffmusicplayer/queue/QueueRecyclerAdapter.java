@@ -22,6 +22,7 @@ import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,13 +46,65 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
         void onTracksSwapped(int i, int j);
     }
 
+    private static final int VIEW_TYPE_DEFAULT = 0;
+    private static final int VIEW_TYPE_NOW_PLAYING = 1;
+
     private final Context mContext;
 
     private TrackListener mTrackListener;
 
+    private long mNowPlayingId;
+
     QueueRecyclerAdapter(@NonNull final Context context, @NonNull final List<Media> items) {
         super(context, items);
+        setHasStableIds(true);
         mContext = context;
+    }
+
+    @UiThread
+    private int getItemPosForId(final long id) {
+        for (int i = 0; i < getItemCount(); i++) {
+            if (getItemId(i) == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public long getItemId(final int position) {
+        return getItem(position).getId();
+    }
+
+    @Override
+    public int getItemViewType(final int position) {
+        return getItemId(position) == mNowPlayingId ?
+                VIEW_TYPE_NOW_PLAYING : VIEW_TYPE_DEFAULT;
+    }
+
+    @UiThread
+    void setNowPlayingId(final long nowPlayingId) {
+        if (mNowPlayingId != nowPlayingId) {
+            final int oldItemPos = getItemPosForId(mNowPlayingId);
+            final int newItemPos = getItemPosForId(nowPlayingId);
+            mNowPlayingId = nowPlayingId;
+
+            if (oldItemPos != -1 && newItemPos != -1) {
+                if (Math.abs(oldItemPos - newItemPos) == 1) {
+                    // Update as range
+                    notifyItemRangeChanged(oldItemPos < newItemPos
+                            ? oldItemPos : newItemPos, 2);
+                } else {
+                    // Update both
+                    notifyItemChanged(oldItemPos);
+                    notifyItemChanged(newItemPos);
+                }
+            } else if (oldItemPos != -1) {
+                notifyItemChanged(oldItemPos);
+            } else if (newItemPos != -1) {
+                notifyItemChanged(newItemPos);
+            }
+        }
     }
 
     void removeItemWithId(final long id) {
@@ -132,15 +185,40 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
 
     @Override
     public QueueItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+        switch (viewType) {
+            case VIEW_TYPE_DEFAULT:
+                return onCreateViewHolderDefault(parent);
+
+            case VIEW_TYPE_NOW_PLAYING:
+                return onCreateViewHolderNowPlaying(parent);
+
+            default:
+                throw new IllegalArgumentException("Unexpected viewType: " + viewType);
+        }
+    }
+
+    @NonNull
+    private QueueItemViewHolder onCreateViewHolderDefault(final ViewGroup parent) {
         final QueueItemViewHolder vh = new QueueItemViewHolder(
                 getLayoutInflater().inflate(R.layout.list_item_media, parent, false));
+        initViewHolder(vh);
+        return vh;
+    }
 
+    @NonNull
+    private QueueItemViewHolder onCreateViewHolderNowPlaying(final ViewGroup parent) {
+        final QueueItemViewHolder vh = new QueueItemViewHolder(
+                getLayoutInflater().inflate(R.layout.list_item_media_now_playing, parent, false));
+        initViewHolder(vh);
+        return vh;
+    }
+
+    private void initViewHolder(@NonNull final QueueItemViewHolder vh) {
         vh.btnMenu.setImageDrawable(DrawableUtils.getTintedDrawableFromAttrTint(mContext,
                 R.drawable.ic_more_vert_black_24dp,
                 android.R.attr.textColorPrimary));
 
         vh.itemView.setOnClickListener(v -> onTrackClick(vh.itemView, vh.getAdapterPosition()));
         vh.btnMenu.setOnClickListener(v -> onMenuClick(v, vh.getAdapterPosition()));
-        return vh;
     }
 }

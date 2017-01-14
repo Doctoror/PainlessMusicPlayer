@@ -33,6 +33,19 @@
         tools:layout_editor_absoluteY="31dp"
         tools:layout_editor_absoluteX="0dp"/>
 
+    <com.doctoror.fuckoffmusicplayer.widget.AutoStartSiriWaveView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:waveAmount="4"
+        app:waveColor="@color/dividerBackground"
+        app:waveFrequency="2.4"
+        app:waveVerticalPosition="2"
+        app:wavePhaseShift="0.28"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <ImageButton
         android:id="@+id/btnMenu"
         android:layout_width="wrap_content"

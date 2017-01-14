@@ -1,1 +1,1 @@
-include ':app', ':wear', ':commons'
+include ':app', ':wear', ':commons', ':siriwaveview'
