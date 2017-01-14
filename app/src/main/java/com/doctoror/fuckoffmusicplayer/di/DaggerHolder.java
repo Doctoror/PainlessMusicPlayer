@@ -44,11 +44,14 @@ public final class DaggerHolder {
     private final WearComponent mWearComponent;
 
     private DaggerHolder(@NonNull final Context context) {
+        final AppContextModule appContextModule = new AppContextModule(context);
         mMainComponent = DaggerMainComponent.builder()
-                .appContextModule(new AppContextModule(context))
+                .appContextModule(appContextModule)
                 .build();
 
-        mWearComponent = DaggerWearComponent.builder().build();
+        mWearComponent = DaggerWearComponent.builder()
+                .appContextModule(appContextModule)
+                .build();
     }
 
     @NonNull
