@@ -23,7 +23,9 @@ import dagger.Component;
  * Wear Component
  */
 @Singleton
-@Component
+@Component(modules = {
+        AppContextModule.class
+})
 public interface WearComponent {
 
 }
