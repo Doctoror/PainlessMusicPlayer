@@ -43,6 +43,7 @@ Does not support FLAC.
 
 ![screenshot](/screenshots/recent_activity.png?raw=true)
 ![screenshot](/screenshots/now_playing.png?raw=true)
+![screenshot](/screenshots/navigation_drawer.png?raw=true)
 ![screenshot](/screenshots/albums.png?raw=true)
 ![screenshot](/screenshots/effects.png?raw=true)
 ![screenshot](/screenshots/notification.png?raw=true)
