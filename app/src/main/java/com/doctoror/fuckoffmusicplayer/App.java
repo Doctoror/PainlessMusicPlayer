@@ -27,10 +27,15 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
+import javax.inject.Inject;
+
 /**
  * Application
  */
 public final class App extends Application {
+
+    @Inject
+    Settings mSettings;
 
     @Override
     public void onCreate() {
@@ -65,12 +70,11 @@ public final class App extends Application {
     }
 
     private void initDagger() {
-        DaggerHolder.getInstance(this);
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
     }
 
     private void initTheme() {
-        AppCompatDelegate.setDefaultNightMode(
-                Theme.getDayNightMode(Settings.getInstance(this).getThemeType()));
+        AppCompatDelegate.setDefaultNightMode(Theme.getDayNightMode(mSettings.getThemeType()));
     }
 
     private void initAudioTrack() {

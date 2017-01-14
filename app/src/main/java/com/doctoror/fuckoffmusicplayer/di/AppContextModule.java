@@ -15,6 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import com.doctoror.fuckoffmusicplayer.settings.Settings;
+import com.doctoror.fuckoffmusicplayer.settings.ProtoSettings;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -47,5 +50,11 @@ final class AppContextModule {
     @Singleton
     ContentResolver provideContentResolver() {
         return mContext.getContentResolver();
+    }
+
+    @Provides
+    @Singleton
+    Settings provideSettings(@NonNull final Context context) {
+        return ProtoSettings.getInstance(context);
     }
 }

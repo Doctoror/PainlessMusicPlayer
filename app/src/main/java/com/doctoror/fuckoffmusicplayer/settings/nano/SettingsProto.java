@@ -25,10 +25,7 @@ public interface SettingsProto {
     // optional int32 theme = 1;
     public int theme;
 
-    // optional int32 libraryTab = 2;
-    public int libraryTab;
-
-    // optional bool scrobbleEnabled = 3;
+    // optional bool scrobbleEnabled = 2;
     public boolean scrobbleEnabled;
 
     public Settings() {
@@ -37,7 +34,6 @@ public interface SettingsProto {
 
     public Settings clear() {
       theme = 0;
-      libraryTab = 0;
       scrobbleEnabled = false;
       cachedSize = -1;
       return this;
@@ -49,11 +45,8 @@ public interface SettingsProto {
       if (this.theme != 0) {
         output.writeInt32(1, this.theme);
       }
-      if (this.libraryTab != 0) {
-        output.writeInt32(2, this.libraryTab);
-      }
       if (this.scrobbleEnabled != false) {
-        output.writeBool(3, this.scrobbleEnabled);
+        output.writeBool(2, this.scrobbleEnabled);
       }
       super.writeTo(output);
     }
@@ -65,13 +58,9 @@ public interface SettingsProto {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
             .computeInt32Size(1, this.theme);
       }
-      if (this.libraryTab != 0) {
-        size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeInt32Size(2, this.libraryTab);
-      }
       if (this.scrobbleEnabled != false) {
         size += com.google.protobuf.nano.CodedOutputByteBufferNano
-            .computeBoolSize(3, this.scrobbleEnabled);
+            .computeBoolSize(2, this.scrobbleEnabled);
       }
       return size;
     }
@@ -96,10 +85,6 @@ public interface SettingsProto {
             break;
           }
           case 16: {
-            this.libraryTab = input.readInt32();
-            break;
-          }
-          case 24: {
             this.scrobbleEnabled = input.readBool();
             break;
           }

@@ -16,8 +16,10 @@
 package com.doctoror.fuckoffmusicplayer.reporter;
 
 import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.util.Objects;
 
 import android.content.Context;
@@ -26,6 +28,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * {@link PlaybackReporter} for ScrobbleDroid
@@ -46,8 +50,12 @@ public final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
     private Media mMedia;
     private boolean mIsPlaying;
 
+    @Inject
+    Settings mSettings;
+
     ScrobbleDroidPlaybackReporter(@NonNull final Context context,
             @Nullable final Media currentMedia) {
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
         mContext = context;
         mMedia = currentMedia;
         mIsPlaying = PlaybackService.getLastKnownState() == PlaybackState.STATE_PLAYING;
@@ -74,7 +82,7 @@ public final class ScrobbleDroidPlaybackReporter implements PlaybackReporter {
     }
 
     private void report(@Nullable final Media media, final boolean isPlaying) {
-        if (media != null) {
+        if (mSettings.isScrobbleEnabled() && media != null) {
             final Intent intent = new Intent(ACTION);
             intent.putExtra(PLAYING, isPlaying);
             intent.putExtra(ARTIST, media.getArtist());

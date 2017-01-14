@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.reporter;
 
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.settings.Settings;
@@ -29,11 +30,13 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Simple Last.fm Scrobbler playback reporter
  * https://github.com/tgwizard/sls/blob/master/Developer's%20API.md
  */
-final class SLSPlaybackReporter implements PlaybackReporter {
+public final class SLSPlaybackReporter implements PlaybackReporter {
 
     private static final String ACTION = "com.adam.aslfms.notify.playstatechanged";
 
@@ -54,18 +57,18 @@ final class SLSPlaybackReporter implements PlaybackReporter {
     @NonNull
     private final Context mContext;
 
-    @NonNull
-    private final Settings mSettings;
-
     private Media mMedia;
 
     @PlaybackState.State
     private int mState;
 
+    @Inject
+    Settings mSettings;
+
     SLSPlaybackReporter(@NonNull final Context context,
             @Nullable final Media currentMedia) {
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
         mContext = context;
-        mSettings = Settings.getInstance(context);
         mMedia = currentMedia;
         mState = PlaybackService.getLastKnownState();
     }

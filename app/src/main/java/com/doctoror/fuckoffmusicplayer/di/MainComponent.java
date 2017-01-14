@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import com.doctoror.fuckoffmusicplayer.App;
+import com.doctoror.fuckoffmusicplayer.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.home.PlaybackStatusFragment;
 import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerService;
@@ -36,6 +38,8 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.reporter.SLSPlaybackReporter;
+import com.doctoror.fuckoffmusicplayer.reporter.ScrobbleDroidPlaybackReporter;
 
 import javax.inject.Singleton;
 
@@ -51,6 +55,10 @@ import dagger.Component;
         PlaylistsModule.class
 })
 public interface MainComponent {
+
+    void inject(App target);
+
+    void inject(BaseActivity target);
 
     void inject(HomeActivity target);
 
@@ -87,6 +95,10 @@ public interface MainComponent {
     void inject(SearchUtils target);
 
     void inject(PlaybackService target);
+
+    void inject(ScrobbleDroidPlaybackReporter target);
+
+    void inject(SLSPlaybackReporter target);
 
     void inject(MediaManagerService target);
 
