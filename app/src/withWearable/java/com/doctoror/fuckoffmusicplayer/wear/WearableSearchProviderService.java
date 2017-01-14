@@ -32,7 +32,6 @@ import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.util.Box;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -188,11 +187,12 @@ public final class WearableSearchProviderService extends IntentService {
 
     @NonNull
     private WearSearchData.Album[] queryAlbums(@NonNull final String query) {
-        final Box<WearSearchData.Album[]> resultsHolder = new Box<>();
-        RxUtils.subscribeBlocking(mAlbumsProvider.load(query, LIMIT)
+        return mAlbumsProvider.load(query, LIMIT)
                 .subscribeOn(Schedulers.io())
-                .map(this::cursorToWearSearchDataAlbum), resultsHolder);
-        return resultsHolder.getValue();
+                .map(this::cursorToWearSearchDataAlbum)
+                .take(1)
+                .toBlocking()
+                .single();
     }
 
     @NonNull
@@ -210,11 +210,12 @@ public final class WearableSearchProviderService extends IntentService {
 
     @NonNull
     private WearSearchData.Artist[] queryArtists(@NonNull final String query) {
-        final Box<WearSearchData.Artist[]> resultsHolder = new Box<>();
-        RxUtils.subscribeBlocking(mArtistsProvider.load(query, LIMIT)
+        return mArtistsProvider.load(query, LIMIT)
                 .subscribeOn(Schedulers.io())
-                .map(this::cursorToWearSearchDataArtist), resultsHolder);
-        return resultsHolder.getValue();
+                .map(this::cursorToWearSearchDataArtist)
+                .take(1)
+                .toBlocking()
+                .single();
     }
 
     @NonNull
@@ -232,11 +233,12 @@ public final class WearableSearchProviderService extends IntentService {
 
     @NonNull
     private WearSearchData.Track[] queryTracks(@NonNull final String query) {
-        final Box<WearSearchData.Track[]> resultsHolder = new Box<>();
-        RxUtils.subscribeBlocking(mTracksProvider.load(query, LIMIT_TRACKS, false)
+        return mTracksProvider.load(query, LIMIT_TRACKS, false)
                 .subscribeOn(Schedulers.io())
-                .map(this::cursorToWearSearchDataTrack), resultsHolder);
-        return resultsHolder.getValue();
+                .map(this::cursorToWearSearchDataTrack)
+                .take(1)
+                .toBlocking()
+                .single();
     }
 
     @NonNull
