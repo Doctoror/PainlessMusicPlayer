@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.effects;
 
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.f2prateek.dart.Dart;
 
 import android.os.Bundle;

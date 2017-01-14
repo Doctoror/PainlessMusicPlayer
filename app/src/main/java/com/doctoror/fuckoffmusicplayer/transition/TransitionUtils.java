@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.transition;
 
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 
 import android.annotation.TargetApi;
 import android.app.SharedElementCallback;

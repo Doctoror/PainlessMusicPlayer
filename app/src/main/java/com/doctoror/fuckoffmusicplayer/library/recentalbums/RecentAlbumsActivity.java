@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.recentalbums;
 
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.f2prateek.dart.HensonNavigable;
 
 import android.os.Bundle;

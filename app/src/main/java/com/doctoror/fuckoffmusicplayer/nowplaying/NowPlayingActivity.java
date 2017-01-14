@@ -24,7 +24,7 @@ import com.bumptech.glide.request.target.Target;
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.StringUtils;
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
@@ -74,7 +74,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscription;
 import rx.functions.Action1;
 
 /**
@@ -110,11 +109,6 @@ public final class NowPlayingActivity extends BaseActivity {
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
 
     private NowPlayingActivityIntentHandler mIntentHandler;
-
-    private Subscription mPlaybackStateSubscription;
-    private Subscription mQueueSubscription;
-    private Subscription mQueuePositionSubscription;
-    private Subscription mMediaPositionSubscription;
 
     private PlaybackParams mPlaybackParams;
 
@@ -358,25 +352,16 @@ public final class NowPlayingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mPlaybackStateSubscription = mPlaybackData.playbackStateObservable()
-                .subscribe(this::bindState);
+        registerOnStartSubscription(mPlaybackData.playbackStateObservable()
+                .subscribe(this::bindState));
 
-        mQueueSubscription = mPlaybackData.queueObservable().subscribe(mQueueAction);
+        registerOnStartSubscription(mPlaybackData.queueObservable().subscribe(mQueueAction));
 
-        mQueuePositionSubscription = mPlaybackData.queuePositionObservable()
-                .subscribe(mQueuePositionAction);
+        registerOnStartSubscription(mPlaybackData.queuePositionObservable()
+                .subscribe(mQueuePositionAction));
 
-        mMediaPositionSubscription = mPlaybackData.mediaPositionObservable()
-                .subscribe(mMediaPositionAction);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mMediaPositionSubscription.unsubscribe();
-        mQueuePositionSubscription.unsubscribe();
-        mQueueSubscription.unsubscribe();
-        mPlaybackStateSubscription.unsubscribe();
+        registerOnStartSubscription(mPlaybackData.mediaPositionObservable()
+                .subscribe(mMediaPositionAction));
     }
 
     void bindTrack(@Nullable Media track, final long position) {

@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.settings;
 
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.f2prateek.dart.Dart;

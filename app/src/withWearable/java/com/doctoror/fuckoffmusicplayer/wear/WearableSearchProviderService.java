@@ -33,7 +33,6 @@ import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.util.Box;
-import com.doctoror.fuckoffmusicplayer.util.RxUtils;
 
 import android.app.IntentService;
 import android.content.Context;

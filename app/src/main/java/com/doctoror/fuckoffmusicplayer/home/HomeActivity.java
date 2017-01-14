@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.home;
 
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
@@ -50,7 +50,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscription;
 
 /**
  * "Library" activity
@@ -79,8 +78,6 @@ public final class HomeActivity extends BaseActivity {
 
     @Inject
     PlaybackData mPlaybackData;
-
-    private Subscription mMediaSubscription;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -139,17 +136,8 @@ public final class HomeActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mMediaSubscription = mPlaybackData.queuePositionObservable()
-                .subscribe(this::onQueuePositionChanged);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mMediaSubscription != null) {
-            mMediaSubscription.unsubscribe();
-            mMediaSubscription = null;
-        }
+        registerOnStartSubscription(mPlaybackData.queuePositionObservable()
+                .subscribe(this::onQueuePositionChanged));
     }
 
     private void onQueuePositionChanged(final int position) {

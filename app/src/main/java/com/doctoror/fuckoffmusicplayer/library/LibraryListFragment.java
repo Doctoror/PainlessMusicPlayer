@@ -43,7 +43,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -73,7 +72,6 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     private final BehaviorSubject<String> mSearchSubject = BehaviorSubject.create();
     private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
 
-    private Subscription mSearchSubscription;
     private Subscription mOldSubscription;
     private Subscription mSubscription;
 
@@ -139,7 +137,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     @Override
     protected void onPermissionGranted() {
         mModel.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
-        mSearchSubscription = mSearchSubject.asObservable().subscribe(mSearchQueryObserver);
+        registerOnStartSubscription(mSearchSubject.asObservable().subscribe(mSearchQueryObserver));
         getActivity().invalidateOptionsMenu();
     }
 
@@ -176,33 +174,17 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     public void onStop() {
         super.onStop();
         SoftInputManager.hideSoftInput(getActivity());
-
         onDataReset();
-
-        if (mSearchSubscription != null) {
-            mSearchSubscription.unsubscribe();
-            mSearchSubscription = null;
-        }
-
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
-            mSubscription = null;
-        }
-
-        if (mOldSubscription != null) {
-            mOldSubscription.unsubscribe();
-            mOldSubscription = null;
-        }
     }
 
     private void restartLoader(@Nullable final String searchFilter) {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             mOldSubscription = mSubscription;
-            mSubscription = load(searchFilter)
+            mSubscription = registerOnStartSubscription(load(searchFilter)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mObserver);
+                    .subscribe(mObserver));
         } else {
             Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
         }

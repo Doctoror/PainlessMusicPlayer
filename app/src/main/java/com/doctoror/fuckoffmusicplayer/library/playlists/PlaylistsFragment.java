@@ -51,7 +51,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -68,7 +67,6 @@ public final class PlaylistsFragment extends LibraryListFragment {
     private boolean mLoading;
 
     private Toast mNoTracksToast;
-    private Subscription mLoadPlaylistSubscription;
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -121,7 +119,6 @@ public final class PlaylistsFragment extends LibraryListFragment {
     @Override
     public void onStop() {
         super.onStop();
-        unsubscribeFromPlaylistLoad();
         clearLoadingFlag();
     }
 
@@ -138,13 +135,6 @@ public final class PlaylistsFragment extends LibraryListFragment {
     @Override
     protected void onDataReset() {
         mAdapter.changeCursor(null);
-    }
-
-    private void unsubscribeFromPlaylistLoad() {
-        if (mLoadPlaylistSubscription != null) {
-            mLoadPlaylistSubscription.unsubscribe();
-            mLoadPlaylistSubscription = null;
-        }
     }
 
     private void showNoTracksToast() {
@@ -174,7 +164,6 @@ public final class PlaylistsFragment extends LibraryListFragment {
         } else {
             mLoading = true;
         }
-        unsubscribeFromPlaylistLoad();
 
         final Activity activity = getActivity();
         if (activity == null) {
@@ -206,7 +195,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
     private void loadLivePlaylistAndPlay(final int position,
             @NonNull final String name,
             @NonNull final LoadPlaylistAction action) {
-        mLoadPlaylistSubscription = Observable.<List<Media>>create(
+        registerOnStartSubscription(Observable.<List<Media>>create(
                 s -> s.onNext(action.load()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -235,7 +224,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
                             onPlaylistLoaded(itemViewForPosition(position), name, medias);
                         }
                     }
-                });
+                }));
     }
 
     private void goToRecentAlbumsActivity(@NonNull final Activity context,

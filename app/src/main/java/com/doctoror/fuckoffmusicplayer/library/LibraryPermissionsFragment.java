@@ -16,13 +16,13 @@
 package com.doctoror.fuckoffmusicplayer.library;
 
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions;
+import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,17 +31,14 @@ import android.support.v4.content.ContextCompat;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 11.01.17.
+ * {@link BaseFragment} that asks library permissions
  */
-public abstract class LibraryPermissionsFragment extends Fragment {
+public abstract class LibraryPermissionsFragment extends BaseFragment {
 
     private static final String KEY_INSTANCE_STATE = "LibraryPermissionsFragment.INSTANCE_STATE";
-
-    private Subscription mPermissionTimerSubscription;
 
     private boolean mHasPermissions;
     private boolean mPermissionRequested = RuntimePermissions.arePermissionsRequested();
@@ -89,9 +86,9 @@ public abstract class LibraryPermissionsFragment extends Fragment {
         } else if (mPermissionRequested) {
             onPermissionDenied();
         } else {
-            mPermissionTimerSubscription = Observable.timer(500, TimeUnit.MILLISECONDS)
+            registerOnStartSubscription(Observable.timer(500, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(l -> requestPermission());
+                    .subscribe(l -> requestPermission()));
         }
     }
 
@@ -122,15 +119,6 @@ public abstract class LibraryPermissionsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         requestPermissionIfNeeded();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mPermissionTimerSubscription != null) {
-            mPermissionTimerSubscription.unsubscribe();
-            mPermissionTimerSubscription = null;
-        }
     }
 
     @Parcel

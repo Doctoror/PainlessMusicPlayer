@@ -73,8 +73,6 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     private final RecentActivityFragmentModel mModel = new RecentActivityFragmentModel();
 
-    private Subscription mSubscription;
-
     private RecentActivityRecyclerAdapter mAdapter;
 
     @Inject
@@ -147,15 +145,6 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
                 (int) getResources().getDimension(R.dimen.recent_activity_grid_spacing)));
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
-            mSubscription = null;
-        }
-    }
-
     private void load() {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -166,12 +155,12 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
             final Single<Cursor> recentlyScanned =
                     mAlbumsProvider.loadRecentlyScannedAlbumsOnce(MAX_HISTORY_SECTION_LENGTH);
 
-            Observable.zip(recentlyPlayed.toObservable(),
+            registerOnStartSubscription(Observable.zip(recentlyPlayed.toObservable(),
                     recentlyScanned.toObservable(),
                     new RecyclerAdapterDataFunc(getResources()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mObserver);
+                    .subscribe(mObserver));
         } else {
             Log.w(TAG, "load() is called, READ_EXTERNAL_STORAGE is not granted");
         }

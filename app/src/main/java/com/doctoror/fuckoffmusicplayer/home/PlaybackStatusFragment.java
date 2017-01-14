@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.home;
 
 import com.bumptech.glide.Glide;
 import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.PlaybackStatusBarBinding;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
@@ -26,7 +27,6 @@ import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,17 +39,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Subscription;
-
 /**
  * Playback status bar fragment
  */
-public final class PlaybackStatusFragment extends Fragment {
+public final class PlaybackStatusFragment extends BaseFragment {
 
     private final PlaybackStatusBarModel mModel = new PlaybackStatusBarModel();
-
-    private Subscription mPlaybackStateSubscription;
-    private Subscription mMediaSubscription;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -76,24 +71,11 @@ public final class PlaybackStatusFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mPlaybackStateSubscription = mPlaybackData.playbackStateObservable()
-                .subscribe(this::onStateChanged);
+        registerOnStartSubscription(mPlaybackData.playbackStateObservable()
+                .subscribe(this::onStateChanged));
 
-        mMediaSubscription = mPlaybackData.queuePositionObservable()
-                .subscribe(this::onQueuePositionChanged);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mPlaybackStateSubscription != null) {
-            mPlaybackStateSubscription.unsubscribe();
-            mPlaybackStateSubscription = null;
-        }
-        if (mMediaSubscription != null) {
-            mMediaSubscription.unsubscribe();
-            mMediaSubscription = null;
-        }
+        registerOnStartSubscription(mPlaybackData.queuePositionObservable()
+                .subscribe(this::onQueuePositionChanged));
     }
 
     private void onStateChanged(@PlaybackState.State int state) {

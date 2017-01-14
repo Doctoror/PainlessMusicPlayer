@@ -22,9 +22,10 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
@@ -46,7 +47,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -89,7 +89,7 @@ import rx.schedulers.Schedulers;
 /**
  * Album lists fragment
  */
-public abstract class ConditionalAlbumListFragment extends Fragment {
+public abstract class ConditionalAlbumListFragment extends BaseFragment {
 
     private static final String TAG = "ConditionalAlbumListFragment";
 
@@ -227,16 +227,6 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
-            mSubscription = null;
-        }
-
-        if (mOldSubscription != null) {
-            mOldSubscription.unsubscribe();
-            mOldSubscription = null;
-        }
-
         mAdapter.changeCursor(null);
     }
 
@@ -326,10 +316,10 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             mOldSubscription = mSubscription;
-            mSubscription = load()
+            mSubscription = registerOnStartSubscription(load()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mObserver);
+                    .subscribe(mObserver));
         } else {
             Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
         }
@@ -387,13 +377,6 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
         }
     }
 
-    private void onDataLoaded() {
-        if (mOldSubscription != null) {
-            mOldSubscription.unsubscribe();
-            mOldSubscription = null;
-        }
-    }
-
     private void loadAlbumArt(@NonNull final Cursor cursor) {
         if (albumArt != null) {
             final String pic = findAlbumArt(cursor);
@@ -429,9 +412,9 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
     private void setPlaceholderAlbumArt() {
         Glide.clear(albumArt);
         //Must be a delay of from here. TODO Why?
-        Observable.timer(300, TimeUnit.MILLISECONDS)
+        registerOnStartSubscription(Observable.timer(300, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((l) -> animateToPlaceholder());
+                .subscribe((l) -> animateToPlaceholder()));
     }
 
     @Nullable
@@ -479,7 +462,11 @@ public abstract class ConditionalAlbumListFragment extends Fragment {
             } else {
                 showStateContent();
             }
-            onDataLoaded();
+
+            if (mOldSubscription != null) {
+                mOldSubscription.unsubscribe();
+                mOldSubscription = null;
+            }
         }
     };
 

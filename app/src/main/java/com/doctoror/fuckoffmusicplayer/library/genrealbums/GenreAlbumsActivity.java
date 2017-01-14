@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.genrealbums;
 
-import com.doctoror.fuckoffmusicplayer.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
