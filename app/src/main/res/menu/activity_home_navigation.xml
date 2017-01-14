@@ -24,10 +24,12 @@
 
         <item
             android:id="@+id/navigationRecentActivity"
+            android:icon="@drawable/ic_schedule_black_24dp"
             android:title="@string/Recent_Activity"/>
 
         <item
             android:id="@+id/navigationPlaylists"
+            android:icon="@drawable/ic_playlist_play_black_24dp"
             android:title="@string/Playlists"/>
 
     </group>
@@ -39,18 +41,22 @@
 
         <item
             android:id="@+id/navigationArtists"
+            android:icon="@drawable/ic_person_black_24dp"
             android:title="@string/Artists"/>
 
         <item
             android:id="@+id/navigationAlbums"
+            android:icon="@drawable/ic_album_black_24dp"
             android:title="@string/Albums"/>
 
         <item
             android:id="@+id/navigationGenres"
+            android:icon="@drawable/ic_library_music_black_24dp"
             android:title="@string/Genres"/>
 
         <item
             android:id="@+id/navigationTracks"
+            android:icon="@drawable/ic_audiotrack_black_24dp"
             android:title="@string/Tracks"/>
 
     </group>

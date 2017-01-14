@@ -27,7 +27,7 @@
     <item
         android:id="@+id/actionQueue"
         android:title="@string/Queue"
-        android:icon="@drawable/ic_playlist_play_white_24dp"
+        android:icon="@drawable/ic_queue_music_white_24dp"
         android:orderInCategory="1"
         app:showAsAction="ifRoom"/>
 
