@@ -208,18 +208,20 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         @Override
         public List<Object> call(final Cursor rPlayed, final Cursor rAdded) {
             final List<Object> data = new ArrayList<>(MAX_HISTORY_SECTION_LENGTH + 2);
+            try {
+                final List<AlbumItem> rPlayedList = AlbumItemsFactory.itemsFromCursor(rPlayed);
+                if (!rPlayedList.isEmpty()) {
+                    data.add(new RecentActivityHeader(
+                            mRes.getText(R.string.Recently_played_albums)));
+                    data.addAll(rPlayedList);
+                }
 
-            final List<AlbumItem> rPlayedList = AlbumItemsFactory.itemsFromCursor(rPlayed);
-            if (!rPlayedList.isEmpty()) {
-                data.add(new RecentActivityHeader(mRes.getText(R.string.Recently_played_albums)));
-                data.addAll(rPlayedList);
+                data.add(new RecentActivityHeader(mRes.getText(R.string.Recently_added)));
+                data.addAll(AlbumItemsFactory.itemsFromCursor(rAdded));
+            } finally {
+                rPlayed.close();
+                rAdded.close();
             }
-
-            data.add(new RecentActivityHeader(mRes.getText(R.string.Recently_added)));
-            data.addAll(AlbumItemsFactory.itemsFromCursor(rAdded));
-
-            rPlayed.close();
-            rAdded.close();
             return data;
         }
     }

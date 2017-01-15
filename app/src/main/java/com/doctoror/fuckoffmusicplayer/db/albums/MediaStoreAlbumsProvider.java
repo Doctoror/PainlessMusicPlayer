@@ -133,20 +133,24 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @NonNull
     private Collection<Long> albumIds(@NonNull final Cursor c, final int limit) {
-        final Set<Long> ids = new LinkedHashSet<>(limit);
-        if (limit == 0) {
-            return ids;
-        }
-        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-            final long id = c.getLong(0);
-            if (id > 0) {
-                ids.add(id);
-                if (ids.size() == limit) {
-                    return ids;
+        try {
+            final Set<Long> ids = new LinkedHashSet<>(limit);
+            if (limit == 0) {
+                return ids;
+            }
+            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                final long id = c.getLong(0);
+                if (id > 0) {
+                    ids.add(id);
+                    if (ids.size() == limit) {
+                        return ids;
+                    }
                 }
             }
+            return ids;
+        } finally {
+            c.close();
         }
-        return ids;
     }
 
     private Observable<Cursor> loadAlbumsOrderedByIds(@NonNull final Collection<Long> ids) {
