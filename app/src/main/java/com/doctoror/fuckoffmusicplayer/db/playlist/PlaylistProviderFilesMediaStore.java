@@ -25,10 +25,14 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
+import rx.Observable;
+
 /**
- * Created by Yaroslav Mytkalyk on 06.01.17.
+ * MediaStore {@link PlaylistProviderFiles}
  */
 public final class PlaylistProviderFilesMediaStore implements PlaylistProviderFiles {
 
@@ -43,22 +47,25 @@ public final class PlaylistProviderFilesMediaStore implements PlaylistProviderFi
 
     @NonNull
     @Override
-    public List<Media> fromFile(@NonNull final Uri uri) throws Exception {
-        final List<Media> playlist = mMediaProvider.load(MediaStore.Audio.Media.DATA.concat("=?"),
+    public Observable<List<Media>> fromFile(@NonNull final Uri uri) {
+        final Observable<List<Media>> fromProvider = mMediaProvider.load(
+                MediaStore.Audio.Media.DATA.concat("=?"),
                 new String[]{uri.getPath()},
                 null,
                 null);
 
-        if (playlist.isEmpty()) {
-            // Not found in MediaStore. Create Media from file data
-            playlist.add(mediaFromFile(uri));
-        }
-
-        return playlist;
+        return fromProvider.flatMap(queue -> queue.isEmpty()
+                    ? Observable.fromCallable(() -> queueFromFile(uri))
+                    : Observable.just(queue));
     }
 
     @NonNull
-    private static Media mediaFromFile(@NonNull final Uri uri) throws Exception {
+    private static List<Media> queueFromFile(@NonNull final Uri uri) throws IOException {
+        return Collections.singletonList(mediaFromFile(uri));
+    }
+
+    @NonNull
+    private static Media mediaFromFile(@NonNull final Uri uri) throws IOException {
         final MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
             r.setDataSource(uri.getPath());

@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
 import android.app.Activity;
@@ -30,9 +29,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.List;
-
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -50,7 +46,7 @@ public final class AlbumClickHandler {
             @NonNull final View view,
             final long albumId,
             @Nullable final String albumName) {
-        Observable.<List<Media>>create(s -> s.onNext(playlistProviderAlbums.fromAlbum(albumId)))
+        playlistProviderAlbums.fromAlbum(albumId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((queue) -> {

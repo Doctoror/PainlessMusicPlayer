@@ -29,15 +29,17 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Yaroslav Mytkalyk on 06.01.17.
- */
+import rx.Observable;
 
+/**
+ * MediaStore {@link PlaylistProviderTracks}
+ */
 public final class PlaylistProviderTracksMediaStore implements PlaylistProviderTracks {
 
     @NonNull
@@ -53,19 +55,26 @@ public final class PlaylistProviderTracksMediaStore implements PlaylistProviderT
         mMediaProvider = mediaProvider;
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromTracks(@NonNull final long[] trackIds, @Nullable final String sortOrder) {
-        return mMediaProvider
-                .load(SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, trackIds),
-                        null,
-                        sortOrder,
-                        null);
+    public Observable<List<Media>> fromTracks(@NonNull final long[] trackIds,
+            @Nullable final String sortOrder) {
+        return mMediaProvider.load(
+                SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, trackIds),
+                null,
+                sortOrder,
+                null);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromTracksSearch(@Nullable final String query) {
+    public Observable<List<Media>> fromTracksSearch(@Nullable final String query) {
+        return Observable.fromCallable(() -> queueFromTracksSearch(query));
+    }
+
+    @NonNull
+    @WorkerThread
+    private List<Media> queueFromTracksSearch(@Nullable final String query) {
         final List<Long> ids = new ArrayList<>(15);
 
         final StringBuilder sel = new StringBuilder(256);
@@ -78,16 +87,16 @@ public final class PlaylistProviderTracksMediaStore implements PlaylistProviderT
             sel.append(')');
         }
 
-        final List<Media> playlist = mMediaProvider.load(sel.toString(),
+        final List<Media> fromProvider = mMediaProvider.load(sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK,
-                QueueConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_PLAYLIST_SIZE).take(1).toBlocking().single();
 
-        for (final Media media : playlist) {
+        for (final Media media : fromProvider) {
             ids.add(media.getId());
         }
 
-        if (!TextUtils.isEmpty(query) && playlist.size() < QueueConfig.MAX_PLAYLIST_SIZE) {
+        if (!TextUtils.isEmpty(query) && fromProvider.size() < QueueConfig.MAX_PLAYLIST_SIZE) {
             // Search in genres for tracks with media ids that do not match found ids
             Cursor c = mContentResolver.query(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI,
                     new String[]{BaseColumns._ID},
@@ -107,16 +116,19 @@ public final class PlaylistProviderTracksMediaStore implements PlaylistProviderT
             }
 
             if (genreId != null) {
-                playlist.addAll(mMediaProvider.load(
+                fromProvider.addAll(mMediaProvider.load(
                         MediaStore.Audio.Genres.Members
                                 .getContentUri(MediaStoreVolumeNames.EXTERNAL, genreId),
                         SelectionUtils.notInSelection(MediaStore.Audio.Media._ID, ids),
                         null,
                         "RANDOM()",
-                        QueueConfig.MAX_PLAYLIST_SIZE - ids.size()));
+                        QueueConfig.MAX_PLAYLIST_SIZE - ids.size())
+                        .take(1)
+                        .toBlocking()
+                        .single());
             }
         }
 
-        return playlist;
+        return fromProvider;
     }
 }

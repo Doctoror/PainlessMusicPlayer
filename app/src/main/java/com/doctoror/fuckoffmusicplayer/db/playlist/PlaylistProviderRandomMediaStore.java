@@ -23,10 +23,11 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-/**
- * Created by Yaroslav Mytkalyk on 06.01.17.
- */
+import rx.Observable;
 
+/**
+ * MediaStore {@link PlaylistProviderRandom}
+ */
 public final class PlaylistProviderRandomMediaStore implements PlaylistProviderRandom {
 
     @NonNull
@@ -36,8 +37,8 @@ public final class PlaylistProviderRandomMediaStore implements PlaylistProviderR
         mMediaProvider = mediaProvider;
     }
 
-    @Override
-    public List<Media> randomPlaylist() {
+    @NonNull
+    public Observable<List<Media>> randomPlaylist() {
         return mMediaProvider.load(
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,

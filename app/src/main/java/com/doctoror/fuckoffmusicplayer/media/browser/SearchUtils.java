@@ -29,17 +29,21 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import rx.Observable;
 
 /**
  * Search utils
@@ -67,7 +71,7 @@ public final class SearchUtils {
     PlaylistProviderGenres genrePlaylistFactory;
 
     @Inject
-    PlaylistProviderTracks trackPlaylistFactory;
+    PlaylistProviderTracks tracksQueueProvider;
 
     @Inject
     PlaylistProviderRecentlyScanned recentlyScannedPlaylistFactory;
@@ -80,17 +84,16 @@ public final class SearchUtils {
         DaggerHolder.getInstance(context).mainComponent().inject(this);
     }
 
+    @WorkerThread
     public void onPlayFromMediaId(@NonNull final String mediaId) {
         if (MediaBrowserImpl.MEDIA_ID_RANDOM.equals(mediaId)) {
-            final List<Media> queue = randomPlaylistFactory.randomPlaylist();
-            play(mContext, queue, 0);
+            playFromQueueSource(randomPlaylistFactory.randomPlaylist());
         } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
-            final List<Media> queue = recentlyScannedPlaylistFactory.recentlyScannedPlaylist();
-            play(mContext, queue, 0);
+            playFromQueueSource(recentlyScannedPlaylistFactory.recentlyScannedPlaylist());
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM)) {
-            onPlayFromAlbumId(mediaId);
+            playFromQueueSource(queueSourceFromAlbumId(mediaId));
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE)) {
-            onPlayFromGenreId(mediaId);
+            playFromQueueSource(queueSourceFromGenreId(mediaId));
         } else {
             long id = -1;
             try {
@@ -104,33 +107,27 @@ public final class SearchUtils {
         }
     }
 
-    private void onPlayFromAlbumId(@NonNull final String mediaId) {
+    @NonNull
+    private Observable<List<Media>> queueSourceFromAlbumId(@NonNull final String mediaId) {
         final String albumId = mediaId
                 .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM.length());
-        long id = -1;
         try {
-            id = Long.parseLong(albumId);
+            return albumPlaylistFactory.fromAlbum(Long.parseLong(albumId));
         } catch (NumberFormatException e) {
-            Log.w(TAG, "Album id is not a number " + albumId, e);
-        }
-        if (id != -1) {
-            final List<Media> queue = albumPlaylistFactory.fromAlbum(id);
-            play(mContext, queue, 0);
+            return Observable
+                    .error(new NumberFormatException("Album id is not a number " + albumId));
         }
     }
 
-    private void onPlayFromGenreId(@NonNull final String mediaId) {
+    @NonNull
+    private Observable<List<Media>> queueSourceFromGenreId(@NonNull final String mediaId) {
         final String genreId = mediaId
                 .substring(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE.length());
-        long id = -1;
         try {
-            id = Long.parseLong(genreId);
+            return genrePlaylistFactory.fromGenre(Long.parseLong(genreId));
         } catch (NumberFormatException e) {
-            Log.w(TAG, "Genre id is not a number " + genreId, e);
-        }
-        if (id != -1) {
-            final List<Media> queue = genrePlaylistFactory.fromGenre(id);
-            play(mContext, queue, 0);
+            return Observable
+                    .error(new NumberFormatException("Genre id is not a number " + genreId));
         }
     }
 
@@ -147,13 +144,11 @@ public final class SearchUtils {
             }
         }
 
-        // If this media is not found in current playlist
-        if (position == -1) {
-            position = 0;
-            queue = mediaProvider.load(mediaId);
+        if (queue != null && position != -1) {
+            play(mContext, queue, position);
+        } else {
+            playFromQueueSource(mediaProvider.load(mediaId));
         }
-
-        play(mContext, queue, position);
     }
 
     public void onPlayFromSearch(@Nullable final String query,
@@ -163,6 +158,28 @@ public final class SearchUtils {
             return;
         }
 
+        queueSourceFromSearch(query, extras)
+                .take(1)
+                .subscribe(new ObserverAdapter<List<Media>>() {
+                    @Override
+                    public void onNext(final List<Media> queue) {
+                        QueueUtils.play(mContext, mPlaybackData, queue);
+                    }
+
+                    @Override
+                    public void onError(final Throwable e) {
+                        final String message = TextUtils.isEmpty(query)
+                                ? mContext.getString(R.string.No_media_found)
+                                : mContext.getString(R.string.No_media_found_for_s, query);
+
+                        PlaybackServiceControl.stopWithError(mContext, message);
+                    }
+                });
+    }
+
+    @NonNull
+    private Observable<List<Media>> queueSourceFromSearch(@NonNull final String query,
+            @Nullable final Bundle extras) {
         boolean isArtistFocus = false;
         boolean isAlbumFocus = false;
 
@@ -178,40 +195,46 @@ public final class SearchUtils {
             album = extras == null ? null : extras.getString(MediaStore.EXTRA_MEDIA_ALBUM);
         }
 
-        List<Media> queue = null;
+        Observable<List<Media>> source = null;
         if (isArtistFocus) {
-            queue = artistPlaylistFactory.fromArtistSearch(TextUtils.isEmpty(artist)
+            source = artistPlaylistFactory.fromArtistSearch(TextUtils.isEmpty(artist)
                     ? query : artist);
         } else if (isAlbumFocus) {
-            queue = albumPlaylistFactory.fromAlbumSearch(TextUtils.isEmpty(album)
+            source = albumPlaylistFactory.fromAlbumSearch(TextUtils.isEmpty(album)
                     ? query : album);
         }
 
-        if (queue == null || queue.isEmpty()) {
-            // No focus found, search by query for song title
-            queue = trackPlaylistFactory.fromTracksSearch(query);
+        if (source == null) {
+            source = tracksQueueProvider.fromTracksSearch(query);
+        } else {
+            source = source.flatMap(queue -> queue.isEmpty()
+                    ? tracksQueueProvider.fromTracksSearch(query)
+                    : Observable.just(queue));
         }
 
-        playFromSearch(queue, query);
+        return source;
     }
 
-    private void playFromSearch(@Nullable final List<Media> queue,
-            @Nullable final String query) {
-        if (queue != null && !queue.isEmpty()) {
-            QueueUtils.play(mContext, mPlaybackData, queue);
-        } else {
-            final String message = TextUtils.isEmpty(query)
-                    ? mContext.getString(R.string.No_media_found)
-                    : mContext.getString(R.string.No_media_found_for_s, query);
+    private void playFromQueueSource(@NonNull final Observable<List<Media>> source) {
+        source.take(1)
+                .subscribe(new ObserverAdapter<List<Media>>() {
+                    @Override
+                    public void onNext(final List<Media> queue) {
+                        play(mContext, queue, 0);
+                    }
 
-            PlaybackServiceControl.stopWithError(mContext, message);
-        }
+                    @Override
+                    public void onError(final Throwable e) {
+                        PlaybackServiceControl.stopWithError(mContext,
+                                mContext.getString(R.string.No_media_found));
+                    }
+                });
     }
 
     private void play(@NonNull final Context context,
-            @Nullable final List<Media> queue,
+            @NonNull final List<Media> queue,
             final int position) {
-        if (queue != null && !queue.isEmpty()) {
+        if (!queue.isEmpty()) {
             QueueUtils.play(context, mPlaybackData, queue, position);
         } else {
             PlaybackServiceControl

@@ -17,13 +17,18 @@ package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
+import rx.Observable;
+
 /**
- * Factory for creating "recently scanned" playlist
+ * Creates "recently scanned" playlist
  */
 public interface PlaylistProviderRecentlyScanned {
 
-    List<Media> recentlyScannedPlaylist();
+    @NonNull
+    Observable<List<Media>> recentlyScannedPlaylist();
 
 }

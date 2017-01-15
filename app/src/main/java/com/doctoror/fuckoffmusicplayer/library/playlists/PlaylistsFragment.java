@@ -180,13 +180,13 @@ public final class PlaylistsFragment extends LibraryListFragment {
             case LivePlaylist.TYPE_RECENTLY_SCANNED:
                 loadLivePlaylistAndPlay(position,
                         livePlaylist.getTitle().toString(),
-                        () -> mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
+                        mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
                 break;
 
             case LivePlaylist.TYPE_RANDOM_PLAYLIST:
                 loadLivePlaylistAndPlay(position,
                         livePlaylist.getTitle().toString(),
-                        () -> mRandomPlaylistFactory.randomPlaylist());
+                        mRandomPlaylistFactory.randomPlaylist());
                 break;
 
         }
@@ -194,9 +194,8 @@ public final class PlaylistsFragment extends LibraryListFragment {
 
     private void loadLivePlaylistAndPlay(final int position,
             @NonNull final String name,
-            @NonNull final LoadPlaylistAction action) {
-        registerOnStartSubscription(Observable.<List<Media>>create(
-                s -> s.onNext(action.load()))
+            @NonNull final Observable<List<Media>> queueSource) {
+        registerOnStartSubscription(queueSource
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Media>>() {
@@ -316,10 +315,5 @@ public final class PlaylistsFragment extends LibraryListFragment {
                     id,
                     name);
         }
-    }
-
-    private interface LoadPlaylistAction {
-
-        List<Media> load();
     }
 }

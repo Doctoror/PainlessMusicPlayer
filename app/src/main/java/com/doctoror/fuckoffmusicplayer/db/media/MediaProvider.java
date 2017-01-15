@@ -22,14 +22,16 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
+import rx.Observable;
+
 public interface MediaProvider {
 
     @NonNull
-    List<Media> load(@Nullable final String selection,
+    Observable<List<Media>> load(@Nullable final String selection,
             @Nullable final String[] selectionArgs,
             @Nullable final String orderBy,
             @Nullable final Integer limit);
 
     @NonNull
-    List<Media> load(long id);
+    Observable<List<Media>> load(long id);
 }

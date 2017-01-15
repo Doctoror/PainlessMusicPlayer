@@ -23,18 +23,17 @@ import android.support.annotation.WorkerThread;
 
 import java.util.List;
 
+import rx.Observable;
+
 public interface PlaylistProviderAlbums {
 
-    @Nullable
-    @WorkerThread
-    List<Media> fromAlbumSearch(@Nullable String query);
+    @NonNull
+    Observable<List<Media>> fromAlbumSearch(@Nullable String query);
 
-    @Nullable
-    @WorkerThread
-    List<Media> fromAlbum(long albumId);
+    @NonNull
+    Observable<List<Media>> fromAlbum(long albumId);
 
-    @Nullable
-    @WorkerThread
-    List<Media> fromAlbums(@NonNull long[] albumIds, @Nullable Long forArtist);
+    @NonNull
+    Observable<List<Media>> fromAlbums(@NonNull long[] albumIds, @Nullable Long forArtist);
 
 }

@@ -147,7 +147,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     View emptyContainer;
 
     @Inject
-    PlaylistProviderAlbums mPlaylistFactory;
+    PlaylistProviderAlbums mQueueFactory;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -230,22 +230,20 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         mAdapter.changeCursor(null);
     }
 
-    @Nullable
-    @WorkerThread
-    protected List<Media> playlistFromAlbum(final long albumId) {
-        return mPlaylistFactory.fromAlbum(albumId);
+    @NonNull
+    protected Observable<List<Media>> queueFromAlbum(final long albumId) {
+        return mQueueFactory.fromAlbum(albumId);
     }
 
-    @Nullable
-    @WorkerThread
-    protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
-        return mPlaylistFactory.fromAlbums(albumIds, null);
+    @NonNull
+    protected Observable<List<Media>> queueFromAlbums(@NonNull final long[] albumIds) {
+        return mQueueFactory.fromAlbums(albumIds, null);
     }
 
     private void onListItemClick(@NonNull final View itemView,
             final long albumId,
             @Nullable final String playlistName) {
-        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbum(albumId)))
+        queueFromAlbum(albumId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {
@@ -275,7 +273,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void onPlayClick(@NonNull final long[] albumIds) {
-        Observable.<List<Media>>create(s -> s.onNext(playlistFromAlbums(albumIds)))
+        queueFromAlbums(albumIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((playlist) -> {

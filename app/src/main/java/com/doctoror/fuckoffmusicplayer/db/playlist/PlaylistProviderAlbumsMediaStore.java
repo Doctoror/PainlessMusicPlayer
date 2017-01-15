@@ -28,6 +28,8 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
+
 public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderAlbums {
 
     @NonNull
@@ -37,9 +39,9 @@ public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderA
         mMediaProvider = mediaProvider;
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromAlbumSearch(@Nullable final String query) {
+    public Observable<List<Media>> fromAlbumSearch(@Nullable final String query) {
         final StringBuilder sel = new StringBuilder(256);
         sel.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {
@@ -53,20 +55,26 @@ public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderA
                 QueueConfig.MAX_PLAYLIST_SIZE);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromAlbum(final long albumId) {
+    public Observable<List<Media>> fromAlbum(final long albumId) {
         return fromAlbums(new long[]{albumId}, null);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromAlbums(@NonNull final long[] albumIds, @Nullable final Long forArtist) {
-        final List<Media> playlist = new ArrayList<>(15 * albumIds.length);
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < albumIds.length; i++) {
-            final long albumId = albumIds[i];
+    public Observable<List<Media>> fromAlbums(
+            @NonNull final long[] albumIds,
+            @Nullable final Long forArtist) {
+        return Observable.fromCallable(() -> mediasFromAlbums(albumIds, forArtist));
+    }
 
+    @NonNull
+    private List<Media> mediasFromAlbums(
+            @NonNull final long[] albumIds,
+            @Nullable final Long forArtist) {
+        final List<Media> playlist = new ArrayList<>(15 * albumIds.length);
+        for (final long albumId : albumIds) {
             final StringBuilder selection = new StringBuilder(256);
             selection.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC).append(" AND ");
             selection.append(MediaStore.Audio.Media.ALBUM_ID).append('=').append(albumId);
@@ -76,7 +84,7 @@ public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderA
             }
 
             playlist.addAll(mMediaProvider.load(selection.toString(), null,
-                    MediaStore.Audio.Media.TRACK, null));
+                    MediaStore.Audio.Media.TRACK, null).take(1).toBlocking().single());
         }
         return playlist;
     }

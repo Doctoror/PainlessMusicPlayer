@@ -26,6 +26,8 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
  * Created by Yaroslav Mytkalyk on 06.01.17.
  */
@@ -38,9 +40,9 @@ public final class PlaylistProviderGenresMediaStore implements PlaylistProviderG
         mMediaProvider = mediaProvider;
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromGenre(final long genreId) {
+    public Observable<List<Media>> fromGenre(final long genreId) {
         return mMediaProvider.load(MediaStore.Audio.Genres.Members.getContentUri(
                 MediaStoreVolumeNames.EXTERNAL, genreId),
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,

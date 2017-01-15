@@ -51,7 +51,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     private long artistId;
 
     @Inject
-    PlaylistProviderAlbums mPlaylistFactory;
+    PlaylistProviderAlbums queueProvider;
 
     @Inject
     AlbumsProvider mAlbumsProvider;
@@ -63,10 +63,10 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    protected List<Media> playlistFromAlbums(@NonNull final long[] albumIds) {
-        return mPlaylistFactory.fromAlbums(albumIds, artistId);
+    protected Observable<List<Media>> queueFromAlbums(@NonNull final long[] albumIds) {
+        return queueProvider.fromAlbums(albumIds, artistId);
     }
 
     @Override

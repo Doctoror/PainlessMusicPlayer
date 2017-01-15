@@ -59,7 +59,7 @@ public final class PlaylistsProviderMediaStore implements PlaylistsProvider {
     public Observable<List<Media>> loadQueue(final long playlistId) {
         return loadMediaIdsCursor(playlistId)
                 .map(this::mediaIdsFromCursor)
-                .map(this::loadMediasForIds);
+                .flatMap(this::loadMediasForIds);
     }
 
     @NonNull
@@ -87,7 +87,7 @@ public final class PlaylistsProviderMediaStore implements PlaylistsProvider {
     }
 
     @NonNull
-    private List<Media> loadMediasForIds(@NonNull final long[] mediaIds) {
+    private Observable<List<Media>> loadMediasForIds(@NonNull final long[] mediaIds) {
         return mMediaProvider.load(
                 SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, mediaIds),
                 null,

@@ -24,8 +24,10 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
- * Created by Yaroslav Mytkalyk on 06.01.17.
+ * MediaStore {@link PlaylistProviderRecentlyScanned}
  */
 public final class PlaylistProviderRecentlyScannedMediaStore
         implements PlaylistProviderRecentlyScanned {
@@ -38,8 +40,8 @@ public final class PlaylistProviderRecentlyScannedMediaStore
         mMediaProvider = mediaProvider;
     }
 
-    @Override
-    public List<Media> recentlyScannedPlaylist() {
+    @NonNull
+    public Observable<List<Media>> recentlyScannedPlaylist() {
         return mMediaProvider.load(
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,

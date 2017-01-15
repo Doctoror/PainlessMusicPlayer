@@ -27,10 +27,11 @@ import android.text.TextUtils;
 
 import java.util.List;
 
-/**
- * Created by Yaroslav Mytkalyk on 06.01.17.
- */
+import rx.Observable;
 
+/**
+ * MediaStore {@link PlaylistProviderArtists}
+ */
 public final class PlaylistProviderArtistsMediaStore implements PlaylistProviderArtists {
 
     @NonNull
@@ -40,9 +41,9 @@ public final class PlaylistProviderArtistsMediaStore implements PlaylistProvider
         mMediaProvider = mediaProvider;
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromArtist(final long artistId) {
+    public Observable<List<Media>> fromArtist(final long artistId) {
         return mMediaProvider.load(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC + " AND "
                         + MediaStore.Audio.Media.ARTIST_ID + '=' + artistId,
                 null,
@@ -50,9 +51,9 @@ public final class PlaylistProviderArtistsMediaStore implements PlaylistProvider
                 null);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public List<Media> fromArtistSearch(@Nullable final String query) {
+    public Observable<List<Media>> fromArtistSearch(@Nullable final String query) {
         final StringBuilder sel = new StringBuilder(256);
         sel.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC);
         if (!TextUtils.isEmpty(query)) {

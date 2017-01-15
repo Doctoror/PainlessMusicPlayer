@@ -23,16 +23,18 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Yaroslav Mytkalyk on 06.01.17.
- */
+import rx.Observable;
 
+/**
+ * MedaiStore {@link MediaProvider}
+ */
 public final class MediaStoreMediaProvider implements MediaProvider {
 
     @NonNull
@@ -44,7 +46,7 @@ public final class MediaStoreMediaProvider implements MediaProvider {
 
     @Override
     @NonNull
-    public List<Media> load(@Nullable final String selection,
+    public Observable<List<Media>> load(@Nullable final String selection,
             @Nullable final String[] selectionArgs,
             @Nullable final String orderBy,
             @Nullable final Integer limit) {
@@ -53,7 +55,7 @@ public final class MediaStoreMediaProvider implements MediaProvider {
 
     @NonNull
     @Override
-    public List<Media> load(final long id) {
+    public Observable<List<Media>> load(final long id) {
         return load(MediaQuery.CONTENT_URI,
                 MediaStore.Audio.Media._ID + '=' + id,
                 null,
@@ -62,11 +64,18 @@ public final class MediaStoreMediaProvider implements MediaProvider {
     }
 
     @NonNull
-    public String[] projection() {
-        return MediaQuery.PROJECTION;
+    public Observable<List<Media>> load(@NonNull final Uri contentUri,
+            @Nullable final String selection,
+            @Nullable final String[] selectionArgs,
+            @Nullable final String orderBy,
+            @Nullable final Integer limit) {
+        return Observable.fromCallable(
+                () -> loadMediaList(contentUri, selection, selectionArgs, orderBy, limit));
     }
 
-    public List<Media> load(@NonNull final Uri contentUri,
+    @NonNull
+    @WorkerThread
+    private List<Media> loadMediaList(@NonNull final Uri contentUri,
             @Nullable final String selection,
             @Nullable final String[] selectionArgs,
             @Nullable final String orderBy,

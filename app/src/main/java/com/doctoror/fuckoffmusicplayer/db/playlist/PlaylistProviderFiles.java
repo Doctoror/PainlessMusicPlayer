@@ -22,12 +22,14 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import rx.Observable;
+
 /**
  * "File" playlist provider
  */
 public interface PlaylistProviderFiles {
 
     @NonNull
-    List<Media> fromFile(@NonNull Uri uri) throws Exception;
+    Observable<List<Media>> fromFile(@NonNull Uri uri);
 
 }

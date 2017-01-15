@@ -120,8 +120,8 @@ public final class TracksFragment extends LibraryListFragment {
         return tracks;
     }
 
-    @Nullable
-    private List<Media> playlistFromIds(@NonNull final long[] ids) {
+    @NonNull
+    private Observable<List<Media>> queueFromIds(@NonNull final long[] ids) {
         return mPlaylistFactory.fromTracks(ids, MediaStoreTracksProvider.SORT_ORDER);
     }
 
@@ -129,7 +129,7 @@ public final class TracksFragment extends LibraryListFragment {
             final int startPosition,
             final long trackId) {
         Observable.<long[]>create(s -> s.onNext(createLimitedPlaylist(startPosition)))
-                .map(this::playlistFromIds)
+                .flatMap(this::queueFromIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(p -> onPlaylistLoaded(itemView, p));

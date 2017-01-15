@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.Pair;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -73,14 +75,8 @@ public final class NowPlayingActivityIntentHandler {
     private static void onActionView(@NonNull final Activity activity,
             @NonNull final PlaybackData playbackData,
             @NonNull final Intent intent,
-            @NonNull final PlaylistProviderFiles playlistFactory) {
-        rx.Observable.<List<Media>>create(s -> {
-            try {
-                s.onNext(playlistFromActionView(playlistFactory, intent));
-            } catch (IOException e) {
-                s.onError(e);
-            }
-        })
+            @NonNull final PlaylistProviderFiles queueProvider) {
+        queueFromActionView(queueProvider, intent)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ObserverAdapter<List<Media>>() {
@@ -118,9 +114,16 @@ public final class NowPlayingActivityIntentHandler {
     }
 
     @NonNull
-    private static List<Media> playlistFromActionView(
-            @NonNull final PlaylistProviderFiles playlistFactory,
-            @NonNull final Intent intent) throws IOException {
+    private static Observable<List<Media>> queueFromActionView(
+            @NonNull final PlaylistProviderFiles queueProvider,
+            @NonNull final Intent intent) {
+        return Observable.fromCallable(() -> schemeAndDataFromIntent(intent))
+                .flatMap(data -> queueObservableForSchemeAndData(queueProvider, data));
+    }
+
+    @NonNull
+    private static Pair<Uri, String> schemeAndDataFromIntent(@NonNull final Intent intent)
+            throws IOException {
         final Uri data = intent.getData();
         if (data == null) {
             Log.w(TAG, "Intent data is null");
@@ -132,24 +135,27 @@ public final class NowPlayingActivityIntentHandler {
             Log.w(TAG, "Uri scheme is null");
             throw new IOException("Uri scheme is null");
         }
-        switch (scheme) {
+
+        return new Pair<>(data, scheme);
+    }
+
+    @NonNull
+    private static Observable<List<Media>> queueObservableForSchemeAndData(
+            @NonNull final PlaylistProviderFiles queueProvider,
+            @NonNull final Pair<Uri, String> data) {
+        switch (data.second) {
             case "file":
-                return playlistFromFileActionView(playlistFactory, data);
+                return queueFromFileActionView(queueProvider, data.first);
 
             default:
-                Log.w(TAG, "Unhandled Uri scheme: " + scheme);
-                throw new IOException("Unhandled Uri scheme: " + scheme);
+                return Observable.error(new IOException("Unhandled Uri scheme: " + data.second));
         }
     }
 
     @NonNull
-    private static List<Media> playlistFromFileActionView(
-            @NonNull final PlaylistProviderFiles playlistFactory,
-            @NonNull final Uri data) throws IOException {
-        try {
-            return playlistFactory.fromFile(data);
-        } catch (Exception e) {
-            throw new IOException(e.getMessage(), e);
-        }
+    private static Observable<List<Media>> queueFromFileActionView(
+            @NonNull final PlaylistProviderFiles queueProvider,
+            @NonNull final Uri data) {
+        return queueProvider.fromFile(data);
     }
 }

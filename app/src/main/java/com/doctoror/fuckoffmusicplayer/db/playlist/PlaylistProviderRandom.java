@@ -17,14 +17,18 @@ package com.doctoror.fuckoffmusicplayer.db.playlist;
 
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
+import android.support.annotation.NonNull;
+
 import java.util.List;
 
-/**
- * Created by Yaroslav Mytkalyk on 06.01.17.
- */
+import rx.Observable;
 
+/**
+ * "Random playlist" provider
+ */
 public interface PlaylistProviderRandom {
 
-    List<Media> randomPlaylist();
+    @NonNull
+    Observable<List<Media>> randomPlaylist();
 
 }

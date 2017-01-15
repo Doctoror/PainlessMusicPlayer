@@ -37,6 +37,7 @@ import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
@@ -72,6 +73,7 @@ import javax.inject.Inject;
 import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 import static com.doctoror.commons.playback.PlaybackState.STATE_ERROR;
 import static com.doctoror.commons.playback.PlaybackState.STATE_IDLE;
@@ -452,8 +454,14 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaybackData.getQueuePosition(), true, false);
         } else {
-            QueueUtils.play(this, mPlaybackData,
-                    mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
+            mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist()
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new ObserverAdapter<List<Media>>() {
+                        @Override
+                        public void onNext(final List<Media> queue) {
+                            QueueUtils.play(PlaybackService.this, mPlaybackData, queue);
+                        }
+                    });
         }
     }
 
