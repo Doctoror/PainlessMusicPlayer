@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
@@ -106,11 +107,8 @@ public final class NowPlayingActivityIntentHandler {
 
     private static void onActionPlayFromSearch(@NonNull final Activity activity,
             @NonNull final Intent intent) {
-        rx.Observable.create(s ->
-                new SearchUtils(activity).onPlayFromSearch(
-                        intent.getStringExtra(SearchManager.QUERY), intent.getExtras()))
-                .subscribeOn(Schedulers.io())
-                .subscribe();
+        Handlers.runOnIoThread(() -> new SearchUtils(activity).onPlayFromSearch(
+                intent.getStringExtra(SearchManager.QUERY), intent.getExtras()));
     }
 
     @NonNull

@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.media.session;
 
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 
@@ -22,9 +23,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * {@link MediaSessionCompat.Callback} implementation
@@ -68,15 +66,11 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
     @Override
     public void onPlayFromSearch(final String query, final Bundle extras) {
-        Observable.create(s -> mSearchUtils.onPlayFromSearch(query, extras))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+        Handlers.runOnIoThread(() -> mSearchUtils.onPlayFromSearch(query, extras));
     }
 
     @Override
     public void onPlayFromMediaId(final String mediaId, final Bundle extras) {
-        Observable.create(s -> mSearchUtils.onPlayFromMediaId(mediaId))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+        Handlers.runOnIoThread(() -> mSearchUtils.onPlayFromMediaId(mediaId));
     }
 }

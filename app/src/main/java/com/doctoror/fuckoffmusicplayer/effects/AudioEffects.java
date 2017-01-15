@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.effects;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.effects.nano.EffectsProto;
 
 import android.annotation.SuppressLint;
@@ -28,12 +29,9 @@ import android.support.annotation.Nullable;
 
 import java.util.Observable;
 
-import rx.schedulers.Schedulers;
-
 /**
  * Created by Yaroslav Mytkalyk on 22.10.16.
  */
-
 public final class AudioEffects extends Observable {
 
     private static final String TAG = "AudioEffects";
@@ -165,9 +163,7 @@ public final class AudioEffects extends Observable {
                         setChanged();
                     }
                 }
-                rx.Observable.create(s -> persistBassBoostSettingsBlocking())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe();
+                persistBassBoostSettingsAsync();
             }
         }
         notifyObservers();
@@ -190,9 +186,7 @@ public final class AudioEffects extends Observable {
                         setChanged();
                     }
                 }
-                rx.Observable.create(s -> persistEqualizerSettingsBlocking())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe();
+                persistEqualizerSettingsAsync();
             }
         }
         notifyObservers();
@@ -222,9 +216,6 @@ public final class AudioEffects extends Observable {
                     settings.bandLevels[i] = (short) proto.bandValues[i];
                 }
 
-                System.out.println("RESTORING: " + proto);
-                System.out.println("RESTORING: " + settings);
-
                 try {
                     mEqualizer.setProperties(settings);
                 } catch (IllegalArgumentException e) {
@@ -237,16 +228,13 @@ public final class AudioEffects extends Observable {
     }
 
     void setBassBoostStrength(final int strength) {
-        System.out.println("BBS: " + strength);
         synchronized (SETTINGS_LOCK) {
             if (mBassBoostSettings.strength != strength) {
                 mBassBoostSettings.strength = strength;
                 if (mBassBoost != null) {
                     mBassBoost.setStrength((short) strength);
                 }
-                rx.Observable.create(s -> persistBassBoostSettingsBlocking())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe();
+                persistBassBoostSettingsAsync();
             }
         }
     }
@@ -266,16 +254,21 @@ public final class AudioEffects extends Observable {
             }
         }
 
-        System.out.println("WRITING: " + mEqualizerSettings);
+        persistEqualizerSettingsAsync();
+    }
 
-        rx.Observable.create(s -> persistEqualizerSettingsBlocking()).subscribeOn(Schedulers.io())
-                .subscribe();
+    private void persistBassBoostSettingsAsync() {
+        Handlers.runOnIoThread(this::persistBassBoostSettingsBlocking);
     }
 
     private void persistBassBoostSettingsBlocking() {
         synchronized (SETTINGS_LOCK) {
             ProtoUtils.writeToFile(mContext, FILE_NAME_BASS_BOOST, mBassBoostSettings);
         }
+    }
+
+    private void persistEqualizerSettingsAsync() {
+        Handlers.runOnIoThread(this::persistEqualizerSettingsBlocking);
     }
 
     private void persistEqualizerSettingsBlocking() {

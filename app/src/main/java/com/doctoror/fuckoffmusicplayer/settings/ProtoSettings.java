@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.settings;
 
 import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.settings.nano.SettingsProto;
 
 import android.annotation.SuppressLint;
@@ -23,9 +24,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 import android.support.v7.app.AppCompatDelegate;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Application settings
@@ -110,7 +108,7 @@ public final class ProtoSettings implements Settings {
     }
 
     private void persistAsync() {
-        Observable.create(s -> persist()).subscribeOn(Schedulers.io()).subscribe();
+        Handlers.runOnIoThread(this::persist);
     }
 
     @WorkerThread

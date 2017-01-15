@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.media.manager;
 
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
@@ -30,10 +31,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
-import javax.inject.Inject;
+import java.io.IOException;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
+import javax.inject.Inject;
 
 /**
  * Service for managing media
@@ -125,14 +125,12 @@ public final class MediaManagerService extends IntentService {
         QueueUtils.removeMediasFromCurrentQueue(mPlaybackData, targetId);
         try {
             mMediaManager.deleteMedia(targetId);
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.w(TAG, e);
 
             final Context context = getApplicationContext();
-            Observable.create(s -> Toast.makeText(context, R.string.Failed_to_delete_media,
-                    Toast.LENGTH_LONG).show())
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe();
+            Handlers.runOnMainThread(() -> Toast.makeText(context, R.string.Failed_to_delete_media,
+                    Toast.LENGTH_LONG).show());
         }
     }
 
@@ -148,14 +146,13 @@ public final class MediaManagerService extends IntentService {
 
         try {
             mMediaManager.deleteAlbum(albumId);
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.w(TAG, e);
 
             final Context context = getApplicationContext();
-            Observable.create(s -> Toast.makeText(context,
-                    R.string.Failed_to_delete_album, Toast.LENGTH_LONG).show())
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe();
+
+            Handlers.runOnMainThread(() -> Toast.makeText(context,
+                    R.string.Failed_to_delete_album, Toast.LENGTH_LONG).show());
         }
     }
 
@@ -169,14 +166,12 @@ public final class MediaManagerService extends IntentService {
         final long targetId = getTargetId(intent);
         try {
             mMediaManager.deletePlaylist(targetId);
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.w(TAG, e);
 
             final Context context = getApplicationContext();
-            Observable.create(s -> Toast.makeText(context, R.string.Failed_to_delete_playlist,
-                    Toast.LENGTH_LONG).show())
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .subscribe();
+            Handlers.runOnMainThread(() -> Toast.makeText(context,
+                    R.string.Failed_to_delete_playlist, Toast.LENGTH_LONG).show());
         }
     }
 }

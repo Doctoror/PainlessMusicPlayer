@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.media.session;
 
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
@@ -114,8 +115,8 @@ public final class MediaSessionHolder {
                 new Intent(mContext, NowPlayingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
 
         mMediaSession = mediaSession;
-        Observable.create(s -> reportMediaAndState(mediaSession)).subscribeOn(Schedulers.io())
-                .subscribe();
+
+        Handlers.runOnIoThread(() -> reportMediaAndState(mediaSession));
     }
 
     private void doCloseSession() {

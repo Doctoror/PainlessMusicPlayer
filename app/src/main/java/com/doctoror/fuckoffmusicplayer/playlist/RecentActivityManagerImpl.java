@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.playlist;
 
 import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playlist.nano.RecentPlaylists;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 
@@ -28,9 +29,6 @@ import android.support.annotation.WorkerThread;
 
 import java.util.Collection;
 import java.util.Queue;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Used for storing recent playlists
@@ -96,7 +94,7 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
         synchronized (mLock) {
             mRecentAlbums.clear();
         }
-        persist();
+        persistAsync();
     }
 
     @Override
@@ -115,7 +113,7 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
             }
         }
         if (result) {
-            persist();
+            persistAsync();
         }
     }
 
@@ -145,7 +143,7 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
             }
         }
         if (persist && result) {
-            persist();
+            persistAsync();
         }
         return result;
     }
@@ -158,8 +156,8 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
         }
     }
 
-    private void persist() {
-        Observable.create(s -> persistBlocking()).subscribeOn(Schedulers.io()).subscribe();
+    private void persistAsync() {
+        Handlers.runOnIoThread(this::persistBlocking);
     }
 
     @WorkerThread

@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.appwidget;
 
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -27,9 +28,6 @@ import android.support.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Yaroslav Mytkalyk on 11.11.16.
@@ -139,8 +137,6 @@ public final class AlbumThumbHolder {
     }
 
     private void writeAsync() {
-        Observable.create((s) -> write())
-                .subscribeOn(Schedulers.io())
-                .subscribe();
+        Handlers.runOnIoThread(this::write);
     }
 }

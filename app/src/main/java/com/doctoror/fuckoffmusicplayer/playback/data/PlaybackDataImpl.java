@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
 import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 import rx.Observable;
-import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
 /**
@@ -133,9 +133,8 @@ public final class PlaybackDataImpl implements PlaybackData {
             final Media current = CollectionUtils.getItemSafe(getQueue(), pos);
 
             mQueueSubject.onNext(newQueue);
-            Observable.create(s -> storeToRecentAlbums(newQueue))
-                    .subscribeOn(Schedulers.computation())
-                    .subscribe();
+
+            Handlers.runOnIoThread(() -> storeToRecentAlbums(newQueue));
 
             if (newQueue != null && current != null) {
                 final int newPos = newQueue.indexOf(current);

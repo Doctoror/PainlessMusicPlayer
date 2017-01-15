@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
 import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.StringUtils;
@@ -27,9 +28,6 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.Observable;
-import rx.schedulers.Schedulers;
 
 /**
  * Used for persisting and restoring {@link PlaybackData} from file
@@ -47,8 +45,7 @@ final class PlaybackDataPersister {
     static void persistAsync(@NonNull final Context context,
             @NonNull final PlaybackData target) {
         final PlaybackDataProto.PlaybackData data = toProtoPlaybackData(target);
-        Observable.create(s -> persist(context, data))
-                .subscribeOn(Schedulers.io()).subscribe();
+        Handlers.runOnIoThread(() -> persist(context, data));
     }
 
     private static void persist(@NonNull final Context context,

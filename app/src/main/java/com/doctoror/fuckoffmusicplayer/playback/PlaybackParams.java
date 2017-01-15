@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playback.nano.PlaybackParamsProto;
 
 import android.annotation.SuppressLint;
@@ -98,7 +99,7 @@ public final class PlaybackParams {
         synchronized (mLock) {
             if (mShuffleEnabled != shuffleEnabled) {
                 mShuffleEnabled = shuffleEnabled;
-                Observable.create(s -> persistBlocking()).subscribeOn(Schedulers.io()).subscribe();
+                persistAsync();
             }
         }
     }
@@ -113,7 +114,7 @@ public final class PlaybackParams {
         synchronized (mLock) {
             if (mRepeatMode != repeatMode) {
                 mRepeatMode = repeatMode;
-                Observable.create(s -> persistBlocking()).subscribeOn(Schedulers.io()).subscribe();
+                persistAsync();
             }
         }
     }
@@ -129,6 +130,10 @@ public final class PlaybackParams {
     private PlaybackParamsProto.PlaybackParams read() {
         return ProtoUtils.readFromFile(mContext, FILE_NAME,
                 new PlaybackParamsProto.PlaybackParams());
+    }
+
+    private void persistAsync() {
+        Handlers.runOnIoThread(this::persistBlocking);
     }
 
     @WorkerThread
