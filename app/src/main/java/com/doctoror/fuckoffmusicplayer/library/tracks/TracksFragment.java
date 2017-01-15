@@ -94,7 +94,7 @@ public final class TracksFragment extends LibraryListFragment {
     }
 
     @NonNull
-    private long[] createLimitedPlaylist(final int startPosition) {
+    private long[] createLimitedQueue(final int startPosition) {
         final long[] tracks;
         synchronized (CURSOR_LOCK) {
             final Cursor data = mData;
@@ -128,7 +128,8 @@ public final class TracksFragment extends LibraryListFragment {
     private void playTrack(@NonNull final View itemView,
             final int startPosition,
             final long trackId) {
-        Observable.<long[]>create(s -> s.onNext(createLimitedPlaylist(startPosition)))
+        // TODO SHIT FIXME subscribe no error handling
+        Observable.<long[]>create(s -> s.onNext(createLimitedQueue(startPosition)))
                 .flatMap(this::queueFromIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

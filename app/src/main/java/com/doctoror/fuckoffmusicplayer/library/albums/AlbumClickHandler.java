@@ -18,7 +18,9 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -28,6 +30,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.Toast;
+
+import java.util.List;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -49,29 +53,45 @@ public final class AlbumClickHandler {
         queueProvider.fromAlbum(albumId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((queue) -> {
-                    if (host.isAdded()) {
-                        if (queue != null && !queue.isEmpty()) {
-                            final Activity activity = host.getActivity();
-                            final Intent intent = Henson.with(activity).gotoQueueActivity()
-                                    .hasCoverTransition(true)
-                                    .hasItemViewTransition(false)
-                                    .isNowPlayingQueue(false)
-                                    .queue(queue)
-                                    .title(albumName)
-                                    .build();
+                .subscribe(new ObserverAdapter<List<Media>>() {
+                    @Override
+                    public void onNext(final List<Media> medias) {
+                        onAlbumQueueLoaded(host, view, albumName, medias);
+                    }
 
-                            final ActivityOptionsCompat options = ActivityOptionsCompat
-                                    .makeSceneTransitionAnimation(activity, view,
-                                            QueueActivity.TRANSITION_NAME_ALBUM_ART);
-                            host.startActivity(intent, options.toBundle());
-                        } else {
-                            Toast.makeText(host.getActivity(), R.string.The_queue_is_empty,
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                        }
+                    @Override
+                    public void onError(final Throwable e) {
+                        onAlbumQueueEmpty(host);
                     }
                 });
     }
 
+    private static void onAlbumQueueLoaded(@NonNull final Fragment host,
+            @NonNull final View view,
+            @Nullable final String albumName,
+            @NonNull final List<Media> queue) {
+        if (host.isAdded()) {
+            if (!queue.isEmpty()) {
+                final Activity activity = host.getActivity();
+                final Intent intent = Henson.with(activity).gotoQueueActivity()
+                        .hasCoverTransition(true)
+                        .hasItemViewTransition(false)
+                        .isNowPlayingQueue(false)
+                        .queue(queue)
+                        .title(albumName)
+                        .build();
+
+                final ActivityOptionsCompat options = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(activity, view,
+                                QueueActivity.TRANSITION_NAME_ALBUM_ART);
+                host.startActivity(intent, options.toBundle());
+            } else {
+                onAlbumQueueEmpty(host);
+            }
+        }
+    }
+
+    private static void onAlbumQueueEmpty(@NonNull final Fragment host) {
+        Toast.makeText(host.getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_SHORT).show();
+    }
 }

@@ -241,52 +241,75 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
 
     private void onListItemClick(@NonNull final View itemView,
             final long albumId,
-            @Nullable final String playlistName) {
+            @Nullable final String queueName) {
         queueFromAlbum(albumId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((playlist) -> {
-                    if (isAdded()) {
-                        final Activity activity = getActivity();
-                        if (playlist != null && !playlist.isEmpty()) {
-                            final Intent intent = Henson.with(activity).gotoQueueActivity()
-                                    .hasCoverTransition(false)
-                                    .hasItemViewTransition(false)
-                                    .isNowPlayingQueue(false)
-                                    .queue(playlist)
-                                    .title(playlistName)
-                                    .build();
+                .subscribe(new ObserverAdapter<List<Media>>() {
+                    @Override
+                    public void onNext(final List<Media> medias) {
+                        onQueueLoaded(medias, itemView, queueName);
+                    }
 
-                            final ActivityOptionsCompat options = ActivityOptionsCompat
-                                    .makeSceneTransitionAnimation(activity, itemView,
-                                            QueueActivity.TRANSITION_NAME_ROOT);
-
-                            startActivity(intent, options.toBundle());
-                        } else {
-                            Toast.makeText(activity, R.string.The_queue_is_empty,
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                        }
+                    @Override
+                    public void onError(final Throwable e) {
+                        onQueueEmpty();
                     }
                 });
+    }
+
+    private void onQueueLoaded(@NonNull final List<Media> queue,
+            @NonNull final View itemView,
+            @Nullable final String queueName) {
+        if (isAdded()) {
+            final Activity activity = getActivity();
+            if (queue.isEmpty()) {
+                onQueueEmpty();
+            } else {
+                final Intent intent = Henson.with(activity).gotoQueueActivity()
+                        .hasCoverTransition(false)
+                        .hasItemViewTransition(false)
+                        .isNowPlayingQueue(false)
+                        .queue(queue)
+                        .title(queueName)
+                        .build();
+
+                final ActivityOptionsCompat options = ActivityOptionsCompat
+                        .makeSceneTransitionAnimation(activity, itemView,
+                                QueueActivity.TRANSITION_NAME_ROOT);
+
+                startActivity(intent, options.toBundle());
+            }
+        }
+    }
+
+    private void onQueueEmpty() {
+        if (isAdded()) {
+            Toast.makeText(getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void onPlayClick(@NonNull final long[] albumIds) {
         queueFromAlbums(albumIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((playlist) -> {
-                    if (isAdded()) {
-                        final Activity activity = getActivity();
-                        if (playlist != null && !playlist.isEmpty()) {
-                            QueueUtils.play(activity, mPlaybackData, playlist);
-                            prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
-                                    albumArt, null), true);
-                        } else {
-                            Toast.makeText(activity, R.string.The_queue_is_empty,
-                                    Toast.LENGTH_SHORT)
-                                    .show();
+                .subscribe(new ObserverAdapter<List<Media>>() {
+                    @Override
+                    public void onNext(final List<Media> queue) {
+                        if (isAdded()) {
+                            if (queue.isEmpty()) {
+                                onQueueEmpty();
+                            } else {
+                                QueueUtils.play(getActivity(), mPlaybackData, queue);
+                                prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
+                                        albumArt, null), true);
+                            }
                         }
+                    }
+
+                    @Override
+                    public void onError(final Throwable e) {
+                        onQueueEmpty();
                     }
                 });
     }

@@ -26,6 +26,7 @@ import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity
 import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -300,8 +301,9 @@ public final class PlaylistsFragment extends LibraryListFragment {
             mPlaylistsProvider.loadQueue(id)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe((queue) -> {
-                        if (isAdded()) {
+                    .subscribe(new ObserverAdapter<List<Media>>() {
+                        @Override
+                        public void onNext(final List<Media> queue) {
                             onPlaylistLoaded(itemViewForPosition(position), name, queue);
                         }
                     });
