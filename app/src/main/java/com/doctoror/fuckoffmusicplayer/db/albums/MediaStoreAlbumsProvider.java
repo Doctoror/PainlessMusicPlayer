@@ -33,7 +33,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import rx.Observable;
-import rx.Single;
 
 /**
  * MediaStore {@link AlbumsProvider}
@@ -91,17 +90,12 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @Override
     public Observable<Cursor> loadRecentlyPlayedAlbums() {
-        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery(null));
+        return loadRecentlyPlayedAlbums(null);
     }
 
     @Override
-    public Single<Cursor> loadRecentlyPlayedAlbumsOnce() {
-        return loadRecentlyPlayedAlbumsOnce(null);
-    }
-
-    @Override
-    public Single<Cursor> loadRecentlyPlayedAlbumsOnce(@Nullable final Integer limit) {
-        return RxCursorLoader.single(mContentResolver, newRecentlyPlayedAlbumsQuery(limit));
+    public Observable<Cursor> loadRecentlyPlayedAlbums(@Nullable final Integer limit) {
+        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery(limit));
     }
 
     @NonNull
@@ -122,7 +116,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     }
 
     @Override
-    public Single<Cursor> loadRecentlyScannedAlbumsOnce(final int limit) {
+    public Observable<Cursor> loadRecentlyScannedAlbums(@Nullable final Integer limit) {
         final RxCursorLoader.Query recentTracksQuery = new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
@@ -132,8 +126,8 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setSortOrder(MediaStore.Audio.Media.DATE_ADDED + " DESC")
                 .create();
 
-        return RxCursorLoader.single(mContentResolver, recentTracksQuery)
-                .map(c -> albumIds(c, limit))
+        return RxCursorLoader.create(mContentResolver, recentTracksQuery)
+                .map(c -> albumIds(c, limit != null ? limit : Integer.MAX_VALUE))
                 .flatMap(this::loadAlbumsOrderedByIds);
     }
 
@@ -155,11 +149,11 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
         return ids;
     }
 
-    private Single<Cursor> loadAlbumsOrderedByIds(@NonNull final Collection<Long> ids) {
+    private Observable<Cursor> loadAlbumsOrderedByIds(@NonNull final Collection<Long> ids) {
         final RxCursorLoader.Query.Builder query = newParamsBuilder()
                 .setSelection(SelectionUtils.inSelection(MediaStore.Audio.Albums._ID, ids))
                 .setSortOrder(SelectionUtils.orderByField(MediaStore.Audio.Albums._ID, ids));
-        return RxCursorLoader.single(mContentResolver, query.create());
+        return RxCursorLoader.create(mContentResolver, query.create());
     }
 
     /**

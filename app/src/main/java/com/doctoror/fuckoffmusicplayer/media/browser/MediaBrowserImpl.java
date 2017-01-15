@@ -200,7 +200,8 @@ public final class MediaBrowserImpl {
 
     private void loadChildrenGenres(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
-        mGenresProvider.loadOnce()
+        mGenresProvider.load()
+                .take(1)
                 .onErrorReturn(t -> null)
                 .map(this::mediaItemsFromGenresCursor)
                 .subscribeOn(Schedulers.io())
@@ -223,7 +224,7 @@ public final class MediaBrowserImpl {
 
     private void loadChildrenRecentAlbums(@NonNull final Result<List<MediaItem>> result) {
         result.detach();
-        mAlbumsProvider.loadRecentlyPlayedAlbumsOnce()
+        mAlbumsProvider.loadRecentlyPlayedAlbums().take(1)
                 .onErrorReturn(t -> null)
                 .map(this::recentAlbumsFromCursor)
                 .subscribeOn(Schedulers.io())
@@ -247,7 +248,7 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemGenre(@NonNull final Cursor c) {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_PREFIX_GENRE + c.getString(GenresProvider.COLUMN_ID))
+                .setMediaId(MEDIA_ID_PREFIX_GENRE.concat(c.getString(GenresProvider.COLUMN_ID)))
                 .setTitle(c.getString(GenresProvider.COLUMN_NAME))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
@@ -256,7 +257,7 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemAlbum(@NonNull final Cursor c) {
         final MediaDescriptionCompat.Builder description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_PREFIX_ALBUM + c.getString(AlbumsProvider.COLUMN_ID))
+                .setMediaId(MEDIA_ID_PREFIX_ALBUM.concat(c.getString(AlbumsProvider.COLUMN_ID)))
                 .setTitle(c.getString(AlbumsProvider.COLUMN_ALBUM));
         final String art = c.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (!TextUtils.isEmpty(art)) {

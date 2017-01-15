@@ -19,7 +19,6 @@ import android.database.Cursor;
 import android.support.annotation.Nullable;
 
 import rx.Observable;
-import rx.Single;
 
 /**
  * "Albums" provider
@@ -36,11 +35,10 @@ public interface AlbumsProvider {
 
     Observable<Cursor> loadForArtist(long artistId);
     Observable<Cursor> loadForGenre(long genreId);
+
     Observable<Cursor> loadRecentlyPlayedAlbums();
+    Observable<Cursor> loadRecentlyPlayedAlbums(@Nullable Integer limit);
 
-    Single<Cursor> loadRecentlyPlayedAlbumsOnce();
-    Single<Cursor> loadRecentlyPlayedAlbumsOnce(@Nullable Integer limit);
-
-    Single<Cursor> loadRecentlyScannedAlbumsOnce(int limit);
+    Observable<Cursor> loadRecentlyScannedAlbums(@Nullable Integer limit);
 
 }

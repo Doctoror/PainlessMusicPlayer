@@ -26,7 +26,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import rx.Observable;
-import rx.Single;
 
 /**
  * MediaStore {@link GenresProvider}
@@ -41,13 +40,13 @@ public final class MediaStoreGenresProvider implements GenresProvider {
     }
 
     @Override
-    public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter));
+    public Observable<Cursor> load() {
+        return load(null);
     }
 
     @Override
-    public Single<Cursor> loadOnce() {
-        return RxCursorLoader.single(mContentResolver, newQuery(null));
+    public Observable<Cursor> load(@Nullable final String searchFilter) {
+        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter));
     }
 
     @NonNull

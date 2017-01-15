@@ -50,8 +50,6 @@ import javax.inject.Inject;
 
 import rx.Observable;
 import rx.Observer;
-import rx.Single;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
@@ -149,14 +147,14 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
-            final Single<Cursor> recentlyPlayed =
-                    mAlbumsProvider.loadRecentlyPlayedAlbumsOnce(MAX_HISTORY_SECTION_LENGTH);
+            final Observable<Cursor> recentlyPlayed =
+                    mAlbumsProvider.loadRecentlyPlayedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
 
-            final Single<Cursor> recentlyScanned =
-                    mAlbumsProvider.loadRecentlyScannedAlbumsOnce(MAX_HISTORY_SECTION_LENGTH);
+            final Observable<Cursor> recentlyScanned =
+                    mAlbumsProvider.loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
 
-            registerOnStartSubscription(Observable.zip(recentlyPlayed.toObservable(),
-                    recentlyScanned.toObservable(),
+            registerOnStartSubscription(Observable.zip(recentlyPlayed,
+                    recentlyScanned,
                     new RecyclerAdapterDataFunc(getResources()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
