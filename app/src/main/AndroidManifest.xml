@@ -54,13 +54,11 @@
 
         <activity
             android:name=".library.artistalbums.ArtistAlbumsActivity"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:parentActivityName=".home.HomeActivity"/>
 
         <activity
             android:name=".library.genrealbums.GenreAlbumsActivity"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:parentActivityName=".home.HomeActivity"/>
 
@@ -76,7 +74,6 @@
 
         <activity
             android:name=".effects.AudioEffectsActivity"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme"
             android:label="@string/Effects"/>
 
@@ -84,6 +81,7 @@
             android:name=".nowplaying.NowPlayingActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
+            android:parentActivityName=".home.HomeActivity"
             android:label="@string/Now_Playing">
 
             <intent-filter>
@@ -105,7 +103,6 @@
 
         <activity
             android:name=".settings.SettingsActivity"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme"
             android:label="@string/Settings"
             android:parentActivityName=".home.HomeActivity"/>
