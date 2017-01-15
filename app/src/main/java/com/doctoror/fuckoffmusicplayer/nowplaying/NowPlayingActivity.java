@@ -36,6 +36,7 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.f2prateek.dart.Dart;
@@ -335,12 +336,16 @@ public final class NowPlayingActivity extends BaseActivity {
             case R.id.actionQueue:
                 final Intent intent = Henson.with(this)
                         .gotoQueueActivity()
-                        .hasCoverTransition(false)
+                        .hasCoverTransition(true)
                         .hasItemViewTransition(false)
                         .isNowPlayingQueue(true)
                         .queue(mPlaybackData.getQueue())
                         .build();
-                startActivity(intent);
+
+                final Bundle options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                        albumArt, QueueActivity.TRANSITION_NAME_ALBUM_ART).toBundle();
+
+                startActivity(intent, options);
                 return true;
 
             default:
