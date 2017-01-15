@@ -340,7 +340,6 @@ public final class NowPlayingActivity extends BaseActivity {
                         .isNowPlayingQueue(true)
                         .queue(mPlaybackData.getQueue())
                         .build();
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
 
