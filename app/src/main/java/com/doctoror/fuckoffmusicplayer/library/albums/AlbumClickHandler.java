@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
 import android.app.Activity;
@@ -42,11 +42,11 @@ public final class AlbumClickHandler {
     }
 
     public static void onAlbumClick(@NonNull final Fragment host,
-            @NonNull final PlaylistProviderAlbums playlistProviderAlbums,
+            @NonNull final QueueProviderAlbums queueProvider,
             @NonNull final View view,
             final long albumId,
             @Nullable final String albumName) {
-        playlistProviderAlbums.fromAlbum(albumId)
+        queueProvider.fromAlbum(albumId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((queue) -> {

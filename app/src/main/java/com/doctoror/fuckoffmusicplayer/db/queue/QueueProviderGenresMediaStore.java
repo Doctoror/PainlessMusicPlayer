@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreVolumeNames;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -26,23 +28,25 @@ import java.util.List;
 import rx.Observable;
 
 /**
- * MediaStore {@link PlaylistProviderRandom}
+ * Created by Yaroslav Mytkalyk on 06.01.17.
  */
-public final class PlaylistProviderRandomMediaStore implements PlaylistProviderRandom {
+public final class QueueProviderGenresMediaStore implements QueueProviderGenres {
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public PlaylistProviderRandomMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
+    public QueueProviderGenresMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 
     @NonNull
-    public Observable<List<Media>> randomPlaylist() {
-        return mMediaProvider.load(
+    @Override
+    public Observable<List<Media>> fromGenre(final long genreId) {
+        return mMediaProvider.load(MediaStore.Audio.Genres.Members.getContentUri(
+                MediaStoreVolumeNames.EXTERNAL, genreId),
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 "RANDOM()",
-                QueueConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_QUEUE_SIZE);
     }
 }

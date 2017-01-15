@@ -19,7 +19,7 @@ import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryPermissionsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumClickHandler;
@@ -77,7 +77,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
     AlbumsProvider mAlbumsProvider;
 
     @Inject
-    PlaylistProviderAlbums mPlaylistProviderAlbums;
+    QueueProviderAlbums mQueueProvider;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -170,7 +170,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         @Override
         public void onAlbumClick(final View albumArtView, final long id, final String album) {
             AlbumClickHandler.onAlbumClick(RecentActivityFragment.this,
-                    mPlaylistProviderAlbums,
+                    mQueueProvider,
                     albumArtView,
                     id,
                     album);

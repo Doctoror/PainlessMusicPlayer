@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
-import android.support.annotation.NonNull;
+import android.database.Cursor;
 import android.support.annotation.Nullable;
 
 import java.util.List;
 
 import rx.Observable;
 
-public interface PlaylistProviderArtists {
+/**
+ * Queue provider for playlists
+ */
+public interface QueueProviderPlaylists {
 
-    @NonNull
-    Observable<List<Media>> fromArtist(final long artistId);
+    int COLUMN_ID = 0;
+    int COLUMN_NAME = 1;
 
+    Observable<Cursor> load(@Nullable String filter);
 
-    @NonNull
-    Observable<List<Media>> fromArtistSearch(@Nullable String query);
+    Observable<List<Media>> loadQueue(long playlistId);
+
 }

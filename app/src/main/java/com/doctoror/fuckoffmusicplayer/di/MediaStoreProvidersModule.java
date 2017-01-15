@@ -22,13 +22,13 @@ import com.doctoror.fuckoffmusicplayer.db.artists.MediaStoreArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.db.genres.MediaStoreGenresProvider;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProviderMediaStore;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylists;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylistsMediaStore;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.media.manager.MediaManager;
 import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerFactory;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
+import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 
 import android.content.ContentResolver;
 import android.support.annotation.NonNull;
@@ -53,8 +53,8 @@ final class MediaStoreProvidersModule {
     @Provides
     @Singleton
     AlbumsProvider provideAlbumsProvider(@NonNull final ContentResolver resolver,
-            @NonNull final RecentPlaylistsManager recentPlaylistsManager) {
-        return new MediaStoreAlbumsProvider(resolver, recentPlaylistsManager);
+            @NonNull final RecentActivityManager recentActivityManager) {
+        return new MediaStoreAlbumsProvider(resolver, recentActivityManager);
     }
 
     @Provides
@@ -71,9 +71,9 @@ final class MediaStoreProvidersModule {
 
     @Provides
     @Singleton
-    PlaylistsProvider providePlaylistsProvider(@NonNull final ContentResolver resolver,
+    QueueProviderPlaylists providePlaylistsProvider(@NonNull final ContentResolver resolver,
             @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new PlaylistsProviderMediaStore(resolver, mediaProvider);
+        return new QueueProviderPlaylistsMediaStore(resolver, mediaProvider);
     }
 
     @Provides

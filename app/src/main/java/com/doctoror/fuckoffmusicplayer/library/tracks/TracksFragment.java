@@ -16,8 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.QueueConfig;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueConfig;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
@@ -56,7 +56,7 @@ public final class TracksFragment extends LibraryListFragment {
     TracksProvider mTracksProvider;
 
     @Inject
-    PlaylistProviderTracks mPlaylistFactory;
+    QueueProviderTracks mPlaylistFactory;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -99,7 +99,7 @@ public final class TracksFragment extends LibraryListFragment {
         synchronized (CURSOR_LOCK) {
             final Cursor data = mData;
             if (data != null) {
-                int limit = QueueConfig.MAX_PLAYLIST_SIZE;
+                int limit = QueueConfig.MAX_QUEUE_SIZE;
                 final int count = data.getCount();
                 if (startPosition + limit > count) {
                     limit = count - startPosition;

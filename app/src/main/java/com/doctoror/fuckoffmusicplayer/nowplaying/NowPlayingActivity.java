@@ -28,7 +28,7 @@ import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
@@ -145,7 +145,7 @@ public final class NowPlayingActivity extends BaseActivity {
     PlaybackData mPlaybackData;
 
     @Inject
-    PlaylistProviderFiles mFilePlaylistProvider;
+    QueueProviderFiles mFileQueueProvider;
 
     private volatile boolean mSeekBarTracking;
 

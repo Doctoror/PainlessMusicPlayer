@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.db.albums;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreVolumeNames;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
+import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.util.SelectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.SqlUtils;
 import com.doctoror.rxcursorloader.RxCursorLoader;
@@ -45,12 +45,12 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     private final ContentResolver mContentResolver;
 
     @NonNull
-    private final RecentPlaylistsManager mRecentPlaylistsManager;
+    private final RecentActivityManager mRecentActivityManager;
 
     public MediaStoreAlbumsProvider(@NonNull final ContentResolver contentResolver,
-            @NonNull final RecentPlaylistsManager recentPlaylistsManager) {
+            @NonNull final RecentActivityManager recentActivityManager) {
         mContentResolver = contentResolver;
-        mRecentPlaylistsManager = recentPlaylistsManager;
+        mRecentActivityManager = recentActivityManager;
     }
 
     @Override
@@ -100,7 +100,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @NonNull
     private RxCursorLoader.Query newRecentlyPlayedAlbumsQuery(@Nullable final Integer limit) {
-        final long[] recentlyPlayedAlbums = mRecentPlaylistsManager.getRecentAlbums();
+        final long[] recentlyPlayedAlbums = mRecentActivityManager.getRecentlyPlayedAlbums();
         String sortOrder = SelectionUtils.orderByLongField(MediaStore.Audio.Albums._ID,
                 recentlyPlayedAlbums);
         if (!TextUtils.isEmpty(sortOrder) && limit != null) {

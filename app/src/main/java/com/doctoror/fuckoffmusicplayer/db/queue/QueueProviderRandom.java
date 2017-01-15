@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
+
+import com.doctoror.fuckoffmusicplayer.queue.Media;
+
+import android.support.annotation.NonNull;
+
+import java.util.List;
+
+import rx.Observable;
 
 /**
- * Created by Yaroslav Mytkalyk on 06.01.17.
+ * "Random playlist" provider
  */
+public interface QueueProviderRandom {
 
-public final class QueueConfig {
-
-    public static final int MAX_PLAYLIST_SIZE = 100;
-
-    private QueueConfig() {
-        throw new UnsupportedOperationException();
-    }
+    @NonNull
+    Observable<List<Media>> randomQueue();
 
 }

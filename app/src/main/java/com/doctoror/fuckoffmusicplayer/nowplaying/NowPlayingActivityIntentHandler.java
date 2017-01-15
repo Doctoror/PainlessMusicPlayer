@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderFiles;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
@@ -54,7 +54,7 @@ public final class NowPlayingActivityIntentHandler {
     PlaybackData mPlaybackData;
 
     @Inject
-    PlaylistProviderFiles mPlaylistProviderFiles;
+    QueueProviderFiles mQueueProviderFiles;
 
     @NonNull
     private final Activity mActivity;
@@ -66,7 +66,7 @@ public final class NowPlayingActivityIntentHandler {
 
     void handleIntent(@NonNull final Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            onActionView(mActivity, mPlaybackData, intent, mPlaylistProviderFiles);
+            onActionView(mActivity, mPlaybackData, intent, mQueueProviderFiles);
         } else if (MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH.equals(intent.getAction())) {
             onActionPlayFromSearch(mActivity, intent);
         }
@@ -75,7 +75,7 @@ public final class NowPlayingActivityIntentHandler {
     private static void onActionView(@NonNull final Activity activity,
             @NonNull final PlaybackData playbackData,
             @NonNull final Intent intent,
-            @NonNull final PlaylistProviderFiles queueProvider) {
+            @NonNull final QueueProviderFiles queueProvider) {
         queueFromActionView(queueProvider, intent)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -115,7 +115,7 @@ public final class NowPlayingActivityIntentHandler {
 
     @NonNull
     private static Observable<List<Media>> queueFromActionView(
-            @NonNull final PlaylistProviderFiles queueProvider,
+            @NonNull final QueueProviderFiles queueProvider,
             @NonNull final Intent intent) {
         return Observable.fromCallable(() -> schemeAndDataFromIntent(intent))
                 .flatMap(data -> queueObservableForSchemeAndData(queueProvider, data));
@@ -141,7 +141,7 @@ public final class NowPlayingActivityIntentHandler {
 
     @NonNull
     private static Observable<List<Media>> queueObservableForSchemeAndData(
-            @NonNull final PlaylistProviderFiles queueProvider,
+            @NonNull final QueueProviderFiles queueProvider,
             @NonNull final Pair<Uri, String> data) {
         switch (data.second) {
             case "file":
@@ -154,7 +154,7 @@ public final class NowPlayingActivityIntentHandler {
 
     @NonNull
     private static Observable<List<Media>> queueFromFileActionView(
-            @NonNull final PlaylistProviderFiles queueProvider,
+            @NonNull final QueueProviderFiles queueProvider,
             @NonNull final Uri data) {
         return queueProvider.fromFile(data);
     }

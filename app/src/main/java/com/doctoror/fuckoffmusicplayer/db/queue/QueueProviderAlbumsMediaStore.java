@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
@@ -30,12 +30,12 @@ import java.util.List;
 
 import rx.Observable;
 
-public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderAlbums {
+public final class QueueProviderAlbumsMediaStore implements QueueProviderAlbums {
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public PlaylistProviderAlbumsMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
+    public QueueProviderAlbumsMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 
@@ -52,7 +52,7 @@ public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderA
         return mMediaProvider.load(sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK,
-                QueueConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_QUEUE_SIZE);
     }
 
     @NonNull
@@ -66,14 +66,14 @@ public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderA
     public Observable<List<Media>> fromAlbums(
             @NonNull final long[] albumIds,
             @Nullable final Long forArtist) {
-        return Observable.fromCallable(() -> mediasFromAlbums(albumIds, forArtist));
+        return Observable.fromCallable(() -> queueFromAlbums(albumIds, forArtist));
     }
 
     @NonNull
-    private List<Media> mediasFromAlbums(
+    private List<Media> queueFromAlbums(
             @NonNull final long[] albumIds,
             @Nullable final Long forArtist) {
-        final List<Media> playlist = new ArrayList<>(15 * albumIds.length);
+        final List<Media> queue = new ArrayList<>(15 * albumIds.length);
         for (final long albumId : albumIds) {
             final StringBuilder selection = new StringBuilder(256);
             selection.append(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC).append(" AND ");
@@ -83,9 +83,9 @@ public final class PlaylistProviderAlbumsMediaStore implements PlaylistProviderA
                         .append(MediaStore.Audio.Media.ARTIST_ID).append('=').append(forArtist);
             }
 
-            playlist.addAll(mMediaProvider.load(selection.toString(), null,
+            queue.addAll(mMediaProvider.load(selection.toString(), null,
                     MediaStore.Audio.Media.TRACK, null).take(1).toBlocking().single());
         }
-        return playlist;
+        return queue;
     }
 }

@@ -187,12 +187,17 @@ public final class WearableSearchProviderService extends IntentService {
 
     @NonNull
     private WearSearchData.Album[] queryAlbums(@NonNull final String query) {
-        return mAlbumsProvider.load(query, LIMIT)
-                .subscribeOn(Schedulers.io())
-                .map(this::cursorToWearSearchDataAlbum)
-                .take(1)
-                .toBlocking()
-                .single();
+        try {
+            return mAlbumsProvider.load(query, LIMIT)
+                    .subscribeOn(Schedulers.io())
+                    .map(this::cursorToWearSearchDataAlbum)
+                    .take(1)
+                    .toBlocking()
+                    .single();
+        } catch (RuntimeException e) {
+            Log.w(TAG, e);
+            return new WearSearchData.Album[0];
+        }
     }
 
     @NonNull
@@ -210,12 +215,17 @@ public final class WearableSearchProviderService extends IntentService {
 
     @NonNull
     private WearSearchData.Artist[] queryArtists(@NonNull final String query) {
-        return mArtistsProvider.load(query, LIMIT)
-                .subscribeOn(Schedulers.io())
-                .map(this::cursorToWearSearchDataArtist)
-                .take(1)
-                .toBlocking()
-                .single();
+        try {
+            return mArtistsProvider.load(query, LIMIT)
+                    .subscribeOn(Schedulers.io())
+                    .map(this::cursorToWearSearchDataArtist)
+                    .take(1)
+                    .toBlocking()
+                    .single();
+        } catch (RuntimeException e) {
+            Log.w(TAG, e);
+            return new WearSearchData.Artist[0];
+        }
     }
 
     @NonNull
@@ -233,12 +243,17 @@ public final class WearableSearchProviderService extends IntentService {
 
     @NonNull
     private WearSearchData.Track[] queryTracks(@NonNull final String query) {
-        return mTracksProvider.load(query, LIMIT_TRACKS, false)
-                .subscribeOn(Schedulers.io())
-                .map(this::cursorToWearSearchDataTrack)
-                .take(1)
-                .toBlocking()
-                .single();
+        try {
+            return mTracksProvider.load(query, LIMIT_TRACKS, false)
+                    .subscribeOn(Schedulers.io())
+                    .map(this::cursorToWearSearchDataTrack)
+                    .take(1)
+                    .toBlocking()
+                    .single();
+        } catch (RuntimeException e) {
+            Log.w(TAG, e);
+            return new WearSearchData.Track[0];
+        }
     }
 
     @NonNull

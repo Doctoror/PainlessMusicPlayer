@@ -13,23 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
-
-import com.doctoror.fuckoffmusicplayer.queue.Media;
-
-import android.net.Uri;
-import android.support.annotation.NonNull;
-
-import java.util.List;
-
-import rx.Observable;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 /**
- * "File" playlist provider
+ * Play queue config
  */
-public interface PlaylistProviderFiles {
+public final class QueueConfig {
 
-    @NonNull
-    Observable<List<Media>> fromFile(@NonNull Uri uri);
+    public static final int MAX_QUEUE_SIZE = 100;
+
+    private QueueConfig() {
+        throw new UnsupportedOperationException();
+    }
 
 }

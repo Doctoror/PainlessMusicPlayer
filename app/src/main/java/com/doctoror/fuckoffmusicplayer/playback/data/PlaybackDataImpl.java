@@ -17,8 +17,8 @@ package com.doctoror.fuckoffmusicplayer.playback.data;
 
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 
 import android.content.Context;
@@ -54,12 +54,12 @@ public final class PlaybackDataImpl implements PlaybackData {
     private final Context mContext;
 
     @NonNull
-    private final RecentPlaylistsManager mRecentPlaylistsManager;
+    private final RecentActivityManager mRecentActivityManager;
 
     public PlaybackDataImpl(@NonNull final Context context,
-            @NonNull final RecentPlaylistsManager recentPlaylistsManager) {
+            @NonNull final RecentActivityManager recentActivityManager) {
         mContext = context;
-        mRecentPlaylistsManager = recentPlaylistsManager;
+        mRecentActivityManager = recentActivityManager;
         mPlaybackStateSubject.onNext(PlaybackService.getLastKnownState());
         PlaybackDataPersister.restoreFromFile(context, this);
     }
@@ -201,7 +201,7 @@ public final class PlaybackDataImpl implements PlaybackData {
             if (sequence >= THRESHOLD) {
                 albums.add(prevAlbumId);
             }
-            mRecentPlaylistsManager.storeAlbums(albums);
+            mRecentActivityManager.onAlbumsPlayed(albums);
         }
     }
 }

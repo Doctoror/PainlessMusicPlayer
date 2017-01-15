@@ -21,7 +21,7 @@ import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
+import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -77,7 +77,7 @@ public final class MediaBrowserImpl {
     GenresProvider mGenresProvider;
 
     @Inject
-    RecentPlaylistsManager mRecentPlaylistsManager;
+    RecentActivityManager mRecentActivityManager;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -101,7 +101,7 @@ public final class MediaBrowserImpl {
                 if (queue != null && !queue.isEmpty()) {
                     mediaItems.add(createBrowsableMediaItemCurrentQueue());
                 }
-                final long[] recentlyPlayedAlbums = mRecentPlaylistsManager.getRecentAlbums();
+                final long[] recentlyPlayedAlbums = mRecentActivityManager.getRecentlyPlayedAlbums();
                 if (recentlyPlayedAlbums.length != 0) {
                     mediaItems.add(createBrowsableMediaItemRecentAlbums());
                 }

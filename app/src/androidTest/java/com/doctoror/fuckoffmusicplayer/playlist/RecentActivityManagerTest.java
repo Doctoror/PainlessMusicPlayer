@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManagerImpl;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,46 +27,46 @@ import java.util.Collections;
 import static org.junit.Assert.*;
 
 /**
- * {@link RecentPlaylistsManagerImpl} test
+ * {@link RecentActivityManagerImpl} test
  */
 @RunWith(AndroidJUnit4.class)
-public final class RecentPlaylistsManagerTest {
+public final class RecentActivityManagerTest {
 
     @Test
     public void testStoreAlbum() throws Exception {
-        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
+        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
-        rpm.storeAlbum(666);
+        rpm.onAlbumPlayed(666);
 
-        final long[] albums = rpm.getRecentAlbums();
+        final long[] albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(1, albums.length);
         assertEquals(666, albums[0]);
     }
 
     @Test
     public void testStoreAlbums() throws Exception {
-        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
+        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         rpm.storeAlbumsSync(Collections.singletonList(666L));
 
-        final long[] albums = rpm.getRecentAlbums();
+        final long[] albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(1, albums.length);
         assertEquals(666, albums[0]);
     }
 
     @Test
     public void testOrderingByOne() throws Exception {
-        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
+        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
 
-        rpm.storeAlbum(666);
-        rpm.storeAlbum(777);
-        rpm.storeAlbum(888);
+        rpm.onAlbumPlayed(666);
+        rpm.onAlbumPlayed(777);
+        rpm.onAlbumPlayed(888);
 
-        final long[] albums = rpm.getRecentAlbums();
+        final long[] albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(3, albums.length);
         assertEquals(888, albums[0]);
         assertEquals(777, albums[1]);
@@ -77,12 +75,12 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testOrderingByBatch() throws Exception {
-        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
+        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         rpm.storeAlbumsSync(Arrays.asList(666L, 777L, 888L));
 
-        final long[] albums = rpm.getRecentAlbums();
+        final long[] albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(3, albums.length);
         assertEquals(888, albums[0]);
         assertEquals(777, albums[1]);
@@ -91,15 +89,15 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testAppendingDuplicate() throws Exception {
-        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
+        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         // Add initial values
         rpm.storeAlbumsSync(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L));
         // This one should append to end
-        rpm.storeAlbum(4L);
+        rpm.onAlbumPlayed(4L);
 
-        final long[] albums = rpm.getRecentAlbums();
+        final long[] albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(8, albums.length);
         assertEquals(4, albums[0]);
         assertEquals(8, albums[1]);
@@ -113,39 +111,39 @@ public final class RecentPlaylistsManagerTest {
 
     @Test
     public void testAppendingTheSameValue() throws Exception {
-        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
+        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         // Add initial values
         rpm.storeAlbumsSync(Arrays.asList(1L, 1L, 1L, 1L));
 
-        long[] albums = rpm.getRecentAlbums();
+        long[] albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(1, albums.length);
         assertEquals(1, albums[0]);
 
-        rpm.storeAlbum(1L);
+        rpm.onAlbumPlayed(1L);
 
-        albums = rpm.getRecentAlbums();
+        albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(1, albums.length);
         assertEquals(1, albums[0]);
     }
 
     @Test
     public void testAppendingTheSameValueOnEnd() throws Exception {
-        final RecentPlaylistsManagerImpl rpm = RecentPlaylistsManagerImpl.getInstance(
+        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
                 InstrumentationRegistry.getTargetContext());
         rpm.clear();
         // Add initial values
         rpm.storeAlbumsSync(Arrays.asList(1L, 2L, 2L, 2L));
 
-        long[] albums = rpm.getRecentAlbums();
+        long[] albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(2, albums.length);
         assertEquals(2, albums[0]);
         assertEquals(1, albums[1]);
 
-        rpm.storeAlbum(2L);
+        rpm.onAlbumPlayed(2L);
 
-        albums = rpm.getRecentAlbums();
+        albums = rpm.getRecentlyPlayedAlbums();
         assertEquals(2, albums.length);
         assertEquals(2, albums[0]);
         assertEquals(1, albums[1]);

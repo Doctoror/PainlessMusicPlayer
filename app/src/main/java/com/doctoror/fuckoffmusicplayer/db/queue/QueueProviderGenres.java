@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
@@ -26,7 +26,7 @@ import rx.Observable;
 /**
  * Genre playlist provider
  */
-public interface PlaylistProviderGenres {
+public interface QueueProviderGenres {
 
     @NonNull
     Observable<List<Media>> fromGenre(long genreId);

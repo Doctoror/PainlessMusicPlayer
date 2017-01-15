@@ -23,7 +23,7 @@ import com.doctoror.commons.playback.PlaybackState.State;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
@@ -165,7 +165,7 @@ public final class PlaybackService extends Service {
     PlaybackData mPlaybackData;
 
     @Inject
-    PlaylistProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
+    QueueProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
 
     @Override
     public void onCreate() {
@@ -454,7 +454,7 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaybackData.getQueuePosition(), true, false);
         } else {
-            mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist()
+            mRecentlyScannedPlaylistFactory.recentlyScannedQueue()
                     .subscribeOn(Schedulers.io())
                     .subscribe(new ObserverAdapter<List<Media>>() {
                         @Override

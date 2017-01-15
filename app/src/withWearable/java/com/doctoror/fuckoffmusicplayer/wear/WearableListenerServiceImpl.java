@@ -22,16 +22,18 @@ import com.google.protobuf.nano.InvalidProtocolBufferNanoException;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.wear.DataPaths;
 import com.doctoror.commons.wear.nano.WearQueueFromSearch;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderArtists;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderArtists;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.nio.ByteBuffer;
@@ -48,13 +50,13 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
     private static final String TAG = "WearableListenerServiceImpl";
 
     @Inject
-    PlaylistProviderArtists mArtistPlaylistFactory;
+    QueueProviderArtists mQueueProviderArtists;
 
     @Inject
-    PlaylistProviderAlbums mAlbumPlaylistFactory;
+    QueueProviderAlbums mQueueProviderAlbums;
 
     @Inject
-    PlaylistProviderTracks mTrackPlaylistFactory;
+    QueueProviderTracks mQueueProviderTracks;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -112,8 +114,14 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 8) {
                     final long id = ByteBuffer.wrap(data).getLong();
-                    final List<Media> queue = mAlbumPlaylistFactory.fromAlbum(id);
-                    playQueue(queue, 0);
+                    mQueueProviderAlbums.fromAlbum(id)
+                            .take(1)
+                            .subscribe(new ObserverAdapter<List<Media>>() {
+                                @Override
+                                public void onNext(final List<Media> queue) {
+                                    playQueue(queue, 0);
+                                }
+                            });
                 }
                 break;
             }
@@ -122,8 +130,15 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                 final byte[] data = messageEvent.getData();
                 if (data != null && data.length == 8) {
                     final long id = ByteBuffer.wrap(data).getLong();
-                    final List<Media> queue = mArtistPlaylistFactory.fromArtist(id);
-                    playQueue(queue, 0);
+                    mQueueProviderArtists.fromArtist(id)
+                            .take(1)
+                            .single()
+                            .subscribe(new ObserverAdapter<List<Media>>() {
+                                @Override
+                                public void onNext(final List<Media> queue) {
+                                    playQueue(queue, 0);
+                                }
+                            });
                 }
                 break;
             }
@@ -138,23 +153,33 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                         Log.w(TAG, e);
                         break;
                     }
-                    final List<Media> queue = mTrackPlaylistFactory.fromTracks(
-                            fromSearch.queue, MediaStore.Audio.Media.TITLE);
-                    if (queue != null && !queue.isEmpty()) {
-                        int index = 0;
-                        for (int i = 0; i < queue.size(); i++) {
-                            final Media media = queue.get(i);
-                            if (media.getId() == fromSearch.selectedId) {
-                                index = i;
-                                break;
-                            }
-                        }
-                        playQueue(queue, index);
-                    }
+                    mQueueProviderTracks.fromTracks(fromSearch.queue, MediaStore.Audio.Media.TITLE)
+                            .take(1)
+                            .subscribe(new ObserverAdapter<List<Media>>() {
+                                @Override
+                                public void onNext(final List<Media> queue) {
+                                    if (!queue.isEmpty()) {
+                                        final int mediaPos = mediaPosition(queue,
+                                                fromSearch.selectedId);
+                                        playQueue(queue, mediaPos != -1 ? mediaPos : 0);
+                                    }
+                                }
+                            });
                 }
                 break;
             }
         }
+    }
+
+    private int mediaPosition(@NonNull final List<Media> queue, final long id) {
+        int pos = 0;
+        for (final Media media : queue) {
+            if (media.getId() == id) {
+                return pos;
+            }
+            pos++;
+        }
+        return -1;
     }
 
     private void playQueue(@Nullable final List<Media> queue, final int position) {

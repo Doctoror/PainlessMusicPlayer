@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
@@ -24,12 +24,15 @@ import java.util.List;
 
 import rx.Observable;
 
-public interface PlaylistProviderTracks {
+public interface QueueProviderAlbums {
 
     @NonNull
-    Observable<List<Media>> fromTracks(@NonNull long[] trackIds, @Nullable String sortOrder);
+    Observable<List<Media>> fromAlbumSearch(@Nullable String query);
 
     @NonNull
-    Observable<List<Media>> fromTracksSearch(@Nullable String query);
+    Observable<List<Media>> fromAlbum(long albumId);
+
+    @NonNull
+    Observable<List<Media>> fromAlbums(@NonNull long[] albumIds, @Nullable Long forArtist);
 
 }

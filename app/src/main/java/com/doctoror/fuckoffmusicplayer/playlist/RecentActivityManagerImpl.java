@@ -35,7 +35,7 @@ import rx.schedulers.Schedulers;
 /**
  * Used for storing recent playlists
  */
-public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager {
+public final class RecentActivityManagerImpl implements RecentActivityManager {
 
     private static final int MAX_LENGTH = 10;
 
@@ -44,14 +44,14 @@ public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager 
 
     // Is not a leak since it's an application context
     @SuppressLint("StaticFieldLeak")
-    private static volatile RecentPlaylistsManagerImpl sInstance;
+    private static volatile RecentActivityManagerImpl sInstance;
 
     @NonNull
-    public static RecentPlaylistsManagerImpl getInstance(@NonNull final Context context) {
+    public static RecentActivityManagerImpl getInstance(@NonNull final Context context) {
         if (sInstance == null) {
-            synchronized (RecentPlaylistsManagerImpl.class) {
+            synchronized (RecentActivityManagerImpl.class) {
                 if (sInstance == null) {
-                    sInstance = new RecentPlaylistsManagerImpl(context.getApplicationContext());
+                    sInstance = new RecentActivityManagerImpl(context.getApplicationContext());
                 }
             }
         }
@@ -70,7 +70,7 @@ public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager 
     @NonNull
     private final Queue<Long> mRecentAlbums = new CircularFifoQueue<>(MAX_LENGTH);
 
-    private RecentPlaylistsManagerImpl(@NonNull final Context context) {
+    private RecentActivityManagerImpl(@NonNull final Context context) {
         mContext = context;
         read();
     }
@@ -100,14 +100,14 @@ public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager 
     }
 
     @Override
-    public void storeAlbum(final long albumId) {
+    public void onAlbumPlayed(final long albumId) {
         if (albumId > 0) {
             storeAlbumInternal(albumId, true);
         }
     }
 
     @Override
-    public void storeAlbums(@NonNull final Collection<Long> albumIds) {
+    public void onAlbumsPlayed(@NonNull final Collection<Long> albumIds) {
         boolean result = false;
         for (final Long albumId : albumIds) {
             if (albumId > 0) {
@@ -121,7 +121,7 @@ public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager 
 
     // For testing
     void storeAlbumsSync(@NonNull final Collection<Long> albumIds) {
-        storeAlbums(albumIds);
+        onAlbumsPlayed(albumIds);
         persistBlocking();
     }
 
@@ -152,7 +152,7 @@ public final class RecentPlaylistsManagerImpl implements RecentPlaylistsManager 
 
     @NonNull
     @Override
-    public long[] getRecentAlbums() {
+    public long[] getRecentlyPlayedAlbums() {
         synchronized (mLock) {
             return CollectionUtils.toReverseLongArray(mRecentAlbums);
         }

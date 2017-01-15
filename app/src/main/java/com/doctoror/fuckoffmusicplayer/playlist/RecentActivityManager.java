@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2016 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
-
-import com.doctoror.fuckoffmusicplayer.queue.Media;
+package com.doctoror.fuckoffmusicplayer.playlist;
 
 import android.support.annotation.NonNull;
 
-import java.util.List;
-
-import rx.Observable;
+import java.util.Collection;
 
 /**
- * Creates "recently scanned" playlist
+ * Used for managing "recently played albums"
  */
-public interface PlaylistProviderRecentlyScanned {
+public interface RecentActivityManager {
 
     @NonNull
-    Observable<List<Media>> recentlyScannedPlaylist();
+    long[] getRecentlyPlayedAlbums();
 
+    void onAlbumsPlayed(@NonNull Collection<Long> albumIds);
+
+    void onAlbumPlayed(long albumId);
+
+    void clear();
 }

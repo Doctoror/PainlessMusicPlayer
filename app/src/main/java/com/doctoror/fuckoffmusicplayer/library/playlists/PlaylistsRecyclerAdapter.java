@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProvider;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylists;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconMenuViewHolder;
@@ -125,8 +125,8 @@ final class PlaylistsRecyclerAdapter
             final Cursor item = getCursor();
             if (item != null && item.moveToPosition(cursorPosition)) {
                 onPlaylistClick(
-                        item.getLong(PlaylistsProvider.COLUMN_ID),
-                        item.getString(PlaylistsProvider.COLUMN_NAME),
+                        item.getLong(QueueProviderPlaylists.COLUMN_ID),
+                        item.getString(QueueProviderPlaylists.COLUMN_NAME),
                         position);
             }
         }
@@ -155,8 +155,8 @@ final class PlaylistsRecyclerAdapter
 
             final Cursor item = getCursorItem(position);
             if (item != null) {
-                final long id = item.getLong(PlaylistsProvider.COLUMN_ID);
-                final String name = item.getString(PlaylistsProvider.COLUMN_NAME);
+                final long id = item.getLong(QueueProviderPlaylists.COLUMN_ID);
+                final String name = item.getString(QueueProviderPlaylists.COLUMN_NAME);
                 popup.setOnMenuItemClickListener(
                         menuItem -> onMenuItemClick(menuItem, id, name));
                 popup.show();
@@ -198,7 +198,7 @@ final class PlaylistsRecyclerAdapter
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final Cursor cursor) {
         final SingleLineItemIconMenuViewHolder vh = (SingleLineItemIconMenuViewHolder) viewHolder;
-        vh.text.setText(cursor.getString(PlaylistsProvider.COLUMN_NAME));
+        vh.text.setText(cursor.getString(QueueProviderPlaylists.COLUMN_NAME));
     }
 
     private void onBindViewHolderLivePlaylist(final SingleLineItemIconViewHolder viewHolder,
@@ -248,7 +248,7 @@ final class PlaylistsRecyclerAdapter
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(PlaylistsProvider.COLUMN_NAME).charAt(0));
+            return String.valueOf(c.getString(QueueProviderPlaylists.COLUMN_NAME).charAt(0));
         }
         return null;
     }

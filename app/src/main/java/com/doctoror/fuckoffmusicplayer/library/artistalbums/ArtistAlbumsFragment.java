@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
@@ -51,7 +51,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     private long artistId;
 
     @Inject
-    PlaylistProviderAlbums queueProvider;
+    QueueProviderAlbums queueProvider;
 
     @Inject
     AlbumsProvider mAlbumsProvider;

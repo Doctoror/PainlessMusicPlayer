@@ -17,13 +17,13 @@ package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandom;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistsProvider;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRandom;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylists;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentPlaylistsManager;
+import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
@@ -72,16 +72,16 @@ public final class PlaylistsFragment extends LibraryListFragment {
     RecyclerView mRecyclerView;
 
     @Inject
-    PlaylistsProvider mPlaylistsProvider;
+    QueueProviderPlaylists mPlaylistsProvider;
 
     @Inject
-    RecentPlaylistsManager mRecentPlaylistsManager;
+    RecentActivityManager mRecentActivityManager;
 
     @Inject
-    PlaylistProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
+    QueueProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
 
     @Inject
-    PlaylistProviderRandom mRandomPlaylistFactory;
+    QueueProviderRandom mRandomPlaylistFactory;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -180,13 +180,13 @@ public final class PlaylistsFragment extends LibraryListFragment {
             case LivePlaylist.TYPE_RECENTLY_SCANNED:
                 loadLivePlaylistAndPlay(position,
                         livePlaylist.getTitle().toString(),
-                        mRecentlyScannedPlaylistFactory.recentlyScannedPlaylist());
+                        mRecentlyScannedPlaylistFactory.recentlyScannedQueue());
                 break;
 
             case LivePlaylist.TYPE_RANDOM_PLAYLIST:
                 loadLivePlaylistAndPlay(position,
                         livePlaylist.getTitle().toString(),
-                        mRandomPlaylistFactory.randomPlaylist());
+                        mRandomPlaylistFactory.randomQueue());
                 break;
 
         }
@@ -228,7 +228,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
 
     private void goToRecentAlbumsActivity(@NonNull final Activity context,
             final int position) {
-        final long[] recentAlbums = mRecentPlaylistsManager.getRecentAlbums();
+        final long[] recentAlbums = mRecentActivityManager.getRecentlyPlayedAlbums();
         if (recentAlbums.length == 0) {
             Toast.makeText(context, R.string.You_played_no_albums_yet, Toast.LENGTH_LONG).show();
         } else {

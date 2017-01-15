@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
@@ -27,25 +27,25 @@ import java.util.List;
 import rx.Observable;
 
 /**
- * MediaStore {@link PlaylistProviderRecentlyScanned}
+ * MediaStore {@link QueueProviderRecentlyScanned}
  */
-public final class PlaylistProviderRecentlyScannedMediaStore
-        implements PlaylistProviderRecentlyScanned {
+public final class QueueProviderRecentlyScannedMediaStore
+        implements QueueProviderRecentlyScanned {
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public PlaylistProviderRecentlyScannedMediaStore(
+    public QueueProviderRecentlyScannedMediaStore(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 
     @NonNull
-    public Observable<List<Media>> recentlyScannedPlaylist() {
+    public Observable<List<Media>> recentlyScannedQueue() {
         return mMediaProvider.load(
                 MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC,
                 null,
                 MediaStore.Audio.Media.DATE_ADDED + " DESC",
-                QueueConfig.MAX_PLAYLIST_SIZE);
+                QueueConfig.MAX_QUEUE_SIZE);
     }
 }

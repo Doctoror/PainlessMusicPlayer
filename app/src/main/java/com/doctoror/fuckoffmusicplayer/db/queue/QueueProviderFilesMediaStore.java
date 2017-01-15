@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.db.playlist;
+package com.doctoror.fuckoffmusicplayer.db.queue;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
@@ -32,16 +32,16 @@ import java.util.List;
 import rx.Observable;
 
 /**
- * MediaStore {@link PlaylistProviderFiles}
+ * MediaStore {@link QueueProviderFiles}
  */
-public final class PlaylistProviderFilesMediaStore implements PlaylistProviderFiles {
+public final class QueueProviderFilesMediaStore implements QueueProviderFiles {
 
     private static final String TAG = "MediaStoreFilePlaylistFactory";
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
 
-    public PlaylistProviderFilesMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
+    public QueueProviderFilesMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
     }
 

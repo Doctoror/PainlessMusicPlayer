@@ -18,12 +18,12 @@ package com.doctoror.fuckoffmusicplayer.media.browser;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.db.media.MediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderArtists;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderGenres;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRandom;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.db.playlist.PlaylistProviderTracks;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderArtists;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderGenres;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRandom;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
@@ -62,22 +62,22 @@ public final class SearchUtils {
     PlaybackData mPlaybackData;
 
     @Inject
-    PlaylistProviderArtists artistPlaylistFactory;
+    QueueProviderArtists artistPlaylistFactory;
 
     @Inject
-    PlaylistProviderAlbums albumPlaylistFactory;
+    QueueProviderAlbums albumPlaylistFactory;
 
     @Inject
-    PlaylistProviderGenres genrePlaylistFactory;
+    QueueProviderGenres genrePlaylistFactory;
 
     @Inject
-    PlaylistProviderTracks tracksQueueProvider;
+    QueueProviderTracks tracksQueueProvider;
 
     @Inject
-    PlaylistProviderRecentlyScanned recentlyScannedPlaylistFactory;
+    QueueProviderRecentlyScanned recentlyScannedPlaylistFactory;
 
     @Inject
-    PlaylistProviderRandom randomPlaylistFactory;
+    QueueProviderRandom randomPlaylistFactory;
 
     public SearchUtils(@NonNull final Context context) {
         mContext = context;
@@ -87,9 +87,9 @@ public final class SearchUtils {
     @WorkerThread
     public void onPlayFromMediaId(@NonNull final String mediaId) {
         if (MediaBrowserImpl.MEDIA_ID_RANDOM.equals(mediaId)) {
-            playFromQueueSource(randomPlaylistFactory.randomPlaylist());
+            playFromQueueSource(randomPlaylistFactory.randomQueue());
         } else if (MediaBrowserImpl.MEDIA_ID_RECENT.equals(mediaId)) {
-            playFromQueueSource(recentlyScannedPlaylistFactory.recentlyScannedPlaylist());
+            playFromQueueSource(recentlyScannedPlaylistFactory.recentlyScannedQueue());
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_ALBUM)) {
             playFromQueueSource(queueSourceFromAlbumId(mediaId));
         } else if (mediaId.startsWith(MediaBrowserImpl.MEDIA_ID_PREFIX_GENRE)) {

@@ -30,7 +30,7 @@ import dagger.Component;
 @Component(modules = {
         AppContextModule.class,
         MediaStoreProvidersModule.class,
-        PlaylistsModule.class
+        MediaModule.class
 })
 public interface WearComponent {
 
