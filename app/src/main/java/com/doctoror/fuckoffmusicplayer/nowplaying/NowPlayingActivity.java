@@ -96,6 +96,9 @@ public final class NowPlayingActivity extends BaseActivity {
                 .hasCoverTransition(albumArt != null)
                 .hasListViewTransition(listItemView != null)
                 .build();
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         Bundle options = null;
         if (albumArt != null) {
             options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, albumArt,

@@ -394,11 +394,19 @@ public final class QueueActivity extends BaseActivity
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media != null ? media.getAlbumArt() : null);
         if (shouldPassCoverView) {
-            prepareViewsAndExit(() -> NowPlayingActivity.start(this, albumArt, null));
+            prepareViewsAndExit(() -> startNowPlayingActivity(albumArt, null));
         } else {
             mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(fab);
             CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(fab);
-            NowPlayingActivity.start(this, null, clickedView);
+            startNowPlayingActivity(null, clickedView);
+        }
+    }
+
+    private void startNowPlayingActivity(@Nullable final View albumArt,
+            @Nullable final View listItemView) {
+        NowPlayingActivity.start(this, albumArt, listItemView);
+        if (isNowPlayingQueue) {
+            ActivityCompat.finishAfterTransition(this);
         }
     }
 
