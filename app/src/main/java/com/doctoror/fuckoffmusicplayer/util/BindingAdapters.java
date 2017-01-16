@@ -73,7 +73,7 @@ public final class BindingAdapters {
                 imageView.setImageDrawable(placeholder);
             } else {
                 mRequestManager.load(imageUri)
-                        .placeholder(placeholder)
+                        .error(placeholder)
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .into(imageView);
             }

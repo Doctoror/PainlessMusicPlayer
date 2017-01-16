@@ -254,8 +254,7 @@ public final class QueueActivity extends BaseActivity
         mCoverUri = pic;
 
         if (TextUtils.isEmpty(pic)) {
-            Glide.clear(albumArt);
-            animateToPlaceholder();
+            showPlaceholderArt();
             onImageSet();
         } else {
             final DrawableRequestBuilder<String> b = Glide.with(this)
@@ -271,7 +270,7 @@ public final class QueueActivity extends BaseActivity
                         final Target<GlideDrawable> target,
                         final boolean isFirstResource) {
                     mCoverUri = null;
-                    animateToPlaceholder();
+                    showPlaceholderArt();
                     onImageSet();
                     return true;
                 }
@@ -289,10 +288,10 @@ public final class QueueActivity extends BaseActivity
         }
     }
 
-    private void animateToPlaceholder() {
-        albumArt.setAlpha(0f);
+    private void showPlaceholderArt() {
+        Glide.clear(albumArt);
         albumArt.setImageResource(R.drawable.album_art_placeholder);
-        albumArt.animate().alpha(1f).start();
+        albumArt.setAlpha(1f);
     }
 
     private void onImageSet() {

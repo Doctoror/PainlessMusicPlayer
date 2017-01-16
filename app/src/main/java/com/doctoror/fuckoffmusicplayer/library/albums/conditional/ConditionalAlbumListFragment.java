@@ -70,7 +70,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -195,8 +194,6 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         if (TransitionUtils.supportsActivityTransitions()) {
             LollipopUtils.applyTransitions((BaseActivity) getActivity(), cardView != null);
         }
-
-        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
     }
 
     @Override
@@ -405,16 +402,17 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         if (albumArt != null) {
             final String pic = findAlbumArt(cursor);
             if (TextUtils.isEmpty(pic)) {
-                setPlaceholderAlbumArt();
+                showPlaceholderAlbumArt();
             } else {
                 mRequestManager.load(pic)
+                        .dontAnimate()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
                             public boolean onException(final Exception e, final String model,
                                     final Target<GlideDrawable> target,
                                     final boolean isFirstResource) {
-                                animateToPlaceholder();
+                                showPlaceholderAlbumArt();
                                 return true;
                             }
 
@@ -424,6 +422,8 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                                     final Target<GlideDrawable> target,
                                     final boolean isFromMemoryCache,
                                     final boolean isFirstResource) {
+                                ((AppCompatActivity) getActivity())
+                                        .supportStartPostponedEnterTransition();
                                 return false;
                             }
                         })
@@ -432,12 +432,11 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         }
     }
 
-    private void setPlaceholderAlbumArt() {
+    private void showPlaceholderAlbumArt() {
         Glide.clear(albumArt);
-        //Must be a delay of from here. TODO Why?
-        registerOnStartSubscription(Observable.timer(300, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((l) -> animateToPlaceholder()));
+        albumArt.setImageResource(R.drawable.album_art_placeholder);
+        albumArt.setAlpha(1f);
+        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
     }
 
     @Nullable
@@ -449,12 +448,6 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             }
         }
         return null;
-    }
-
-    private void animateToPlaceholder() {
-        albumArt.setAlpha(0f);
-        albumArt.setImageResource(R.drawable.album_art_placeholder);
-        albumArt.animate().alpha(1f).setDuration(500).start();
     }
 
     private final Observer<Cursor> mObserver = new ObserverAdapter<Cursor>() {

@@ -129,7 +129,7 @@ final class RecentActivityRecyclerAdapter
             holder.image.setImageResource(R.drawable.album_art_placeholder);
         } else {
             mGlide.load(artLocation)
-                    .placeholder(R.drawable.album_art_placeholder)
+                    .error(R.drawable.album_art_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(holder.image);
         }

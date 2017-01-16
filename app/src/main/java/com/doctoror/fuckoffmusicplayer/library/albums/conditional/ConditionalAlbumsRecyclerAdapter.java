@@ -88,7 +88,7 @@ final class ConditionalAlbumsRecyclerAdapter
         } else {
             mRequestManager
                     .load(artLocation)
-                    .placeholder(R.drawable.album_art_placeholder)
+                    .error(R.drawable.album_art_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(viewHolder.image);
         }
