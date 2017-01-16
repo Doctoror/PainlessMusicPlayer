@@ -30,7 +30,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import javax.inject.Inject;
 
@@ -62,12 +61,12 @@ public final class AlbumsFragment extends LibraryListFragment {
         mAdapter.setOnAlbumClickListener(new AlbumsRecyclerAdapter.OnAlbumClickListener() {
 
             @Override
-            public void onAlbumClick(final View albumArtView, final long id, final String album) {
-                AlbumsFragment.this.onAlbumClick(albumArtView, id, album);
+            public void onAlbumClick(final int position, final long id, final String album) {
+                AlbumsFragment.this.onAlbumClick(position, id, album);
             }
 
             @Override
-            public void onAlbumDeleteClick(final long id, @NonNull final String name) {
+            public void onAlbumDeleteClick(final long id, @Nullable final String name) {
                 AlbumsFragment.this.onAlbumDeleteClick(id, name);
             }
         });
@@ -111,18 +110,17 @@ public final class AlbumsFragment extends LibraryListFragment {
         mAdapter.changeCursor(null);
     }
 
-    private void onAlbumDeleteClick(final long albumId, @NonNull final String name) {
+    private void onAlbumDeleteClick(final long albumId, @Nullable final String name) {
         DeleteAlbumDialogFragment.show(getActivity(), getFragmentManager(), TAG_DIALOG_DELETE,
                 albumId, name);
     }
 
-    private void onAlbumClick(@NonNull final View view,
-            final long albumId,
+    private void onAlbumClick(final int position, final long albumId,
             @Nullable final String albumName) {
         AlbumClickHandler.onAlbumClick(this,
                 mQueueProvider,
-                view,
                 albumId,
-                albumName);
+                albumName,
+                () -> getItemView(position));
     }
 }

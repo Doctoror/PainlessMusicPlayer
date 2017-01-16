@@ -25,8 +25,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -36,7 +36,7 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
         implements FastScroller.SectionIndexer {
 
     interface OnTrackClickListener {
-        void onTrackClick(View itemView, int position, long id);
+        void onTrackClick(int position, long id);
     }
 
     @NonNull
@@ -53,9 +53,16 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
         mClickListener = clickListener;
     }
 
-    private void onTrackClick(@NonNull final View itemView, final int position, final long id) {
+    private void onItemClick(final int position) {
+        final Cursor item = getCursor();
+        if (item != null && item.moveToPosition(position)) {
+            onTrackClick(position, item.getLong(TracksProvider.COLUMN_ID));
+        }
+    }
+
+    private void onTrackClick(final int position, final long id) {
         if (mClickListener != null) {
-            mClickListener.onTrackClick(itemView, position, id);
+            mClickListener.onTrackClick(position, id);
         }
     }
 
@@ -69,13 +76,7 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
     public TwoLineItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final TwoLineItemViewHolder vh = new TwoLineItemViewHolder(mLayoutInflater.inflate(
                 R.layout.list_item_two_line, parent, false));
-        vh.itemView.setOnClickListener(v -> {
-            final Cursor item = getCursor();
-            final int position = vh.getAdapterPosition();
-            if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onTrackClick(vh.itemView, position, item.getLong(TracksProvider.COLUMN_ID));
-            }
-        });
+        vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
         return vh;
     }
 
@@ -83,7 +84,10 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(TracksProvider.COLUMN_TITLE).charAt(0));
+            final String title = c.getString(TracksProvider.COLUMN_TITLE);
+            if (!TextUtils.isEmpty(title)) {
+                return String.valueOf(title.charAt(0));
+            }
         }
         return null;
     }

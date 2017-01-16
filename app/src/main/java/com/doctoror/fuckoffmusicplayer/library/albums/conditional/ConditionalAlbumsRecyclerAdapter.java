@@ -28,7 +28,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -39,9 +38,7 @@ final class ConditionalAlbumsRecyclerAdapter
 
     interface OnAlbumClickListener {
 
-        void onAlbumClick(@NonNull View itemView,
-                long albumId,
-                @Nullable String albumName);
+        void onAlbumClick(int position, long albumId, @Nullable String albumName);
     }
 
     @NonNull
@@ -63,11 +60,20 @@ final class ConditionalAlbumsRecyclerAdapter
         mOnAlbumClickListener = onAlbumClickListener;
     }
 
-    private void onAlbumClick(@NonNull final View itemView,
+    private void onItemClick(final int position) {
+        final Cursor item = getCursor();
+        if (item != null && item.moveToPosition(position)) {
+            onAlbumClick(position,
+                    item.getLong(AlbumsProvider.COLUMN_ID),
+                    item.getString(AlbumsProvider.COLUMN_ALBUM));
+        }
+    }
+
+    private void onAlbumClick(final int positon,
             final long id,
             @NonNull final String album) {
         if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(itemView, id, album);
+            mOnAlbumClickListener.onAlbumClick(positon, id, album);
         }
     }
 
@@ -92,14 +98,7 @@ final class ConditionalAlbumsRecyclerAdapter
     public AlbumListViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final AlbumListViewHolder vh = new AlbumListViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_two_line_icon, parent, false));
-        vh.itemView.setOnClickListener(v -> {
-            final Cursor item = getCursor();
-            if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onAlbumClick(vh.itemView,
-                        item.getLong(AlbumsProvider.COLUMN_ID),
-                        item.getString(AlbumsProvider.COLUMN_ALBUM));
-            }
-        });
+        vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
         return vh;
     }
 }

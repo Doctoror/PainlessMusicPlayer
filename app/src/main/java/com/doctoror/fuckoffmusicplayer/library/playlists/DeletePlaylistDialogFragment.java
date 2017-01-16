@@ -21,6 +21,7 @@ import com.doctoror.fuckoffmusicplayer.library.DeleteItemDialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by Yaroslav Mytkalyk on 09.01.17.
@@ -31,7 +32,7 @@ public final class DeletePlaylistDialogFragment extends DeleteItemDialogFragment
             @NonNull final FragmentManager fragmentManager,
             @NonNull final String tag,
             final long id,
-            @NonNull final String name) {
+            @Nullable final String name) {
         DeleteItemDialogFragment.show(context,
                 DeletePlaylistDialogFragment.class,
                 fragmentManager,

@@ -28,8 +28,9 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -41,7 +42,7 @@ final class GenresRecyclerAdapter
 
     interface OnGenreClickListener {
 
-        void onGenreClick(@NonNull View itemView, long id, @NonNull String genre);
+        void onGenreClick(int position, long id, @Nullable String genre);
     }
 
     @NonNull
@@ -62,10 +63,20 @@ final class GenresRecyclerAdapter
         mClickListener = clickListener;
     }
 
-    private void onGenreClick(@NonNull final View itemView, final long id,
+    private void onItemClick(final int position) {
+        final Cursor item = getCursor();
+        if (item != null && item.moveToPosition(position)) {
+            onGenreClick(
+                    position,
+                    item.getLong(GenresProvider.COLUMN_ID),
+                    item.getString(GenresProvider.COLUMN_NAME));
+        }
+    }
+
+    private void onGenreClick(final int position, final long id,
             @NonNull final String genre) {
         if (mClickListener != null) {
-            mClickListener.onGenreClick(itemView, id, genre);
+            mClickListener.onGenreClick(position, id, genre);
         }
     }
 
@@ -76,20 +87,12 @@ final class GenresRecyclerAdapter
     }
 
     @Override
-    public SingleLineItemIconViewHolder onCreateViewHolder(
-            final ViewGroup parent, final int viewType) {
+    public SingleLineItemIconViewHolder onCreateViewHolder(final ViewGroup parent,
+            final int viewType) {
         final SingleLineItemIconViewHolder vh = new SingleLineItemIconViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_single_line_icon, parent, false));
         vh.icon.setImageDrawable(mIcon);
-        vh.itemView.setOnClickListener(v -> {
-            final Cursor item = getCursor();
-            if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onGenreClick(
-                        vh.itemView,
-                        item.getLong(GenresProvider.COLUMN_ID),
-                        item.getString(GenresProvider.COLUMN_NAME));
-            }
-        });
+        vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
         return vh;
     }
 
@@ -97,7 +100,10 @@ final class GenresRecyclerAdapter
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(GenresProvider.COLUMN_NAME).charAt(0));
+            final String genre = c.getString(GenresProvider.COLUMN_NAME);
+            if (!TextUtils.isEmpty(genre)) {
+                return String.valueOf(genre.charAt(0));
+            }
         }
         return null;
     }

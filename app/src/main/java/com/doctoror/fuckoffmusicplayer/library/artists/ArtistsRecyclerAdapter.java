@@ -26,8 +26,8 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -38,7 +38,7 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
 
     interface OnArtistClickListener {
 
-        void onArtistClick(@NonNull View itemView, long id, String artist);
+        void onArtistClick(int position, long id, @Nullable String artist);
     }
 
     @NonNull
@@ -59,10 +59,18 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
         mClickListener = clickListener;
     }
 
-    private void onArtistClick(@NonNull final View itemView,
-            final long id, @NonNull final String artist) {
+    private void onItemClick(final int position) {
+        final Cursor item = getCursor();
+        if (item != null && item.moveToPosition(position)) {
+            onArtistClick(position,
+                    item.getLong(ArtistsProvider.COLUMN_ID),
+                    item.getString(ArtistsProvider.COLUMN_ARTIST));
+        }
+    }
+
+    private void onArtistClick(final int position, final long id, @NonNull final String artist) {
         if (mClickListener != null) {
-            mClickListener.onArtistClick(itemView, id, artist);
+            mClickListener.onArtistClick(position, id, artist);
         }
     }
 
@@ -78,14 +86,7 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
     public TwoLineItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final TwoLineItemViewHolder vh = new TwoLineItemViewHolder(mLayoutInflater.inflate(
                 R.layout.list_item_two_line, parent, false));
-        vh.itemView.setOnClickListener(v -> {
-            final Cursor item = getCursor();
-            if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onArtistClick(vh.itemView,
-                        item.getLong(ArtistsProvider.COLUMN_ID),
-                        item.getString(ArtistsProvider.COLUMN_ARTIST));
-            }
-        });
+        vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
         return vh;
     }
 
@@ -93,7 +94,10 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(ArtistsProvider.COLUMN_ARTIST).charAt(0));
+            final String artist = c.getString(ArtistsProvider.COLUMN_ARTIST);
+            if (!TextUtils.isEmpty(artist)) {
+                return String.valueOf(artist.charAt(0));
+            }
         }
         return null;
     }

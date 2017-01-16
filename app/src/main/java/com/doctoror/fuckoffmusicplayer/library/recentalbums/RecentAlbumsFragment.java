@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import rx.Observable;
 
 /**
- * Used for showing albums for genre
+ * Shows recently played albums
  */
 public final class RecentAlbumsFragment extends ConditionalAlbumListFragment {
 

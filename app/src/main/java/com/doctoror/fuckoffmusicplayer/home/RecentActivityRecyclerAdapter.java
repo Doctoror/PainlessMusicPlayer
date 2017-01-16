@@ -4,11 +4,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumViewHolder;
 import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumViewHolder;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
@@ -29,7 +30,7 @@ final class RecentActivityRecyclerAdapter
 
     interface OnAlbumClickListener {
 
-        void onAlbumClick(View albumArtView, long id, String album);
+        void onAlbumClick(int position, long id, @Nullable String album);
     }
 
     private final RequestManager mGlide;
@@ -44,10 +45,20 @@ final class RecentActivityRecyclerAdapter
         mOnAlbumClickListener = l;
     }
 
-    private void onAlbumClick(@NonNull final View view, final long id,
-            @NonNull final String album) {
+    private void onItemClick(final int position) {
+        final Object item = getItem(position);
+        if (item instanceof AlbumItem) {
+            onAlbumClick(position,
+                    ((AlbumItem) item).id,
+                    ((AlbumItem) item).title);
+        }
+
+    }
+
+    private void onAlbumClick(final int position, final long id,
+            @Nullable final String album) {
         if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(view, id, album);
+            mOnAlbumClickListener.onAlbumClick(position, id, album);
         }
     }
 
@@ -81,15 +92,7 @@ final class RecentActivityRecyclerAdapter
     private AlbumViewHolder onCreateViewHolderAlbum(final ViewGroup parent) {
         final AlbumViewHolder vh = new AlbumViewHolder(
                 getLayoutInflater().inflate(R.layout.recycler_item_album, parent, false));
-        vh.itemView.setOnClickListener(v -> {
-            final Object item = getItem(vh.getAdapterPosition());
-            if (item instanceof AlbumItem) {
-                onAlbumClick(vh.image,
-                        ((AlbumItem) item).id,
-                        ((AlbumItem) item).title);
-            }
-        });
-
+        vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
         return vh;
     }
 

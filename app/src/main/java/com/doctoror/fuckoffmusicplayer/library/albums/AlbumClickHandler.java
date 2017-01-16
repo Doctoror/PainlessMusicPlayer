@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
@@ -25,8 +26,10 @@ import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.Toast;
@@ -37,7 +40,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Yaroslav Mytkalyk on 11.01.17.
+ * Handles album click from adapter view
  */
 public final class AlbumClickHandler {
 
@@ -45,49 +48,69 @@ public final class AlbumClickHandler {
         throw new UnsupportedOperationException();
     }
 
-    public static void onAlbumClick(@NonNull final Fragment host,
+    /**
+     * Used to provide item view for position. This is required so that item view is retreived from
+     * adapter view after background work is finished.
+     */
+    public interface ItemViewProvider {
+
+        @Nullable
+        @UiThread
+        View provideItemView();
+    }
+
+    public static void onAlbumClick(@NonNull final BaseFragment host,
             @NonNull final QueueProviderAlbums queueProvider,
-            @NonNull final View view,
             final long albumId,
-            @Nullable final String albumName) {
-        queueProvider.fromAlbum(albumId)
+            @Nullable final String albumName,
+            @Nullable final ItemViewProvider itemViewProvider) {
+        host.registerOnStartSubscription(queueProvider.fromAlbum(albumId)
+                .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ObserverAdapter<List<Media>>() {
                     @Override
                     public void onNext(final List<Media> medias) {
-                        onAlbumQueueLoaded(host, view, albumName, medias);
+                        if (host.isAdded()) {
+                            onAlbumQueueLoaded(host, medias, albumName, itemViewProvider);
+                        }
                     }
 
                     @Override
                     public void onError(final Throwable e) {
-                        onAlbumQueueEmpty(host);
+                        if (host.isAdded()) {
+                            onAlbumQueueEmpty(host);
+                        }
                     }
-                });
+                }));
     }
 
     private static void onAlbumQueueLoaded(@NonNull final Fragment host,
-            @NonNull final View view,
+            @NonNull final List<Media> queue,
             @Nullable final String albumName,
-            @NonNull final List<Media> queue) {
-        if (host.isAdded()) {
-            if (!queue.isEmpty()) {
-                final Activity activity = host.getActivity();
-                final Intent intent = Henson.with(activity).gotoQueueActivity()
-                        .hasCoverTransition(true)
-                        .hasItemViewTransition(false)
-                        .isNowPlayingQueue(false)
-                        .queue(queue)
-                        .title(albumName)
-                        .build();
+            @Nullable final ItemViewProvider itemViewProvider) {
+        if (queue.isEmpty()) {
+            onAlbumQueueEmpty(host);
+        } else {
+            final Activity activity = host.getActivity();
+            final Intent intent = Henson.with(activity).gotoQueueActivity()
+                    .hasCoverTransition(true)
+                    .hasItemViewTransition(false)
+                    .isNowPlayingQueue(false)
+                    .queue(queue)
+                    .title(albumName)
+                    .build();
 
-                final ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(activity, view,
-                                QueueActivity.TRANSITION_NAME_ALBUM_ART);
-                host.startActivity(intent, options.toBundle());
-            } else {
-                onAlbumQueueEmpty(host);
+            Bundle options = null;
+            if (itemViewProvider != null) {
+                final View itemView = itemViewProvider.provideItemView();
+                if (itemView != null) {
+                    options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
+                            QueueActivity.TRANSITION_NAME_ALBUM_ART).toBundle();
+                }
             }
+
+            host.startActivity(intent, options);
         }
     }
 

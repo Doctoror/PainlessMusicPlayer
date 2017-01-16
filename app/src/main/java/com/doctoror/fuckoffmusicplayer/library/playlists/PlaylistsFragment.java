@@ -197,6 +197,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
             @NonNull final String name,
             @NonNull final Observable<List<Media>> queueSource) {
         registerOnStartSubscription(queueSource
+                .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<Media>>() {
@@ -221,7 +222,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
                     @Override
                     public void onNext(final List<Media> medias) {
                         if (isAdded()) {
-                            onPlaylistLoaded(itemViewForPosition(position), name, medias);
+                            onQueueLoaded(itemViewForPosition(position), name, medias);
                         }
                     }
                 }));
@@ -263,8 +264,8 @@ public final class PlaylistsFragment extends LibraryListFragment {
         return livePlaylists;
     }
 
-    private void onPlaylistLoaded(@Nullable final View itemView,
-            @NonNull final String name,
+    private void onQueueLoaded(@Nullable final View itemView,
+            @Nullable final String name,
             @Nullable final List<Media> queue) {
         if (queue != null && !queue.isEmpty()) {
             final Intent intent = Henson.with(getActivity()).gotoQueueActivity()
@@ -292,25 +293,28 @@ public final class PlaylistsFragment extends LibraryListFragment {
             implements PlaylistsRecyclerAdapter.OnPlaylistClickListener {
 
         @Override
-        public void onLivePlaylistClick(final LivePlaylist playlist, final int position) {
+        public void onLivePlaylistClick(@NonNull final LivePlaylist playlist, final int position) {
             loadLivePlaylistAndPlay(playlist, position);
         }
 
         @Override
-        public void onPlaylistClick(final long id, final String name, final int position) {
-            mPlaylistsProvider.loadQueue(id)
+        public void onPlaylistClick(final long id,
+                @Nullable final String name,
+                final int position) {
+            registerOnStartSubscription(mPlaylistsProvider.loadQueue(id)
+                    .take(1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new ObserverAdapter<List<Media>>() {
                         @Override
                         public void onNext(final List<Media> queue) {
-                            onPlaylistLoaded(itemViewForPosition(position), name, queue);
+                            onQueueLoaded(itemViewForPosition(position), name, queue);
                         }
-                    });
+                    }));
         }
 
         @Override
-        public void onPlaylistDeleteClick(final long id, final String name) {
+        public void onPlaylistDeleteClick(final long id, @Nullable final String name) {
             DeletePlaylistDialogFragment.show(getActivity(),
                     getFragmentManager(),
                     TAG_DIALOG_DELETE,

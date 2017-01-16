@@ -18,8 +18,10 @@ package com.doctoror.fuckoffmusicplayer.util;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -73,5 +75,16 @@ public final class ViewUtils {
         final int recyclerViewHeight = ViewUtils.childHeights(scrollableView);
         final int appBarHeight = appBar.getHeight();
         return recyclerViewHeight - overlayTop > rootViewHeight - appBarHeight;
+    }
+
+    @Nullable
+    public static View getItemView(@Nullable final RecyclerView recyclerView, final int position) {
+        if (recyclerView != null) {
+            final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+            if (layoutManager != null) {
+                return layoutManager.getChildAt(position);
+            }
+        }
+        return null;
     }
 }

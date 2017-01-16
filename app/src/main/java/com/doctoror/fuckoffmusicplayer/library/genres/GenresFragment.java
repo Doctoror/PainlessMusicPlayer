@@ -21,6 +21,7 @@ import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsActivity;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -50,7 +51,7 @@ public final class GenresFragment extends LibraryListFragment {
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
 
         mAdapter = new GenresRecyclerAdapter(getActivity());
-        mAdapter.setOnGenreClickListener(this::openGenre);
+        mAdapter.setOnGenreClickListener(this::onGenreClick);
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_genres_found));
     }
@@ -70,16 +71,20 @@ public final class GenresFragment extends LibraryListFragment {
         mAdapter.changeCursor(null);
     }
 
-    private void openGenre(@NonNull final View itemView, final long genreId,
-            @NonNull final String genre) {
+    private void onGenreClick(final int position, final long genreId,
+            @Nullable final String genre) {
         final Intent intent = Henson.with(getActivity()).gotoGenreAlbumsActivity()
                 .genre(genre)
                 .genreId(genreId)
                 .build();
 
-        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                getActivity(), itemView, GenreAlbumsActivity.TRANSITION_NAME_ROOT);
+        Bundle options = null;
+        final View itemView = getItemView(position);
+        if (itemView != null) {
+            options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), itemView,
+                    GenreAlbumsActivity.TRANSITION_NAME_ROOT).toBundle();
+        }
 
-        startActivity(intent, options.toBundle());
+        startActivity(intent, options);
     }
 }

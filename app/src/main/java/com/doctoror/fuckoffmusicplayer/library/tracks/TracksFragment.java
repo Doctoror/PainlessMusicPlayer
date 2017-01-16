@@ -26,12 +26,12 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
+import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.Toast;
 
 import java.util.List;
@@ -67,7 +67,7 @@ public final class TracksFragment extends LibraryListFragment {
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
 
         mAdapter = new TracksRecyclerAdapter(getActivity());
-        mAdapter.setOnTrackClickListener(this::playTrack);
+        mAdapter.setOnTrackClickListener(this::onTrackClick);
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_tracks_found));
     }
@@ -125,27 +125,42 @@ public final class TracksFragment extends LibraryListFragment {
         return mPlaylistFactory.fromTracks(ids, MediaStoreTracksProvider.SORT_ORDER);
     }
 
-    private void playTrack(@NonNull final View itemView,
-            final int startPosition,
-            final long trackId) {
-        // TODO SHIT FIXME subscribe no error handling
-        Observable.<long[]>create(s -> s.onNext(createLimitedQueue(startPosition)))
+    private void onTrackClick(final int startPosition, final long trackId) {
+        Observable.fromCallable(() -> createLimitedQueue(startPosition))
                 .flatMap(this::queueFromIds)
+                .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(p -> onPlaylistLoaded(itemView, p));
+                .subscribe(new ObserverAdapter<List<Media>>() {
+                    @Override
+                    public void onNext(final List<Media> queue) {
+                        if (isAdded()) {
+                            onQueueLoaded(startPosition, queue);
+                        }
+                    }
+
+                    @Override
+                    public void onError(final Throwable e) {
+                        if (isAdded()) {
+                            onQueueEmpty();
+                        }
+                    }
+                });
     }
 
-    private void onPlaylistLoaded(@NonNull final View itemView,
-            @Nullable final List<Media> p) {
+    private void onQueueLoaded(final int startPosition,
+            @NonNull final List<Media> queue) {
         if (isAdded()) {
-            if (p != null && !p.isEmpty()) {
-                QueueUtils.play(getActivity(), mPlaybackData, p, 0);
-                NowPlayingActivity.start(getActivity(), null, itemView);
-            } else {
-                Toast.makeText(getActivity(), R.string.The_queue_is_empty,
-                        Toast.LENGTH_LONG).show();
+            if (queue.isEmpty()) {
+                onQueueEmpty();
+            } else  {
+                QueueUtils.play(getActivity(), mPlaybackData, queue);
+                NowPlayingActivity.start(getActivity(), null, getItemView(startPosition));
             }
         }
+    }
+
+    private void onQueueEmpty() {
+        Toast.makeText(getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_LONG).show();
     }
 }

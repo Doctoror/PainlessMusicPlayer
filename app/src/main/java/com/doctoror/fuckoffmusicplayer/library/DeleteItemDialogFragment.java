@@ -27,6 +27,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
 /**
@@ -43,7 +44,7 @@ public abstract class DeleteItemDialogFragment extends DialogFragment {
             @NonNull final FragmentManager fragmentManager,
             @NonNull final String tag,
             final long targetId,
-            @NonNull final String targetName) {
+            @Nullable final String targetName) {
         final DialogFragment f = (DialogFragment) Fragment.instantiate(context,
                 tClass.getCanonicalName(), createArguments(targetId, targetName));
         f.show(fragmentManager, tag);
@@ -51,7 +52,7 @@ public abstract class DeleteItemDialogFragment extends DialogFragment {
 
     @NonNull
     private static Bundle createArguments(final long targetId,
-            @NonNull final String targetName) {
+            @Nullable final String targetName) {
         final Bundle args = new Bundle();
         args.putLong(EXTRA_ID, targetId);
         args.putString(EXTRA_NAME, targetName);
@@ -73,9 +74,6 @@ public abstract class DeleteItemDialogFragment extends DialogFragment {
             throw new IllegalArgumentException("Arguments must contain non-zero EXTRA_ID");
         }
         mName = args.getString(EXTRA_NAME);
-        if (mName == null) {
-            throw new IllegalArgumentException("Arguments must contain EXTRA_NAME");
-        }
     }
 
     @Override

@@ -21,6 +21,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.SearchViewUtils;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
 import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 
@@ -77,6 +78,8 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
 
     private boolean mCanShowEmptyView = true;
     private boolean mSearchIconified = true;
+
+    private RecyclerView mRecyclerView;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -163,7 +166,13 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         });
         binding.getRoot().findViewById(R.id.btnRequest)
                 .setOnClickListener(v -> requestPermission());
+        mRecyclerView = binding.recyclerView;
         return binding.getRoot();
+    }
+
+    @Nullable
+    protected final View getItemView(final int position) {
+        return ViewUtils.getItemView(mRecyclerView, position);
     }
 
     protected void setupRecyclerView(@NonNull final RecyclerView recyclerView) {

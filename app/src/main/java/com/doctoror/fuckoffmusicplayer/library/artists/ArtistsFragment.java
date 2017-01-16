@@ -21,7 +21,9 @@ import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsActivity;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -50,7 +52,7 @@ public final class ArtistsFragment extends LibraryListFragment {
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
 
         mAdapter = new ArtistsRecyclerAdapter(getActivity());
-        mAdapter.setOnArtistClickListener(this::openArtist);
+        mAdapter.setOnArtistClickListener(this::onArtistClick);
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_artists_found));
     }
@@ -70,16 +72,21 @@ public final class ArtistsFragment extends LibraryListFragment {
         mAdapter.changeCursor(null);
     }
 
-    private void openArtist(@NonNull final View itemView, final long artistId,
-            @NonNull final String artist) {
-        final Intent intent = Henson.with(getActivity()).gotoArtistAlbumsActivity()
+    private void onArtistClick(final int position, final long artistId,
+            @Nullable final String artist) {
+        final Activity activity = getActivity();
+        final Intent intent = Henson.with(activity).gotoArtistAlbumsActivity()
                 .artist(artist)
                 .artistId(artistId)
                 .build();
 
-        final ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                getActivity(), itemView, ArtistAlbumsActivity.TRANSITION_NAME_ROOT);
+        Bundle options = null;
+        final View itemView = getItemView(position);
+        if (itemView != null) {
+            options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
+                    ArtistAlbumsActivity.TRANSITION_NAME_ROOT).toBundle();
+        }
 
-        startActivity(intent, options.toBundle());
+        startActivity(intent, options);
     }
 }

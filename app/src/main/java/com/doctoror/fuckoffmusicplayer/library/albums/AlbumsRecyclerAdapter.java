@@ -53,9 +53,9 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
 
     interface OnAlbumClickListener {
 
-        void onAlbumClick(View albumArtView, long id, String album);
+        void onAlbumClick(int position, long id, String album);
 
-        void onAlbumDeleteClick(long id, @NonNull String name);
+        void onAlbumDeleteClick(long id, @Nullable String name);
     }
 
     private OnAlbumClickListener mOnAlbumClickListener;
@@ -71,10 +71,18 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
         mOnAlbumClickListener = onAlbumClickListener;
     }
 
-    private void onAlbumClick(@NonNull final View view, final long id,
-            @NonNull final String album) {
+    private void onItemClick(final int position) {
+        final Cursor item = getCursor();
+        if (item != null && item.moveToPosition(position)) {
+            onAlbumClick(position,
+                    item.getLong(AlbumsProvider.COLUMN_ID),
+                    item.getString(AlbumsProvider.COLUMN_ALBUM));
+        }
+    }
+
+    private void onAlbumClick(final int position, final long id, @NonNull final String album) {
         if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(view, id, album);
+            mOnAlbumClickListener.onAlbumClick(position, id, album);
         }
     }
 
@@ -132,14 +140,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
     public AlbumWithMenuViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
         final AlbumWithMenuViewHolder vh = new AlbumWithMenuViewHolder(
                 mLayoutInflater.inflate(R.layout.recycler_item_album_with_menu, parent, false));
-        vh.itemView.setOnClickListener(v -> {
-            final Cursor item = getCursor();
-            if (item != null && item.moveToPosition(vh.getAdapterPosition())) {
-                onAlbumClick(vh.image,
-                        item.getLong(AlbumsProvider.COLUMN_ID),
-                        item.getString(AlbumsProvider.COLUMN_ALBUM));
-            }
-        });
+
+        vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
 
         vh.btnMenu.setImageDrawable(DrawableUtils.getTintedDrawable(vh.btnMenu.getContext(),
                 R.drawable.ic_more_vert_black_24dp, Color.WHITE));
@@ -153,7 +155,10 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(AlbumsProvider.COLUMN_ALBUM).charAt(0));
+            final String album = c.getString(AlbumsProvider.COLUMN_ALBUM);
+            if (!TextUtils.isEmpty(album)) {
+                return String.valueOf(album.charAt(0));
+            }
         }
         return null;
     }

@@ -239,54 +239,58 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         return mQueueFactory.fromAlbums(albumIds, null);
     }
 
-    private void onListItemClick(@NonNull final View itemView,
+    private void onListItemClick(final int position,
             final long albumId,
             @Nullable final String queueName) {
-        queueFromAlbum(albumId)
+        registerOnStartSubscription(queueFromAlbum(albumId)
+                .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ObserverAdapter<List<Media>>() {
                     @Override
-                    public void onNext(final List<Media> medias) {
-                        onQueueLoaded(medias, itemView, queueName);
+                    public void onNext(final List<Media> queue) {
+                        if (isAdded()) {
+                            onQueueLoaded(queue, ViewUtils.getItemView(recyclerView, position),
+                                    queueName);
+                        }
                     }
 
                     @Override
                     public void onError(final Throwable e) {
-                        onQueueEmpty();
+                        if (isAdded()) {
+                            onQueueEmpty();
+                        }
                     }
-                });
+                }));
     }
 
     private void onQueueLoaded(@NonNull final List<Media> queue,
-            @NonNull final View itemView,
+            @Nullable final View itemView,
             @Nullable final String queueName) {
-        if (isAdded()) {
-            final Activity activity = getActivity();
-            if (queue.isEmpty()) {
-                onQueueEmpty();
-            } else {
-                final Intent intent = Henson.with(activity).gotoQueueActivity()
-                        .hasCoverTransition(false)
-                        .hasItemViewTransition(false)
-                        .isNowPlayingQueue(false)
-                        .queue(queue)
-                        .title(queueName)
-                        .build();
+        final Activity activity = getActivity();
+        if (queue.isEmpty()) {
+            onQueueEmpty();
+        } else {
+            final Intent intent = Henson.with(activity).gotoQueueActivity()
+                    .hasCoverTransition(false)
+                    .hasItemViewTransition(false)
+                    .isNowPlayingQueue(false)
+                    .queue(queue)
+                    .title(queueName)
+                    .build();
 
-                final ActivityOptionsCompat options = ActivityOptionsCompat
-                        .makeSceneTransitionAnimation(activity, itemView,
-                                QueueActivity.TRANSITION_NAME_ROOT);
-
-                startActivity(intent, options.toBundle());
+            Bundle options = null;
+            if (itemView != null) {
+                options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
+                        QueueActivity.TRANSITION_NAME_ROOT).toBundle();
             }
+
+            startActivity(intent, options);
         }
     }
 
     private void onQueueEmpty() {
-        if (isAdded()) {
-            Toast.makeText(getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_SHORT).show();
     }
 
     private void onPlayClick(@NonNull final long[] albumIds) {

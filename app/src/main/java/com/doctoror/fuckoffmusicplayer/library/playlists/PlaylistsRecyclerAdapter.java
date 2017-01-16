@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,11 +49,11 @@ final class PlaylistsRecyclerAdapter
 
     interface OnPlaylistClickListener {
 
-        void onLivePlaylistClick(LivePlaylist playlist, int position);
+        void onLivePlaylistClick(@NonNull LivePlaylist playlist, int position);
 
-        void onPlaylistClick(long id, String name, int position);
+        void onPlaylistClick(long id, @Nullable String name, int position);
 
-        void onPlaylistDeleteClick(long id, String name);
+        void onPlaylistDeleteClick(long id, @Nullable String name);
     }
 
     private static final int VIEW_TYPE_PLAYLIST_LIVE = 0;
@@ -248,7 +249,10 @@ final class PlaylistsRecyclerAdapter
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            return String.valueOf(c.getString(QueueProviderPlaylists.COLUMN_NAME).charAt(0));
+            final String name = c.getString(QueueProviderPlaylists.COLUMN_NAME);
+            if (!TextUtils.isEmpty(name)) {
+                return String.valueOf(name.charAt(0));
+            }
         }
         return null;
     }

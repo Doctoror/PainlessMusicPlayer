@@ -24,6 +24,7 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryPermissionsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumClickHandler;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
 
 import org.parceler.Parcel;
@@ -71,6 +72,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     private final RecentActivityFragmentModel mModel = new RecentActivityFragmentModel();
 
+    private RecyclerView mRecyclerView;
     private RecentActivityRecyclerAdapter mAdapter;
 
     @Inject
@@ -87,7 +89,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         setHasOptionsMenu(true);
 
         mAdapter = new RecentActivityRecyclerAdapter(getActivity());
-        mAdapter.setOnAlbumClickListener(mOnAlbumClickListener);
+        mAdapter.setOnAlbumClickListener(new OnAlbumClickListener());
 
         mModel.setEmptyMessage(getText(R.string.No_albums_found));
         mModel.setErrorText(getText(R.string.Failed_connecting_to_Media_Store));
@@ -115,6 +117,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         binding.setModel(mModel);
         binding.getRoot().findViewById(R.id.btnRequest)
                 .setOnClickListener(v -> requestPermission());
+        mRecyclerView = binding.recyclerView;
         return binding.getRoot();
     }
 
@@ -164,18 +167,18 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         }
     }
 
-    private final RecentActivityRecyclerAdapter.OnAlbumClickListener mOnAlbumClickListener
-            = new RecentActivityRecyclerAdapter.OnAlbumClickListener() {
+    private final class OnAlbumClickListener
+            implements RecentActivityRecyclerAdapter.OnAlbumClickListener {
 
         @Override
-        public void onAlbumClick(final View albumArtView, final long id, final String album) {
+        public void onAlbumClick(final int position, final long id, @Nullable final String album) {
             AlbumClickHandler.onAlbumClick(RecentActivityFragment.this,
                     mQueueProvider,
-                    albumArtView,
                     id,
-                    album);
+                    album,
+                    () -> ViewUtils.getItemView(mRecyclerView, position));
         }
-    };
+    }
 
     private final Observer<List<Object>> mObserver = new ObserverAdapter<List<Object>>() {
 
