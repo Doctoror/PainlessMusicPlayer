@@ -172,12 +172,12 @@ public final class QueueActivity extends BaseActivity
         }
 
         mAdapter = new QueueRecyclerAdapter(this, queue);
-        mAdapter.setTrackListener(mTrackListener);
+        mAdapter.setTrackListener(new TrackListenerImpl());
         mAdapter.registerAdapterDataObserver(mAdapterDataObserver);
         mModel.setRecyclerAdpter(mAdapter);
 
-        final ActivityQueueBinding binding
-                = DataBindingUtil.setContentView(this, R.layout.activity_queue);
+        final ActivityQueueBinding binding = DataBindingUtil.setContentView(this,
+                R.layout.activity_queue);
         binding.setModel(mModel);
 
         ButterKnife.bind(this);
@@ -404,9 +404,15 @@ public final class QueueActivity extends BaseActivity
 
     private void startNowPlayingActivity(@Nullable final View albumArt,
             @Nullable final View listItemView) {
-        NowPlayingActivity.start(this, albumArt, listItemView);
         if (isNowPlayingQueue) {
+            // Note that starting a transition from here when returning to already running
+            // NowPlayingActivity causes memory leak in ExitTransitionCoordinator. Thus null views
+            // are passed here to avoid this.
+            // https://code.google.com/p/android/issues/detail?id=170469
+            NowPlayingActivity.start(this, null, null);
             ActivityCompat.finishAfterTransition(this);
+        } else {
+            NowPlayingActivity.start(this, albumArt, listItemView);
         }
     }
 
@@ -478,8 +484,7 @@ public final class QueueActivity extends BaseActivity
         CoordinatorLayoutUtil.AnchorParams fabAnchorParams;
     }
 
-    private final QueueRecyclerAdapter.TrackListener mTrackListener
-            = new QueueRecyclerAdapter.TrackListener() {
+    private final class TrackListenerImpl implements QueueRecyclerAdapter.TrackListener {
 
         @Override
         public void onTrackClick(@NonNull final View itemView,
@@ -502,7 +507,7 @@ public final class QueueActivity extends BaseActivity
                 mPlaybackData.setPlayQueue(queue);
             }
         }
-    };
+    }
 
     private final class ItemTouchHelperImpl extends ItemTouchHelper.SimpleCallback {
 
