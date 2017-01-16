@@ -408,7 +408,6 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                 setPlaceholderAlbumArt();
             } else {
                 mRequestManager.load(pic)
-                        .dontTransform()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .listener(new RequestListener<String, GlideDrawable>() {
                             @Override

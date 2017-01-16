@@ -131,7 +131,6 @@ final class RecentActivityRecyclerAdapter
             mGlide.load(artLocation)
                     .placeholder(R.drawable.album_art_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .dontTransform()
                     .into(holder.image);
         }
     }

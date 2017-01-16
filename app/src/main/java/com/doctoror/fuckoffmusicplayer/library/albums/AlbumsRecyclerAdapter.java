@@ -131,7 +131,6 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
                     .load(artLocation)
                     .placeholder(R.drawable.album_art_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .dontTransform()
                     .into(viewHolder.image);
         }
     }

@@ -258,33 +258,33 @@ public final class QueueActivity extends BaseActivity
             animateToPlaceholder();
             onImageSet();
         } else {
-            final DrawableRequestBuilder<String> b = Glide.with(this).load(pic);
+            final DrawableRequestBuilder<String> b = Glide.with(this)
+                    .load(pic)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE);
             if (hasCoverTransition || hasItemViewTransition) {
                 supportPostponeEnterTransition();
                 b.dontAnimate();
             }
-            b.diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .dontTransform()
-                    .listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(final Exception e, final String model,
-                                final Target<GlideDrawable> target,
-                                final boolean isFirstResource) {
-                            mCoverUri = null;
-                            animateToPlaceholder();
-                            onImageSet();
-                            return true;
-                        }
+            b.listener(new RequestListener<String, GlideDrawable>() {
+                @Override
+                public boolean onException(final Exception e, final String model,
+                        final Target<GlideDrawable> target,
+                        final boolean isFirstResource) {
+                    mCoverUri = null;
+                    animateToPlaceholder();
+                    onImageSet();
+                    return true;
+                }
 
-                        @Override
-                        public boolean onResourceReady(final GlideDrawable resource,
-                                final String model,
-                                final Target<GlideDrawable> target, final boolean isFromMemoryCache,
-                                final boolean isFirstResource) {
-                            onImageSet();
-                            return false;
-                        }
-                    })
+                @Override
+                public boolean onResourceReady(final GlideDrawable resource,
+                        final String model,
+                        final Target<GlideDrawable> target, final boolean isFromMemoryCache,
+                        final boolean isFirstResource) {
+                    onImageSet();
+                    return false;
+                }
+            })
                     .into(albumArt);
         }
     }
@@ -376,7 +376,7 @@ public final class QueueActivity extends BaseActivity
     @WorkerThread
     private void onPlaybackStateChanged(@PlaybackState.State final int state) {
         final Media media = state == PlaybackState.STATE_PLAYING
-            ? PlaybackDataUtils.getCurrentMedia(mPlaybackData) : null;
+                ? PlaybackDataUtils.getCurrentMedia(mPlaybackData) : null;
         //noinspection WrongThread
         runOnUiThread(() -> onNowPlayingMediaChanged(media));
     }

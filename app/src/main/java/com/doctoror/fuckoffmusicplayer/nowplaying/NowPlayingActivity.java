@@ -223,33 +223,33 @@ public final class NowPlayingActivity extends BaseActivity {
             albumArt.setImageResource(R.drawable.album_art_placeholder);
             onArtProcessed();
         } else {
-            final DrawableRequestBuilder<String> b = Glide.with(this).load(artUri);
+            final DrawableRequestBuilder<String> b = Glide.with(this)
+                    .load(artUri)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE);
             if (hasCoverTransition || hasListViewTransition) {
                 b.dontAnimate();
             }
-            b.diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .dontTransform()
-                    .listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(final Exception e, final String model,
-                                final Target<GlideDrawable> target,
-                                final boolean isFirstResource) {
-                            albumArt.setAlpha(0f);
-                            albumArt.setImageResource(R.drawable.album_art_placeholder);
-                            albumArt.animate().alpha(1f).start();
-                            onArtProcessed();
-                            return true;
-                        }
+            b.listener(new RequestListener<String, GlideDrawable>() {
+                @Override
+                public boolean onException(final Exception e, final String model,
+                        final Target<GlideDrawable> target,
+                        final boolean isFirstResource) {
+                    albumArt.setAlpha(0f);
+                    albumArt.setImageResource(R.drawable.album_art_placeholder);
+                    albumArt.animate().alpha(1f).start();
+                    onArtProcessed();
+                    return true;
+                }
 
-                        @Override
-                        public boolean onResourceReady(final GlideDrawable resource,
-                                final String model,
-                                final Target<GlideDrawable> target, final boolean isFromMemoryCache,
-                                final boolean isFirstResource) {
-                            onArtProcessed();
-                            return false;
-                        }
-                    })
+                @Override
+                public boolean onResourceReady(final GlideDrawable resource,
+                        final String model,
+                        final Target<GlideDrawable> target, final boolean isFromMemoryCache,
+                        final boolean isFirstResource) {
+                    onArtProcessed();
+                    return false;
+                }
+            })
                     .into(albumArt);
         }
     }
