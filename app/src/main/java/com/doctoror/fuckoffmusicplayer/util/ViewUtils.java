@@ -80,9 +80,10 @@ public final class ViewUtils {
     @Nullable
     public static View getItemView(@Nullable final RecyclerView recyclerView, final int position) {
         if (recyclerView != null) {
-            final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-            if (layoutManager != null) {
-                return layoutManager.getChildAt(position);
+            final RecyclerView.ViewHolder vh = recyclerView
+                    .findViewHolderForAdapterPosition(position);
+            if (vh != null) {
+                return vh.itemView;
             }
         }
         return null;

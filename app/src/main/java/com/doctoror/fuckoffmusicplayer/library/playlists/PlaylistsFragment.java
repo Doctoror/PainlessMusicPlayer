@@ -27,6 +27,7 @@ import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -154,8 +155,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
 
     @Nullable
     private View itemViewForPosition(final int position) {
-        final RecyclerView.LayoutManager lm = mRecyclerView.getLayoutManager();
-        return lm != null ? lm.findViewByPosition(position) : null;
+        return ViewUtils.getItemView(mRecyclerView, position);
     }
 
     private void loadLivePlaylistAndPlay(@NonNull final LivePlaylist livePlaylist,
