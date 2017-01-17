@@ -21,4 +21,7 @@
 
     <dimen name="collapsingToolbarHeightConditionalAlbums">164dp</dimen>
     <dimen name="collapsingToolbarHeightAlbum">230dp</dimen>
+
+    <dimen name="activity_library_empty_margin_bottom">96dp</dimen>
+
 </resources>

@@ -91,8 +91,6 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         mAdapter = new RecentActivityRecyclerAdapter(getActivity());
         mAdapter.setOnAlbumClickListener(new OnAlbumClickListener());
 
-        mModel.setEmptyMessage(getText(R.string.No_albums_found));
-        mModel.setErrorText(getText(R.string.Failed_connecting_to_Media_Store));
         mModel.setRecyclerAdapter(mAdapter);
     }
 
@@ -185,16 +183,26 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         @Override
         public void onError(final Throwable e) {
             if (isAdded()) {
-                mModel.setErrorText(getText(R.string.Failed_connecting_to_Media_Store));
                 mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
             }
         }
 
         @Override
         public void onNext(final List<Object> data) {
-            mAdapter.setItems(data);
-            mModel.setDisplayedChild(data.isEmpty()
-                    ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
+            if (isAdded()) {
+                mAdapter.setItems(data);
+                mModel.setDisplayedChild(data.isEmpty() || dataIsOnlyHeaders(data)
+                        ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
+            }
+        }
+
+        private boolean dataIsOnlyHeaders(@NonNull final List<Object> data) {
+            for (final Object item : data) {
+                if (!(item instanceof RecentActivityHeader)) {
+                    return false;
+                }
+            }
+            return true;
         }
     };
 

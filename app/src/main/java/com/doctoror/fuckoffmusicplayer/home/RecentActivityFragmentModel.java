@@ -27,27 +27,11 @@ import android.support.v7.widget.RecyclerView;
 public final class RecentActivityFragmentModel {
 
     private final ObservableInt mDisplayedChild = new ObservableInt();
-    private final ObservableField<CharSequence> mErrorText = new ObservableField<>();
-    private final ObservableField<CharSequence> mEmptyMessage = new ObservableField<>();
     private final ObservableField<RecyclerView.Adapter> mRecyclerAdapter = new ObservableField<>();
-
-    @Nullable
-    public ObservableField<CharSequence> getEmptyMessage() {
-        return mEmptyMessage;
-    }
-
-    public void setEmptyMessage(@Nullable final CharSequence emptyMessage) {
-        mEmptyMessage.set(emptyMessage);
-    }
 
     @NonNull
     public ObservableInt getDisplayedChild() {
         return mDisplayedChild;
-    }
-
-    @NonNull
-    public ObservableField<CharSequence> getErrorText() {
-        return mErrorText;
     }
 
     @NonNull
@@ -62,9 +46,4 @@ public final class RecentActivityFragmentModel {
     public void setDisplayedChild(final int displayedChild) {
         mDisplayedChild.set(displayedChild);
     }
-
-    public void setErrorText(@Nullable final CharSequence errorText) {
-        mErrorText.set(errorText);
-    }
-
 }
