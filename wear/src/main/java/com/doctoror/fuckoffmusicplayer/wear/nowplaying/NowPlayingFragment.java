@@ -26,6 +26,7 @@ import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventMedia;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaybackPosition;
 import com.doctoror.fuckoffmusicplayer.wear.media.eventbus.EventPlaybackState;
 import com.doctoror.fuckoffmusicplayer.wear.remote.RemoteControl;
+import com.doctoror.fuckoffmusicplayer.wear.root.KeyEventFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +39,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +48,7 @@ import android.widget.SeekBar;
 /**
  * "Now Playing" screen
  */
-public final class NowPlayingFragment extends Fragment {
+public final class NowPlayingFragment extends KeyEventFragment {
 
     private final NowPlayingFragmentModelPlaybackState mModelPlaybackState
             = new NowPlayingFragmentModelPlaybackState();
@@ -62,6 +64,9 @@ public final class NowPlayingFragment extends Fragment {
     private MediaHolder mMediaHolder;
 
     private volatile boolean mSeekBarTracking;
+
+    private View mBtnPrev;
+    private View mBtnNext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +88,8 @@ public final class NowPlayingFragment extends Fragment {
         binding.btnPrev.setOnClickListener(v -> mRemoteControl.prev());
         binding.btnNext.setOnClickListener(v -> mRemoteControl.next());
         binding.btnPlayPause.setOnClickListener(v -> mRemoteControl.playPause());
+        mBtnPrev = binding.btnPrev;
+        mBtnNext = binding.btnNext;
         return binding.getRoot();
     }
 
@@ -171,6 +178,22 @@ public final class NowPlayingFragment extends Fragment {
                 mModelPlaybackState
                         .setProgress((int) (((double) elapsedTime / (double) duration) * 200f));
             }
+        }
+    }
+
+    @Override
+    protected boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_NAVIGATE_PREVIOUS:
+                mBtnPrev.performClick();
+                return true;
+
+            case KeyEvent.KEYCODE_NAVIGATE_NEXT:
+                mBtnNext.performClick();
+                return true;
+
+            default:
+                return super.onKeyDown(keyCode, event);
         }
     }
 
