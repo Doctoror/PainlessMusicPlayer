@@ -97,6 +97,10 @@
     <string name="Failed_to_delete_album">Failed to delete album</string>
     <string name="Failed_to_delete_media">Failed to delete media</string>
 
+    <string name="Media_on_removable_storage_cannot_be_deleted">Media on removable storage cannot be
+        deleted
+    </string>
+
     <string name="Menu">Menu</string>
 
 </resources>

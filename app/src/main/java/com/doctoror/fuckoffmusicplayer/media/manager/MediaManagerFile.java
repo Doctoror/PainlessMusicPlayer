@@ -82,12 +82,12 @@ final class MediaManagerFile implements MediaManager {
     }
 
     @WorkerThread
-    static void deleteFile(@NonNull final File file) throws IOException {
+    private static void deleteFile(@NonNull final File file) throws IOException {
         if (!file.exists()) {
             throw new IOException("File does not exist: " + file);
         }
         if (!file.canWrite()) {
-            throw new IOException("File is not writable: " + file);
+            throw new SecurityIoException("File is not writable: " + file);
         }
         if (!file.delete()) {
             throw new IOException("Failed to delete file: " + file);

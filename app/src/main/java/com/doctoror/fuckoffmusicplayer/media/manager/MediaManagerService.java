@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
@@ -125,12 +126,11 @@ public final class MediaManagerService extends IntentService {
         QueueUtils.removeMediasFromCurrentQueue(mPlaybackData, targetId);
         try {
             mMediaManager.deleteMedia(targetId);
+        } catch (SecurityIoException e) {
+            showToast(R.string.Media_on_removable_storage_cannot_be_deleted);
         } catch (IOException e) {
             Log.w(TAG, e);
-
-            final Context context = getApplicationContext();
-            Handlers.runOnMainThread(() -> Toast.makeText(context, R.string.Failed_to_delete_media,
-                    Toast.LENGTH_LONG).show());
+            showToast(R.string.Failed_to_delete_media);
         }
     }
 
@@ -146,13 +146,11 @@ public final class MediaManagerService extends IntentService {
 
         try {
             mMediaManager.deleteAlbum(albumId);
+        } catch (SecurityIoException e) {
+            showToast(R.string.Media_on_removable_storage_cannot_be_deleted);
         } catch (IOException e) {
             Log.w(TAG, e);
-
-            final Context context = getApplicationContext();
-
-            Handlers.runOnMainThread(() -> Toast.makeText(context,
-                    R.string.Failed_to_delete_album, Toast.LENGTH_LONG).show());
+            showToast(R.string.Failed_to_delete_album);
         }
     }
 
@@ -166,12 +164,16 @@ public final class MediaManagerService extends IntentService {
         final long targetId = getTargetId(intent);
         try {
             mMediaManager.deletePlaylist(targetId);
+        } catch (SecurityIoException e) {
+            showToast(R.string.Media_on_removable_storage_cannot_be_deleted);
         } catch (IOException e) {
             Log.w(TAG, e);
-
-            final Context context = getApplicationContext();
-            Handlers.runOnMainThread(() -> Toast.makeText(context,
-                    R.string.Failed_to_delete_playlist, Toast.LENGTH_LONG).show());
+            showToast(R.string.Failed_to_delete_playlist);
         }
+    }
+
+    private void showToast(@StringRes final int message) {
+        final Context context = getApplicationContext();
+        Handlers.runOnMainThread(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
     }
 }
