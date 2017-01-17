@@ -429,12 +429,13 @@ public final class PlaybackService extends Service {
         final List<Media> queue = mPlaybackData.getQueue();
         if (queue != null) {
             int mediaPosition = -1;
-            for (int i = 0; i < queue.size(); i++) {
-                final Media m = queue.get(i);
-                if (m.getId() == mediaId) {
-                    mediaPosition = i;
+            int loopPos = 0;
+            for (final Media media : queue) {
+                if (media.getId() == mediaId) {
+                    mediaPosition = loopPos;
                     break;
                 }
+                loopPos++;
             }
             if (mediaPosition == -1) {
                 Log.w(TAG, "Media with id " + mediaId + " not found in current playlist");

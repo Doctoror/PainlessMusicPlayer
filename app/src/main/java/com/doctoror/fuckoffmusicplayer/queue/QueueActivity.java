@@ -243,9 +243,7 @@ public final class QueueActivity extends BaseActivity
         ViewCompat.setTransitionName(albumArt, QueueActivity.TRANSITION_NAME_ALBUM_ART);
 
         String pic = null;
-        final int size = queue.size();
-        for (int i = 0; i < size; i++) {
-            final Media media = queue.get(i);
+        for (final Media media : queue) {
             pic = media.albumArt;
             if (pic != null) {
                 break;

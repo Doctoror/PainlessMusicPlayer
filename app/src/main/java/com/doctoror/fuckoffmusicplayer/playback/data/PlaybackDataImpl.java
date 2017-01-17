@@ -183,18 +183,24 @@ public final class PlaybackDataImpl implements PlaybackData {
         if (queue != null && !queue.isEmpty()) {
             final Set<Long> albums = new LinkedHashSet<>();
             final long THRESHOLD = 4; // number of items per single album
-            long prevAlbumId = queue.get(0).getAlbumId();
+            long prevAlbumId = -1;
             int sequence = 1;
-            for (int i = 1; i < queue.size(); i++) {
-                final long albumId = queue.get(i).getAlbumId();
-                if (albumId == prevAlbumId) {
-                    sequence++;
+            boolean first = true;
+            for (final Media item : queue) {
+                if (first) {
+                    first = false;
+                    prevAlbumId = item.getAlbumId();
                 } else {
-                    if (sequence >= THRESHOLD) {
-                        albums.add(prevAlbumId);
+                    final long albumId = item.getAlbumId();
+                    if (albumId == prevAlbumId) {
+                        sequence++;
+                    } else {
+                        if (sequence >= THRESHOLD) {
+                            albums.add(prevAlbumId);
+                        }
+                        sequence = 1;
+                        prevAlbumId = albumId;
                     }
-                    sequence = 1;
-                    prevAlbumId = albumId;
                 }
             }
             if (sequence >= THRESHOLD) {

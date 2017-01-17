@@ -131,10 +131,11 @@ final class PlaybackDataPersister {
         if (media == null || media.isEmpty()) {
             return new PlaybackDataProto.Media[0];
         }
-        final int size = media.size();
-        final PlaybackDataProto.Media[] result = new PlaybackDataProto.Media[size];
-        for (int i = 0; i < size; i++) {
-            result[i] = toProtoMedia(media.get(i));
+        final PlaybackDataProto.Media[] result = new PlaybackDataProto.Media[media.size()];
+        int i = 0;
+        for (final Media item : media) {
+            result[i] = toProtoMedia(item);
+            i++;
         }
         return result;
     }

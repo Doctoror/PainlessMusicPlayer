@@ -80,9 +80,8 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
             final long[] ids = albums.ids;
             if (ids != null) {
                 synchronized (mLock) {
-                    //noinspection ForLoopReplaceableByForEach
-                    for (int i = 0; i < ids.length; i++) {
-                        mRecentAlbums.add(ids[i]);
+                    for (final long id : ids) {
+                        mRecentAlbums.add(id);
                     }
                 }
             }

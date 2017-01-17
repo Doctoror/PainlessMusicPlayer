@@ -179,10 +179,11 @@ public final class WearableMediaPlaybackReporter implements PlaybackReporter {
     @Override
     public void reportQueueChanged(@Nullable final List<Media> queue) {
         if (mGoogleApiClient.isConnected() && queue != null && !queue.isEmpty()) {
-            final int size = queue.size();
             final WearPlaybackData.Media[] wMedias = new WearPlaybackData.Media[queue.size()];
-            for (int i = 0; i < size; i++) {
-                wMedias[i] = toWearableMedia(queue.get(i), 0);
+            int i = 0;
+            for (final Media media : queue) {
+                wMedias[i] = toWearableMedia(media, 0);
+                i++;
             }
 
             final PutDataRequest request;

@@ -116,10 +116,9 @@ public final class MediaBrowserImpl {
                 List<MediaItem> mediaItems = null;
                 final List<Media> queue = mPlaybackData.getQueue();
                 if (queue != null && !queue.isEmpty()) {
-                    final int size = queue.size();
-                    mediaItems = new ArrayList<>(size);
-                    for (int i = 0; i < size; i++) {
-                        mediaItems.add(createMediaItemMedia(queue.get(i)));
+                    mediaItems = new ArrayList<>(queue.size());
+                    for (final Media item : queue) {
+                        mediaItems.add(createMediaItemMedia(item));
                     }
                 }
 

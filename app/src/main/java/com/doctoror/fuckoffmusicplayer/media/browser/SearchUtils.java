@@ -135,12 +135,13 @@ public final class SearchUtils {
         int position = -1;
         List<Media> queue = mPlaybackData.getQueue();
         if (queue != null && !queue.isEmpty()) {
-            final int size = queue.size();
-            for (int i = 0; i < size; i++) {
-                if (queue.get(i).getId() == mediaId) {
-                    position = i;
+            int loopPos = 0;
+            for (final Media item : queue) {
+                if (item.getId() == mediaId) {
+                    position = loopPos;
                     break;
                 }
+                loopPos++;
             }
         }
 

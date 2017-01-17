@@ -44,14 +44,13 @@ public final class SelectionUtils {
         }
         final StringBuilder order = new StringBuilder(256);
         boolean first = true;
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < arguments.length; i++) {
+        for (final long argument : arguments) {
             if (first) {
                 first = false;
             } else {
                 order.append(',');
             }
-            order.append(column).append('=').append(arguments[i]).append(" DESC");
+            order.append(column).append('=').append(argument).append(" DESC");
         }
         return order.toString();
     }
