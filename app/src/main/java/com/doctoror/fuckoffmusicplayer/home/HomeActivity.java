@@ -146,6 +146,15 @@ public final class HomeActivity extends BaseActivity {
                 ? View.VISIBLE : View.GONE);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(mNavigationView)) {
+            mDrawerLayout.closeDrawer(mNavigationView);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void performDrawerClosedAction() {
         if (mDrawerClosedAction != null) {
             switch (mDrawerClosedAction) {
