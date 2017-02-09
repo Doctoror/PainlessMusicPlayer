@@ -1,6 +1,6 @@
 ##Description
 
-Fuck Off Music Player is a lightweight music player based on ExoPlayer and MediaStore library
+Painless Music Player is a lightweight music player based on ExoPlayer and MediaStore library
 
 Min API level 16
 
