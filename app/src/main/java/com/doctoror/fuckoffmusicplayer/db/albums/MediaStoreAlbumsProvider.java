@@ -71,6 +71,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setContentUri(MediaStore.Audio.Artists.Albums.getContentUri(
                         MediaStoreVolumeNames.EXTERNAL, artistId))
                 .setSelection(MediaStore.Audio.Media.IS_MUSIC + "!=0")
+                .setSortOrder(MediaStore.Audio.Albums.FIRST_YEAR)
                 .create();
 
         return RxCursorLoader.create(mContentResolver, query);
