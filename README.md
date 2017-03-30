@@ -1,10 +1,10 @@
-##Description
+## Description
 
 Painless Music Player is a lightweight music player based on ExoPlayer and MediaStore library
 
 Min API level 16
 
-##Features
+## Features
 
  - Artists browser
  - Albums browser
@@ -33,13 +33,13 @@ Missing features you might expect from a Music Player
  - No tablet UI
  - No fast-forward/rewind (only seek supported)
  
-##Supported formats
+## Supported formats
 
 All formats that are supported by [ExoPlayer](https://google.github.io/ExoPlayer/supported-formats.html).
 
 Does not support FLAC.
 
-##Screenshots
+## Screenshots
 
 ![screenshot](/screenshots/recent_activity.png?raw=true)
 ![screenshot](/screenshots/now_playing.png?raw=true)
@@ -50,7 +50,7 @@ Does not support FLAC.
 ![screenshot](/screenshots/lock_screen.png?raw=true)
 ![screenshot](/screenshots/settings.png?raw=true)
 
-##License
+## License
 
 ```
 Copyright 2016 Yaroslav Mytkalyk
