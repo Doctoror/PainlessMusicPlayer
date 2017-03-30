@@ -371,7 +371,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 .subscribe(mMediaPositionConsumer));
     }
 
-    void bindTrack(@Nullable Media track, final long position) {
+    void bindTrack(@Nullable final Media track, final long position) {
         if (!isFinishingAfterTransition()) {
             if (track != null) {
                 setAlbumArt(track.getAlbumArt());
