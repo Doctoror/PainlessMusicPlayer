@@ -68,22 +68,35 @@ android {
 }
 
 dependencies {
-    def gpsVersion = '10.0.1'
+    def supportVersion = '25.3.1'
+    def gpsVersion = '10.2.1'
 
     testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support:support-annotations:25.1.1'
+    // These dependencies are for promoting versions that used by
+    // com.google.android.wearable:wearable and com.android.support.test:runner
+    androidTestCompile "com.android.support:support-annotations:$supportVersion"
+    androidTestCompile "com.android.support:support-v4:$supportVersion"
+    androidTestCompile "com.android.support:percent:$supportVersion"
+    androidTestCompile "com.android.support:recyclerview-v7:$supportVersion"
+
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':commons')
 
-    provided 'com.google.android.wearable:wearable:2.0.0-alpha3'
-    compile 'com.google.android.support:wearable:2.0.0-alpha3'
+    provided 'com.google.android.wearable:wearable:2.0.1'
+    compile 'com.google.android.support:wearable:2.0.1'
+
+    // These dependencies are for promoting versions that used by
+    // com.google.android.wearable:wearable and com.android.support.test:runner
+    compile "com.android.support:recyclerview-v7:$supportVersion"
+    compile "com.android.support:support-v4:$supportVersion"
+    compile "com.android.support:percent:$supportVersion"
 
     compile "com.google.android.gms:play-services-wearable:$gpsVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'io.reactivex:rxjava:1.2.5'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.8'
 }

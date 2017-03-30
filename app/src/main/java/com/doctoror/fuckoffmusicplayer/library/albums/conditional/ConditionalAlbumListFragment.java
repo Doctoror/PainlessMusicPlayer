@@ -38,7 +38,6 @@ import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
 
@@ -78,11 +77,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Album lists fragment
@@ -95,8 +93,8 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
-    private Subscription mOldSubscription;
-    private Subscription mSubscription;
+    private Disposable mDisposableDataOld;
+    private Disposable mDisposableData;
 
     private RequestManager mRequestManager;
     private Cursor mData;
@@ -243,22 +241,22 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ObserverAdapter<List<Media>>() {
-                    @Override
-                    public void onNext(final List<Media> queue) {
-                        if (isAdded()) {
-                            onQueueLoaded(queue, ViewUtils.getItemView(recyclerView, position),
-                                    queueName);
-                        }
-                    }
+                .subscribe(q -> onQueueLoaded(position, queueName, q), this::onQueueLoadFailed));
+    }
 
-                    @Override
-                    public void onError(final Throwable e) {
-                        if (isAdded()) {
-                            onQueueEmpty();
-                        }
-                    }
-                }));
+    private void onQueueLoadFailed(@NonNull final Throwable t) {
+        if (isAdded()) {
+            onQueueEmpty();
+        }
+    }
+
+    private void onQueueLoaded(final int position,
+            @Nullable final String queueName,
+            @NonNull final List<Media> queue) {
+        if (isAdded()) {
+            onQueueLoaded(queue, ViewUtils.getItemView(recyclerView, position),
+                    queueName);
+        }
     }
 
     private void onQueueLoaded(@NonNull final List<Media> queue,
@@ -294,25 +292,19 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         queueFromAlbums(albumIds)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ObserverAdapter<List<Media>>() {
-                    @Override
-                    public void onNext(final List<Media> queue) {
-                        if (isAdded()) {
-                            if (queue.isEmpty()) {
-                                onQueueEmpty();
-                            } else {
-                                QueueUtils.play(getActivity(), mPlaybackData, queue);
-                                prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
-                                        albumArt, null), true);
-                            }
-                        }
-                    }
+                .subscribe(this::onQueueLoaded, t -> onQueueEmpty());
+    }
 
-                    @Override
-                    public void onError(final Throwable e) {
-                        onQueueEmpty();
-                    }
-                });
+    private void onQueueLoaded(@NonNull final List<Media> queue) {
+        if (isAdded()) {
+            if (queue.isEmpty()) {
+                onQueueEmpty();
+            } else {
+                QueueUtils.play(getActivity(), mPlaybackData, queue);
+                prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
+                        albumArt, null), true);
+            }
+        }
     }
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction,
@@ -336,13 +328,44 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private void restartLoader() {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            mOldSubscription = mSubscription;
-            mSubscription = registerOnStartSubscription(load()
+            mDisposableDataOld = mDisposableData;
+            mDisposableData = registerOnStartSubscription(load()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mObserver));
+                    .subscribe(this::onDataLoaded, this::onDataLoadFailed));
         } else {
             Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
+        }
+    }
+
+    private void onDataLoadFailed(@NonNull final Throwable t) {
+        if (mDisposableDataOld != null) {
+            mDisposableDataOld.dispose();
+            mDisposableDataOld = null;
+        }
+        if (mData != null) {
+            mData.close();
+            mData = null;
+        }
+        if (isAdded()) {
+            showStateError();
+        }
+    }
+
+    private void onDataLoaded(@NonNull final Cursor cursor) {
+        loadAlbumArt(cursor);
+        mAdapter.changeCursor(cursor);
+        mData = cursor;
+
+        if (cursor.getCount() == 0) {
+            showStateEmpty();
+        } else {
+            showStateContent();
+        }
+
+        if (mDisposableDataOld != null) {
+            mDisposableDataOld.dispose();
+            mDisposableDataOld = null;
         }
     }
 
@@ -449,42 +472,6 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         }
         return null;
     }
-
-    private final Observer<Cursor> mObserver = new ObserverAdapter<Cursor>() {
-
-        @Override
-        public void onError(final Throwable e) {
-            if (mOldSubscription != null) {
-                mOldSubscription.unsubscribe();
-                mOldSubscription = null;
-            }
-            if (mData != null) {
-                mData.close();
-                mData = null;
-            }
-            if (isAdded()) {
-                showStateError();
-            }
-        }
-
-        @Override
-        public void onNext(final Cursor cursor) {
-            loadAlbumArt(cursor);
-            mAdapter.changeCursor(cursor);
-            mData = cursor;
-
-            if (cursor.getCount() == 0) {
-                showStateEmpty();
-            } else {
-                showStateContent();
-            }
-
-            if (mOldSubscription != null) {
-                mOldSubscription.unsubscribe();
-                mOldSubscription = null;
-            }
-        }
-    };
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static final class LollipopUtils {

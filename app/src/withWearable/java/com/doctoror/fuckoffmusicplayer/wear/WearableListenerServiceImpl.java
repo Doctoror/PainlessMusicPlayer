@@ -30,7 +30,6 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -116,12 +115,9 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                     final long id = ByteBuffer.wrap(data).getLong();
                     mQueueProviderAlbums.fromAlbum(id)
                             .take(1)
-                            .subscribe(new ObserverAdapter<List<Media>>() {
-                                @Override
-                                public void onNext(final List<Media> queue) {
-                                    playQueue(queue, 0);
-                                }
-                            });
+                            .subscribe(
+                                    q -> playQueue(q, 0),
+                                    t -> Log.w(TAG, "Failed to load queue for album", t));
                 }
                 break;
             }
@@ -132,13 +128,9 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                     final long id = ByteBuffer.wrap(data).getLong();
                     mQueueProviderArtists.fromArtist(id)
                             .take(1)
-                            .single()
-                            .subscribe(new ObserverAdapter<List<Media>>() {
-                                @Override
-                                public void onNext(final List<Media> queue) {
-                                    playQueue(queue, 0);
-                                }
-                            });
+                            .subscribe(
+                                    q -> playQueue(q, 0),
+                                    t -> Log.w(TAG, "Failed to load queue for artist", t));
                 }
                 break;
             }
@@ -155,16 +147,15 @@ public final class WearableListenerServiceImpl extends WearableListenerService {
                     }
                     mQueueProviderTracks.fromTracks(fromSearch.queue, MediaStore.Audio.Media.TITLE)
                             .take(1)
-                            .subscribe(new ObserverAdapter<List<Media>>() {
-                                @Override
-                                public void onNext(final List<Media> queue) {
-                                    if (!queue.isEmpty()) {
-                                        final int mediaPos = mediaPosition(queue,
-                                                fromSearch.selectedId);
-                                        playQueue(queue, mediaPos != -1 ? mediaPos : 0);
-                                    }
-                                }
-                            });
+                            .subscribe(
+                                    q -> {
+                                        if (!q.isEmpty()) {
+                                            final int mediaPos = mediaPosition(q,
+                                                    fromSearch.selectedId);
+                                            playQueue(q, mediaPos != -1 ? mediaPos : 0);
+                                        }
+                                    },
+                                    t -> Log.w(TAG, "Failed to load queue for track", t));
                 }
                 break;
             }

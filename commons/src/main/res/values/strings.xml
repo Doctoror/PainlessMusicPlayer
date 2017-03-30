@@ -14,13 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <string translatable="false" name="wear_capability_playback_control">
+    <string
+        translatable="false" name="wear_capability_playback_control" tools:ignore="UnusedResources">
         fomp_wear_playback_control
     </string>
 
-    <string translatable="false" name="wear_capability_search_receiver">fomp_wear_search_receiver
+    <string translatable="false" name="wear_capability_search_receiver"
+        tools:ignore="UnusedResources">fomp_wear_search_receiver
     </string>
 
     <string name="app_name">Commons</string>
@@ -32,7 +35,6 @@
 
     <string name="Unknown_artist">Unknown artist</string>
     <string name="Unknown_album">Unknown album</string>
-    <string name="Untitled">Untitled</string>
     <string name="artist_album_separator"><![CDATA[ / ]]></string>
 
     <string name="Now_Playing">Now Playing</string>

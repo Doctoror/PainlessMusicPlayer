@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.wear.nowplaying;
 
 import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 
@@ -25,6 +26,8 @@ import android.support.annotation.NonNull;
 public final class NowPlayingFragmentModelViewState {
 
     private final ObservableInt mBtnPlayRes = new ObservableInt();
+    private final ObservableField<CharSequence> mBtnPlayContentDescription
+            = new ObservableField<>();
 
     private final ObservableBoolean mProgressVisible = new ObservableBoolean();
     private final ObservableBoolean mNavigationButtonsVisible = new ObservableBoolean();
@@ -52,5 +55,14 @@ public final class NowPlayingFragmentModelViewState {
 
     void setBtnPlayRes(final int btnPlayRes) {
         mBtnPlayRes.set(btnPlayRes);
+    }
+
+    @NonNull
+    public ObservableField<CharSequence> getBtnPlayContentDescription() {
+        return mBtnPlayContentDescription;
+    }
+
+    void setBtnPlayContentDescription(final CharSequence btnPlayContentDescription) {
+        mBtnPlayContentDescription.set(btnPlayContentDescription);
     }
 }

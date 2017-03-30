@@ -26,7 +26,6 @@ import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity
 import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 
 import android.app.Activity;
@@ -51,10 +50,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import rx.Observable;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * "Playlsits" fragment
@@ -200,32 +198,32 @@ public final class PlaylistsFragment extends LibraryListFragment {
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<Media>>() {
+                .subscribe(q -> onLivePlaylistLoaded(position, name, q),
+                        this::onLivePlaylistLoadFailed,
+                        this::onLivePlaylistLoadComplete));
+    }
 
-                    @Override
-                    public void onCompleted() {
-                        if (isAdded()) {
-                            clearLoadingFlag();
-                        }
-                    }
+    private void onLivePlaylistLoaded(final int position,
+            @NonNull final String name,
+            @NonNull final List<Media> medias) {
+        if (isAdded()) {
+            onQueueLoaded(itemViewForPosition(position), name, medias);
+        }
+    }
 
-                    @Override
-                    public void onError(final Throwable e) {
-                        if (isAdded()) {
-                            clearLoadingFlag();
-                            Toast.makeText(getActivity(),
-                                    getString(R.string.Failed_to_load_data_s, e.getMessage()),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
+    private void onLivePlaylistLoadFailed(@NonNull final Throwable t) {
+        if (isAdded()) {
+            clearLoadingFlag();
+            Toast.makeText(getActivity(),
+                    getString(R.string.Failed_to_load_data_s, t.getMessage()),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 
-                    @Override
-                    public void onNext(final List<Media> medias) {
-                        if (isAdded()) {
-                            onQueueLoaded(itemViewForPosition(position), name, medias);
-                        }
-                    }
-                }));
+    private void onLivePlaylistLoadComplete() {
+        if (isAdded()) {
+            clearLoadingFlag();
+        }
     }
 
     private void goToRecentAlbumsActivity(@NonNull final Activity context,
@@ -305,12 +303,8 @@ public final class PlaylistsFragment extends LibraryListFragment {
                     .take(1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new ObserverAdapter<List<Media>>() {
-                        @Override
-                        public void onNext(final List<Media> queue) {
-                            onQueueLoaded(itemViewForPosition(position), name, queue);
-                        }
-                    }));
+                    .subscribe(q -> onQueueLoaded(itemViewForPosition(position), name, q),
+                            PlaylistsFragment.this::onLivePlaylistLoadFailed));
         }
 
         @Override

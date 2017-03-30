@@ -18,42 +18,43 @@ package com.doctoror.fuckoffmusicplayer.base;
 import android.app.Fragment;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
-import android.support.v4.util.ArraySet;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
-import rx.Subscription;
+import io.reactivex.disposables.Disposable;
+
 
 /**
  * The base {@link Fragment}
  */
 public abstract class BaseFragment extends Fragment {
 
-    private final Collection<Subscription> mSubscriptions = new ArraySet<>();
+    private final Collection<Disposable> mDisposables = new ArrayList<>();
 
     /**
-     * Register a {@link Subscription} that will be unsubscribed onStop()
+     * Register a {@link Disposable} that will be disposed onStop()
      *
-     * @param subscription the {@link Subscription} to register
-     * @return the registered {@link Subscription}
+     * @param disposable the {@link Disposable} to register
+     * @return the registered {@link Disposable}
      */
     @NonNull
     @MainThread
-    public Subscription registerOnStartSubscription(@NonNull final Subscription subscription) {
+    public Disposable registerOnStartSubscription(@NonNull final Disposable disposable) {
         //noinspection ConstantConditions
-        if (subscription == null) {
-            throw new NullPointerException("subscription must not be null");
+        if (disposable == null) {
+            throw new NullPointerException("disposable must not be null");
         }
-        mSubscriptions.add(subscription);
-        return subscription;
+        mDisposables.add(disposable);
+        return disposable;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        for (final Subscription s : mSubscriptions) {
-            s.unsubscribe();
+        for (final Disposable d : mDisposables) {
+            d.dispose();
         }
-        mSubscriptions.clear();
+        mDisposables.clear();
     }
 }

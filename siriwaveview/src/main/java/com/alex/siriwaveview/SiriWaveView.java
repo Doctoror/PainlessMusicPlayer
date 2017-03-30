@@ -24,6 +24,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.annotation.Keep;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -154,11 +155,13 @@ public class SiriWaveView extends View {
         //mPath.close();
     }
 
+    @Keep
     public void setAmplitude(float amplitude) {
         this.amplitude = amplitude;
         invalidate();
     }
 
+    @Keep
     public float getAmplitude() {
         return this.amplitude;
     }

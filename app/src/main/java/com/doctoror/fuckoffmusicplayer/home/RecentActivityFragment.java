@@ -23,7 +23,6 @@ import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryPermissionsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumClickHandler;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
 
@@ -49,11 +48,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func2;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * "Recent Activity" fragment
@@ -159,10 +157,33 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
                     new RecyclerAdapterDataFunc(getResources()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mObserver));
+                    .subscribe(this::onRecentActivityLoaded, this::onError));
         } else {
             Log.w(TAG, "load() is called, READ_EXTERNAL_STORAGE is not granted");
         }
+    }
+
+    private void onError(@NonNull final Throwable t) {
+        if (isAdded()) {
+            mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
+        }
+    }
+
+    private void onRecentActivityLoaded(@NonNull final List<Object> data) {
+        if (isAdded()) {
+            mAdapter.setItems(data);
+            mModel.setDisplayedChild(data.isEmpty() || dataIsOnlyHeaders(data)
+                    ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
+        }
+    }
+
+    private boolean dataIsOnlyHeaders(@NonNull final List<Object> data) {
+        for (final Object item : data) {
+            if (!(item instanceof RecentActivityHeader)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private final class OnAlbumClickListener
@@ -178,36 +199,8 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         }
     }
 
-    private final Observer<List<Object>> mObserver = new ObserverAdapter<List<Object>>() {
-
-        @Override
-        public void onError(final Throwable e) {
-            if (isAdded()) {
-                mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
-            }
-        }
-
-        @Override
-        public void onNext(final List<Object> data) {
-            if (isAdded()) {
-                mAdapter.setItems(data);
-                mModel.setDisplayedChild(data.isEmpty() || dataIsOnlyHeaders(data)
-                        ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
-            }
-        }
-
-        private boolean dataIsOnlyHeaders(@NonNull final List<Object> data) {
-            for (final Object item : data) {
-                if (!(item instanceof RecentActivityHeader)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    };
-
     private static final class RecyclerAdapterDataFunc
-            implements Func2<Cursor, Cursor, List<Object>> {
+            implements BiFunction<Cursor, Cursor, List<Object>> {
 
         @NonNull
         private final Resources mRes;
@@ -217,7 +210,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         }
 
         @Override
-        public List<Object> call(final Cursor rPlayed, final Cursor rAdded) {
+        public List<Object> apply(final Cursor rPlayed, final Cursor rAdded) {
             final List<Object> data = new ArrayList<>(MAX_HISTORY_SECTION_LENGTH + 2);
             try {
                 final List<AlbumItem> rPlayedList = AlbumItemsFactory.itemsFromCursor(rPlayed);

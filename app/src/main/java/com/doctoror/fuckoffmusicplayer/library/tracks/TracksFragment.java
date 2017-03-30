@@ -26,7 +26,6 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -38,9 +37,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * "Tracks" list fragment
@@ -126,26 +125,14 @@ public final class TracksFragment extends LibraryListFragment {
     }
 
     private void onTrackClick(final int startPosition, final long trackId) {
-        Observable.fromCallable(() -> createLimitedQueue(startPosition))
+        registerOnStartSubscription(Observable.fromCallable(() -> createLimitedQueue(startPosition))
                 .flatMap(this::queueFromIds)
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ObserverAdapter<List<Media>>() {
-                    @Override
-                    public void onNext(final List<Media> queue) {
-                        if (isAdded()) {
-                            onQueueLoaded(startPosition, queue);
-                        }
-                    }
-
-                    @Override
-                    public void onError(final Throwable e) {
-                        if (isAdded()) {
-                            onQueueEmpty();
-                        }
-                    }
-                });
+                .subscribe(
+                        q -> onQueueLoaded(startPosition, q),
+                        t -> onQueueEmpty()));
     }
 
     private void onQueueLoaded(final int startPosition,
@@ -153,7 +140,7 @@ public final class TracksFragment extends LibraryListFragment {
         if (isAdded()) {
             if (queue.isEmpty()) {
                 onQueueEmpty();
-            } else  {
+            } else {
                 QueueUtils.play(getActivity(), mPlaybackData, queue);
                 NowPlayingActivity.start(getActivity(), null, getItemView(startPosition));
             }
@@ -161,6 +148,8 @@ public final class TracksFragment extends LibraryListFragment {
     }
 
     private void onQueueEmpty() {
-        Toast.makeText(getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_LONG).show();
+        if (isAdded()) {
+            Toast.makeText(getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_LONG).show();
+        }
     }
 }

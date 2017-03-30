@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.library;
 
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions;
 import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
-import com.tbruyelle.rxpermissions.RxPermissions;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
@@ -30,8 +30,8 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * {@link BaseFragment} that asks library permissions

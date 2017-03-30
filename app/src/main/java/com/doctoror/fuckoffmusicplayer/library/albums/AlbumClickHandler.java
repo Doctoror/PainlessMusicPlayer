@@ -21,7 +21,6 @@ import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -36,8 +35,8 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Handles album click from adapter view
@@ -68,27 +67,19 @@ public final class AlbumClickHandler {
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ObserverAdapter<List<Media>>() {
-                    @Override
-                    public void onNext(final List<Media> medias) {
-                        if (host.isAdded()) {
-                            onAlbumQueueLoaded(host, medias, albumName, itemViewProvider);
-                        }
-                    }
-
-                    @Override
-                    public void onError(final Throwable e) {
-                        if (host.isAdded()) {
-                            onAlbumQueueEmpty(host);
-                        }
-                    }
-                }));
+                .subscribe(
+                        q -> onAlbumQueueLoaded(host, q, albumName, itemViewProvider),
+                        t -> onAlbumQueueEmpty(host)));
     }
 
     private static void onAlbumQueueLoaded(@NonNull final Fragment host,
             @NonNull final List<Media> queue,
             @Nullable final String albumName,
             @Nullable final ItemViewProvider itemViewProvider) {
+        if (!host.isAdded()) {
+            return;
+        }
+
         if (queue.isEmpty()) {
             onAlbumQueueEmpty(host);
         } else {
@@ -115,6 +106,9 @@ public final class AlbumClickHandler {
     }
 
     private static void onAlbumQueueEmpty(@NonNull final Fragment host) {
-        Toast.makeText(host.getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_SHORT).show();
+        if (host.isAdded()) {
+            Toast.makeText(host.getActivity(), R.string.The_queue_is_empty, Toast.LENGTH_SHORT)
+                    .show();
+        }
     }
 }

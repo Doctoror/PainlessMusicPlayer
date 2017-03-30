@@ -32,8 +32,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import rx.Observable;
-import rx.subjects.BehaviorSubject;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Default {@link PlaybackData} implementation
@@ -67,25 +67,25 @@ public final class PlaybackDataImpl implements PlaybackData {
     @NonNull
     @Override
     public Observable<List<Media>> queueObservable() {
-        return mQueueSubject.asObservable();
+        return mQueueSubject.hide();
     }
 
     @NonNull
     @Override
     public Observable<Integer> queuePositionObservable() {
-        return mQueuePositionSubject.asObservable();
+        return mQueuePositionSubject.hide();
     }
 
     @NonNull
     @Override
     public Observable<Long> mediaPositionObservable() {
-        return mMediaPositionSubject.asObservable();
+        return mMediaPositionSubject.hide();
     }
 
     @NonNull
     @Override
     public Observable<Integer> playbackStateObservable() {
-        return mPlaybackStateSubject.asObservable();
+        return mPlaybackStateSubject.hide();
     }
 
     @Nullable

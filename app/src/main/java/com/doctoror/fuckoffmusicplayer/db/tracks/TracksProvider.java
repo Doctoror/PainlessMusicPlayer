@@ -18,7 +18,7 @@ package com.doctoror.fuckoffmusicplayer.db.tracks;
 import android.database.Cursor;
 import android.support.annotation.Nullable;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * "Tracks" provider

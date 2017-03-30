@@ -29,8 +29,8 @@ import android.support.annotation.WorkerThread;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Playback config

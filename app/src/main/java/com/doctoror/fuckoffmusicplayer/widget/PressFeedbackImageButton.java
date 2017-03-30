@@ -15,7 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
@@ -24,14 +23,13 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
-import android.widget.ImageButton;
 
 /**
  * Created by Yaroslav Mytkalyk on 22.10.16.
  */
-
-public class PressFeedbackImageButton extends ImageButton {
+public class PressFeedbackImageButton extends AppCompatImageButton {
 
     private final ColorFilter mColorFilter = new PorterDuffColorFilter(
             0x50ffffff, PorterDuff.Mode.SRC_ATOP);
@@ -47,12 +45,6 @@ public class PressFeedbackImageButton extends ImageButton {
     public PressFeedbackImageButton(final Context context, final AttributeSet attrs,
             final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public PressFeedbackImageButton(final Context context, final AttributeSet attrs,
-            final int defStyleAttr, final int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

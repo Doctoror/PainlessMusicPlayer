@@ -47,7 +47,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import rx.schedulers.Schedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Provides search for wear
@@ -192,8 +192,7 @@ public final class WearableSearchProviderService extends IntentService {
                     .subscribeOn(Schedulers.io())
                     .map(this::cursorToWearSearchDataAlbum)
                     .take(1)
-                    .toBlocking()
-                    .single();
+                    .blockingFirst();
         } catch (RuntimeException e) {
             Log.w(TAG, e);
             return new WearSearchData.Album[0];
@@ -220,8 +219,7 @@ public final class WearableSearchProviderService extends IntentService {
                     .subscribeOn(Schedulers.io())
                     .map(this::cursorToWearSearchDataArtist)
                     .take(1)
-                    .toBlocking()
-                    .single();
+                    .blockingFirst();
         } catch (RuntimeException e) {
             Log.w(TAG, e);
             return new WearSearchData.Artist[0];
@@ -248,8 +246,7 @@ public final class WearableSearchProviderService extends IntentService {
                     .subscribeOn(Schedulers.io())
                     .map(this::cursorToWearSearchDataTrack)
                     .take(1)
-                    .toBlocking()
-                    .single();
+                    .blockingFirst();
         } catch (RuntimeException e) {
             Log.w(TAG, e);
             return new WearSearchData.Track[0];

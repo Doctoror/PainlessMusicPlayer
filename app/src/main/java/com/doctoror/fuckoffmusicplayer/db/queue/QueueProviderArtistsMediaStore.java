@@ -27,7 +27,7 @@ import android.text.TextUtils;
 
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * MediaStore {@link QueueProviderArtists}

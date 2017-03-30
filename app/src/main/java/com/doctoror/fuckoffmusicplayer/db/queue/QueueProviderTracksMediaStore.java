@@ -35,7 +35,7 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * MediaStore {@link QueueProviderTracks}
@@ -90,7 +90,7 @@ public final class QueueProviderTracksMediaStore implements QueueProviderTracks 
         final List<Media> fromProvider = mMediaProvider.load(sel.toString(),
                 null,
                 MediaStore.Audio.Media.ALBUM + ',' + MediaStore.Audio.Media.TRACK,
-                QueueConfig.MAX_QUEUE_SIZE).take(1).toBlocking().single();
+                QueueConfig.MAX_QUEUE_SIZE).take(1).blockingFirst();
 
         for (final Media media : fromProvider) {
             ids.add(media.getId());
@@ -124,8 +124,7 @@ public final class QueueProviderTracksMediaStore implements QueueProviderTracks 
                         "RANDOM()",
                         QueueConfig.MAX_QUEUE_SIZE - ids.size())
                         .take(1)
-                        .toBlocking()
-                        .single());
+                        .blockingFirst());
             }
         }
 

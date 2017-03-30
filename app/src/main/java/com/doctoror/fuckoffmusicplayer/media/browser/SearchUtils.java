@@ -29,7 +29,6 @@ import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -43,7 +42,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * Search utils
@@ -161,21 +160,19 @@ public final class SearchUtils {
 
         queueSourceFromSearch(query, extras)
                 .take(1)
-                .subscribe(new ObserverAdapter<List<Media>>() {
-                    @Override
-                    public void onNext(final List<Media> queue) {
-                        QueueUtils.play(mContext, mPlaybackData, queue);
-                    }
+                .subscribe(this::onQueueLoaded, t -> onQueueLoadFailed(query));
+    }
 
-                    @Override
-                    public void onError(final Throwable e) {
-                        final String message = TextUtils.isEmpty(query)
-                                ? mContext.getString(R.string.No_media_found)
-                                : mContext.getString(R.string.No_media_found_for_s, query);
+    private void onQueueLoaded(@NonNull final List<Media> queue) {
+        QueueUtils.play(mContext, mPlaybackData, queue);
+    }
 
-                        PlaybackServiceControl.stopWithError(mContext, message);
-                    }
-                });
+    private void onQueueLoadFailed(@NonNull final String query) {
+        final String message = TextUtils.isEmpty(query)
+                ? mContext.getString(R.string.No_media_found)
+                : mContext.getString(R.string.No_media_found_for_s, query);
+
+        PlaybackServiceControl.stopWithError(mContext, message);
     }
 
     @NonNull
@@ -217,19 +214,10 @@ public final class SearchUtils {
     }
 
     private void playFromQueueSource(@NonNull final Observable<List<Media>> source) {
-        source.take(1)
-                .subscribe(new ObserverAdapter<List<Media>>() {
-                    @Override
-                    public void onNext(final List<Media> queue) {
-                        play(mContext, queue, 0);
-                    }
-
-                    @Override
-                    public void onError(final Throwable e) {
-                        PlaybackServiceControl.stopWithError(mContext,
-                                mContext.getString(R.string.No_media_found));
-                    }
-                });
+        source.take(1).subscribe(
+                q -> play(mContext, q, 0),
+                t -> PlaybackServiceControl.stopWithError(mContext,
+                        mContext.getString(R.string.No_media_found)));
     }
 
     private void play(@NonNull final Context context,

@@ -54,6 +54,8 @@
     <string name="Failed_connecting_to_Media_Store">Failed connecting to Media Store</string>
     <string name="Filter">Filter</string>
 
+    <string name="Untitled">Untitled</string>
+
     <string name="Failed_to_start_playback">Failed to start playback</string>
     <string name="Bass_Boost">Bass Boost</string>
     <string name="Equalizer">Equalizer</string>

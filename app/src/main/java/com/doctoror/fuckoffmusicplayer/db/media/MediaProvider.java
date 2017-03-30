@@ -22,7 +22,7 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 public interface MediaProvider {
 

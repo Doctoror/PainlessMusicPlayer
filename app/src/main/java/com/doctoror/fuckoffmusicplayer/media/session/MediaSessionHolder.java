@@ -38,8 +38,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * {@link MediaSessionCompat} holder

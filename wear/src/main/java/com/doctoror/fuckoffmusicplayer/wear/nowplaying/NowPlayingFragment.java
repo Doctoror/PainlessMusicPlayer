@@ -32,7 +32,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -72,6 +71,7 @@ public final class NowPlayingFragment extends KeyEventFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_48dp);
+        mModelViewState.setBtnPlayContentDescription(getText(R.string.Play));
         mMediaHolder = MediaHolder.getInstance(getActivity());
     }
 
@@ -158,8 +158,14 @@ public final class NowPlayingFragment extends KeyEventFragment {
             mModelViewState.setBtnPlayRes(playbackState.state == PlaybackState.STATE_PLAYING
                     || playbackState.state == PlaybackState.STATE_LOADING
                     ? R.drawable.ic_pause_white_48dp : R.drawable.ic_play_arrow_white_48dp);
+
+            mModelViewState.setBtnPlayContentDescription(getText(
+                    playbackState.state == PlaybackState.STATE_PLAYING
+                    || playbackState.state == PlaybackState.STATE_LOADING
+                    ? R.string.Pause : R.string.Play));
         } else {
             mModelViewState.setBtnPlayRes(R.drawable.ic_play_arrow_white_48dp);
+            mModelViewState.setBtnPlayContentDescription(getText(R.string.Play));
         }
     }
 

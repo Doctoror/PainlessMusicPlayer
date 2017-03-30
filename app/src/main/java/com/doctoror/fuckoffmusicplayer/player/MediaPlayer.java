@@ -26,6 +26,8 @@ import android.support.annotation.Nullable;
 
 public interface MediaPlayer {
 
+    int SESSION_ID_NOT_SET = 0;
+
     void init(@NonNull Context context);
     void load(@NonNull Uri data);
     void play();

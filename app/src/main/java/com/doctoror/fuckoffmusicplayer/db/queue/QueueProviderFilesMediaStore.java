@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * MediaStore {@link QueueProviderFiles}

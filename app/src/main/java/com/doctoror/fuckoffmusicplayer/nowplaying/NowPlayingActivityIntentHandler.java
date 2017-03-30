@@ -24,7 +24,6 @@ import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -40,9 +39,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * {@link NowPlayingActivity} intent handler
@@ -80,29 +79,31 @@ public final class NowPlayingActivityIntentHandler {
         queueFromActionView(queueProvider, intent)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ObserverAdapter<List<Media>>() {
-                    @Override
-                    public void onError(final Throwable e) {
-                        if (!activity.isFinishing()) {
-                            Toast.makeText(activity.getApplicationContext(),
-                                    R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    }
+                .subscribe(q -> onActionViewQueueLoaded(activity, playbackData, q),
+                        t -> onActionViewQueueLoadFailed(activity));
+    }
 
-                    @Override
-                    public void onNext(final List<Media> playlist) {
-                        if (!activity.isFinishing()) {
-                            if (playlist.isEmpty()) {
-                                Toast.makeText(activity.getApplicationContext(),
-                                        R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
-                                        .show();
-                            } else {
-                                QueueUtils.play(activity, playbackData, playlist);
-                            }
-                        }
-                    }
-                });
+    private static void onActionViewQueueLoaded(
+            @NonNull final Activity activity,
+            @NonNull final PlaybackData playbackData,
+            @NonNull final List<Media> queue) {
+        if (!activity.isFinishing()) {
+            if (queue.isEmpty()) {
+                Toast.makeText(activity.getApplicationContext(),
+                        R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
+                        .show();
+            } else {
+                QueueUtils.play(activity, playbackData, queue);
+            }
+        }
+    }
+
+    private static void onActionViewQueueLoadFailed(@NonNull final Activity activity) {
+        if (!activity.isFinishing()) {
+            Toast.makeText(activity.getApplicationContext(),
+                    R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 
     private static void onActionPlayFromSearch(@NonNull final Activity activity,

@@ -25,7 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * MediaStore {@link GenresProvider}

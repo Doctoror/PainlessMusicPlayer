@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * Used for showing albums for genre

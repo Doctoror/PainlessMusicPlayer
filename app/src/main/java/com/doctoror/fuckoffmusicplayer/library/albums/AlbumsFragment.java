@@ -33,7 +33,7 @@ import android.support.v7.widget.RecyclerView;
 
 import javax.inject.Inject;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * Created by Yaroslav Mytkalyk on 17.10.16.

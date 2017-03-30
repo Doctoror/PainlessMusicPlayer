@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * MediaStore {@link AlbumsProvider}

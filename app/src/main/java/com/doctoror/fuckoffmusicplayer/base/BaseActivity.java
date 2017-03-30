@@ -32,20 +32,20 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v13.app.ActivityCompat;
-import android.support.v4.util.ArraySet;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import rx.Subscription;
+import io.reactivex.disposables.Disposable;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private final Collection<Subscription> mSubscriptions = new ArraySet<>();
+    private final Collection<Disposable> mDisposables = new ArrayList<>();
 
     @Theme.ThemeType
     private int mThemeUsed;
@@ -70,20 +70,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * Register a {@link Subscription} that will be unsubscribed onStop()
+     * Register a {@link Disposable} that will be disposed onStop()
      *
-     * @param subscription the {@link Subscription} to register
-     * @return the registered {@link Subscription}
+     * @param disposable the {@link Disposable} to register
+     * @return the registered {@link Disposable}
      */
     @NonNull
     @MainThread
-    public Subscription registerOnStartSubscription(@NonNull final Subscription subscription) {
+    public Disposable registerOnStartSubscription(@NonNull final Disposable disposable) {
         //noinspection ConstantConditions
-        if (subscription == null) {
-            throw new NullPointerException("subscription must not be null");
+        if (disposable == null) {
+            throw new NullPointerException("disposable must not be null");
         }
-        mSubscriptions.add(subscription);
-        return subscription;
+        mDisposables.add(disposable);
+        return disposable;
     }
 
     public Settings getSettings() {
@@ -125,10 +125,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        for (final Subscription s : mSubscriptions) {
-            s.unsubscribe();
+        for (final Disposable d : mDisposables) {
+            d.dispose();
         }
-        mSubscriptions.clear();
+        mDisposables.clear();
     }
 
     @Override

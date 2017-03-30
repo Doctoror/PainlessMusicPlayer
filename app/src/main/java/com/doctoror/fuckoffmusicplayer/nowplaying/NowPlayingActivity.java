@@ -75,7 +75,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.functions.Action1;
+import io.reactivex.functions.Consumer;
 
 /**
  * "Now Playing" activity
@@ -362,13 +362,13 @@ public final class NowPlayingActivity extends BaseActivity {
         registerOnStartSubscription(mPlaybackData.playbackStateObservable()
                 .subscribe(this::bindState));
 
-        registerOnStartSubscription(mPlaybackData.queueObservable().subscribe(mQueueAction));
+        registerOnStartSubscription(mPlaybackData.queueObservable().subscribe(mQueueConsumer));
 
         registerOnStartSubscription(mPlaybackData.queuePositionObservable()
-                .subscribe(mQueuePositionAction));
+                .subscribe(mQueuePositionConsumer));
 
         registerOnStartSubscription(mPlaybackData.mediaPositionObservable()
-                .subscribe(mMediaPositionAction));
+                .subscribe(mMediaPositionConsumer));
     }
 
     void bindTrack(@Nullable Media track, final long position) {
@@ -500,20 +500,18 @@ public final class NowPlayingActivity extends BaseActivity {
         mModel.setRepeatMode(value);
     }
 
-    private final Action1<List<Media>> mQueueAction = p -> {
-        if (p == null || p.isEmpty()) {
-            if (!isFinishing()) {
-                finish();
-            }
+    private final Consumer<List<Media>> mQueueConsumer = p -> {
+        if (p.isEmpty() && !isFinishing()) {
+            finish();
         }
     };
 
-    private final Action1<Integer> mQueuePositionAction = pos -> {
+    private final Consumer<Integer> mQueuePositionConsumer = pos -> {
         final Media media = CollectionUtils.getItemSafe(mPlaybackData.getQueue(), pos);
         runOnUiThread(() -> bindTrack(media, mPlaybackData.getMediaPosition()));
     };
 
-    private final Action1<Long> mMediaPositionAction = this::bindProgress;
+    private final Consumer<Long> mMediaPositionConsumer = this::bindProgress;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static final class NowPlayingActivityLollipop {

@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback;
 
-import com.google.android.exoplayer2.audio.AudioTrack;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.doctoror.commons.playback.PlaybackState.State;
@@ -37,7 +35,6 @@ import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
@@ -70,10 +67,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.doctoror.commons.playback.PlaybackState.STATE_ERROR;
 import static com.doctoror.commons.playback.PlaybackState.STATE_IDLE;
@@ -148,8 +145,8 @@ public final class PlaybackService extends Service {
 
     private Media mCurrentTrack;
 
-    private Subscription mTimerSubscription;
-    private Subscription mPauseTimeoutSubscription;
+    private Disposable mDisposableTimer;
+    private Disposable mDisposablePauseTimeout;
 
     private PowerManager.WakeLock mWakeLock;
     private boolean mDestroying;
@@ -159,7 +156,7 @@ public final class PlaybackService extends Service {
     private String mPermissionReceivePlaybackState;
 
     private PlaybackController mPlaybackController;
-    private Subscription mQueueSubscription;
+    private Disposable mDisposableQueue;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -205,7 +202,7 @@ public final class PlaybackService extends Service {
         mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(this);
 
-        mQueueSubscription = mPlaybackData.queueObservable().subscribe(mQueueChangedAction);
+        mDisposableQueue = mPlaybackData.queueObservable().subscribe(mQueueConsumer);
     }
 
     @NonNull
@@ -355,9 +352,9 @@ public final class PlaybackService extends Service {
     }
 
     private void onActionPlay() {
-        if (mPauseTimeoutSubscription != null) {
-            mPauseTimeoutSubscription.unsubscribe();
-            mPauseTimeoutSubscription = null;
+        if (mDisposablePauseTimeout != null) {
+            mDisposablePauseTimeout.dispose();
+            mDisposablePauseTimeout = null;
         }
         mPlayOnFocusGain = true;
         playCurrent(true);
@@ -370,7 +367,7 @@ public final class PlaybackService extends Service {
     private void onActionPause() {
         mPlayOnFocusGain = false;
         pause();
-        mPauseTimeoutSubscription = Observable.timer(8, TimeUnit.SECONDS)
+        mDisposablePauseTimeout = Observable.timer(8, TimeUnit.SECONDS)
                 .subscribe(o -> onActionStop());
         showNotification();
     }
@@ -457,12 +454,9 @@ public final class PlaybackService extends Service {
         } else {
             mRecentlyScannedPlaylistFactory.recentlyScannedQueue()
                     .subscribeOn(Schedulers.io())
-                    .subscribe(new ObserverAdapter<List<Media>>() {
-                        @Override
-                        public void onNext(final List<Media> queue) {
-                            QueueUtils.play(PlaybackService.this, mPlaybackData, queue);
-                        }
-                    });
+                    .subscribe(
+                            q -> QueueUtils.play(PlaybackService.this, mPlaybackData, q),
+                            t -> Log.w(TAG, "Failed to load recently scanned", t));
         }
     }
 
@@ -563,7 +557,7 @@ public final class PlaybackService extends Service {
         stopForeground(true);
         mMediaPlayer.stop();
 
-        mQueueSubscription.unsubscribe();
+        mDisposableQueue.dispose();
         mPlaybackReporter.onDestroy();
 
         mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
@@ -578,9 +572,9 @@ public final class PlaybackService extends Service {
         } else {
             setState(STATE_IDLE);
         }
-        if (mTimerSubscription != null) {
-            mTimerSubscription.unsubscribe();
-            mTimerSubscription = null;
+        if (mDisposableTimer != null) {
+            mDisposableTimer.dispose();
+            mDisposableTimer = null;
         }
         mAudioEffects.relese();
         mMediaPlayer.release();
@@ -674,7 +668,7 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final Action1<List<Media>> mQueueChangedAction = p -> {
+    private final Consumer<List<Media>> mQueueConsumer = p -> {
         if (p == null || p.isEmpty()) {
             mCurrentTrack = null;
             AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
@@ -710,7 +704,7 @@ public final class PlaybackService extends Service {
         @Override
         public void onAudioSessionId(final int audioSessionId) {
             mErrorMessage = null;
-            if (audioSessionId == AudioTrack.SESSION_ID_NOT_SET) {
+            if (audioSessionId == MediaPlayer.SESSION_ID_NOT_SET) {
                 mAudioEffects.relese();
             } else {
                 mAudioEffects.create(audioSessionId);
@@ -728,7 +722,7 @@ public final class PlaybackService extends Service {
             mErrorMessage = null;
             setState(STATE_PLAYING);
             showNotification();
-            mTimerSubscription = Observable.interval(1L, TimeUnit.SECONDS)
+            mDisposableTimer = Observable.interval(1L, TimeUnit.SECONDS)
                     .subscribe(o -> updateMediaPosition());
         }
 
@@ -745,9 +739,9 @@ public final class PlaybackService extends Service {
         public void onPlaybackPaused() {
             mErrorMessage = null;
             setState(STATE_PAUSED);
-            if (mTimerSubscription != null) {
-                mTimerSubscription.unsubscribe();
-                mTimerSubscription = null;
+            if (mDisposableTimer != null) {
+                mDisposableTimer.dispose();
+                mDisposableTimer = null;
             }
         }
 

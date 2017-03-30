@@ -23,7 +23,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * MediaStore {@link QueueProviderRandom}

@@ -23,7 +23,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.audio.AudioTrack;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -193,7 +192,7 @@ final class ExoMediaPlayer implements MediaPlayer {
                 Log.d(TAG, "onAudioDisabled");
             }
             if (mMediaPlayerListener != null) {
-                mMediaPlayerListener.onAudioSessionId(AudioTrack.SESSION_ID_NOT_SET);
+                mMediaPlayerListener.onAudioSessionId(SESSION_ID_NOT_SET);
             }
         }
     };

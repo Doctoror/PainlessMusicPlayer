@@ -115,12 +115,12 @@
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@{viewState.btnPlayContentDescription}"
             app:srcRes="@{viewState.btnPlayRes}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline54percent"
-            tools:src="@drawable/ic_play_arrow_white_48dp"
-            tools:ignore="ContentDescription"/>
+            tools:src="@drawable/ic_play_arrow_white_48dp"/>
 
         <ImageButton
             android:id="@+id/btnPrev"

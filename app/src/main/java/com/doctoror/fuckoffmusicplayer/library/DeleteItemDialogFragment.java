@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.tbruyelle.rxpermissions.RxPermissions;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import android.Manifest;
 import android.app.Activity;

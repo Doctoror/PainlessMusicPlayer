@@ -28,7 +28,7 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 public final class QueueProviderAlbumsMediaStore implements QueueProviderAlbums {
 
@@ -84,7 +84,7 @@ public final class QueueProviderAlbumsMediaStore implements QueueProviderAlbums 
             }
 
             queue.addAll(mMediaProvider.load(selection.toString(), null,
-                    MediaStore.Audio.Media.TRACK, null).take(1).toBlocking().single());
+                    MediaStore.Audio.Media.TRACK, null).take(1).blockingFirst());
         }
         return queue;
     }

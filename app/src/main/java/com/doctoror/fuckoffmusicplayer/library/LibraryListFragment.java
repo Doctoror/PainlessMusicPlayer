@@ -18,12 +18,11 @@ package com.doctoror.fuckoffmusicplayer.library;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
-import com.doctoror.fuckoffmusicplayer.util.ObserverAdapter;
 import com.doctoror.fuckoffmusicplayer.util.SearchViewUtils;
 import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
-import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
+import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
@@ -47,13 +46,12 @@ import android.view.ViewGroup;
 
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
-import rx.subjects.BehaviorSubject;
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.processors.BehaviorProcessor;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Fragment used for library list
@@ -70,11 +68,11 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     private static final int ANIMATOR_CHILD_ERROR = 3;
     private static final int ANIMATOR_CHILD_CONTENT = 4;
 
-    private final BehaviorSubject<String> mSearchSubject = BehaviorSubject.create();
+    private final BehaviorProcessor<String> mSearchProcessor = BehaviorProcessor.create();
     private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
 
-    private Subscription mOldSubscription;
-    private Subscription mSubscription;
+    private Disposable mOldSubscription;
+    private Disposable mSubscription;
 
     private boolean mCanShowEmptyView = true;
     private boolean mSearchIconified = true;
@@ -96,7 +94,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
                 .getParcelable(KEY_INSTANCE_STATE));
         if (state != null) {
             mSearchIconified = state.searchIconified;
-            mSearchSubject.onNext(state.searchQuery);
+            mSearchProcessor.onNext(state.searchQuery);
         }
     }
 
@@ -105,7 +103,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         super.onSaveInstanceState(outState);
         final InstanceState state = new InstanceState();
         state.searchIconified = mSearchIconified;
-        state.searchQuery = mSearchSubject.getValue();
+        state.searchQuery = mSearchProcessor.getValue();
         outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(state));
     }
 
@@ -119,7 +117,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
             SearchViewUtils.setSearchIcon(searchView, R.drawable.ic_filter_list_white_24dp);
             searchView.setQueryHint(getText(R.string.Filter));
 
-            searchView.setQuery(mSearchSubject.getValue(), false);
+            searchView.setQuery(mSearchProcessor.getValue(), false);
             searchView.setOnCloseListener(() -> {
                 mSearchIconified = true;
                 return false;
@@ -130,7 +128,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
             RxSearchView
                     .queryTextChanges(searchView)
                     .debounce(400, TimeUnit.MILLISECONDS)
-                    .subscribe(t -> mSearchSubject.onNext(t.toString()));
+                    .subscribe(t -> mSearchProcessor.onNext(t.toString()));
 
         } else {
             menu.findItem(R.id.actionFilter).setVisible(false);
@@ -140,7 +138,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     @Override
     protected void onPermissionGranted() {
         mModel.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
-        registerOnStartSubscription(mSearchSubject.asObservable().subscribe(mSearchQueryObserver));
+        registerOnStartSubscription(mSearchProcessor.hide().subscribe(mSearchQueryConsumer));
         getActivity().invalidateOptionsMenu();
     }
 
@@ -193,7 +191,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
             mSubscription = registerOnStartSubscription(load(searchFilter)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(mObserver));
+                    .subscribe(this::onNextSearchResult, this::onSearchResultLoadFailed));
         } else {
             Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
         }
@@ -217,33 +215,28 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         mModel.setEmptyMessage(emptyMessage);
     }
 
-    private final Observer<Cursor> mObserver = new ObserverAdapter<Cursor>() {
-
-        @Override
-        public void onError(final Throwable e) {
-            if (mOldSubscription != null) {
-                mOldSubscription.unsubscribe();
-                mOldSubscription = null;
-            }
-            onDataReset();
-            if (isAdded()) {
-                mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
-            }
+    private void onNextSearchResult(@NonNull final Cursor cursor) {
+        onDataLoaded(cursor);
+        if (mOldSubscription != null) {
+            mOldSubscription.dispose();
+            mOldSubscription = null;
         }
+        mModel.setDisplayedChild(cursor.getCount() == 0 && mCanShowEmptyView
+                ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
+    }
 
-        @Override
-        public void onNext(final Cursor cursor) {
-            onDataLoaded(cursor);
-            if (mOldSubscription != null) {
-                mOldSubscription.unsubscribe();
-                mOldSubscription = null;
-            }
-            mModel.setDisplayedChild(cursor.getCount() == 0 && mCanShowEmptyView
-                    ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
+    private void onSearchResultLoadFailed(@NonNull final Throwable t) {
+        if (mOldSubscription != null) {
+            mOldSubscription.dispose();
+            mOldSubscription = null;
         }
-    };
+        onDataReset();
+        if (isAdded()) {
+            mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
+        }
+    }
 
-    private final Action1<String> mSearchQueryObserver = this::restartLoader;
+    private final Consumer<String> mSearchQueryConsumer = this::restartLoader;
 
     @Parcel
     static final class InstanceState {

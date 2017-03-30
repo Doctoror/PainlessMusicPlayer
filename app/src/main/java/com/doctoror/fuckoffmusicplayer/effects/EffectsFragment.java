@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.effects;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentEffectsBinding;
-import com.jakewharton.rxbinding.widget.RxSeekBar;
+import com.jakewharton.rxbinding2.widget.RxSeekBar;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -29,7 +29,8 @@ import android.view.ViewGroup;
 
 import java.util.Observer;
 
-import rx.functions.Action1;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by Yaroslav Mytkalyk on 22.10.16.
@@ -58,12 +59,12 @@ public final class EffectsFragment extends Fragment {
         binding.setModel(mModel);
         binding.switchBassBoost.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> setBassBoostEnabled(isChecked));
-        RxSeekBar.userChanges(binding.seekBarBassBoost).subscribe(new Action1<Integer>() {
+        RxSeekBar.userChanges(binding.seekBarBassBoost).subscribe(new Consumer<Integer>() {
 
             private boolean mFirst = true;
 
             @Override
-            public void call(final Integer progress) {
+            public void accept(@NonNull final Integer progress) throws Exception {
                 if (mFirst) {
                     mFirst = false;
                 } else {
