@@ -39,6 +39,7 @@ import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.util.Objects;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -150,6 +151,7 @@ public final class NowPlayingActivity extends BaseActivity {
     @Inject
     QueueProviderFiles mFileQueueProvider;
 
+    private Media mBoundTrack;
     private volatile boolean mSeekBarTracking;
 
     @Override
@@ -373,23 +375,26 @@ public final class NowPlayingActivity extends BaseActivity {
 
     void bindTrack(@Nullable final Media track, final long position) {
         if (!isFinishingAfterTransition()) {
-            if (track != null) {
-                setAlbumArt(track.getAlbumArt());
-                mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
-                        track.getArtist(), track.getAlbum()));
-                mModel.setTitle(track.getTitle());
-                mModel.setDuration(track.getDuration());
-                bindProgress(position);
-                mModel.notifyChange();
-            } else {
-                setAlbumArt(null);
-                mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
-                        null, null));
-                mModel.setTitle(getString(R.string.Untitled));
-                mModel.setElapsedTime(0);
-                mModel.setProgress(0);
-                mModel.setDuration(0);
-                mModel.notifyChange();
+            if (!Objects.equals(mBoundTrack, track)) {
+                mBoundTrack = track;
+                if (track != null) {
+                    setAlbumArt(track.getAlbumArt());
+                    mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
+                            track.getArtist(), track.getAlbum()));
+                    mModel.setTitle(track.getTitle());
+                    mModel.setDuration(track.getDuration());
+                    bindProgress(position);
+                    mModel.notifyChange();
+                } else {
+                    setAlbumArt(null);
+                    mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
+                            null, null));
+                    mModel.setTitle(getString(R.string.Untitled));
+                    mModel.setElapsedTime(0);
+                    mModel.setProgress(0);
+                    mModel.setDuration(0);
+                    mModel.notifyChange();
+                }
             }
         }
     }
@@ -500,9 +505,15 @@ public final class NowPlayingActivity extends BaseActivity {
         mModel.setRepeatMode(value);
     }
 
-    private final Consumer<List<Media>> mQueueConsumer = p -> {
-        if (p.isEmpty() && !isFinishing()) {
-            finish();
+    private final Consumer<List<Media>> mQueueConsumer = q -> {
+        if (q.isEmpty()) {
+            if (!isFinishing()) {
+                finish();
+            }
+        } else {
+            final Media media = CollectionUtils
+                    .getItemSafe(mPlaybackData.getQueue(), mPlaybackData.getQueuePosition());
+            runOnUiThread(() -> bindTrack(media, mPlaybackData.getMediaPosition()));
         }
     };
 
