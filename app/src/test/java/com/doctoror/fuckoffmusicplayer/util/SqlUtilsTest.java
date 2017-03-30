@@ -59,24 +59,4 @@ public final class SqlUtilsTest {
     public void testWrapForLikeArgumentNonEmptyArgument() throws Exception {
         assertEquals("'%asshole%'", SqlUtils.wrapForLikeArgument("'asshole'"));
     }
-
-    @Test
-    public void testEscapeAndWrapForLikeArgumentNull() throws Exception {
-        assertEquals("'%NULL%'", SqlUtils.escapeAndWrapForLikeArgument(null));
-    }
-
-    @Test
-    public void testEscapeAndWrapForLikeArgumentEmpty() throws Exception {
-        assertEquals("'%%'", SqlUtils.escapeAndWrapForLikeArgument(""));
-    }
-
-    @Test
-    public void testEscapeAndWrapForLikeArgumentWithApostrophe() throws Exception {
-        assertEquals("'%Don''t%'", SqlUtils.escapeAndWrapForLikeArgument("Don't"));
-    }
-
-    @Test
-    public void testEscapeAndWrapForLikeArgumentWithQuotes() throws Exception {
-        assertEquals("'%'Don''t'%'", SqlUtils.escapeAndWrapForLikeArgument("'Don't'"));
-    }
 }
