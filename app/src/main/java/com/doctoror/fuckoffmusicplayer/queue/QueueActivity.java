@@ -312,7 +312,7 @@ public final class QueueActivity extends BaseActivity
             mFabAnchorParams = null;
         }
         if (isNowPlayingQueue) {
-            registerOnStartSubscription(mPlaybackData.playbackStateObservable()
+            disposeOnStop(mPlaybackData.playbackStateObservable()
                     .subscribe(this::onPlaybackStateChanged));
         }
     }

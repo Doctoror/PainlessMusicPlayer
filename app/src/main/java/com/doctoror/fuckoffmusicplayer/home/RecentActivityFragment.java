@@ -152,7 +152,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
             final Observable<Cursor> recentlyScanned =
                     mAlbumsProvider.loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
 
-            registerOnStartSubscription(Observable.combineLatest(recentlyPlayed,
+            disposeOnStop(Observable.combineLatest(recentlyPlayed,
                     recentlyScanned,
                     new RecyclerAdapterDataFunc(getResources()))
                     .subscribeOn(Schedulers.io())

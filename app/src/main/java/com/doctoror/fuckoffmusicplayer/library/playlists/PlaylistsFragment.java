@@ -194,7 +194,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
     private void loadLivePlaylistAndPlay(final int position,
             @NonNull final String name,
             @NonNull final Observable<List<Media>> queueSource) {
-        registerOnStartSubscription(queueSource
+        disposeOnStop(queueSource
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -299,7 +299,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
         public void onPlaylistClick(final long id,
                 @Nullable final String name,
                 final int position) {
-            registerOnStartSubscription(mPlaylistsProvider.loadQueue(id)
+            disposeOnStop(mPlaylistsProvider.loadQueue(id)
                     .take(1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

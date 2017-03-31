@@ -237,7 +237,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private void onListItemClick(final int position,
             final long albumId,
             @Nullable final String queueName) {
-        registerOnStartSubscription(queueFromAlbum(albumId)
+        disposeOnStop(queueFromAlbum(albumId)
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -329,7 +329,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             mDisposableDataOld = mDisposableData;
-            mDisposableData = registerOnStartSubscription(load()
+            mDisposableData = disposeOnStop(load()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::onDataLoaded, this::onDataLoadFailed));

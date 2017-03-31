@@ -63,7 +63,7 @@ public final class AlbumClickHandler {
             final long albumId,
             @Nullable final String albumName,
             @Nullable final ItemViewProvider itemViewProvider) {
-        host.registerOnStartSubscription(queueProvider.fromAlbum(albumId)
+        host.disposeOnStop(queueProvider.fromAlbum(albumId)
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

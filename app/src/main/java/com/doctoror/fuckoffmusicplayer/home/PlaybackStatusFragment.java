@@ -71,10 +71,10 @@ public final class PlaybackStatusFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        registerOnStartSubscription(mPlaybackData.playbackStateObservable()
+        disposeOnStop(mPlaybackData.playbackStateObservable()
                 .subscribe(this::onStateChanged));
 
-        registerOnStartSubscription(mPlaybackData.queuePositionObservable()
+        disposeOnStop(mPlaybackData.queuePositionObservable()
                 .subscribe(this::onQueuePositionChanged));
     }
 

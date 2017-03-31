@@ -136,7 +136,7 @@ public final class HomeActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        registerOnStartSubscription(mPlaybackData.queuePositionObservable()
+        disposeOnStop(mPlaybackData.queuePositionObservable()
                 .subscribe(this::onQueuePositionChanged));
     }
 

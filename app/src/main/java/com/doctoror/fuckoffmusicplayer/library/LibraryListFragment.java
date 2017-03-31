@@ -138,7 +138,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     @Override
     protected void onPermissionGranted() {
         mModel.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
-        registerOnStartSubscription(mSearchProcessor.hide().subscribe(mSearchQueryConsumer));
+        disposeOnStop(mSearchProcessor.hide().subscribe(mSearchQueryConsumer));
         getActivity().invalidateOptionsMenu();
     }
 
@@ -188,7 +188,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             mOldSubscription = mSubscription;
-            mSubscription = registerOnStartSubscription(load(searchFilter)
+            mSubscription = disposeOnStop(load(searchFilter)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::onNextSearchResult, this::onSearchResultLoadFailed));

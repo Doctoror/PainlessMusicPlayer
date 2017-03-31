@@ -86,7 +86,7 @@ public abstract class LibraryPermissionsFragment extends BaseFragment {
         } else if (mPermissionRequested) {
             onPermissionDenied();
         } else {
-            registerOnStartSubscription(Observable.timer(500, TimeUnit.MILLISECONDS)
+            disposeOnStop(Observable.timer(500, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(l -> requestPermission()));
         }

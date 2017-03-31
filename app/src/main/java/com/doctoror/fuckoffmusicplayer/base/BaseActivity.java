@@ -77,7 +77,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     @NonNull
     @MainThread
-    public Disposable registerOnStartSubscription(@NonNull final Disposable disposable) {
+    public Disposable disposeOnStop(@NonNull final Disposable disposable) {
         //noinspection ConstantConditions
         if (disposable == null) {
             throw new NullPointerException("disposable must not be null");

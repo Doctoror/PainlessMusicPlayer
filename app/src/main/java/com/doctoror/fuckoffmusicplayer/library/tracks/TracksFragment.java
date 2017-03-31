@@ -125,7 +125,7 @@ public final class TracksFragment extends LibraryListFragment {
     }
 
     private void onTrackClick(final int startPosition, final long trackId) {
-        registerOnStartSubscription(Observable.fromCallable(() -> createLimitedQueue(startPosition))
+        disposeOnStop(Observable.fromCallable(() -> createLimitedQueue(startPosition))
                 .flatMap(this::queueFromIds)
                 .take(1)
                 .subscribeOn(Schedulers.io())

@@ -361,15 +361,15 @@ public final class NowPlayingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        registerOnStartSubscription(mPlaybackData.playbackStateObservable()
+        disposeOnStop(mPlaybackData.playbackStateObservable()
                 .subscribe(this::bindState));
 
-        registerOnStartSubscription(mPlaybackData.queueObservable().subscribe(mQueueConsumer));
+        disposeOnStop(mPlaybackData.queueObservable().subscribe(mQueueConsumer));
 
-        registerOnStartSubscription(mPlaybackData.queuePositionObservable()
+        disposeOnStop(mPlaybackData.queuePositionObservable()
                 .subscribe(mQueuePositionConsumer));
 
-        registerOnStartSubscription(mPlaybackData.mediaPositionObservable()
+        disposeOnStop(mPlaybackData.mediaPositionObservable()
                 .subscribe(mMediaPositionConsumer));
     }
 
