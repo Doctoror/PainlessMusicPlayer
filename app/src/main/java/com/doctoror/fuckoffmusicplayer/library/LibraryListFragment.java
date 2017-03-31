@@ -71,8 +71,8 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     private final BehaviorProcessor<String> mSearchProcessor = BehaviorProcessor.create();
     private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
 
-    private Disposable mOldSubscription;
-    private Disposable mSubscription;
+    private Disposable mDisposableOld;
+    private Disposable mDisposable;
 
     private boolean mCanShowEmptyView = true;
     private boolean mSearchIconified = true;
@@ -187,8 +187,8 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     private void restartLoader(@Nullable final String searchFilter) {
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            mOldSubscription = mSubscription;
-            mSubscription = disposeOnStop(load(searchFilter)
+            mDisposableOld = mDisposable;
+            mDisposable = disposeOnStop(load(searchFilter)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::onNextSearchResult, this::onSearchResultLoadFailed));
@@ -217,18 +217,19 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
 
     private void onNextSearchResult(@NonNull final Cursor cursor) {
         onDataLoaded(cursor);
-        if (mOldSubscription != null) {
-            mOldSubscription.dispose();
-            mOldSubscription = null;
+        if (mDisposableOld != null) {
+            mDisposableOld.dispose();
+            mDisposableOld = null;
         }
         mModel.setDisplayedChild(cursor.getCount() == 0 && mCanShowEmptyView
                 ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
     }
 
     private void onSearchResultLoadFailed(@NonNull final Throwable t) {
-        if (mOldSubscription != null) {
-            mOldSubscription.dispose();
-            mOldSubscription = null;
+        Log.w(TAG, "onSearchResultLoadFailed()", t);
+        if (mDisposableOld != null) {
+            mDisposableOld.dispose();
+            mDisposableOld = null;
         }
         onDataReset();
         if (isAdded()) {
