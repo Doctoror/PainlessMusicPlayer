@@ -21,7 +21,6 @@ import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsActivity;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
 import android.app.Activity;
 import android.content.Intent;
