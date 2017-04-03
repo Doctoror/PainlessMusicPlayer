@@ -36,6 +36,8 @@
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
 
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
+
         <meta-data android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc"/>
 
