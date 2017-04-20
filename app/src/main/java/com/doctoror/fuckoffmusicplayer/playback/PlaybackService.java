@@ -649,16 +649,16 @@ public final class PlaybackService extends Service {
     }
 
     @WorkerThread
-    private void reportCurrentPlaylist() {
-        final List<Media> playlist = mPlaybackData.getQueue();
-        if (playlist != null) {
-            mPlaybackReporter.reportQueueChanged(playlist);
+    private void reportCurrentQueue() {
+        final List<Media> queue = mPlaybackData.getQueue();
+        if (queue != null) {
+            mPlaybackReporter.reportQueueChanged(queue);
         }
     }
 
     private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
     private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
-    private final Runnable mRunnableReportCurrentPlaylist = this::reportCurrentPlaylist;
+    private final Runnable mRunnableReportCurrentQueue = this::reportCurrentQueue;
 
     private final BroadcastReceiver mResendStateReceiver = new BroadcastReceiver() {
 
@@ -668,34 +668,28 @@ public final class PlaybackService extends Service {
         }
     };
 
-    private final Consumer<List<Media>> mQueueConsumer = p -> {
-        if (p == null || p.isEmpty()) {
+    private final Consumer<List<Media>> mQueueConsumer = q -> {
+        if (q == null || q.isEmpty()) {
             mCurrentTrack = null;
             AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
             stopSelf();
         } else {
-            // If playing some track
-            if (mCurrentTrack != null) {
-                // If this track is not present in new playlist
-                if (!p.contains(mCurrentTrack)) {
-                    // Stop current and play the other track from playlist
+            final PlaybackController playbackController = getPlaybackController();
+            playbackController.setQueue(q);
+
+            final Media current = mCurrentTrack;
+            // Playing some track
+            if (current != null) {
+                final int indexOf = q.indexOf(current);
+                if (indexOf != -1) {
+                    // This track position changed in queue
+                    playbackController.setPositionInQueue(indexOf);
+                    mExecutor.submit(mRunnableReportCurrentQueue);
+                } else {
+                    // This track is not in new queue
                     restart();
                 }
             }
-
-            final PlaybackController playbackController = getPlaybackController();
-            playbackController.setQueue(p);
-
-            int pos = mPlaybackData.getQueuePosition();
-            final Media current = mCurrentTrack;
-            if (current != null) {
-                final int indexOf = p.indexOf(current);
-                if (indexOf != -1) {
-                    pos = indexOf;
-                }
-            }
-            playbackController.setPositionInQueue(pos);
-            mExecutor.submit(mRunnableReportCurrentPlaylist);
         }
     };
 

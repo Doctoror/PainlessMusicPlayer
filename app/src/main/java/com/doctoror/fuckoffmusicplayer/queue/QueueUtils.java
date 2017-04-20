@@ -52,9 +52,9 @@ public final class QueueUtils {
             @NonNull final PlaybackData playbackData,
             @NonNull final List<Media> mediaList,
             final int position) {
-        playbackData.setPlayQueue(mediaList);
-        playbackData.setPlayQueuePosition(position);
         playbackData.setMediaPosition(0);
+        playbackData.setPlayQueuePosition(position);
+        playbackData.setPlayQueue(mediaList);
         playbackData.persistAsync();
 
         PlaybackServiceControl.play(context);
