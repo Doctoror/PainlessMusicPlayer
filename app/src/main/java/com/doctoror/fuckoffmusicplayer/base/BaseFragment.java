@@ -19,18 +19,27 @@ import android.app.Fragment;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-
 
 /**
  * The base {@link Fragment}
  */
 public abstract class BaseFragment extends Fragment {
 
-    private final Collection<Disposable> mDisposables = new ArrayList<>();
+    private final Object mOnStopDisposableLock = new Object();
+
+    private CompositeDisposable mOnStopDisposable;
+
+    @NonNull
+    private CompositeDisposable getOnStopDisposable() {
+        synchronized (mOnStopDisposableLock) {
+            if (mOnStopDisposable == null) {
+                mOnStopDisposable = new CompositeDisposable();
+            }
+            return mOnStopDisposable;
+        }
+    }
 
     /**
      * Register a {@link Disposable} that will be disposed onStop()
@@ -45,16 +54,20 @@ public abstract class BaseFragment extends Fragment {
         if (disposable == null) {
             throw new NullPointerException("disposable must not be null");
         }
-        mDisposables.add(disposable);
+        getOnStopDisposable().add(disposable);
         return disposable;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        for (final Disposable d : mDisposables) {
-            d.dispose();
+        if (mOnStopDisposable != null) {
+            synchronized (mOnStopDisposableLock) {
+                if (mOnStopDisposable != null) {
+                    mOnStopDisposable.dispose();
+                    mOnStopDisposable = null;
+                }
+            }
         }
-        mDisposables.clear();
     }
 }

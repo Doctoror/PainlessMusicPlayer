@@ -35,17 +35,18 @@ import android.support.v13.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private final Collection<Disposable> mDisposables = new ArrayList<>();
+    private final Object mOnStopDisposableLock = new Object();
+
+    private CompositeDisposable mOnStopDisposable;
 
     @Theme.ThemeType
     private int mThemeUsed;
@@ -69,6 +70,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         mFinishingAfterTransition = false;
     }
 
+    @NonNull
+    private CompositeDisposable getOnStopDisposable() {
+        synchronized (mOnStopDisposableLock) {
+            if (mOnStopDisposable == null) {
+                mOnStopDisposable = new CompositeDisposable();
+            }
+            return mOnStopDisposable;
+        }
+    }
+
     /**
      * Register a {@link Disposable} that will be disposed onStop()
      *
@@ -82,7 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (disposable == null) {
             throw new NullPointerException("disposable must not be null");
         }
-        mDisposables.add(disposable);
+        getOnStopDisposable().add(disposable);
         return disposable;
     }
 
@@ -125,10 +136,14 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        for (final Disposable d : mDisposables) {
-            d.dispose();
+        if (mOnStopDisposable != null) {
+            synchronized (mOnStopDisposableLock) {
+                if (mOnStopDisposable != null) {
+                    mOnStopDisposable.dispose();
+                    mOnStopDisposable = null;
+                }
+            }
         }
-        mDisposables.clear();
     }
 
     @Override
