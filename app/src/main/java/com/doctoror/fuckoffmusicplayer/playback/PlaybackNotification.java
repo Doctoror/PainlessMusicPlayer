@@ -24,17 +24,22 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import android.view.View;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -43,6 +48,8 @@ import java.util.concurrent.ExecutionException;
 final class PlaybackNotification {
 
     private static final String TAG = "PlaybackNotification";
+
+    private static final String CHANNEL_ID = "NowPlaying";
 
     private PlaybackNotification() {
         throw new UnsupportedOperationException();
@@ -54,6 +61,8 @@ final class PlaybackNotification {
             @NonNull final Media media,
             @PlaybackState.State final int state,
             @NonNull final MediaSessionCompat mediaSession) {
+        ensureChannelExists(context);
+
         Bitmap art = null;
         final String artLocation = media.getAlbumArt();
         if (!TextUtils.isEmpty(artLocation)) {
@@ -83,8 +92,8 @@ final class PlaybackNotification {
                 .setMediaSession(mediaSession.getSessionToken())
                 .setShowActionsInCompactView(1, 2);
 
-        final android.support.v4.app.NotificationCompat.Builder b
-                = new NotificationCompat.Builder(context)
+        final NotificationCompat.Builder b
+                = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setStyle(style)
                 .setShowWhen(false)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -107,7 +116,7 @@ final class PlaybackNotification {
     }
 
     private static void addAction1(@NonNull final Context context,
-            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+            @NonNull final NotificationCompat.Builder b) {
         final int direction = context.getResources().getInteger(R.integer.layoutDirection);
         switch (direction) {
             case View.LAYOUT_DIRECTION_RTL:
@@ -122,7 +131,7 @@ final class PlaybackNotification {
     }
 
     private static void addAction2(@NonNull final Context context,
-            @NonNull final android.support.v4.app.NotificationCompat.Builder b,
+            @NonNull final NotificationCompat.Builder b,
             @PlaybackState.State final int state) {
         final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
                 PlaybackServiceIntentFactory.intentPlayPause(context),
@@ -138,7 +147,7 @@ final class PlaybackNotification {
     }
 
     private static void addAction3(@NonNull final Context context,
-            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+            @NonNull final NotificationCompat.Builder b) {
         final int direction = context.getResources().getInteger(R.integer.layoutDirection);
         switch (direction) {
             case View.LAYOUT_DIRECTION_RTL:
@@ -153,7 +162,7 @@ final class PlaybackNotification {
     }
 
     private static void addActionPrev(@NonNull final Context context,
-            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+            @NonNull final NotificationCompat.Builder b) {
         final PendingIntent prevIntent = PendingIntent.getService(context, 1,
                 PlaybackServiceIntentFactory.intentPrev(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -163,7 +172,7 @@ final class PlaybackNotification {
     }
 
     private static void addActionNext(@NonNull final Context context,
-            @NonNull final android.support.v4.app.NotificationCompat.Builder b) {
+            @NonNull final NotificationCompat.Builder b) {
         final PendingIntent nextIntent = PendingIntent.getService(context, 2,
                 PlaybackServiceIntentFactory.intentNext(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -172,4 +181,44 @@ final class PlaybackNotification {
                 nextIntent);
     }
 
+    private static void ensureChannelExists(@NonNull final Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ensureChannelExistsV26(context);
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private static void ensureChannelExistsV26(@NonNull final Context context) {
+        final NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            ensureChannelExists(context, notificationManager);
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private static void ensureChannelExists(
+            @NonNull final Context context,
+            @NonNull final NotificationManager notificationManager) {
+        if (!hasChannels(notificationManager)) {
+            final NotificationChannel channel = createChannel(context);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private static NotificationChannel createChannel(
+            @NonNull final Context context) {
+        return new NotificationChannel(
+                CHANNEL_ID,
+                context.getString(R.string.Now_Playing),
+                NotificationManager.IMPORTANCE_HIGH);
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private static boolean hasChannels(@NonNull final NotificationManager notificationManager) {
+        final List<NotificationChannel> channels = notificationManager
+                .getNotificationChannels();
+        return channels != null && !channels.isEmpty();
+    }
 }
