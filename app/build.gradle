@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 27
     buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "com.doctoror.fuckoffmusicplayer"
 
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
 
         versionCode 1
         versionName "1.0.0"
