@@ -101,7 +101,7 @@ android {
 
 dependencies {
     def supportVersion = '27.0.2'
-    def gpsVersion = '10.2.4'
+    def gpsVersion = '11.8.0'
 
     testCompile 'junit:junit:4.12'
     androidTestCompile "com.android.support:support-annotations:$supportVersion"
