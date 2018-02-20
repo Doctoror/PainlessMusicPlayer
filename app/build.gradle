@@ -142,11 +142,11 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
-    implementation 'com.f2prateek.dart:dart:2.0.2'
-    annotationProcessor 'com.f2prateek.dart:dart-processor:2.0.2'
+    implementation 'com.f2prateek.dart:dart:2.0.3'
+    annotationProcessor 'com.f2prateek.dart:dart-processor:2.0.3'
 
-    implementation 'com.f2prateek.dart:henson:2.0.2'
-    annotationProcessor 'com.f2prateek.dart:henson-processor:2.0.2'
+    implementation 'com.f2prateek.dart:henson:2.0.3'
+    annotationProcessor 'com.f2prateek.dart:henson-processor:2.0.3'
 
     // Generation
     implementation 'org.parceler:parceler-api:1.1.10'
