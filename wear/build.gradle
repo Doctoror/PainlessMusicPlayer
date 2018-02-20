@@ -84,8 +84,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':commons')
 
-    provided 'com.google.android.wearable:wearable:2.0.1'
-    implementation 'com.google.android.support:wearable:2.0.1'
+    provided 'com.google.android.wearable:wearable:2.2.0'
+    implementation 'com.google.android.support:wearable:2.2.0'
 
     // These dependencies are for promoting versions that used by
     // com.google.android.wearable:wearable and com.android.support.test:runner
