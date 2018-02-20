@@ -149,8 +149,8 @@ dependencies {
     annotationProcessor 'com.f2prateek.dart:henson-processor:2.0.2'
 
     // Generation
-    implementation 'org.parceler:parceler-api:1.1.6'
-    annotationProcessor 'org.parceler:parceler:1.1.6'
+    implementation 'org.parceler:parceler-api:1.1.10'
+    annotationProcessor 'org.parceler:parceler:1.1.10'
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.1.0'
 
     // Loader
