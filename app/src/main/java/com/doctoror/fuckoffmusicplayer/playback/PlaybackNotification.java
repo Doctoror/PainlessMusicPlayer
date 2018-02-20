@@ -30,8 +30,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -79,7 +79,7 @@ final class PlaybackNotification {
                 .hasListViewTransition(false)
                 .build();
 
-        final NotificationCompat.Style style = new NotificationCompat.MediaStyle()
+        final NotificationCompat.Style style = new android.support.v4.media.app.NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.getSessionToken())
                 .setShowActionsInCompactView(1, 2);
 
