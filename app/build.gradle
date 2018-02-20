@@ -143,10 +143,10 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 
     compile 'com.f2prateek.dart:dart:2.0.2'
-    provided 'com.f2prateek.dart:dart-processor:2.0.2'
+    annotationProcessor 'com.f2prateek.dart:dart-processor:2.0.2'
 
     compile 'com.f2prateek.dart:henson:2.0.2'
-    provided 'com.f2prateek.dart:henson-processor:2.0.2'
+    annotationProcessor 'com.f2prateek.dart:henson-processor:2.0.2'
 
     // Generation
     compile 'org.parceler:parceler-api:1.1.6'
