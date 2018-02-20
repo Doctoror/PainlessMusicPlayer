@@ -78,8 +78,8 @@ dependencies {
     androidTestImplementation "com.android.support:percent:$supportVersion"
     androidTestImplementation "com.android.support:recyclerview-v7:$supportVersion"
 
-    androidTestImplementation 'com.android.support.test:runner:0.5'
-    androidTestImplementation 'com.android.support.test:rules:0.5'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':commons')
