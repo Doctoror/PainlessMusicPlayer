@@ -15,15 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer;
 
-import com.google.android.exoplayer2.audio.AudioTrack;
-
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;
 
 import android.app.Application;
-import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
@@ -44,7 +41,6 @@ public final class App extends Application {
         initStrictMode();
         initDagger();
         initTheme();
-        initAudioTrack();
     }
 
     private void initLogger() {
@@ -75,11 +71,5 @@ public final class App extends Application {
 
     private void initTheme() {
         AppCompatDelegate.setDefaultNightMode(Theme.getDayNightMode(mSettings.getThemeType()));
-    }
-
-    private void initAudioTrack() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            AudioTrack.enablePreV21AudioSessionWorkaround = true;
-        }
     }
 }

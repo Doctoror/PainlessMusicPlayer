@@ -17,9 +17,10 @@ package com.doctoror.fuckoffmusicplayer.player;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
@@ -78,7 +79,7 @@ final class ExoMediaPlayer implements MediaPlayer {
         mExoPlayer = ExoPlayerFactory
                 .newSimpleInstance(context, trackSelector, new DefaultLoadControl());
         mExoPlayer.addListener(mEventListener);
-        mExoPlayer.setAudioDebugListener(mAudioRendererEventListener);
+        mExoPlayer.addAudioDebugListener(mAudioRendererEventListener);
 
         mDataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Fuck Off Music Player"));
@@ -177,11 +178,11 @@ final class ExoMediaPlayer implements MediaPlayer {
         }
 
         @Override
-        public void onAudioTrackUnderrun(final int bufferSize, final long bufferSizeMs,
-                final long elapsedSinceLastFeedMs) {
+        public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs,
+                long elapsedSinceLastFeedMs) {
             if (Log.logDEnabled()) {
                 Log.d(TAG, String.format(Locale.US,
-                        "onAudioTrackUnderrun, bufferSize = '%d', bufferSizeMs = '%d', elapsedSinceLastFeedMs = '%d",
+                        "onAudioSinkUnderrun, bufferSize = '%d', bufferSizeMs = '%d', elapsedSinceLastFeedMs = '%d",
                         bufferSize, bufferSizeMs, elapsedSinceLastFeedMs));
             }
         }
@@ -197,7 +198,7 @@ final class ExoMediaPlayer implements MediaPlayer {
         }
     };
 
-    private final ExoPlayer.EventListener mEventListener = new ExoPlayer.EventListener() {
+    private final Player.EventListener mEventListener = new Player.EventListener() {
 
         @Override
         public void onTracksChanged(final TrackGroupArray trackGroups,
@@ -221,7 +222,7 @@ final class ExoMediaPlayer implements MediaPlayer {
             }
             if (mMediaPlayerListener != null) {
                 switch (playbackState) {
-                    case ExoPlayer.STATE_READY:
+                    case Player.STATE_READY:
                         mLoadedMediaUri = mLoadingMediaUri;
                         if (playWhenReady) {
                             mMediaPlayerListener.onPlaybackStarted();
@@ -230,7 +231,7 @@ final class ExoMediaPlayer implements MediaPlayer {
                         }
                         break;
 
-                    case ExoPlayer.STATE_ENDED:
+                    case Player.STATE_ENDED:
                         mMediaPlayerListener.onPlaybackFinished();
                         break;
                 }
@@ -255,9 +256,37 @@ final class ExoMediaPlayer implements MediaPlayer {
         }
 
         @Override
-        public void onPositionDiscontinuity() {
+        public void onRepeatModeChanged(final int repeatMode) {
             if (Log.logDEnabled()) {
-                Log.d(TAG, "onPositionDiscontinuity");
+                Log.d(TAG, "onRepeatModeChanged: " + repeatMode);
+            }
+        }
+
+        @Override
+        public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onShuffleModeEnabledChanged: " + shuffleModeEnabled);
+            }
+        }
+
+        @Override
+        public void onPositionDiscontinuity(final int reason) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onPositionDiscontinuity: " + reason);
+            }
+        }
+
+        @Override
+        public void onPlaybackParametersChanged(final PlaybackParameters playbackParameters) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onPlaybackParametersChanged: " + playbackParameters);
+            }
+        }
+
+        @Override
+        public void onSeekProcessed() {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onSeekProcessed");
             }
         }
     };
