@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.commons.util;
+package com.doctoror.fuckoffmusicplayer.util;
 
 import com.google.protobuf.nano.CodedOutputByteBufferNano;
 import com.google.protobuf.nano.MessageNano;
+
+import com.doctoror.commons.util.FileUtils;
+import com.doctoror.commons.util.Log;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

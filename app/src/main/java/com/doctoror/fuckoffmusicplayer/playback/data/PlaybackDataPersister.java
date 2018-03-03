@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
-import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playback.data.nano.PlaybackDataProto;
 import com.doctoror.fuckoffmusicplayer.queue.Media;

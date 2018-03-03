@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback;
 
-import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playback.nano.PlaybackParamsProto;
 
@@ -28,9 +28,6 @@ import android.support.annotation.WorkerThread;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Playback config

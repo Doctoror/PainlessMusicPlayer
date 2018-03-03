@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playlist;
 
-import com.doctoror.commons.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playlist.nano.RecentPlaylists;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
