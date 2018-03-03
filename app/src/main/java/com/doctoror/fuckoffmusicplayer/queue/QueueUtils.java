@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.queue;
 
-import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerMediaStore;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;

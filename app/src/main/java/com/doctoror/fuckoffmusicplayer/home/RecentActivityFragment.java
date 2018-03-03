@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.home;
 
-import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding;
 import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;

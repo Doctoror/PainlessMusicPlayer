@@ -15,12 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.media.manager;
 
-import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

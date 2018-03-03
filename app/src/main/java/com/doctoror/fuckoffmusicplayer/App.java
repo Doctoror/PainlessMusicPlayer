@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer;
 
-import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.settings.Theme;

@@ -16,7 +16,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.media.browser;
 
-import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 
 import org.xmlpull.v1.XmlPullParserException;

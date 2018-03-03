@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.appwidget;
 
-import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.Handlers;
 
 import android.annotation.SuppressLint;
