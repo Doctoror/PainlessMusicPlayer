@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerService;
 import com.doctoror.fuckoffmusicplayer.library.DeleteItemDialogFragment;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -44,6 +45,9 @@ public final class DeleteAlbumDialogFragment extends DeleteItemDialogFragment {
 
     @Override
     protected void performDelete() {
-        MediaManagerService.deleteAlbum(getActivity(), getTargetId());
+        final Activity activity = getActivity();
+        if (activity != null) {
+            MediaManagerService.deleteAlbum(activity, getTargetId());
+        }
     }
 }

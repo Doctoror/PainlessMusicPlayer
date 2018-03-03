@@ -48,9 +48,11 @@ public final class DeleteMediaDialogFragment extends DeleteItemDialogFragment {
     @Override
     protected void performDelete() {
         final Activity activity = getActivity();
-        if (activity instanceof Callback) {
-            ((Callback) activity).onPerformDelete(getTargetId());
+        if (activity != null) {
+            if (activity instanceof Callback) {
+                ((Callback) activity).onPerformDelete(getTargetId());
+            }
+            MediaManagerService.deleteMedia(activity, getTargetId());
         }
-        MediaManagerService.deleteMedia(getActivity(), getTargetId());
     }
 }
