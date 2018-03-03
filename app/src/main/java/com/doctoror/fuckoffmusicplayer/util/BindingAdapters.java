@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingComponent;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
@@ -35,6 +36,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import java.util.Locale;
 
@@ -182,5 +184,25 @@ public final class BindingAdapters {
         };
 
         return new ColorStateList(states, colors);
+    }
+
+    @BindingAdapter("displayedChild")
+    public static void setDisplayedChild(@NonNull final ViewAnimator viewAnimator,
+            final int child) {
+        if (viewAnimator.getDisplayedChild() != child) {
+            viewAnimator.setDisplayedChild(child);
+        }
+    }
+
+    @BindingAdapter("srcRes")
+    public static void setImageResource(@NonNull final ImageView imageView,
+            @DrawableRes final int src) {
+        imageView.setImageResource(src);
+    }
+
+    @BindingAdapter("colorFilter")
+    public static void setColorFiler(@NonNull final ImageView imageView,
+            @ColorInt final int color) {
+        imageView.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 }
