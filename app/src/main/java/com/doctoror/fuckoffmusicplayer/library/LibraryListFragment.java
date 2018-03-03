@@ -28,6 +28,7 @@ import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -47,9 +48,9 @@ import android.view.ViewGroup;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.processors.BehaviorProcessor;
 import io.reactivex.schedulers.Schedulers;
 
@@ -154,7 +155,16 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         final FragmentLibraryListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_library_list, container, false);
         setupRecyclerView(binding.recyclerView);
+        initSwipeDirection(binding);
         binding.setModel(mModel);
+        binding.getRoot().findViewById(R.id.btnRequest)
+                .setOnClickListener(v -> requestPermission());
+        mRecyclerView = binding.recyclerView;
+        return binding.getRoot();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initSwipeDirection(@NonNull final FragmentLibraryListBinding binding) {
         binding.recyclerView.setOnTouchListener(new SwipeDirectionTouchListener() {
 
             @Override
@@ -162,10 +172,6 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
                 SoftInputManager.hideSoftInput(getActivity());
             }
         });
-        binding.getRoot().findViewById(R.id.btnRequest)
-                .setOnClickListener(v -> requestPermission());
-        mRecyclerView = binding.recyclerView;
-        return binding.getRoot();
     }
 
     @Nullable
