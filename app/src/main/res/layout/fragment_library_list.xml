@@ -64,7 +64,8 @@
                 app:bubbleColor="?attr/colorAccent"
                 app:bubbleTextColor="@android:color/white"
                 app:hideScrollbar="false"
-                app:recyclerAdapter="@{model.recyclerAdapter}"/>
+                app:recyclerAdapter="@{model.recyclerAdapter}"
+                tools:ignore="MissingRegistered"/>
 
         </FrameLayout>
 

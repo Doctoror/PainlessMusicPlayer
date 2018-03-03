@@ -22,7 +22,8 @@
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground"
     app:aspectType="vertical"
-    app:aspect="1">
+    app:aspect="1"
+    tools:ignore="MissingRegistered">
 
     <ImageView
         android:id="@android:id/icon"
