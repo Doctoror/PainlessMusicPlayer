@@ -86,7 +86,8 @@
                 android:scaleType="center"
                 android:src="@drawable/ic_fast_rewind_white_24dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@string/Previous"/>
+                android:contentDescription="@string/Previous"
+                tools:ignore="NestedWeights"/>
 
             <ImageButton
                 android:id="@+id/appwidget_btn_play_pause"
