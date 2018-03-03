@@ -96,6 +96,7 @@ final class PlaybackNotification {
                 = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setStyle(style)
                 .setShowWhen(false)
+                .setOnlyAlertOnce(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setContentTitle(media.getTitle())
@@ -209,10 +210,15 @@ final class PlaybackNotification {
     @RequiresApi(Build.VERSION_CODES.O)
     private static NotificationChannel createChannel(
             @NonNull final Context context) {
-        return new NotificationChannel(
+        final NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,
                 context.getString(R.string.Now_Playing),
-                NotificationManager.IMPORTANCE_HIGH);
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        channel.setShowBadge(true);
+        channel.enableVibration(false);
+        channel.setSound(null, null);
+        return channel;
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
