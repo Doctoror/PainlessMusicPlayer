@@ -65,6 +65,12 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
 
     @NonNull
     @Override
+    protected Observable<List<Media>> queueFromAlbum(final long albumId) {
+        return queueProvider.fromAlbums(new long[]{albumId}, artistId);
+    }
+
+    @NonNull
+    @Override
     protected Observable<List<Media>> queueFromAlbums(@NonNull final long[] albumIds) {
         return queueProvider.fromAlbums(albumIds, artistId);
     }
