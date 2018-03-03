@@ -18,11 +18,15 @@ package com.doctoror.fuckoffmusicplayer.util;
 import org.junit.Test;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.test.InstrumentationRegistry;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import static org.junit.Assert.*;
 
@@ -88,14 +92,19 @@ public final class BindingAdaptersTest {
 
         final RecyclerView.Adapter<?> adapter
                 = new RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
             @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent,
+            @NonNull
+            public RecyclerView.ViewHolder onCreateViewHolder(
+                    @NonNull final ViewGroup parent,
                     final int viewType) {
+                //noinspection ConstantConditions
                 return null;
             }
 
             @Override
-            public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+            public void onBindViewHolder(
+                    @NonNull final RecyclerView.ViewHolder holder, final int position) {
 
             }
 
@@ -112,4 +121,41 @@ public final class BindingAdaptersTest {
         assertNull(recyclerView.getAdapter());
     }
 
+    @Test
+    public void testSetDisplayedChild() {
+        final Context context = InstrumentationRegistry.getContext();
+
+        final ViewAnimator va = new ViewAnimator(context);
+        va.addView(new View(context));
+        va.addView(new View(context));
+        va.addView(new View(context));
+
+        BindingAdapters.setDisplayedChild(va, 1);
+        assertEquals(1, va.getDisplayedChild());
+    }
+
+    @Test
+    public void testSetImageResource() {
+        final Context context = InstrumentationRegistry.getContext();
+
+        final ImageView iv = new ImageView(context);
+        assertNull(iv.getDrawable());
+
+        BindingAdapters.setImageResource(iv, com.doctoror.commons.R.drawable.album_art_placeholder);
+
+        assertNotNull(iv.getDrawable());
+    }
+
+    @Test
+    public void testSetColorFilter() {
+        final Context context = InstrumentationRegistry.getContext();
+
+        final ImageView iv = new ImageView(context);
+        assertNull(iv.getColorFilter());
+
+        final int color = Color.CYAN;
+        BindingAdapters.setColorFiler(iv, color);
+
+        assertNotNull(iv.getColorFilter());
+    }
 }
