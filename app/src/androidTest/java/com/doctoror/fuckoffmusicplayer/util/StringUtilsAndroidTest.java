@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.commons.util;
+package com.doctoror.fuckoffmusicplayer.util;
 
 import com.doctoror.commons.R;
 
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 /**
  * {@link StringUtils} test
  */
-public final class StringUtilsTest {
+public final class StringUtilsAndroidTest {
 
     @Test(expected = NullPointerException.class)
     public void testFormatArtistAndAlbumNull() throws Exception {
