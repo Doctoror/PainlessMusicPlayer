@@ -100,7 +100,7 @@ android {
 }
 
 dependencies {
-    def supportVersion = '27.0.2'
+    def supportVersion = '27.1.0'
     def gpsVersion = '11.8.0'
 
     testImplementation 'junit:junit:4.12'
