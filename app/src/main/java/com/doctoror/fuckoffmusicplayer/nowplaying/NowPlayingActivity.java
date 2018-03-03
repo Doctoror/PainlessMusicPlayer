@@ -24,14 +24,15 @@ import com.bumptech.glide.request.target.Target;
 import com.doctoror.commons.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.StringUtils;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
 import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
+import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
@@ -112,6 +113,9 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
+
+    @SuppressWarnings("FieldCanBeLocal") // Ensure not collected
+    private NavigationController mNavigationController;
 
     private NowPlayingActivityIntentHandler mIntentHandler;
 
@@ -213,6 +217,9 @@ public final class NowPlayingActivity extends BaseActivity {
 
         mIntentHandler = new NowPlayingActivityIntentHandler(this);
         mIntentHandler.handleIntent(getIntent());
+
+        mNavigationController = new NavigationController(this, findViewById(R.id.drawerLayout));
+        mNavigationController.bind();
     }
 
     private void setAlbumArt(@Nullable final String artUri) {

@@ -19,6 +19,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -38,7 +39,7 @@ public final class ThemeUtils {
      *
      * @param theme {@link Theme} to get int from
      * @param attr  Attribute of the int
-     * @return dimension for attr from the {@link Theme}
+     * @return color for attr from the {@link Theme}
      */
     @ColorInt
     public static int getColor(@NonNull final Theme theme, @AttrRes final int attr) {
@@ -55,7 +56,7 @@ public final class ThemeUtils {
      *
      * @param theme {@link Theme} to get int from
      * @param attr  Attribute of the int
-     * @return dimension for attr from the {@link Theme}
+     * @return {@link ColorStateList} for attr from the {@link Theme}
      */
     @Nullable
     public static ColorStateList getColorStateList(@NonNull final Theme theme,
@@ -63,6 +64,24 @@ public final class ThemeUtils {
         final TypedArray array = theme.obtainStyledAttributes(new int[]{attr});
         try {
             return array.getColorStateList(0);
+        } finally {
+            array.recycle();
+        }
+    }
+
+    /**
+     * Returns {@link ColorStateList} for attr from the {@link Theme}
+     *
+     * @param theme {@link Theme} to get int from
+     * @param attr  Attribute of the int
+     * @return {@link Drawable} for attr from the {@link Theme}
+     */
+    @Nullable
+    public static Drawable getDrawable(@NonNull final Theme theme,
+            @AttrRes final int attr) {
+        final TypedArray array = theme.obtainStyledAttributes(new int[]{attr});
+        try {
+            return array.getDrawable(0);
         } finally {
             array.recycle();
         }

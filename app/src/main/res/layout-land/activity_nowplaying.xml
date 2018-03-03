@@ -20,12 +20,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="model"
             type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityModel"/>
     </data>
 
-    <FrameLayout
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="InconsistentLayout">
@@ -34,6 +36,16 @@
             layout="@layout/activity_nowplaying_full_art"
             app:model="@{model}"/>
 
-    </FrameLayout>
+        <com.doctoror.fuckoffmusicplayer.widget.WindowBackgroundPaddingInsetsFrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start">
+
+            <include
+                layout="@layout/navigation_view"/>
+
+        </com.doctoror.fuckoffmusicplayer.widget.WindowBackgroundPaddingInsetsFrameLayout>
+
+    </android.support.v4.widget.DrawerLayout>
 
 </layout>

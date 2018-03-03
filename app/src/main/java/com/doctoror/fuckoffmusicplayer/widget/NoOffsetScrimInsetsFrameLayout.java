@@ -62,6 +62,7 @@ public class NoOffsetScrimInsetsFrameLayout extends FrameLayout {
                     onInsetsChanged(insets);
                     setWillNotDraw(!insets.hasSystemWindowInsets() || mInsetForeground == null);
                     ViewCompat.postInvalidateOnAnimation(NoOffsetScrimInsetsFrameLayout.this);
+                    InsetsHolder.getInstance().onInsetsChanged(mInsets);
                     return insets;
                 });
     }
