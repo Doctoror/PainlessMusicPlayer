@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.util;
 import com.google.protobuf.nano.CodedInputByteBufferNano;
 import com.google.protobuf.nano.MessageNano;
 
-import com.doctoror.commons.util.ByteStreams;
 import com.doctoror.commons.wear.nano.WearPlaybackData;
 
 import org.junit.Test;

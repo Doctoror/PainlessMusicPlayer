@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.util;
 import com.google.protobuf.nano.CodedOutputByteBufferNano;
 import com.google.protobuf.nano.MessageNano;
 
-import com.doctoror.commons.util.FileUtils;
 import com.doctoror.commons.util.Log;
 
 import android.content.Context;

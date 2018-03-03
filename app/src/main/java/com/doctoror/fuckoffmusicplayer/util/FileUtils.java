@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.commons.util;
+package com.doctoror.fuckoffmusicplayer.util;
+
+import com.doctoror.commons.util.Log;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
