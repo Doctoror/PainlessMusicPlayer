@@ -185,39 +185,34 @@ public final class HomeActivity extends BaseActivity {
                 case R.id.navigationRecentActivity:
                     setMainFragment(RecentActivityFragment.class.getCanonicalName());
                     setTitle(R.string.Recent_Activity);
-                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationPlaylists:
                     setMainFragment(PlaylistsFragment.class.getCanonicalName());
                     setTitle(R.string.Playlists);
-                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationArtists:
                     setMainFragment(ArtistsFragment.class.getCanonicalName());
                     setTitle(R.string.Artists);
-                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationAlbums:
                     setMainFragment(AlbumsFragment.class.getCanonicalName());
                     setTitle(R.string.Albums);
-                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationGenres:
                     setMainFragment(GenresFragment.class.getCanonicalName());
                     setTitle(R.string.Genres);
-                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationTracks:
                     setMainFragment(TracksFragment.class.getCanonicalName());
                     setTitle(R.string.Tracks);
-                    mNavigationItem = mDrawerClosedAction;
                     break;
             }
+            mNavigationItem = mDrawerClosedAction;
             mDrawerClosedAction = null;
         }
     }

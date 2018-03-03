@@ -65,27 +65,9 @@ public final class NavigationController {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-
-            final int id = item.getItemId();
-            final boolean result;
-            switch (id) {
-                case R.id.navigationRecentActivity:
-                case R.id.navigationArtists:
-                case R.id.navigationAlbums:
-                case R.id.navigationGenres:
-                case R.id.navigationTracks:
-                case R.id.navigationPlaylists:
-                    result = true;
-                    break;
-
-                default:
-                    result = false;
-                    break;
-            }
-
-            mDrawerClosedAction = id;
+            mDrawerClosedAction = item.getItemId();
             mDrawerLayout.closeDrawers();
-            return result;
+            return true;
         }
     }
 }
