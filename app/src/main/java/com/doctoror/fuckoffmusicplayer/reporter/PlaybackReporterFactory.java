@@ -16,7 +16,6 @@
 package com.doctoror.fuckoffmusicplayer.reporter;
 
 import com.doctoror.fuckoffmusicplayer.queue.Media;
-import com.doctoror.fuckoffmusicplayer.wear.WearableMediaPlaybackReporter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -39,7 +38,6 @@ public final class PlaybackReporterFactory {
             @Nullable final Media currentMedia) {
         return new PlaybackReporterSet(
                 new MediaSessionPlaybackReporter(context, mediaSession),
-                new WearableMediaPlaybackReporter(context),
                 new LastFmPlaybackReporter(context, currentMedia));
     }
 

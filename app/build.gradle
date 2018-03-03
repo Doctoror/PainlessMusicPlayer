@@ -76,18 +76,6 @@ android {
         }
     }
 
-    flavorDimensions "default"
-
-    productFlavors {
-        default1 {
-
-        }
-
-        withWearable {
-
-        }
-    }
-
     splits {
         density {
             enable true
@@ -101,7 +89,6 @@ android {
 
 dependencies {
     def supportVersion = '27.1.0'
-    def gpsVersion = '11.8.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation "com.android.support:support-annotations:$supportVersion"
@@ -111,7 +98,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':siriwaveview')
     implementation project(':commons')
-    withWearableWearApp project(':wear')
 
     // Support library
     implementation "com.android.support:support-v13:$supportVersion"
@@ -120,9 +106,6 @@ dependencies {
     implementation "com.android.support:design:$supportVersion"
     implementation "com.android.support:cardview-v7:$supportVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-
-    // Google Play Services
-    withWearableCompile "com.google.android.gms:play-services-wearable:$gpsVersion"
 
     // Views
     implementation 'com.github.doctoror.aspectratiolayout:library:1.0.3'

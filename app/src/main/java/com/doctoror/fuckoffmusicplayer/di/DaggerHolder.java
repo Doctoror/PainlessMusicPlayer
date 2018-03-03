@@ -40,16 +40,9 @@ public final class DaggerHolder {
     @NonNull
     private final MainComponent mMainComponent;
 
-    @NonNull
-    private final WearComponent mWearComponent;
-
     private DaggerHolder(@NonNull final Context context) {
         final AppContextModule appContextModule = new AppContextModule(context);
         mMainComponent = DaggerMainComponent.builder()
-                .appContextModule(appContextModule)
-                .build();
-
-        mWearComponent = DaggerWearComponent.builder()
                 .appContextModule(appContextModule)
                 .build();
     }
@@ -57,10 +50,5 @@ public final class DaggerHolder {
     @NonNull
     public MainComponent mainComponent() {
         return mMainComponent;
-    }
-
-    @NonNull
-    public WearComponent wearComponent() {
-        return mWearComponent;
     }
 }
