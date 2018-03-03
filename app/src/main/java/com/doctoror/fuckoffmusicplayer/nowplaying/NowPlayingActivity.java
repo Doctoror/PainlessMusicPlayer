@@ -21,7 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.commons.util.StringUtils;
 import com.doctoror.fuckoffmusicplayer.Henson;

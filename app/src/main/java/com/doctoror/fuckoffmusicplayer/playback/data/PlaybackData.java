@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
-import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.support.annotation.NonNull;

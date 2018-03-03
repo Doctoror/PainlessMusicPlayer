@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback.data;
 
-import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;

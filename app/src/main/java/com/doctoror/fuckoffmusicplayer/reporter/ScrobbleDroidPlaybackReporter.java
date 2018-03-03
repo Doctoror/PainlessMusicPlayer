@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.reporter;
 
-import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.Media;

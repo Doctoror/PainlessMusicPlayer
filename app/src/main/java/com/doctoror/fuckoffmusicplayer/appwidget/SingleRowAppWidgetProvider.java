@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.appwidget;
 
-import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;

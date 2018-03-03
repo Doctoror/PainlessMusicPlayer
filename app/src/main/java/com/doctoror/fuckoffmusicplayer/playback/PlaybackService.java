@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.doctoror.commons.playback.PlaybackState.State;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState.State;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
@@ -73,11 +73,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.doctoror.commons.playback.PlaybackState.STATE_ERROR;
-import static com.doctoror.commons.playback.PlaybackState.STATE_IDLE;
-import static com.doctoror.commons.playback.PlaybackState.STATE_LOADING;
-import static com.doctoror.commons.playback.PlaybackState.STATE_PAUSED;
-import static com.doctoror.commons.playback.PlaybackState.STATE_PLAYING;
+import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_ERROR;
+import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_IDLE;
+import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_LOADING;
+import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_PAUSED;
+import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_PLAYING;
 
 
 /**

@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.home;
 
 import com.bumptech.glide.Glide;
-import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.PlaybackStatusBarBinding;

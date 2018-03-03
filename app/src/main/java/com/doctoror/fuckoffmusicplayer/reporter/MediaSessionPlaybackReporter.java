@@ -18,7 +18,7 @@ package com.doctoror.fuckoffmusicplayer.reporter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.doctoror.commons.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
