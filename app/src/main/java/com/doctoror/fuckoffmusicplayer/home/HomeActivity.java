@@ -26,6 +26,8 @@ import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
@@ -33,7 +35,6 @@ import org.parceler.Parcels;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -56,8 +57,6 @@ import butterknife.ButterKnife;
  */
 public final class HomeActivity extends BaseActivity {
 
-    public static final String EXTRA_NAVIGATION_ACTION = "NAVIGATION_ACTION";
-
     private static final String KEY_INSTANCE_STATE = "INSTANCE_STATE";
 
     private ActionBarDrawerToggle mActionBarDrawerToggle;
@@ -79,7 +78,9 @@ public final class HomeActivity extends BaseActivity {
 
     private int mNavigationItem = R.id.navigationRecentActivity;
 
-    private Integer mDrawerClosedAction;
+    @Nullable
+    @InjectExtra
+    Integer drawerClosedAction;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -96,28 +97,26 @@ public final class HomeActivity extends BaseActivity {
         initNavigation();
 
         if (savedInstanceState == null) {
-            mDrawerClosedAction = mNavigationItem;
+            drawerClosedAction = mNavigationItem;
             performDrawerClosedAction();
         } else {
             restoreInstanceState(savedInstanceState);
         }
 
-        handleIntent(getIntent());
+        handleIntent();
     }
 
     @Override
     protected void onNewIntent(@NonNull final Intent intent) {
         super.onNewIntent(intent);
-        handleIntent(intent);
+        setIntent(intent);
+        handleIntent();
     }
 
-    private void handleIntent(@NonNull final Intent intent) {
-        if (intent.hasExtra(EXTRA_NAVIGATION_ACTION)) {
-            final int action = intent.getIntExtra(EXTRA_NAVIGATION_ACTION, -1);
-            if (action != -1) {
-                mDrawerClosedAction = action;
-                performDrawerClosedAction();
-            }
+    private void handleIntent() {
+        Dart.inject(this);
+        if (drawerClosedAction != null) {
+            performDrawerClosedAction();
         }
     }
 
@@ -180,8 +179,8 @@ public final class HomeActivity extends BaseActivity {
     }
 
     private void performDrawerClosedAction() {
-        if (mDrawerClosedAction != null) {
-            switch (mDrawerClosedAction) {
+        if (drawerClosedAction != null) {
+            switch (drawerClosedAction) {
                 case R.id.navigationRecentActivity:
                     setMainFragment(RecentActivityFragment.class.getCanonicalName());
                     setTitle(R.string.Recent_Activity);
@@ -212,8 +211,8 @@ public final class HomeActivity extends BaseActivity {
                     setTitle(R.string.Tracks);
                     break;
             }
-            mNavigationItem = mDrawerClosedAction;
-            mDrawerClosedAction = null;
+            mNavigationItem = drawerClosedAction;
+            drawerClosedAction = null;
         }
     }
 
@@ -231,15 +230,6 @@ public final class HomeActivity extends BaseActivity {
         if (ft != null) {
             ft.commit();
         }
-    }
-
-    public static void startForNavigationAction(
-            @NonNull final Context context,
-            final int navigationAction) {
-        final Intent intent = new Intent(context, HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(EXTRA_NAVIGATION_ACTION, navigationAction);
-        context.startActivity(intent);
     }
 
     @Parcel

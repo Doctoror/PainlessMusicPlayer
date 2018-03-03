@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.navigation;
 
+import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
 import android.content.Context;
@@ -53,7 +53,12 @@ public final class NavigationController {
                     break;
 
                 default:
-                    HomeActivity.startForNavigationAction(mContext, mDrawerClosedAction);
+                    final Intent intent = Henson.with(mContext)
+                            .gotoHomeActivity()
+                            .drawerClosedAction(mDrawerClosedAction)
+                            .build();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mContext.startActivity(intent);
                     break;
             }
             mDrawerClosedAction = null;
