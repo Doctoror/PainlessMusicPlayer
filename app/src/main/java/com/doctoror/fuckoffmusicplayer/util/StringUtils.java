@@ -15,14 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
+import com.doctoror.fuckoffmusicplayer.R;
+
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-/**
- * Created by Yaroslav Mytkalyk on 7/8/16.
- */
 public final class StringUtils {
 
     private StringUtils() {
@@ -56,12 +55,12 @@ public final class StringUtils {
             @Nullable String artist,
             @Nullable String album) {
         if (TextUtils.isEmpty(artist)) {
-            artist = res.getString(com.doctoror.commons.R.string.Unknown_artist);
+            artist = res.getString(R.string.Unknown_artist);
         }
         if (TextUtils.isEmpty(album)) {
-            album = res.getString(com.doctoror.commons.R.string.Unknown_album);
+            album = res.getString(R.string.Unknown_album);
         }
-        return artist + res.getString(com.doctoror.commons.R.string.artist_album_separator) + album;
+        return artist + res.getString(R.string.artist_album_separator) + album;
     }
 }
 

@@ -1,1 +1,1 @@
-include ':app', ':commons', ':siriwaveview'
+include ':app', ':siriwaveview'

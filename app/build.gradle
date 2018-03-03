@@ -97,7 +97,6 @@ dependencies {
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':siriwaveview')
-    implementation project(':commons')
 
     // Support library
     implementation "com.android.support:support-v13:$supportVersion"
