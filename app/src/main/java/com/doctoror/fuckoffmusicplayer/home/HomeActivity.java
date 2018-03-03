@@ -26,7 +26,6 @@ import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
-import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
@@ -217,10 +216,6 @@ public final class HomeActivity extends BaseActivity {
                     setMainFragment(TracksFragment.class.getCanonicalName());
                     setTitle(R.string.Tracks);
                     mNavigationItem = mDrawerClosedAction;
-                    break;
-
-                case R.id.navigationSettings:
-                    startActivity(new Intent(this, SettingsActivity.class));
                     break;
             }
             mDrawerClosedAction = null;

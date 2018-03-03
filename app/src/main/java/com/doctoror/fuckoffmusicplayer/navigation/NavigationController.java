@@ -2,8 +2,10 @@ package com.doctoror.fuckoffmusicplayer.navigation;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
+import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -45,7 +47,15 @@ public final class NavigationController {
 
     private void performDrawerClosedAction() {
         if (mDrawerClosedAction != null) {
-            HomeActivity.startForNavigationAction(mContext, mDrawerClosedAction);
+            switch (mDrawerClosedAction) {
+                case R.id.navigationSettings:
+                    mContext.startActivity(new Intent(mContext, SettingsActivity.class));
+                    break;
+
+                default:
+                    HomeActivity.startForNavigationAction(mContext, mDrawerClosedAction);
+                    break;
+            }
             mDrawerClosedAction = null;
         }
     }
