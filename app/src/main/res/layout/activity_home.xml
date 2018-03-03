@@ -64,14 +64,6 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:itemBackground="@drawable/navigation_view_item_background"
-        app:itemTextColor="@color/navigation_view_text"
-        app:itemIconTint="@color/navigation_view_text"
-        app:menu="@menu/activity_home_navigation"/>
+    <include layout="@layout/navigation_view"/>
 
 </android.support.v4.widget.DrawerLayout>

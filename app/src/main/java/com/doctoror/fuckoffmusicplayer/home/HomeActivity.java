@@ -15,14 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.home;
 
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
 import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
+import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
@@ -33,6 +34,7 @@ import org.parceler.Parcels;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,7 +43,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 
 import java.util.List;
@@ -56,9 +57,14 @@ import butterknife.ButterKnife;
  */
 public final class HomeActivity extends BaseActivity {
 
+    public static final String EXTRA_NAVIGATION_ACTION = "NAVIGATION_ACTION";
+
     private static final String KEY_INSTANCE_STATE = "INSTANCE_STATE";
 
     private ActionBarDrawerToggle mActionBarDrawerToggle;
+
+    @SuppressWarnings("FieldCanBeLocal") // Ensure not collected
+    private NavigationController mNavigationController;
 
     @BindView(R.id.playbackStatusCard)
     View mPlaybackStatusCard;
@@ -88,18 +94,7 @@ public final class HomeActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-        mNavigationView.setNavigationItemSelectedListener(new NavigationListener());
-        mNavigationView.setCheckedItem(mNavigationItem);
-
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
-                R.string.Navigation_drawer, R.string.Navigation_drawer) {
-            @Override
-            public void onDrawerClosed(final View drawerView) {
-                super.onDrawerClosed(drawerView);
-                performDrawerClosedAction();
-            }
-        };
-        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
+        initNavigation();
 
         if (savedInstanceState == null) {
             mDrawerClosedAction = mNavigationItem;
@@ -107,6 +102,36 @@ public final class HomeActivity extends BaseActivity {
         } else {
             restoreInstanceState(savedInstanceState);
         }
+
+        handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(@NonNull final Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(@NonNull final Intent intent) {
+        if (intent.hasExtra(EXTRA_NAVIGATION_ACTION)) {
+            final int action = intent.getIntExtra(EXTRA_NAVIGATION_ACTION, -1);
+            if (action != -1) {
+                mDrawerClosedAction = action;
+                performDrawerClosedAction();
+            }
+        }
+    }
+
+    private void initNavigation() {
+        mNavigationView.setCheckedItem(mNavigationItem);
+
+        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+                R.string.Navigation_drawer, R.string.Navigation_drawer);
+
+        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
+
+        mNavigationController = new NavigationController(this, mDrawerLayout);
+        mNavigationController.bind();
     }
 
     private void restoreInstanceState(final Bundle savedInstanceState) {
@@ -142,8 +167,8 @@ public final class HomeActivity extends BaseActivity {
 
     private void onQueuePositionChanged(final int position) {
         final List<Media> queue = mPlaybackData.getQueue();
-        mPlaybackStatusCard.setVisibility(queue != null && position < queue.size()
-                ? View.VISIBLE : View.GONE);
+        runOnUiThread(() -> mPlaybackStatusCard.setVisibility(
+                queue != null && position < queue.size() ? View.VISIBLE : View.GONE));
     }
 
     @Override
@@ -161,31 +186,37 @@ public final class HomeActivity extends BaseActivity {
                 case R.id.navigationRecentActivity:
                     setMainFragment(RecentActivityFragment.class.getCanonicalName());
                     setTitle(R.string.Recent_Activity);
+                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationPlaylists:
                     setMainFragment(PlaylistsFragment.class.getCanonicalName());
                     setTitle(R.string.Playlists);
+                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationArtists:
                     setMainFragment(ArtistsFragment.class.getCanonicalName());
                     setTitle(R.string.Artists);
+                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationAlbums:
                     setMainFragment(AlbumsFragment.class.getCanonicalName());
                     setTitle(R.string.Albums);
+                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationGenres:
                     setMainFragment(GenresFragment.class.getCanonicalName());
                     setTitle(R.string.Genres);
+                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationTracks:
                     setMainFragment(TracksFragment.class.getCanonicalName());
                     setTitle(R.string.Tracks);
+                    mNavigationItem = mDrawerClosedAction;
                     break;
 
                 case R.id.navigationSettings:
@@ -212,37 +243,13 @@ public final class HomeActivity extends BaseActivity {
         }
     }
 
-    private final class NavigationListener
-            implements NavigationView.OnNavigationItemSelectedListener {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-
-            final int id = item.getItemId();
-            final boolean result;
-            switch (id) {
-                case R.id.navigationRecentActivity:
-                case R.id.navigationArtists:
-                case R.id.navigationAlbums:
-                case R.id.navigationGenres:
-                case R.id.navigationTracks:
-                case R.id.navigationPlaylists:
-                    result = true;
-                    break;
-
-                default:
-                    result = false;
-                    break;
-            }
-
-            if (result) {
-                mNavigationItem = item.getItemId();
-            }
-
-            mDrawerClosedAction = id;
-            mDrawerLayout.closeDrawers();
-            return result;
-        }
+    public static void startForNavigationAction(
+            @NonNull final Context context,
+            final int navigationAction) {
+        final Intent intent = new Intent(context, HomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(EXTRA_NAVIGATION_ACTION, navigationAction);
+        context.startActivity(intent);
     }
 
     @Parcel
