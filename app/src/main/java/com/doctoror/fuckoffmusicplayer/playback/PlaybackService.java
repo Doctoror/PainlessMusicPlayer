@@ -38,6 +38,7 @@ import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -168,15 +169,12 @@ public final class PlaybackService extends Service {
     public void onCreate() {
         super.onCreate();
         DaggerHolder.getInstance(this).mainComponent().inject(this);
+        acquireWakeLock();
 
         mDestroying = false;
         mErrorMessage = null;
         mPermissionReceivePlaybackState = getPackageName()
                 .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
-
-        final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-        mWakeLock.acquire();
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         mAudioEffects = AudioEffects.getInstance(this);
@@ -203,6 +201,15 @@ public final class PlaybackService extends Service {
         mMediaPlayer.init(this);
 
         mDisposableQueue = mPlaybackData.queueObservable().subscribe(mQueueConsumer);
+    }
+
+    @SuppressLint("WakelockTimeout") // User may want this to play forever.
+    private void acquireWakeLock() {
+        final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        if (powerManager != null) {
+            mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+            mWakeLock.acquire();
+        }
     }
 
     @NonNull
@@ -244,56 +251,66 @@ public final class PlaybackService extends Service {
             stopSelf();
             return START_NOT_STICKY;
         }
-        if (intent != null) {
-            switch (intent.getAction()) {
-                case ACTION_PLAY_PAUSE:
-                    onActionPlayPause();
-                    break;
 
-                case ACTION_PLAY:
-                    onActionPlay();
-                    break;
+        if (intent == null) {
+            stopSelf(startId);
+            return START_NOT_STICKY;
+        }
 
-                case ACTION_PLAY_ANYTHING:
-                    onActionPlayAnything();
-                    break;
+        final String action = intent.getAction();
+        if (action == null) {
+            stopSelf(startId);
+            return START_NOT_STICKY;
+        }
 
-                case ACTION_PAUSE:
-                    onActionPause();
-                    break;
+        switch (intent.getAction()) {
+            case ACTION_PLAY_PAUSE:
+                onActionPlayPause();
+                break;
 
-                case ACTION_STOP:
-                    onActionStop();
-                    break;
+            case ACTION_PLAY:
+                onActionPlay();
+                break;
 
-                case ACTION_STOP_WITH_ERROR:
-                    onActionStopWithError(intent.getStringExtra(EXTRA_ERROR_MESSAGE));
-                    break;
+            case ACTION_PLAY_ANYTHING:
+                onActionPlayAnything();
+                break;
 
-                case ACTION_PREV:
-                    onActionPrev();
-                    break;
+            case ACTION_PAUSE:
+                onActionPause();
+                break;
 
-                case ACTION_NEXT:
-                    onActionNext();
-                    break;
+            case ACTION_STOP:
+                onActionStop();
+                break;
 
-                case ACTION_SEEK:
-                    onActionSeek(intent);
-                    break;
+            case ACTION_STOP_WITH_ERROR:
+                onActionStopWithError(intent.getStringExtra(EXTRA_ERROR_MESSAGE));
+                break;
 
-                case ACTION_PLAY_MEDIA_FROM_QUEUE:
-                    onActionPlayMediaFromQueue(intent);
-                    break;
+            case ACTION_PREV:
+                onActionPrev();
+                break;
 
-                case Intent.ACTION_MEDIA_BUTTON:
-                    onActionMediaButton(intent);
-                    break;
+            case ACTION_NEXT:
+                onActionNext();
+                break;
 
-                default:
-                    stopSelf(startId);
-                    break;
-            }
+            case ACTION_SEEK:
+                onActionSeek(intent);
+                break;
+
+            case ACTION_PLAY_MEDIA_FROM_QUEUE:
+                onActionPlayMediaFromQueue(intent);
+                break;
+
+            case Intent.ACTION_MEDIA_BUTTON:
+                onActionMediaButton(intent);
+                break;
+
+            default:
+                stopSelf(startId);
+                return START_NOT_STICKY;
         }
         return START_STICKY;
     }
@@ -581,7 +598,7 @@ public final class PlaybackService extends Service {
         mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         mAudioFocusRequested = false;
         mMediaSessionHolder.closeSession();
-        if (mWakeLock.isHeld()) {
+        if (mWakeLock != null && mWakeLock.isHeld()) {
             mWakeLock.release();
         }
     }
