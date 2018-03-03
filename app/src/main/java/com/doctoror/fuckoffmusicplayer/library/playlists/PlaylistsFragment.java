@@ -28,6 +28,7 @@ import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -137,6 +138,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
         mAdapter.changeCursor(null);
     }
 
+    @SuppressLint("ShowToast")
     private void showNoTracksToast() {
         if (mNoTracksToast == null) {
             mNoTracksToast = Toast.makeText(getActivity(), R.string.The_queue_is_empty,
