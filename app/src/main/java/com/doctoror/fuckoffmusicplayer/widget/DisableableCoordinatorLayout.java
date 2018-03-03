@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
@@ -45,6 +46,7 @@ public class DisableableCoordinatorLayout extends CoordinatorLayout {
         mTouchEnabled = touchEnabled;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(final MotionEvent ev) {
         return !mTouchEnabled || super.onTouchEvent(ev);
