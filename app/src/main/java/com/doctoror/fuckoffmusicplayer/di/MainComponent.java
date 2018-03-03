@@ -38,6 +38,7 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.reporter.LastFmPlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.SLSPlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.reporter.ScrobbleDroidPlaybackReporter;
 
@@ -95,6 +96,8 @@ public interface MainComponent {
     void inject(SearchUtils target);
 
     void inject(PlaybackService target);
+
+    void inject(LastFmPlaybackReporter target);
 
     void inject(ScrobbleDroidPlaybackReporter target);
 

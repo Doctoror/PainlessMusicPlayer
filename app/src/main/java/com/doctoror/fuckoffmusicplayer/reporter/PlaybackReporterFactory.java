@@ -40,7 +40,7 @@ public final class PlaybackReporterFactory {
         return new PlaybackReporterSet(
                 new MediaSessionPlaybackReporter(context, mediaSession),
                 new WearableMediaPlaybackReporter(context),
-                new ScrobbleDroidPlaybackReporter(context, currentMedia));
+                new LastFmPlaybackReporter(context, currentMedia));
     }
 
     @NonNull
