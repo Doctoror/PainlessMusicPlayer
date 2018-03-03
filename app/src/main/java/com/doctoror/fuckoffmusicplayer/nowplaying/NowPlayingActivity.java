@@ -23,7 +23,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.commons.util.Log;
-import com.doctoror.commons.util.StringUtils;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
@@ -41,6 +40,7 @@ import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.Objects;
+import com.doctoror.fuckoffmusicplayer.util.StringUtils;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
