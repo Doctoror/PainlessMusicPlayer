@@ -68,7 +68,6 @@ android {
             proguardFile getDefaultProguardFile('proguard-android.txt')
             proguardFile 'proguard-dart.pro'
             proguardFile 'proguard-parceler.pro'
-            proguardFile 'proguard-retrolambda.pro'
             proguardFile 'proguard-rules.pro'
             proguardFile 'proguard-rx-java.pro'
             proguardFile 'proguard-support-design.pro'
