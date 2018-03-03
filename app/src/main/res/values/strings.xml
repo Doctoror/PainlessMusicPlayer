@@ -105,4 +105,17 @@
 
     <string name="Menu">Menu</string>
 
+    <string name="Previous">Previous</string>
+    <string name="Next">Next</string>
+    <string name="Play">Play</string>
+    <string name="Pause">Pause</string>
+
+    <string name="Unknown_artist">Unknown artist</string>
+    <string name="Unknown_album">Unknown album</string>
+    <string name="artist_album_separator"><![CDATA[ / ]]></string>
+
+    <string name="Now_Playing">Now Playing</string>
+    <string name="Queue">Queue</string>
+    <string name="The_queue_is_empty">The queue is empty</string>
+
 </resources>
