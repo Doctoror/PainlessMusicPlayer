@@ -47,6 +47,7 @@ import com.f2prateek.dart.InjectExtra;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -488,6 +489,7 @@ public final class NowPlayingActivity extends BaseActivity {
         mModel.setShuffleEnabled(newValue);
     }
 
+    @SuppressLint("WrongConstant")
     @OnClick(R.id.btnRepeat)
     public void onRepeatClick() {
         @PlaybackParams.RepeatMode final int value;
