@@ -15,19 +15,19 @@
  */
 package com.doctoror.fuckoffmusicplayer.media.browser;
 
-import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.media.MediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderArtists;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderGenres;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRandom;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderTracks;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.content.Context;

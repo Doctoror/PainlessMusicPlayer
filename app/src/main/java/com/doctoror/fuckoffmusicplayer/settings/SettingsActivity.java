@@ -15,9 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.settings;
 
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -31,8 +33,11 @@ import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatDelegate;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,9 +61,13 @@ public final class SettingsActivity extends BaseActivity {
     @Nullable
     Boolean suppressDayNightWarnings;
 
+    @Inject
+    DayNightModeMapper mDayNightModeMapper;
+
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
 
         Dart.inject(this);
         restoreInstanceState(savedInstanceState);
@@ -83,10 +92,12 @@ public final class SettingsActivity extends BaseActivity {
     private void initView() {
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        bindTheme(getSettings().getThemeType());
+        bindTheme(getSettings().getTheme());
 
         mRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
-            getSettings().setThemeType(buttonIdToTheme(id));
+            @Theme final int theme = buttonIdToTheme(id);
+            getSettings().setTheme(theme);
+            AppCompatDelegate.setDefaultNightMode(mDayNightModeMapper.toDayNightMode(theme));
             restart(Henson.with(SettingsActivity.this).gotoSettingsActivity()
                     .suppressDayNightWarnings(suppressDayNightWarnings)
                     .build());
@@ -112,7 +123,7 @@ public final class SettingsActivity extends BaseActivity {
         }
     }
 
-    private void bindTheme(@Theme.ThemeType final int theme) {
+    private void bindTheme(@Theme final int theme) {
         mRadioGroup.check(themeToButtonId(theme));
         if (theme == Theme.DAYNIGHT && !suppressDayNightWarnings()) {
             checkPermissions();
@@ -120,7 +131,7 @@ public final class SettingsActivity extends BaseActivity {
     }
 
     @IdRes
-    private static int themeToButtonId(@Theme.ThemeType final int theme) {
+    private static int themeToButtonId(@Theme final int theme) {
         switch (theme) {
             case Theme.DAY:
                 return R.id.radioDay;
@@ -136,7 +147,7 @@ public final class SettingsActivity extends BaseActivity {
         }
     }
 
-    @Theme.ThemeType
+    @Theme
     private static int buttonIdToTheme(@IdRes final int buttonId) {
         switch (buttonId) {
             case R.id.radioDay:

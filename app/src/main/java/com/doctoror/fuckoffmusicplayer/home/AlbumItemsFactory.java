@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.home;
 
-import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 
 import android.database.Cursor;
 import android.support.annotation.NonNull;

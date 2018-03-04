@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-option java_package = "com.doctoror.fuckoffmusicplayer.playlist";
-
-message Albums {
-  repeated int64 ids = 1;
-}

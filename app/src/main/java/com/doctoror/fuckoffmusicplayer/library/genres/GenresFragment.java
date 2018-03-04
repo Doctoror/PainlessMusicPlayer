@@ -17,11 +17,10 @@ package com.doctoror.fuckoffmusicplayer.library.genres;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsActivity;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
 import android.content.Intent;
 import android.database.Cursor;

@@ -17,9 +17,9 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 
 import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
 

@@ -15,14 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
-import com.doctoror.fuckoffmusicplayer.Handlers;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFiles;
+import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
-import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.app.Activity;

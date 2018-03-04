@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
+import com.doctoror.fuckoffmusicplayer.R;
+
 import org.junit.Test;
 
 import android.content.Context;
@@ -28,7 +30,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link BindingAdapters} test
@@ -141,7 +147,7 @@ public final class BindingAdaptersTest {
         final ImageView iv = new ImageView(context);
         assertNull(iv.getDrawable());
 
-        BindingAdapters.setImageResource(iv, com.doctoror.commons.R.drawable.album_art_placeholder);
+        BindingAdapters.setImageResource(iv, R.drawable.album_art_placeholder);
 
         assertNotNull(iv.getDrawable());
     }

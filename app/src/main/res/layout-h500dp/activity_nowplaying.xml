@@ -25,7 +25,7 @@
             name="model"
             type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityModel"/>
 
-        <import type="com.doctoror.fuckoffmusicplayer.playback.PlaybackParams"/>
+        <import type="com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode"/>
     </data>
 
     <android.support.v4.widget.DrawerLayout
@@ -228,11 +228,11 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/Repeat"
                     android:padding="12dp"
-                    app:activated="@{model.repeatMode != PlaybackParams.REPEAT_MODE_NONE}"
+                    app:activated="@{model.repeatMode != RepeatMode.NONE}"
                     app:layout_constraintBottom_toBottomOf="@+id/btnPlay"
                     app:layout_constraintEnd_toStartOf="@id/btnPrev"
                     app:layout_constraintTop_toTopOf="@+id/btnPlay"
-                    app:src="@{model.repeatMode == PlaybackParams.REPEAT_MODE_TRACK ? @drawable/ic_repeat_one_black_24dp : @drawable/ic_repeat_black_24dp}"
+                    app:src="@{model.repeatMode == RepeatMode.TRACK ? @drawable/ic_repeat_one_black_24dp : @drawable/ic_repeat_black_24dp}"
                     app:tintNormal="@{@color/borderlessImageButton}"
                     app:useActivatedSrcTint="@{true}"
                     tools:src="@drawable/ic_repeat_black_24dp"/>

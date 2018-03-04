@@ -123,7 +123,7 @@
 
         </provider>
 
-        <service android:name=".media.manager.MediaManagerService"/>
+        <service android:name=".media.MediaManagerService"/>
 
         <service android:name=".playback.PlaybackService"
             android:exported="false">

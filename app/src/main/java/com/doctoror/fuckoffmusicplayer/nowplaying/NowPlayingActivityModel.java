@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 
 import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
@@ -104,7 +104,7 @@ public final class NowPlayingActivityModel extends BaseObservable {
         return mRepeatMode;
     }
 
-    public void setRepeatMode(@PlaybackParams.RepeatMode final int repeatMode) {
+    public void setRepeatMode(@RepeatMode final int repeatMode) {
         mRepeatMode.set(repeatMode);
     }
 }

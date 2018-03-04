@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-option java_package = "com.doctoror.fuckoffmusicplayer.playback";
-
-message PlaybackParams {
-  bool shuffle = 1;
-  int32 repeatMode = 2;
-}

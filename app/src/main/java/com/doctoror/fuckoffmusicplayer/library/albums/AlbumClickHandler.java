@@ -18,8 +18,8 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
 import android.app.Activity;

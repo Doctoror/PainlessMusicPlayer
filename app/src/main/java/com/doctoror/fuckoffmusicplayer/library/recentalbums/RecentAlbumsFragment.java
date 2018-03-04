@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.recentalbums;
 
-import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 
 import android.database.Cursor;

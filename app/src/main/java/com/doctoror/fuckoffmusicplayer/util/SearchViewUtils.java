@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SearchView;
@@ -37,13 +35,13 @@ public final class SearchViewUtils {
         View iconView = searchView
                 .findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
         if (iconView instanceof ImageView) {
-            ((ImageView) iconView).setImageResource(R.drawable.ic_filter_list_white_24dp);
+            ((ImageView) iconView).setImageResource(icon);
         }
 
         iconView = searchView
                 .findViewById(android.support.v7.appcompat.R.id.search_button);
         if (iconView instanceof ImageView) {
-            ((ImageView) iconView).setImageResource(R.drawable.ic_filter_list_white_24dp);
+            ((ImageView) iconView).setImageResource(icon);
         }
     }
 

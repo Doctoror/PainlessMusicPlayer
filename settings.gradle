@@ -1,1 +1,1 @@
-include ':app', ':siriwaveview'
+include ':app', ':siriwaveview', ':domain', ':data'

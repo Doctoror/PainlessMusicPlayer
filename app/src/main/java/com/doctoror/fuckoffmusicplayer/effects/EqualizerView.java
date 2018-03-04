@@ -16,6 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.effects;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.OnSeekBarChangeListenerAdapter;
 
@@ -38,20 +40,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-/**
- * Created by Yaroslav Mytkalyk on 23.10.16.
- */
 
 public class EqualizerView extends RecyclerView {
 
     public interface OnBandChangeListener {
         void onBandChange(short band, short value);
     }
-
-    private AudioEffects mAudioEffects;
 
     private Equalizer mEqualizer;
     private AdapterImpl mAdapter;
@@ -60,6 +58,9 @@ public class EqualizerView extends RecyclerView {
     private int mMinEqLevel;
 
     private OnBandChangeListener mOnBandChangeListener;
+
+    @Inject
+    AudioEffects mAudioEffects;
 
     public EqualizerView(final Context context) {
         super(context);
@@ -78,7 +79,7 @@ public class EqualizerView extends RecyclerView {
     }
 
     private void init(@NonNull final Context context) {
-        mAudioEffects = AudioEffects.getInstance(context);
+        DaggerHolder.getInstance(context).mainComponent().inject(this);
         setLayoutManager(new LinearLayoutManager(context));
     }
 

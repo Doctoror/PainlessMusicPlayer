@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylists;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconMenuViewHolder;

@@ -20,7 +20,7 @@ import org.junit.Test;
 import android.content.res.ColorStateList;
 import android.support.test.InstrumentationRegistry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * {@link ThemeUtils} test

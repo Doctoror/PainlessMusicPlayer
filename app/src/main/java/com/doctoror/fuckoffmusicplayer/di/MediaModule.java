@@ -15,26 +15,28 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
-import com.doctoror.fuckoffmusicplayer.db.media.MediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderArtists;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFiles;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderGenres;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbumsMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderArtistsMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFilesMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderGenresMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRandomMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScannedMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderTracksMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRandom;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderTracks;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataImpl;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManagerImpl;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
+import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
+import com.doctoror.fuckoffmusicplayer.data.playlist.RecentActivityManagerImpl;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderAlbumsMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderArtistsMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderFilesMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderGenresMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRandomMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRecentlyScannedMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -125,5 +127,11 @@ final class MediaModule {
     PlaybackData providePlaybackData(@NonNull final Context context,
             @NonNull final RecentActivityManager recentActivityManager) {
         return new PlaybackDataImpl(context, recentActivityManager);
+    }
+
+    @Provides
+    @Singleton
+    AlbumThumbHolder provideAlbumThumbHolder(@NonNull final Context context) {
+        return new AlbumThumbHolderImpl(context);
     }
 }

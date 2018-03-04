@@ -34,7 +34,10 @@ public final class SoftInputManager {
         if (focus != null) {
             final InputMethodManager imm = (InputMethodManager)
                     activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(focus.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(focus.getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+            }
         }
     }
 

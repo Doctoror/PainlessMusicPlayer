@@ -16,8 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.base;
 
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.settings.Theme;
+import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
+import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -31,7 +31,7 @@ import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v13.app.ActivityCompat;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -48,7 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private CompositeDisposable mOnStopDisposable;
 
-    @Theme.ThemeType
+    @Theme
     private int mThemeUsed;
 
     private boolean mFragmentTransactionsAllowed;
@@ -64,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         DaggerHolder.getInstance(this).mainComponent().inject(this);
 
-        mThemeUsed = mSettings.getThemeType();
+        mThemeUsed = mSettings.getTheme();
 
         mFragmentTransactionsAllowed = true;
         mFinishingAfterTransition = false;
@@ -122,7 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onStart();
         mFragmentTransactionsAllowed = true;
         // Theme changed while this Activity was in background
-        if (mThemeUsed != mSettings.getThemeType()) {
+        if (mThemeUsed != mSettings.getTheme()) {
             restart();
         }
     }

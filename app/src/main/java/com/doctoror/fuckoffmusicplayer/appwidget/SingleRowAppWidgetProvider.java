@@ -15,17 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.appwidget;
 
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataUtils;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -47,7 +48,10 @@ import javax.inject.Inject;
 public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     @Inject
-    PlaybackData mPlaybackData;
+    AlbumThumbHolder albumThumbHolder;
+
+    @Inject
+    PlaybackData playbackData;
 
     private static void requestServiceStateUpdate(final Context context) {
         PlaybackServiceControl.resendState(context);
@@ -57,10 +61,9 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     public void onReceive(final Context context, final Intent intent) {
         DaggerHolder.getInstance(context).mainComponent().inject(this);
         if (PlaybackService.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-            @PlaybackState.State
-            final int state = intent.getIntExtra(PlaybackService.EXTRA_STATE,
-                    PlaybackState.STATE_IDLE);
-            onStateChanged(context, mPlaybackData, state);
+            @PlaybackState.State final int state = intent.getIntExtra(
+                    PlaybackService.EXTRA_STATE, PlaybackState.STATE_IDLE);
+            onStateChanged(context, albumThumbHolder, playbackData, state);
         } else {
             // Handle AppWidgetProvider broadcast
             super.onReceive(context, intent);
@@ -68,25 +71,35 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(@NonNull final Context context,
+    public void onUpdate(
+            @NonNull final Context context,
             @NonNull final AppWidgetManager appWidgetManager,
             @NonNull final int[] appWidgetIds) {
-
-        bindViews(context, mPlaybackData, appWidgetManager, appWidgetIds, PlaybackState.STATE_IDLE);
+        bindViews(
+                context,
+                albumThumbHolder,
+                playbackData,
+                appWidgetManager,
+                appWidgetIds,
+                PlaybackState.STATE_IDLE);
         requestServiceStateUpdate(context);
     }
 
-    private static void onStateChanged(@NonNull final Context context,
+    private static void onStateChanged(
+            @NonNull final Context context,
+            @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final PlaybackData playbackData,
             final int state) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, SingleRowAppWidgetProvider.class));
 
-        bindViews(context, playbackData, appWidgetManager, appWidgetIds, state);
+        bindViews(context, albumThumbHolder, playbackData, appWidgetManager, appWidgetIds, state);
     }
 
-    private static void bindViews(@NonNull final Context context,
+    private static void bindViews(
+            @NonNull final Context context,
+            @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final PlaybackData playbackData,
             @NonNull final AppWidgetManager appWidgetManager,
             @NonNull final int[] appWidgetIds,
@@ -128,7 +141,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
         views.setTextViewText(R.id.appwidget_text_artist, artist);
         views.setTextViewText(R.id.appwidget_text_title, title);
 
-        final Bitmap thumb = AlbumThumbHolder.getInstance(context).getAlbumThumb();
+        final Bitmap thumb = albumThumbHolder.getAlbumThumb();
         if (thumb != null) {
             views.setImageViewBitmap(R.id.appwidget_img_albumart, thumb);
         } else {

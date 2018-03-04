@@ -15,20 +15,22 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
-import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.db.albums.MediaStoreAlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.db.artists.ArtistsProvider;
-import com.doctoror.fuckoffmusicplayer.db.artists.MediaStoreArtistsProvider;
-import com.doctoror.fuckoffmusicplayer.db.genres.GenresProvider;
-import com.doctoror.fuckoffmusicplayer.db.genres.MediaStoreGenresProvider;
-import com.doctoror.fuckoffmusicplayer.db.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylists;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylistsMediaStore;
-import com.doctoror.fuckoffmusicplayer.db.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
-import com.doctoror.fuckoffmusicplayer.media.manager.MediaManager;
-import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerFactory;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
+import com.doctoror.fuckoffmusicplayer.data.albums.MediaStoreAlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.data.artists.MediaStoreArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.data.genres.MediaStoreGenresProvider;
+import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerFile;
+import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerSet;
+import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderPlaylistsMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
+import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
+import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
 
 import android.content.ContentResolver;
 import android.support.annotation.NonNull;
@@ -38,9 +40,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by Yaroslav Mytkalyk on 06.01.17.
- */
 @Module
 final class MediaStoreProvidersModule {
 
@@ -79,7 +78,8 @@ final class MediaStoreProvidersModule {
     @Provides
     @Singleton
     MediaManager provideMediaManager(@NonNull final ContentResolver resolver) {
-        return MediaManagerFactory.getDefault(resolver);
+        return new MediaManagerSet(
+                new MediaManagerFile(resolver),
+                new MediaManagerMediaStore(resolver));
     }
-
 }

@@ -17,14 +17,14 @@ package com.doctoror.fuckoffmusicplayer.library.playlists;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRandom;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderPlaylists;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
-import com.doctoror.fuckoffmusicplayer.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 

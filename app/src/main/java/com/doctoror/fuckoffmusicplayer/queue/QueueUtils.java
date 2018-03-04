@@ -15,10 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.queue;
 
-import com.doctoror.fuckoffmusicplayer.util.Log;
-import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
 
 import android.content.ContentResolver;
 import android.content.Context;

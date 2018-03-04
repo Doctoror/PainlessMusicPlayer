@@ -21,26 +21,27 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
+import com.doctoror.fuckoffmusicplayer.formatter.ArtistAlbumFormatter;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.util.Objects;
-import com.doctoror.fuckoffmusicplayer.util.StringUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.Objects;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -120,8 +121,6 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private NowPlayingActivityIntentHandler mIntentHandler;
 
-    private PlaybackParams mPlaybackParams;
-
     @PlaybackState.State
     private int mState = PlaybackState.STATE_IDLE;
 
@@ -151,7 +150,13 @@ public final class NowPlayingActivity extends BaseActivity {
     boolean hasListViewTransition;
 
     @Inject
+    ArtistAlbumFormatter mArtistAlbumFormatter;
+
+    @Inject
     PlaybackData mPlaybackData;
+
+    @Inject
+    PlaybackParams mPlaybackParams;
 
     @Inject
     QueueProviderFiles mFileQueueProvider;
@@ -179,8 +184,6 @@ public final class NowPlayingActivity extends BaseActivity {
 
         mTransitionPostponed = false;
         mTransitionStarted = false;
-
-        mPlaybackParams = PlaybackParams.getInstance(this);
 
         final ActivityNowplayingBinding binding = DataBindingUtil.setContentView(
                 this, R.layout.activity_nowplaying);
@@ -387,16 +390,16 @@ public final class NowPlayingActivity extends BaseActivity {
                 mBoundTrack = track;
                 if (track != null) {
                     setAlbumArt(track.getAlbumArt());
-                    mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
-                            track.getArtist(), track.getAlbum()));
+                    mModel.setArtistAndAlbum(mArtistAlbumFormatter.formatArtistAndAlbum(
+                            getResources(), track.getArtist(), track.getAlbum()));
                     mModel.setTitle(track.getTitle());
                     mModel.setDuration(track.getDuration());
                     bindProgress(position);
                     mModel.notifyChange();
                 } else {
                     setAlbumArt(null);
-                    mModel.setArtistAndAlbum(StringUtils.formatArtistAndAlbum(getResources(),
-                            null, null));
+                    mModel.setArtistAndAlbum(mArtistAlbumFormatter.formatArtistAndAlbum(
+                            getResources(), null, null));
                     mModel.setTitle(getString(R.string.Untitled));
                     mModel.setElapsedTime(0);
                     mModel.setProgress(0);
@@ -492,18 +495,18 @@ public final class NowPlayingActivity extends BaseActivity {
     @SuppressLint("WrongConstant")
     @OnClick(R.id.btnRepeat)
     public void onRepeatClick() {
-        @PlaybackParams.RepeatMode final int value;
+        @RepeatMode final int value;
         switch (mPlaybackParams.getRepeatMode()) {
-            case PlaybackParams.REPEAT_MODE_NONE:
-                value = PlaybackParams.REPEAT_MODE_QUEUE;
+            case RepeatMode.NONE:
+                value = RepeatMode.QUEUE;
                 break;
 
-            case PlaybackParams.REPEAT_MODE_QUEUE:
-                value = PlaybackParams.REPEAT_MODE_TRACK;
+            case RepeatMode.QUEUE:
+                value = RepeatMode.TRACK;
                 break;
 
-            case PlaybackParams.REPEAT_MODE_TRACK:
-                value = PlaybackParams.REPEAT_MODE_NONE;
+            case RepeatMode.TRACK:
+                value = RepeatMode.NONE;
                 break;
 
             default:

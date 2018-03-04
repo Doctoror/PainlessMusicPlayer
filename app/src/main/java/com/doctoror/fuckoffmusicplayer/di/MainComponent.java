@@ -16,12 +16,14 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.App;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
-import com.doctoror.fuckoffmusicplayer.home.PlaybackStatusFragment;
-import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerService;
-import com.doctoror.fuckoffmusicplayer.home.RecentActivityFragment;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.effects.EffectsFragment;
+import com.doctoror.fuckoffmusicplayer.effects.EqualizerView;
+import com.doctoror.fuckoffmusicplayer.formatter.FormatterModule;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
+import com.doctoror.fuckoffmusicplayer.home.PlaybackStatusFragment;
+import com.doctoror.fuckoffmusicplayer.home.RecentActivityFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsFragment;
@@ -31,6 +33,7 @@ import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragment;
 import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
+import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
@@ -38,9 +41,7 @@ import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.reporter.LastFmPlaybackReporter;
-import com.doctoror.fuckoffmusicplayer.reporter.SLSPlaybackReporter;
-import com.doctoror.fuckoffmusicplayer.reporter.ScrobbleDroidPlaybackReporter;
+import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
 import javax.inject.Singleton;
 
@@ -52,6 +53,8 @@ import dagger.Component;
 @Singleton
 @Component(modules = {
         AppContextModule.class,
+        FormatterModule.class,
+        EngineModule.class,
         MediaStoreProvidersModule.class,
         MediaModule.class
 })
@@ -60,6 +63,10 @@ public interface MainComponent {
     void inject(App target);
 
     void inject(BaseActivity target);
+
+    void inject(EffectsFragment target);
+
+    void inject(EqualizerView target);
 
     void inject(HomeActivity target);
 
@@ -97,15 +104,11 @@ public interface MainComponent {
 
     void inject(PlaybackService target);
 
-    void inject(LastFmPlaybackReporter target);
-
-    void inject(ScrobbleDroidPlaybackReporter target);
-
-    void inject(SLSPlaybackReporter target);
-
     void inject(MediaManagerService target);
 
     void inject(SingleRowAppWidgetProvider target);
 
     void inject(MediaSessionHolder target);
+
+    void inject(SettingsActivity target);
 }

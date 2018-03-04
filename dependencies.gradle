@@ -1,0 +1,111 @@
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+        google()
+    }
+}
+
+ext {
+    androidBuildToolsVersion = "27.0.3"
+    androidMinSdkVersion = 16
+    androidTargetSdkVersion = 27
+    androidCompileSdkVersion = 27
+
+    aspectRatioLayoutVersion = '1.0.3'
+
+    butterKnifeVersion = '8.8.1'
+
+    constraintLayoutVersion = '1.0.2'
+
+    daggerVersion = '2.14.1'
+    dartVersion = '2.0.3'
+
+    exoPlayerVersion = '2.6.1'
+
+    fastScrollVersion = '1.0.4'
+
+    glideVersion = '3.8.0'
+
+    jUnitVersion = '4.12'
+
+    parcelerVersion = '1.1.10'
+    protobufVersion = '3.1.0'
+
+    rxAndroidVersion = '2.0.2'
+    rxCursorLoaderVersion = '2.0.2'
+    rxBindingVersion = '2.1.1'
+    rxJavaVersion = '2.1.10'
+    rxPermissionsVersion = '0.9.5@aar'
+
+    supportVersion = '27.1.0'
+
+    testRunnerVersion = '1.0.1'
+
+    appDependencies = [
+            aspectRatioLayout  : "com.github.doctoror.aspectratiolayout:library:$aspectRatioLayoutVersion",
+
+            butterKnife        : "com.jakewharton:butterknife:$butterKnifeVersion",
+            butterKnifeCompiler: "com.jakewharton:butterknife-compiler:$butterKnifeVersion",
+
+            constraintLayout   : "com.android.support.constraint:constraint-layout:$constraintLayoutVersion",
+
+            daggerCompiler     : "com.google.dagger:dagger-compiler:$daggerVersion",
+            dagger             : "com.google.dagger:dagger:$daggerVersion",
+
+            dart               : "com.f2prateek.dart:dart:$dartVersion",
+            dartProcessor      : "com.f2prateek.dart:dart-processor:$dartVersion",
+
+            fastScroll         : "com.l4digital.fastscroll:fastscroll:$fastScrollVersion",
+
+            glide              : "com.github.bumptech.glide:glide:$glideVersion",
+
+            henson             : "com.f2prateek.dart:henson:$dartVersion",
+            hensonProcessor    : "com.f2prateek.dart:henson-processor:$dartVersion",
+
+            parceler           : "org.parceler:parceler-api:$parcelerVersion",
+            parcelerProcessor  : "org.parceler:parceler:$parcelerVersion",
+
+            rxAndroid          : "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion",
+            rxBinding          : "com.jakewharton.rxbinding2:rxbinding-appcompat-v7:$rxBindingVersion",
+            rxPermissions      : "com.tbruyelle.rxpermissions2:rxpermissions:$rxPermissionsVersion",
+            rxJava             : "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
+
+            supportAppCompat   : "com.android.support:appcompat-v7:$supportVersion",
+            supportCardView    : "com.android.support:cardview-v7:$supportVersion",
+            supportDesign      : "com.android.support:design:$supportVersion",
+            supportRecyclerView: "com.android.support:recyclerview-v7:$supportVersion"
+    ]
+
+    appTestDependencies = [
+            junit     : "junit:junit:$jUnitVersion",
+            testRunner: "com.android.support.test:runner:$testRunnerVersion"
+    ]
+
+    dataDependencies = [
+            exoPlayer     : "com.google.android.exoplayer:exoplayer:$exoPlayerVersion",
+
+            glide         : "com.github.bumptech.glide:glide:$glideVersion",
+
+            protobuf      : "com.google.protobuf.nano:protobuf-javanano:$protobufVersion",
+
+            rxCursorLoader: "com.github.doctoror.rxcursorloader:library:$rxCursorLoaderVersion",
+            rxJava        : "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
+
+            supportV4     : "com.android.support:support-v4:$supportVersion",
+    ]
+
+    dataTestDependencies = [
+            junit     : "junit:junit:$jUnitVersion",
+            testRunner: "com.android.support.test:runner:$testRunnerVersion"
+    ]
+
+    domainDependencies = [
+            parceler         : "org.parceler:parceler-api:$parcelerVersion",
+            parcelerProcessor: "org.parceler:parceler:$parcelerVersion",
+
+            rxJava           : "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
+
+            supportV4        : "com.android.support:support-v4:$supportVersion",
+    ]
+}

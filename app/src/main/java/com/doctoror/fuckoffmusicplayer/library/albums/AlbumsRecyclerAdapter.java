@@ -19,10 +19,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumWithMenuViewHolder;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumWithMenuViewHolder;
 import com.l4digital.fastscroll.FastScroller;
 
 import android.content.Context;

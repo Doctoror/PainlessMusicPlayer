@@ -21,7 +21,8 @@ import android.annotation.SuppressLint;
 
 import io.reactivex.disposables.Disposable;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * {@link BaseFragment} test

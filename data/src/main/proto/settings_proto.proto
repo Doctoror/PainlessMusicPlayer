@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.doctoror.fuckoffmusicplayer.data.settings";
+
+message Settings {
+  int32 theme = 1;
+  bool scrobbleEnabled = 2;
+}

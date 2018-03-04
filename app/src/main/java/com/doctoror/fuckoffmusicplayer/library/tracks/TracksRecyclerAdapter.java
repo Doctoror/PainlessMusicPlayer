@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.db.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.widget.viewholder.TwoLineItemViewHolder;
 import com.l4digital.fastscroll.FastScroller;

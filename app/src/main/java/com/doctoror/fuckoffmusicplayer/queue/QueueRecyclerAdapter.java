@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.queue;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
@@ -178,9 +179,9 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
     @Override
     public void onBindViewHolder(final QueueItemViewHolder viewHolder, final int position) {
         final Media item = getItem(position);
-        viewHolder.textTitle.setText(item.title);
-        viewHolder.textArtist.setText(item.artist);
-        BindingAdapters.setFormattedDuration(viewHolder.textDuration, item.duration / 1000L);
+        viewHolder.textTitle.setText(item.getTitle());
+        viewHolder.textArtist.setText(item.getArtist());
+        BindingAdapters.setFormattedDuration(viewHolder.textDuration, item.getDuration() / 1000L);
     }
 
     @Override

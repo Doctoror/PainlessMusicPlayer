@@ -15,11 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
-import com.doctoror.fuckoffmusicplayer.db.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 
 import android.database.Cursor;
 import android.os.Bundle;

@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer;
 
-import com.doctoror.fuckoffmusicplayer.util.Log;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.settings.Theme;
+import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
+import com.doctoror.fuckoffmusicplayer.settings.DayNightModeMapper;
 
 import android.app.Application;
 import android.os.StrictMode;
@@ -30,6 +30,9 @@ import javax.inject.Inject;
  * Application
  */
 public final class App extends Application {
+
+    @Inject
+    DayNightModeMapper mDayNightModeMapper;
 
     @Inject
     Settings mSettings;
@@ -70,6 +73,7 @@ public final class App extends Application {
     }
 
     private void initTheme() {
-        AppCompatDelegate.setDefaultNightMode(Theme.getDayNightMode(mSettings.getThemeType()));
+        AppCompatDelegate.setDefaultNightMode(
+                mDayNightModeMapper.toDayNightMode(mSettings.getTheme()));
     }
 }

@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.queue;
 
 import com.doctoror.fuckoffmusicplayer.library.DeleteItemDialogFragment;
-import com.doctoror.fuckoffmusicplayer.media.manager.MediaManagerService;
+import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
 
 import android.app.Activity;
 import android.app.FragmentManager;

@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.media.session;
 
-import com.doctoror.fuckoffmusicplayer.Handlers;
+import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
 

@@ -17,24 +17,26 @@ package com.doctoror.fuckoffmusicplayer.playback;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackState.State;
-import com.doctoror.fuckoffmusicplayer.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.appwidget.AlbumThumbHolder;
-import com.doctoror.fuckoffmusicplayer.db.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.effects.AudioEffects;
+import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.State;
+import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
+import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
+import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
+import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
+import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackDataUtils;
-import com.doctoror.fuckoffmusicplayer.player.MediaPlayer;
-import com.doctoror.fuckoffmusicplayer.player.MediaPlayerFactory;
-import com.doctoror.fuckoffmusicplayer.player.MediaPlayerListener;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
-import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporter;
-import com.doctoror.fuckoffmusicplayer.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
@@ -73,12 +75,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_ERROR;
-import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_IDLE;
-import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_LOADING;
-import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_PAUSED;
-import static com.doctoror.fuckoffmusicplayer.playback.PlaybackState.STATE_PLAYING;
-
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_ERROR;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_IDLE;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_LOADING;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PAUSED;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING;
 
 /**
  * Media playback Service
@@ -114,14 +115,6 @@ public final class PlaybackService extends Service {
     static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
     @State
-    private static int sLastKnownState;
-
-    @State
-    public static int getLastKnownState() {
-        return sLastKnownState;
-    }
-
-    @State
     private int mState = STATE_IDLE;
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
@@ -129,16 +122,13 @@ public final class PlaybackService extends Service {
     private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
             = new AudioBecomingNoisyReceiver();
 
-    private final MediaPlayer mMediaPlayer = MediaPlayerFactory.newMediaPlayer();
-
-    private AudioEffects mAudioEffects;
+    private MediaPlayer mMediaPlayer;
 
     private RequestManager mGlide;
     private AudioManager mAudioManager;
 
     private MediaSessionHolder mMediaSessionHolder;
     private PlaybackReporter mPlaybackReporter;
-    private PlaybackParams mPlaybackParams;
 
     private boolean mAudioFocusRequested;
     private boolean mFocusGranted;
@@ -160,7 +150,22 @@ public final class PlaybackService extends Service {
     private Disposable mDisposableQueue;
 
     @Inject
+    AlbumThumbHolder mAlbumThumbHolder;
+
+    @Inject
+    AudioEffects mAudioEffects;
+
+    @Inject
+    MediaPlayerFactory mMediaPlayerFactory;
+
+    @Inject
     PlaybackData mPlaybackData;
+
+    @Inject
+    PlaybackParams mPlaybackParams;
+
+    @Inject
+    PlaybackReporterFactory mPlaybackReporterFactory;
 
     @Inject
     QueueProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
@@ -171,13 +176,14 @@ public final class PlaybackService extends Service {
         DaggerHolder.getInstance(this).mainComponent().inject(this);
         acquireWakeLock();
 
+        mMediaPlayer = mMediaPlayerFactory.newMediaPlayer();
+
         mDestroying = false;
         mErrorMessage = null;
         mPermissionReceivePlaybackState = getPackageName()
                 .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mAudioEffects = AudioEffects.getInstance(this);
 
         mGlide = Glide.with(this);
 
@@ -189,10 +195,7 @@ public final class PlaybackService extends Service {
             throw new IllegalStateException("MediaSession is null");
         }
 
-        mPlaybackReporter = PlaybackReporterFactory.newUniversalReporter(this,
-                mediaSession, PlaybackDataUtils.getCurrentMedia(mPlaybackData));
-
-        mPlaybackParams = PlaybackParams.getInstance(this);
+        mPlaybackReporter = mPlaybackReporterFactory.newUniversalReporter(mediaSession);
 
         registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
         registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
@@ -616,7 +619,6 @@ public final class PlaybackService extends Service {
     private void setState(@State final int state) {
         if (mState != state) {
             mState = state;
-            sLastKnownState = state;
             mExecutor.submit(() -> reportPlaybackState(state, mErrorMessage));
             mPlaybackData.setPlaybackState(state);
             broadcastState();
@@ -688,7 +690,7 @@ public final class PlaybackService extends Service {
     private final Consumer<List<Media>> mQueueConsumer = q -> {
         if (q == null || q.isEmpty()) {
             mCurrentTrack = null;
-            AlbumThumbHolder.getInstance(PlaybackService.this).setAlbumThumb(null);
+            mAlbumThumbHolder.setAlbumThumb(null);
             stopSelf();
         } else {
             final PlaybackController playbackController = getPlaybackController();
@@ -836,9 +838,9 @@ public final class PlaybackService extends Service {
         public void playPrev(final boolean isUserAction) {
             synchronized (LOCK) {
                 if (mQueue != null && !mQueue.isEmpty()) {
-                    final int repeatMode = mPlaybackParams.getRepeatMode();
+                    @RepeatMode final int repeatMode = mPlaybackParams.getRepeatMode();
                     switch (repeatMode) {
-                        case PlaybackParams.REPEAT_MODE_NONE:
+                        case RepeatMode.NONE:
                             if (!isUserAction && mPosition == 0) {
                                 onPlay(mQueue, mPosition);
                             } else {
@@ -846,11 +848,11 @@ public final class PlaybackService extends Service {
                             }
                             break;
 
-                        case PlaybackParams.REPEAT_MODE_QUEUE:
+                        case RepeatMode.QUEUE:
                             onPlay(mQueue, prevPos(mQueue, mPosition));
                             break;
 
-                        case PlaybackParams.REPEAT_MODE_TRACK:
+                        case RepeatMode.TRACK:
                             if (isUserAction) {
                                 onPlay(mQueue, prevPos(mQueue, mPosition));
                             } else {
@@ -868,7 +870,7 @@ public final class PlaybackService extends Service {
                 if (mQueue != null && !mQueue.isEmpty()) {
                     final int repeatMode = mPlaybackParams.getRepeatMode();
                     switch (repeatMode) {
-                        case PlaybackParams.REPEAT_MODE_NONE:
+                        case RepeatMode.NONE:
                             if (!isUserAction && mPosition == mQueue.size() - 1) {
                                 stopSelf();
                             } else {
@@ -876,11 +878,11 @@ public final class PlaybackService extends Service {
                             }
                             break;
 
-                        case PlaybackParams.REPEAT_MODE_QUEUE:
+                        case RepeatMode.QUEUE:
                             onPlay(mQueue, nextPos(mQueue, mPosition));
                             break;
 
-                        case PlaybackParams.REPEAT_MODE_TRACK:
+                        case RepeatMode.TRACK:
                             if (isUserAction) {
                                 onPlay(mQueue, nextPos(mQueue, mPosition));
                             } else {

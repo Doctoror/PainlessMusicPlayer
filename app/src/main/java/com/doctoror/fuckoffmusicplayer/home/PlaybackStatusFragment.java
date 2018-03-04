@@ -16,15 +16,15 @@
 package com.doctoror.fuckoffmusicplayer.home;
 
 import com.bumptech.glide.Glide;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.databinding.PlaybackStatusBarBinding;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.playback.data.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.queue.Media;
 import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
 
 import android.databinding.DataBindingUtil;
