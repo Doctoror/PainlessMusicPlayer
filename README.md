@@ -20,7 +20,7 @@ Min API level 16
  - Removing from playlist
  - Deleting files, albums and playlist
  - Home screen widget
- - Notifies now playing using [Scrobble Droid API](https://github.com/JJC1138/scrobbledroid)
+ - Notifies now playing for LastFM app
  - Android Wear app
  - Android Auto support
  - Remote controls support (headset, car audio)
