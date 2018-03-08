@@ -1,31 +1,29 @@
-/*
- * Copyright (C) 2016 Yaroslav Mytkalyk
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.doctoror.fuckoffmusicplayer.playback;
+package com.doctoror.fuckoffmusicplayer.data.playback;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.net.Uri;
+import android.os.PowerManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.util.SparseIntArray;
+
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServicePresenter;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
@@ -36,29 +34,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
-
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.net.Uri;
-import android.os.IBinder;
-import android.os.PowerManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.text.TextUtils;
-import android.util.SparseIntArray;
-import android.view.KeyEvent;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,8 +41,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -80,50 +53,44 @@ import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STAT
 import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PAUSED;
 import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING;
 
-/**
- * Media playback Service
- */
-public final class PlaybackService extends Service {
+public final class PlaybackServiceImpl implements PlaybackService {
 
-    private static final String SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE
-            = ".permission.RECEIVE_PLAYBACK_STATE";
+    private static final String TAG = "PlaybackServiceImpl";
 
-    private static final String TAG = "PlaybackService";
-    private static final int NOTIFICATION_ID = 666;
+    private final Context mContext;
 
-    public static final String ACTION_STATE_CHANGED
-            = "com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED";
-    public static final String EXTRA_STATE = "EXTRA_STATE";
+    private final AlbumThumbHolder mAlbumThumbHolder;
 
-    static final String ACTION_RESEND_STATE = "ACTION_RESEND_STATE";
-    static final String ACTION_PLAY_MEDIA_FROM_QUEUE = "ACTION_PLAY_MEDIA_FROM_QUEUE";
-    static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
-    static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
-    static final String ACTION_PLAY = "ACTION_PLAY";
-    static final String ACTION_PAUSE = "ACTION_PAUSE";
-    static final String ACTION_STOP = "ACTION_STOP";
-    static final String ACTION_STOP_WITH_ERROR = "ACTION_STOP_WITH_ERROR";
+    private final AudioEffects mAudioEffects;
 
-    static final String ACTION_PREV = "ACTION_PREV";
-    static final String ACTION_NEXT = "ACTION_NEXT";
+    private final MediaPlayerFactory mMediaPlayerFactory;
 
-    static final String ACTION_SEEK = "ACTION_SEEK";
-    static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";
-    static final String EXTRA_MEDIA_ID = "EXTRA_MEDIA_ID";
-    static final String EXTRA_POSITION = "EXTRA_POSITION";
-    static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
+    private final MediaSessionHolder mMediaSessionHolder;
 
-    @PlaybackState
-    private int mState = STATE_IDLE;
+    private final PlaybackData mPlaybackData;
+
+    private final PlaybackInitializer mPlaybackInitializer;
+
+    private final PlaybackParams mPlaybackParams;
+
+    private final PlaybackReporterFactory mPlaybackReporterFactory;
+
+    private final PlaybackServicePresenter mPlaybackServicePresenter;
+
+    private final QueueProviderRecentlyScanned queueProviderRecentlyScanned;
+
+    private final Runnable mStopAction;
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
             = new AudioBecomingNoisyReceiver();
 
+    @PlaybackState
+    private int mState = STATE_IDLE;
+
     private MediaPlayer mMediaPlayer;
 
-    @Nullable
     private AudioManager mAudioManager;
 
     private PlaybackReporter mPlaybackReporter;
@@ -142,55 +109,46 @@ public final class PlaybackService extends Service {
 
     private CharSequence mErrorMessage;
 
-    private String mPermissionReceivePlaybackState;
-
     private PlaybackController mPlaybackController;
     private Disposable mDisposableQueue;
 
-    @Inject
-    AlbumThumbHolder mAlbumThumbHolder;
+    public PlaybackServiceImpl(
+            @NonNull final Context context,
+            @NonNull final AlbumThumbHolder albumThumbHolder,
+            @NonNull final AudioEffects audioEffects,
+            @NonNull final MediaPlayerFactory mediaPlayerFactory,
+            @NonNull final MediaSessionHolder mediaSessionHolder,
+            @NonNull final PlaybackData playbackData,
+            @NonNull final PlaybackInitializer playbackInitializer,
+            @NonNull final PlaybackParams playbackParams,
+            @NonNull final PlaybackReporterFactory playbackReporterFactory,
+            @NonNull final PlaybackServicePresenter playbackServicePresenter,
+            @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,
+            @NonNull final Runnable stopAction) {
+        mContext = context;
+        mAlbumThumbHolder = albumThumbHolder;
+        mAudioEffects = audioEffects;
+        mMediaPlayerFactory = mediaPlayerFactory;
+        mMediaSessionHolder = mediaSessionHolder;
+        mPlaybackData = playbackData;
+        mPlaybackInitializer = playbackInitializer;
+        mPlaybackParams = playbackParams;
+        mPlaybackReporterFactory = playbackReporterFactory;
+        mPlaybackServicePresenter = playbackServicePresenter;
+        this.queueProviderRecentlyScanned = queueProviderRecentlyScanned;
+        mStopAction = stopAction;
+        init();
+    }
 
-    @Inject
-    AudioEffects mAudioEffects;
-
-    @Inject
-    MediaPlayerFactory mMediaPlayerFactory;
-
-    @Inject
-    MediaSessionHolder mMediaSessionHolder;
-
-    @Inject
-    PlaybackData mPlaybackData;
-
-    @Inject
-    PlaybackInitializer mPlaybackInitializer;
-
-    @Inject
-    PlaybackParams mPlaybackParams;
-
-    @Inject
-    PlaybackNotificationFactory mPlaybackNotificationFactory;
-
-    @Inject
-    PlaybackReporterFactory mPlaybackReporterFactory;
-
-    @Inject
-    QueueProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
+    private void init() {
         acquireWakeLock();
 
         mMediaPlayer = mMediaPlayerFactory.newMediaPlayer();
 
         mDestroying = false;
         mErrorMessage = null;
-        mPermissionReceivePlaybackState = getPackageName()
-                .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
 
-        mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         mMediaSessionHolder.openSession();
 
@@ -201,18 +159,18 @@ public final class PlaybackService extends Service {
 
         mPlaybackReporter = mPlaybackReporterFactory.newUniversalReporter(mediaSession);
 
-        registerReceiver(mResendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
-        registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
+        mContext.registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
 
         mMediaPlayer.setListener(mMediaPlayerListener);
-        mMediaPlayer.init(this);
+        mMediaPlayer.init(mContext);
 
-        mDisposableQueue = mPlaybackData.queueObservable().subscribe(mQueueConsumer);
+        mDisposableQueue = mPlaybackData.queueObservable().subscribe(new QueueConsumer());
     }
 
     @SuppressLint("WakelockTimeout") // User may want this to play forever.
     private void acquireWakeLock() {
-        final PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        final PowerManager powerManager = (PowerManager) mContext
+                .getSystemService(Context.POWER_SERVICE);
         if (powerManager != null) {
             mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
             mWakeLock.acquire();
@@ -245,122 +203,15 @@ public final class PlaybackService extends Service {
         return mPlaybackController;
     }
 
-    @Nullable
     @Override
-    public IBinder onBind(final Intent intent) {
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            stopSelf();
-            return START_NOT_STICKY;
-        }
-
-        if (intent == null) {
-            stopSelf(startId);
-            return START_NOT_STICKY;
-        }
-
-        final String action = intent.getAction();
-        if (action == null) {
-            stopSelf(startId);
-            return START_NOT_STICKY;
-        }
-
-        switch (intent.getAction()) {
-            case ACTION_PLAY_PAUSE:
-                onActionPlayPause();
-                break;
-
-            case ACTION_PLAY:
-                onActionPlay();
-                break;
-
-            case ACTION_PLAY_ANYTHING:
-                onActionPlayAnything();
-                break;
-
-            case ACTION_PAUSE:
-                onActionPause();
-                break;
-
-            case ACTION_STOP:
-                onActionStop();
-                break;
-
-            case ACTION_STOP_WITH_ERROR:
-                onActionStopWithError(intent.getCharSequenceExtra(EXTRA_ERROR_MESSAGE));
-                break;
-
-            case ACTION_PREV:
-                onActionPrev();
-                break;
-
-            case ACTION_NEXT:
-                onActionNext();
-                break;
-
-            case ACTION_SEEK:
-                onActionSeek(intent);
-                break;
-
-            case ACTION_PLAY_MEDIA_FROM_QUEUE:
-                onActionPlayMediaFromQueue(intent);
-                break;
-
-            case Intent.ACTION_MEDIA_BUTTON:
-                onActionMediaButton(intent);
-                break;
-
-            default:
-                stopSelf(startId);
-                return START_NOT_STICKY;
-        }
-        return START_STICKY;
-    }
-
-    private void onActionMediaButton(@NonNull final Intent intent) {
-        final KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-        if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-            switch (keyEvent.getKeyCode()) {
-                case KeyEvent.KEYCODE_MEDIA_PLAY:
-                    onActionPlay();
-                    break;
-
-                case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                    onActionPause();
-                    break;
-
-                case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    onActionNext();
-                    break;
-
-                case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    onActionPrev();
-                    break;
-
-                case KeyEvent.KEYCODE_MEDIA_STOP:
-                    onActionStop();
-                    break;
-
-                case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
-                    onActionPlayPause();
-                    break;
-            }
-        }
-    }
-
-    private void onActionPlayPause() {
+    public void playPause() {
         switch (mState) {
             case STATE_PLAYING:
-                onActionPause();
+                pause();
                 break;
 
             case STATE_PAUSED:
-                onActionPlay();
+                play();
                 break;
 
             case STATE_IDLE:
@@ -375,7 +226,8 @@ public final class PlaybackService extends Service {
         }
     }
 
-    private void onActionPlay() {
+    @Override
+    public void play() {
         if (mDisposablePauseTimeout != null) {
             mDisposablePauseTimeout.dispose();
             mDisposablePauseTimeout = null;
@@ -384,89 +236,69 @@ public final class PlaybackService extends Service {
         playCurrent(true);
     }
 
-    private void onActionPlayAnything() {
+    @Override
+    public void playAnything() {
         playCurrentOrNewQueue();
     }
 
-    private void onActionPause() {
+    @Override
+    public void pause() {
         mPlayOnFocusGain = false;
-        pause();
+        pauseInner();
         mDisposablePauseTimeout = Observable.timer(8, TimeUnit.SECONDS)
-                .subscribe(o -> onActionStop());
+                .subscribe(o -> stop());
         showNotification();
     }
 
-    private void onActionStop() {
+    @Override
+    public void stop() {
         mPlayOnFocusGain = false;
-        stopSelf();
+        mStopAction.run();
     }
 
-    private void onActionStopWithError(@Nullable final CharSequence errorMessage) {
+    @Override
+    public void stopWithError(@Nullable final CharSequence errorMessage) {
         mPlayOnFocusGain = false;
         mErrorMessage = errorMessage;
-        stopSelf();
+        mStopAction.run();
     }
 
-    private void onActionPrev() {
-        playPrev(true);
+    @Override
+    public void playPrev() {
+        playPrevInner(true);
     }
 
-    private void onActionNext() {
-        playNext(true);
+    @Override
+    public void playNext() {
+        playNextInner(true);
     }
 
-    private void onActionSeek(final Intent intent) {
-        if (intent.hasExtra(EXTRA_POSITION_PERCENT)) {
-            onActionSeek(intent.getFloatExtra(EXTRA_POSITION_PERCENT, 0f));
-        } else if (intent.hasExtra(EXTRA_POSITION)) {
-            onActionSeek(intent.getLongExtra(EXTRA_POSITION, 0));
+    @Override
+    public void seek(final long position) {
+        mMediaPlayer.seekTo(position);
+    }
+
+    @Override
+    public void playMediaFromQueue(
+            @NonNull final List<Media> queue,
+            final long mediaId) {
+        int mediaPosition = -1;
+        int loopPos = 0;
+        for (final Media media : queue) {
+            if (media.getId() == mediaId) {
+                mediaPosition = loopPos;
+                break;
+            }
+            loopPos++;
+        }
+        if (mediaPosition == -1) {
+            Log.w(TAG, "Media with id " + mediaId + " not found in current playlist");
+        } else {
+            play(queue, mediaPosition, false, false);
         }
     }
 
-    private void onActionSeek(final float positionPercent) {
-        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
-        if (media != null) {
-            final long duration = media.getDuration();
-            if (duration > 0) {
-                final int position = (int) ((float) duration * positionPercent);
-                mPlaybackData.setMediaPosition(position);
-                mMediaPlayer.seekTo(position);
-            }
-        }
-    }
-
-    private void onActionSeek(final long position) {
-        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
-        if (media != null) {
-            final long duration = media.getDuration();
-            if (duration > 0 && position < duration) {
-                mMediaPlayer.seekTo(position);
-            }
-        }
-    }
-
-    private void onActionPlayMediaFromQueue(final Intent intent) {
-        final long mediaId = intent.getLongExtra(EXTRA_MEDIA_ID, 0);
-        final List<Media> queue = mPlaybackData.getQueue();
-        if (queue != null) {
-            int mediaPosition = -1;
-            int loopPos = 0;
-            for (final Media media : queue) {
-                if (media.getId() == mediaId) {
-                    mediaPosition = loopPos;
-                    break;
-                }
-                loopPos++;
-            }
-            if (mediaPosition == -1) {
-                Log.w(TAG, "Media with id " + mediaId + " not found in current playlist");
-            } else {
-                play(queue, mediaPosition, false, false);
-            }
-        }
-    }
-
-    private void pause() {
+    private void pauseInner() {
         mMediaPlayer.pause();
         setState(STATE_PAUSED);
     }
@@ -476,7 +308,7 @@ public final class PlaybackService extends Service {
         if (playlist != null && !playlist.isEmpty()) {
             play(playlist, mPlaybackData.getQueuePosition(), true, false);
         } else {
-            mRecentlyScannedPlaylistFactory.recentlyScannedQueue()
+            queueProviderRecentlyScanned.recentlyScannedQueue()
                     .subscribeOn(Schedulers.io())
                     .subscribe(
                             q -> mPlaybackInitializer.setQueueAndPlay(q, 0),
@@ -489,11 +321,11 @@ public final class PlaybackService extends Service {
                 mayContinueWhereStopped, false);
     }
 
-    private void playPrev(final boolean isUserAction) {
+    private void playPrevInner(final boolean isUserAction) {
         getPlaybackController().playPrev(isUserAction);
     }
 
-    private void playNext(final boolean isUserAction) {
+    private void playNextInner(final boolean isUserAction) {
         getPlaybackController().playNext(isUserAction);
     }
 
@@ -506,9 +338,9 @@ public final class PlaybackService extends Service {
     }
 
     private void play(@Nullable final List<Media> queue,
-            final int position,
-            final boolean mayContinueWhereStopped,
-            final boolean fromPlaybackController) {
+                      final int position,
+                      final boolean mayContinueWhereStopped,
+                      final boolean fromPlaybackController) {
         if (queue == null) {
             throw new IllegalArgumentException("Play queue is null");
         }
@@ -569,16 +401,13 @@ public final class PlaybackService extends Service {
         if (media != null) {
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
-                mExecutor.submit(() -> startForeground(NOTIFICATION_ID, mPlaybackNotificationFactory
-                        .create(getApplicationContext(), media, mState, mediaSession)));
+                mExecutor.submit(() -> mPlaybackServicePresenter.startForeground(media, mState));
             }
         }
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        stopForeground(true);
+    public void destroy() {
         mMediaPlayer.stop();
 
         mDisposableQueue.dispose();
@@ -589,8 +418,7 @@ public final class PlaybackService extends Service {
 
         mDestroying = true;
         mPlayOnFocusGain = false;
-        unregisterReceiver(mBecomingNoisyReceiver);
-        unregisterReceiver(mResendStateReceiver);
+        mContext.unregisterReceiver(mBecomingNoisyReceiver);
         if (mErrorMessage != null) {
             setState(STATE_ERROR);
         } else {
@@ -602,9 +430,7 @@ public final class PlaybackService extends Service {
         }
         mAudioEffects.relese();
         mMediaPlayer.release();
-        if (mAudioManager != null) {
-            mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
-        }
+        mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         mAudioFocusRequested = false;
         mMediaSessionHolder.closeSession();
         if (mWakeLock != null && mWakeLock.isHeld()) {
@@ -615,13 +441,8 @@ public final class PlaybackService extends Service {
     private void ensureFocusRequested() {
         if (!mAudioFocusRequested) {
             mAudioFocusRequested = true;
-            final int result;
-            if (mAudioManager != null) {
-                result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
-                        AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-            } else {
-                result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-            }
+            final int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
+                    AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
             mPlayOnFocusGain = true;
             mFocusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
         }
@@ -630,16 +451,14 @@ public final class PlaybackService extends Service {
     private void setState(@PlaybackState final int state) {
         if (mState != state) {
             mState = state;
-            mExecutor.submit(() -> reportPlaybackState(state, mErrorMessage));
+            notifyState();
             mPlaybackData.setPlaybackState(state);
-            broadcastState();
         }
     }
 
-    private void broadcastState() {
-        final Intent intent = new Intent(ACTION_STATE_CHANGED);
-        intent.putExtra(EXTRA_STATE, mState);
-        sendBroadcast(intent, mPermissionReceivePlaybackState);
+    @Override
+    public void notifyState() {
+        mExecutor.submit(() -> reportPlaybackState(mState, mErrorMessage));
     }
 
     private void updateMediaPosition() {
@@ -659,7 +478,8 @@ public final class PlaybackService extends Service {
     }
 
     @WorkerThread
-    private void reportPlaybackState(@PlaybackState final int state,
+    private void reportPlaybackState(
+            @PlaybackState final int state,
             @Nullable final CharSequence errorMessage) {
         mPlaybackReporter.reportPlaybackStateChanged(state, errorMessage);
     }
@@ -689,39 +509,6 @@ public final class PlaybackService extends Service {
     private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
     private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
     private final Runnable mRunnableReportCurrentQueue = this::reportCurrentQueue;
-
-    private final BroadcastReceiver mResendStateReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            broadcastState();
-        }
-    };
-
-    private final Consumer<List<Media>> mQueueConsumer = q -> {
-        if (q == null || q.isEmpty()) {
-            mCurrentTrack = null;
-            mAlbumThumbHolder.setAlbumThumb(null);
-            stopSelf();
-        } else {
-            final PlaybackController playbackController = getPlaybackController();
-            playbackController.setQueue(q);
-
-            final Media current = mCurrentTrack;
-            // Playing some track
-            if (current != null) {
-                final int indexOf = q.indexOf(current);
-                if (indexOf != -1) {
-                    // This track position changed in queue
-                    playbackController.setPositionInQueue(indexOf);
-                    mExecutor.submit(mRunnableReportCurrentQueue);
-                } else {
-                    // This track is not in new queue
-                    restart();
-                }
-            }
-        }
-    };
 
     private final MediaPlayerListener mMediaPlayerListener = new MediaPlayerListener() {
 
@@ -755,7 +542,7 @@ public final class PlaybackService extends Service {
             mErrorMessage = null;
             mCurrentTrack = null;
             if (!mDestroying) {
-                playNext(false);
+                playNextInner(false);
             }
         }
 
@@ -772,19 +559,9 @@ public final class PlaybackService extends Service {
         @Override
         public void onPlayerError(final Exception error) {
             mCurrentTrack = null;
-            mErrorMessage = errorMessage(error);
+            mErrorMessage = mPlaybackServicePresenter.showPlaybackFailedError(error);
             setState(STATE_ERROR);
-            Toast.makeText(getApplicationContext(), mErrorMessage, Toast.LENGTH_SHORT).show();
-            stopSelf();
-        }
-
-        @NonNull
-        private CharSequence errorMessage(@NonNull final Exception error) {
-            final String message = error.getMessage();
-            if (TextUtils.isEmpty(message)) {
-                return getText(R.string.Failed_to_start_playback);
-            }
-            return message;
+            mStopAction.run();
         }
     };
 
@@ -803,10 +580,39 @@ public final class PlaybackService extends Service {
             default:
                 mFocusGranted = false;
                 mPlayOnFocusGain = mState == STATE_PLAYING;
-                pause();
+                pauseInner();
                 break;
         }
     };
+
+    private final class QueueConsumer implements Consumer<List<Media>> {
+
+        @Override
+        public void accept(@NonNull final List<Media> q) throws Exception {
+            if (q.isEmpty()) {
+                mCurrentTrack = null;
+                mAlbumThumbHolder.setAlbumThumb(null);
+                mStopAction.run();
+            } else {
+                final PlaybackController playbackController = getPlaybackController();
+                playbackController.setQueue(q);
+
+                final Media current = mCurrentTrack;
+                // Playing some track
+                if (current != null) {
+                    final int indexOf = q.indexOf(current);
+                    if (indexOf != -1) {
+                        // This track position changed in queue
+                        playbackController.setPositionInQueue(indexOf);
+                        mExecutor.submit(mRunnableReportCurrentQueue);
+                    } else {
+                        // This track is not in new queue
+                        restart();
+                    }
+                }
+            }
+        }
+    }
 
     private final class AudioBecomingNoisyReceiver extends BroadcastReceiver {
 
@@ -817,7 +623,7 @@ public final class PlaybackService extends Service {
         public void onReceive(final Context context, final Intent intent) {
             final String action = intent.getAction();
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(action)) {
-                stopSelf();
+                mStopAction.run();
             }
         }
     }
@@ -883,7 +689,7 @@ public final class PlaybackService extends Service {
                     switch (repeatMode) {
                         case RepeatMode.NONE:
                             if (!isUserAction && mPosition == mQueue.size() - 1) {
-                                stopSelf();
+                                mStopAction.run();
                             } else {
                                 onPlay(mQueue, nextPos(mQueue, mPosition));
                             }
@@ -911,7 +717,7 @@ public final class PlaybackService extends Service {
         }
 
         protected void play(@Nullable final List<Media> list, final int position) {
-            PlaybackService.this.play(list, position, false, true);
+            PlaybackServiceImpl.this.play(list, position, false, true);
         }
 
         @Override
@@ -939,7 +745,7 @@ public final class PlaybackService extends Service {
         }
 
         private int nextPos(@Nullable final List<Media> list,
-                final int position) {
+                            final int position) {
             if (list == null) {
                 throw new IllegalArgumentException("Playlist is null");
             }

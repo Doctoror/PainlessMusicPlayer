@@ -18,6 +18,16 @@ package com.doctoror.fuckoffmusicplayer.di;
 import com.doctoror.fuckoffmusicplayer.App;
 import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.effects.EffectsFragment;
 import com.doctoror.fuckoffmusicplayer.effects.EqualizerView;
 import com.doctoror.fuckoffmusicplayer.formatter.FormatterModule;
@@ -38,7 +48,6 @@ import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserServiceImpl;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
@@ -62,6 +71,26 @@ import dagger.Component;
         QueueProvidersModule.class
 })
 public interface MainComponent {
+
+    AudioEffects exposeAudioEffects();
+
+    AlbumThumbHolder exposeAlbumThumbHolder();
+
+    MediaPlayerFactory exposeMediaPlayerFactory();
+
+    MediaSessionHolder exposeMediaSessionHolder();
+
+    PlaybackData exposePlaybackData();
+
+    PlaybackInitializer exposePlaybackInitializer();
+
+    PlaybackNotificationFactory exposePlaybackNotificationFactory();
+
+    PlaybackParams exposePlaybackParams();
+
+    PlaybackReporterFactory exposePlaybackReporterFactory();
+
+    QueueProviderRecentlyScanned exposeQueueProviderRecentlyScanned();
 
     void inject(App target);
 
@@ -102,9 +131,7 @@ public interface MainComponent {
     void inject(RecentAlbumsFragment target);
 
     void inject(MediaBrowserImpl target);
-
-    void inject(PlaybackService target);
-
+    
     void inject(MediaBrowserServiceImpl target);
 
     void inject(MediaManagerService target);

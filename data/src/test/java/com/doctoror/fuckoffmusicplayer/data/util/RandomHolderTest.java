@@ -13,34 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.util;
+package com.doctoror.fuckoffmusicplayer.data.util;
 
-import android.support.annotation.NonNull;
+import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder;
 
-import java.util.Random;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
- * Holds {@link Random} instance
+ * {@link RandomHolder} test
  */
-public final class RandomHolder {
+public final class RandomHolderTest {
 
-    @NonNull
-    private static final RandomHolder INSTANCE = new RandomHolder();
-
-    @NonNull
-    public static RandomHolder getInstance() {
-        return INSTANCE;
+    @Test
+    public void testRandomNotNull() {
+        assertNotNull(RandomHolder.getInstance().getRandom());
     }
 
-    @NonNull
-    private final Random mRandom = new Random();
-
-    private RandomHolder() {
-
-    }
-
-    @NonNull
-    public Random getRandom() {
-        return mRandom;
-    }
 }

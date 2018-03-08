@@ -15,15 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.reporter;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.media.session.MediaSessionCompat;
+
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.media.session.MediaSessionCompat;
 
 /**
  * {@link PlaybackReporter} factory implementation.
@@ -51,6 +51,7 @@ public final class PlaybackReporterFactoryImpl implements PlaybackReporterFactor
     public PlaybackReporter newUniversalReporter(
             @NonNull final MediaSessionCompat mediaSession) {
         return new PlaybackReporterSet(
+                new AppWidgetPlaybackStateReporter(context),
                 new MediaSessionPlaybackReporter(context, albumThumbHolder, mediaSession),
                 new LastFmPlaybackReporter(context, playbackData, settings));
     }

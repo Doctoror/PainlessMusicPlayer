@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.reporter;
 
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
-
 import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
 

@@ -15,19 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.appwidget;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -39,6 +26,19 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
+
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
+import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;
 
 import javax.inject.Inject;
 
@@ -54,18 +54,18 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     PlaybackData playbackData;
 
     @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
+    PlaybackServiceControl playbackServiceControl;
 
     private void requestServiceStateUpdate() {
-        mPlaybackServiceControl.resendState();
+        playbackServiceControl.resendState();
     }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         DaggerHolder.getInstance(context).mainComponent().inject(this);
-        if (PlaybackService.ACTION_STATE_CHANGED.equals(intent.getAction())) {
+        if (AppWidgetPlaybackStateReporter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
             @PlaybackState final int state = intent.getIntExtra(
-                    PlaybackService.EXTRA_STATE, PlaybackState.STATE_IDLE);
+                    AppWidgetPlaybackStateReporter.EXTRA_STATE, PlaybackState.STATE_IDLE);
             onStateChanged(context, albumThumbHolder, playbackData, state);
         } else {
             // Handle AppWidgetProvider broadcast
@@ -181,7 +181,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     @NonNull
     private static PendingIntent serviceIntent(@NonNull final Context context,
-            @NonNull final Intent intent) {
+                                               @NonNull final Intent intent) {
         return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -198,13 +198,13 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     }
 
     private static void setButtonAction(@NonNull final RemoteViews views,
-            @IdRes final int buttonId,
-            @NonNull final PendingIntent action) {
+                                        @IdRes final int buttonId,
+                                        @NonNull final PendingIntent action) {
         views.setOnClickPendingIntent(buttonId, action);
     }
 
     private static void setCoverClickAction(final Context context, final RemoteViews views,
-            final boolean hasMedia) {
+                                            final boolean hasMedia) {
         final Intent coverIntent;
         if (hasMedia) {
             coverIntent = Henson.with(context)
