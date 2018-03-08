@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.playback;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
@@ -25,6 +23,7 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.State;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
@@ -124,7 +123,6 @@ public final class PlaybackService extends Service {
 
     private MediaPlayer mMediaPlayer;
 
-    private RequestManager mGlide;
     private AudioManager mAudioManager;
 
     private MediaSessionHolder mMediaSessionHolder;
@@ -165,6 +163,9 @@ public final class PlaybackService extends Service {
     PlaybackParams mPlaybackParams;
 
     @Inject
+    PlaybackNotificationFactory mPlaybackNotificationFactory;
+
+    @Inject
     PlaybackReporterFactory mPlaybackReporterFactory;
 
     @Inject
@@ -184,8 +185,6 @@ public final class PlaybackService extends Service {
                 .concat(SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE);
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-
-        mGlide = Glide.with(this);
 
         mMediaSessionHolder = MediaSessionHolder.getInstance(this);
         mMediaSessionHolder.openSession();
@@ -565,8 +564,8 @@ public final class PlaybackService extends Service {
         if (media != null) {
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
-                mExecutor.submit(() -> startForeground(NOTIFICATION_ID, PlaybackNotification
-                        .create(getApplicationContext(), mGlide, media, mState, mediaSession)));
+                mExecutor.submit(() -> startForeground(NOTIFICATION_ID, mPlaybackNotificationFactory
+                        .create(getApplicationContext(), media, mState, mediaSession)));
             }
         }
     }

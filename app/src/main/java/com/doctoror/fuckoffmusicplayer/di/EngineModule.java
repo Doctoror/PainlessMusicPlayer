@@ -22,10 +22,12 @@ import com.doctoror.fuckoffmusicplayer.data.reporter.PlaybackReporterFactoryImpl
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackNotificationFactoryImpl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -64,5 +66,11 @@ final class EngineModule {
             @NonNull final Settings settings,
             @NonNull final PlaybackData playbackData) {
         return new PlaybackReporterFactoryImpl(context, albumThumbHolder, settings, playbackData);
+    }
+
+    @Provides
+    @Singleton
+    PlaybackNotificationFactory providePlaybackNotificationFactory() {
+        return new PlaybackNotificationFactoryImpl();
     }
 }

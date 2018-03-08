@@ -1,25 +1,11 @@
-/*
- * Copyright (C) 2016 Yaroslav Mytkalyk
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.doctoror.fuckoffmusicplayer.playback;
 
-import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
@@ -42,55 +28,23 @@ import android.view.View;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-/**
- * "Now Playing" notification
- */
-final class PlaybackNotification {
+public final class PlaybackNotificationFactoryImpl implements PlaybackNotificationFactory {
 
     private static final String TAG = "PlaybackNotification";
-
     private static final String CHANNEL_ID = "NowPlaying";
 
-    private PlaybackNotification() {
-        throw new UnsupportedOperationException();
-    }
-
     @NonNull
-    public static Notification create(@NonNull final Context context,
-            @NonNull final RequestManager glide,
+    @Override
+    public Notification create(
+            @NonNull final Context context,
             @NonNull final Media media,
             @PlaybackState.State final int state,
             @NonNull final MediaSessionCompat mediaSession) {
         ensureChannelExists(context);
 
-        Bitmap art = null;
-        final String artLocation = media.getAlbumArt();
-        if (!TextUtils.isEmpty(artLocation)) {
-            final int dp128 = (int) (context.getResources().getDisplayMetrics().density * 128);
-            try {
-                art = glide.load(artLocation)
-                        .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(dp128, dp128)
-                        .get();
-            } catch (InterruptedException | ExecutionException e) {
-                Log.w(TAG, e);
-            }
-        }
-        if (art == null) {
-            art = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.album_art_placeholder);
-        }
-
-        final Intent contentIntent = Henson.with(context)
-                .gotoNowPlayingActivity()
-                .hasCoverTransition(false)
-                .hasListViewTransition(false)
-                .build();
-
-        final NotificationCompat.Style style = new android.support.v4.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSession.getSessionToken())
-                .setShowActionsInCompactView(1, 2);
+        final Bitmap art = loadAlbumArt(context, media);
+        final PendingIntent contentIntent = createContentIntent(context);
+        final NotificationCompat.Style style = createNotificationStyle(mediaSession);
 
         final NotificationCompat.Builder b
                 = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -101,8 +55,7 @@ final class PlaybackNotification {
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setContentTitle(media.getTitle())
                 .setContentText(media.getArtist())
-                .setContentIntent(PendingIntent.getActivity(context, 4, contentIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT))
+                .setContentIntent(contentIntent)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setSmallIcon(state == PlaybackState.STATE_PLAYING ? R.drawable.ic_stat_play
@@ -116,7 +69,53 @@ final class PlaybackNotification {
         return b.build();
     }
 
-    private static void addAction1(@NonNull final Context context,
+    @NonNull
+    private static Bitmap loadAlbumArt(
+            @NonNull final Context context,
+            @NonNull final Media media) {
+        Bitmap art = null;
+        final String artLocation = media.getAlbumArt();
+        if (!TextUtils.isEmpty(artLocation)) {
+            final int dp128 = (int) (context.getResources().getDisplayMetrics().density * 128);
+            try {
+                art = Glide.with(context).load(artLocation)
+                        .asBitmap()
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(dp128, dp128)
+                        .get();
+            } catch (InterruptedException | ExecutionException e) {
+                Log.w(TAG, e);
+            }
+        }
+        if (art == null) {
+            art = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.album_art_placeholder);
+        }
+        return art;
+    }
+
+    @NonNull
+    private static PendingIntent createContentIntent(@NonNull final Context context) {
+        final Intent contentIntent = Henson.with(context)
+                .gotoNowPlayingActivity()
+                .hasCoverTransition(false)
+                .hasListViewTransition(false)
+                .build();
+
+        return PendingIntent.getActivity(context, 4, contentIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    @NonNull
+    private static NotificationCompat.Style createNotificationStyle(
+            @NonNull final MediaSessionCompat mediaSession) {
+        return new android.support.v4.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession.getSessionToken())
+                .setShowActionsInCompactView(1, 2);
+    }
+
+    private static void addAction1(
+            @NonNull final Context context,
             @NonNull final NotificationCompat.Builder b) {
         final int direction = context.getResources().getInteger(R.integer.layoutDirection);
         switch (direction) {
