@@ -61,7 +61,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     public void onReceive(final Context context, final Intent intent) {
         DaggerHolder.getInstance(context).mainComponent().inject(this);
         if (PlaybackService.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-            @PlaybackState.State final int state = intent.getIntExtra(
+            @PlaybackState final int state = intent.getIntExtra(
                     PlaybackService.EXTRA_STATE, PlaybackState.STATE_IDLE);
             onStateChanged(context, albumThumbHolder, playbackData, state);
         } else {
@@ -103,7 +103,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
             @NonNull final PlaybackData playbackData,
             @NonNull final AppWidgetManager appWidgetManager,
             @NonNull final int[] appWidgetIds,
-            @PlaybackState.State final int state) {
+            @PlaybackState final int state) {
         final RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.appwidget_single_row);
 

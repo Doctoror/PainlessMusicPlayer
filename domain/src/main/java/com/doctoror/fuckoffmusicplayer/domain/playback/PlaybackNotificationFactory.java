@@ -13,6 +13,6 @@ public interface PlaybackNotificationFactory {
     Notification create(
             @NonNull Context context,
             @NonNull Media media,
-            @PlaybackState.State int state,
+            @PlaybackState int state,
             @NonNull MediaSessionCompat mediaSession);
 }

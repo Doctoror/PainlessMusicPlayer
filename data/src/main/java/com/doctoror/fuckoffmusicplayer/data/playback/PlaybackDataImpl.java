@@ -164,7 +164,7 @@ public final class PlaybackDataImpl implements PlaybackData {
     }
 
     @Override
-    public void setPlaybackState(@PlaybackState.State final int state) {
+    public void setPlaybackState(@PlaybackState final int state) {
         synchronized (mPlaybackStateSubjectLock) {
             mPlaybackStateSubject.onNext(state);
         }

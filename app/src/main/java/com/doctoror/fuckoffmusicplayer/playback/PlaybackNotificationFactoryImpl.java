@@ -38,7 +38,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     public Notification create(
             @NonNull final Context context,
             @NonNull final Media media,
-            @PlaybackState.State final int state,
+            @PlaybackState final int state,
             @NonNull final MediaSessionCompat mediaSession) {
         ensureChannelExists(context);
 
@@ -132,7 +132,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
 
     private static void addAction2(@NonNull final Context context,
             @NonNull final NotificationCompat.Builder b,
-            @PlaybackState.State final int state) {
+            @PlaybackState final int state) {
         final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
                 PlaybackServiceIntentFactory.intentPlayPause(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);

@@ -50,12 +50,15 @@ public interface PlaybackData {
     @NonNull
     Long getMediaPosition();
 
-    @PlaybackState.State
+    @PlaybackState
     int getPlaybackState();
 
-    void setPlaybackState(@PlaybackState.State int state);
+    void setPlaybackState(@PlaybackState int state);
+
     void setPlayQueue(@Nullable List<Media> queue);
+
     void setPlayQueuePosition(int position);
+
     void setMediaPosition(long position);
 
     void persistAsync();

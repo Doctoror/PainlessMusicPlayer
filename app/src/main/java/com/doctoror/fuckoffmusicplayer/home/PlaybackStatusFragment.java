@@ -78,7 +78,7 @@ public final class PlaybackStatusFragment extends BaseFragment {
                 .subscribe(this::onQueuePositionChanged));
     }
 
-    private void onStateChanged(@PlaybackState.State int state) {
+    private void onStateChanged(@PlaybackState final int state) {
         mModel.setBtnPlayRes(state == PlaybackState.STATE_PLAYING
                 ? R.drawable.ic_pause_white_24dp : R.drawable.ic_play_arrow_white_24dp);
     }

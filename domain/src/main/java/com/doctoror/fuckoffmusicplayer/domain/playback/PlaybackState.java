@@ -23,28 +23,19 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Represents a playback state
  */
-public final class PlaybackState {
+@IntDef({
+        PlaybackState.STATE_IDLE,
+        PlaybackState.STATE_LOADING,
+        PlaybackState.STATE_PLAYING,
+        PlaybackState.STATE_PAUSED,
+        PlaybackState.STATE_ERROR
+})
+@Retention(RetentionPolicy.SOURCE)
+public @interface PlaybackState {
 
-    public static final int STATE_IDLE = 0;
-    public static final int STATE_LOADING = 1;
-    public static final int STATE_PLAYING = 2;
-    public static final int STATE_PAUSED = 3;
-    public static final int STATE_ERROR = 4;
-
-    @IntDef({
-            STATE_IDLE,
-            STATE_LOADING,
-            STATE_PLAYING,
-            STATE_PAUSED,
-            STATE_ERROR
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface State {
-
-    }
-
-    private PlaybackState() {
-        throw new UnsupportedOperationException();
-    }
-
+    int STATE_IDLE = 0;
+    int STATE_LOADING = 1;
+    int STATE_PLAYING = 2;
+    int STATE_PAUSED = 3;
+    int STATE_ERROR = 4;
 }

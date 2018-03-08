@@ -56,7 +56,7 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
 
     private Media media;
 
-    @PlaybackState.State
+    @PlaybackState
     private int state;
 
     SLSPlaybackReporter(
@@ -81,7 +81,7 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaybackStateChanged(@PlaybackState.State final int state,
+    public void reportPlaybackStateChanged(@PlaybackState final int state,
             @Nullable final CharSequence errorMessage) {
         if (this.state != state) {
             report(media, this.state, state);
@@ -90,8 +90,8 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     }
 
     private void report(@Nullable final Media media,
-            @PlaybackState.State final int prevState,
-            @PlaybackState.State final int state) {
+            @PlaybackState final int prevState,
+            @PlaybackState final int state) {
         if (settings.isScrobbleEnabled() && media != null) {
             final Intent intent = new Intent(ACTION);
             intent.putExtra(APP_NAME, "Painless Music Player");
@@ -122,8 +122,8 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
         // Don't care
     }
 
-    private static int toSlsState(@PlaybackState.State final int prevState,
-            @PlaybackState.State final int playbackState) {
+    private static int toSlsState(@PlaybackState final int prevState,
+            @PlaybackState final int playbackState) {
         switch (playbackState) {
             case PlaybackState.STATE_IDLE:
                 return STATE_PAUSE;

@@ -36,7 +36,7 @@ public interface PlaybackReporter {
 
     @WorkerThread
     void reportPlaybackStateChanged(
-            @PlaybackState.State int state,
+            @PlaybackState int state,
             @Nullable CharSequence errorMessage);
 
     @WorkerThread

@@ -114,7 +114,7 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaybackStateChanged(@PlaybackState.State final int state,
+    public void reportPlaybackStateChanged(@PlaybackState final int state,
             @Nullable final CharSequence errorMessage) {
         @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
         final boolean isPlaying = playbackState == PlaybackStateCompat.STATE_PLAYING;
@@ -148,7 +148,7 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @PlaybackStateCompat.State
-    private static int toPlaybackStateCompat(@PlaybackState.State final int state) {
+    private static int toPlaybackStateCompat(@PlaybackState final int state) {
         switch (state) {
             case PlaybackState.STATE_LOADING:
                 return PlaybackStateCompat.STATE_BUFFERING;

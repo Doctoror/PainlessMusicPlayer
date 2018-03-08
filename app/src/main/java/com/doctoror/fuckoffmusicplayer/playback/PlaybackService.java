@@ -25,7 +25,7 @@ import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.State;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
@@ -113,7 +113,7 @@ public final class PlaybackService extends Service {
     static final String EXTRA_POSITION = "EXTRA_POSITION";
     static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
-    @State
+    @PlaybackState
     private int mState = STATE_IDLE;
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
@@ -615,7 +615,7 @@ public final class PlaybackService extends Service {
         }
     }
 
-    private void setState(@State final int state) {
+    private void setState(@PlaybackState final int state) {
         if (mState != state) {
             mState = state;
             mExecutor.submit(() -> reportPlaybackState(state, mErrorMessage));
@@ -647,7 +647,7 @@ public final class PlaybackService extends Service {
     }
 
     @WorkerThread
-    private void reportPlaybackState(@State final int state,
+    private void reportPlaybackState(@PlaybackState final int state,
             @Nullable final CharSequence errorMessage) {
         mPlaybackReporter.reportPlaybackStateChanged(state, errorMessage);
     }

@@ -121,7 +121,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private NowPlayingActivityIntentHandler mIntentHandler;
 
-    @PlaybackState.State
+    @PlaybackState
     private int mState = PlaybackState.STATE_IDLE;
 
     private boolean mTransitionPostponed;
