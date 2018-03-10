@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListB
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
@@ -147,6 +148,9 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
 
     @Inject
     PlaybackData mPlaybackData;
+
+    @Inject
+    PlaybackServiceControl mPlaybackServiceControl;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -300,7 +304,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             if (queue.isEmpty()) {
                 onQueueEmpty();
             } else {
-                QueueUtils.play(getActivity(), mPlaybackData, queue);
+                QueueUtils.play(mPlaybackServiceControl, mPlaybackData, queue);
                 prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
                         albumArt, null), true);
             }

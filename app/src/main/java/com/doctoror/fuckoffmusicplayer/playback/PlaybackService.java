@@ -25,6 +25,7 @@ import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
@@ -169,6 +170,9 @@ public final class PlaybackService extends Service {
     PlaybackReporterFactory mPlaybackReporterFactory;
 
     @Inject
+    PlaybackServiceControl mPlaybackServiceControl;
+
+    @Inject
     QueueProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
 
     @Override
@@ -287,7 +291,7 @@ public final class PlaybackService extends Service {
                 break;
 
             case ACTION_STOP_WITH_ERROR:
-                onActionStopWithError(intent.getStringExtra(EXTRA_ERROR_MESSAGE));
+                onActionStopWithError(intent.getCharSequenceExtra(EXTRA_ERROR_MESSAGE));
                 break;
 
             case ACTION_PREV:
@@ -396,7 +400,7 @@ public final class PlaybackService extends Service {
         stopSelf();
     }
 
-    private void onActionStopWithError(@Nullable final String errorMessage) {
+    private void onActionStopWithError(@Nullable final CharSequence errorMessage) {
         mPlayOnFocusGain = false;
         mErrorMessage = errorMessage;
         stopSelf();
@@ -474,7 +478,7 @@ public final class PlaybackService extends Service {
             mRecentlyScannedPlaylistFactory.recentlyScannedQueue()
                     .subscribeOn(Schedulers.io())
                     .subscribe(
-                            q -> QueueUtils.play(PlaybackService.this, mPlaybackData, q),
+                            q -> QueueUtils.play(mPlaybackServiceControl, mPlaybackData, q),
                             t -> Log.w(TAG, "Failed to load recently scanned", t));
         }
     }

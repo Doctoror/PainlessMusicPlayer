@@ -34,7 +34,7 @@ public final class PlaybackServiceIntentFactory {
     }
 
     @NonNull
-    public static Intent intentPlay(@NonNull final Context context) {
+    static Intent intentPlay(@NonNull final Context context) {
         return intentAction(context, PlaybackService.ACTION_PLAY);
     }
 
@@ -44,12 +44,12 @@ public final class PlaybackServiceIntentFactory {
     }
 
     @NonNull
-    public static Intent intentPause(@NonNull final Context context) {
+    static Intent intentPause(@NonNull final Context context) {
         return intentAction(context, PlaybackService.ACTION_PAUSE);
     }
 
     @NonNull
-    public static Intent intentStop(@NonNull final Context context) {
+    static Intent intentStop(@NonNull final Context context) {
         return intentAction(context, PlaybackService.ACTION_STOP);
     }
 
@@ -64,20 +64,20 @@ public final class PlaybackServiceIntentFactory {
     }
 
     @NonNull
-    public static Intent intentResendState() {
+    static Intent intentResendState() {
         return new Intent(PlaybackService.ACTION_RESEND_STATE);
     }
 
     @NonNull
-    public static Intent intentStopWithError(@NonNull final Context context,
-            @NonNull final String errorMessage) {
+    static Intent intentStopWithError(@NonNull final Context context,
+            @NonNull final CharSequence errorMessage) {
         final Intent intent = intentAction(context, PlaybackService.ACTION_STOP_WITH_ERROR);
         intent.putExtra(PlaybackService.EXTRA_ERROR_MESSAGE, errorMessage);
         return intent;
     }
 
     @NonNull
-    public static Intent intentSeek(@NonNull final Context context,
+    static Intent intentSeek(@NonNull final Context context,
             final float positionPercent) {
         final Intent intent = intentAction(context, PlaybackService.ACTION_SEEK);
         intent.putExtra(PlaybackService.EXTRA_POSITION_PERCENT, positionPercent);
@@ -85,7 +85,7 @@ public final class PlaybackServiceIntentFactory {
     }
 
     @NonNull
-    public static Intent intentPlayMediaFromQueue(@NonNull final Context context,
+    static Intent intentPlayMediaFromQueue(@NonNull final Context context,
             final long mediaId) {
         final Intent intent = intentAction(context, PlaybackService.ACTION_PLAY_MEDIA_FROM_QUEUE);
         intent.putExtra(PlaybackService.EXTRA_MEDIA_ID, mediaId);

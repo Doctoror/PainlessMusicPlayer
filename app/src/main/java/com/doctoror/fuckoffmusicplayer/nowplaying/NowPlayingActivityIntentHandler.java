@@ -20,6 +20,7 @@ import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
@@ -54,6 +55,9 @@ public final class NowPlayingActivityIntentHandler {
     PlaybackData mPlaybackData;
 
     @Inject
+    PlaybackServiceControl mPlaybackServiceControl;
+
+    @Inject
     QueueProviderFiles mQueueProviderFiles;
 
     @NonNull
@@ -72,7 +76,7 @@ public final class NowPlayingActivityIntentHandler {
         }
     }
 
-    private static void onActionView(@NonNull final Activity activity,
+    private void onActionView(@NonNull final Activity activity,
             @NonNull final PlaybackData playbackData,
             @NonNull final Intent intent,
             @NonNull final QueueProviderFiles queueProvider) {
@@ -83,7 +87,7 @@ public final class NowPlayingActivityIntentHandler {
                         t -> onActionViewQueueLoadFailed(activity));
     }
 
-    private static void onActionViewQueueLoaded(
+    private void onActionViewQueueLoaded(
             @NonNull final Activity activity,
             @NonNull final PlaybackData playbackData,
             @NonNull final List<Media> queue) {
@@ -93,7 +97,7 @@ public final class NowPlayingActivityIntentHandler {
                         R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
                         .show();
             } else {
-                QueueUtils.play(activity, playbackData, queue);
+                QueueUtils.play(mPlaybackServiceControl, playbackData, queue);
             }
         }
     }

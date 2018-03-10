@@ -25,7 +25,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
 
 import android.app.PendingIntent;
@@ -53,8 +53,11 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     @Inject
     PlaybackData playbackData;
 
-    private static void requestServiceStateUpdate(final Context context) {
-        PlaybackServiceControl.resendState(context);
+    @Inject
+    PlaybackServiceControl mPlaybackServiceControl;
+
+    private void requestServiceStateUpdate() {
+        mPlaybackServiceControl.resendState();
     }
 
     @Override
@@ -82,7 +85,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
                 appWidgetManager,
                 appWidgetIds,
                 PlaybackState.STATE_IDLE);
-        requestServiceStateUpdate(context);
+        requestServiceStateUpdate();
     }
 
     private static void onStateChanged(

@@ -19,6 +19,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
@@ -59,6 +60,9 @@ public final class TracksFragment extends LibraryListFragment {
 
     @Inject
     PlaybackData mPlaybackData;
+
+    @Inject
+    PlaybackServiceControl mPlaybackServiceControl;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -141,7 +145,7 @@ public final class TracksFragment extends LibraryListFragment {
             if (queue.isEmpty()) {
                 onQueueEmpty();
             } else {
-                QueueUtils.play(getActivity(), mPlaybackData, queue);
+                QueueUtils.play(mPlaybackServiceControl, mPlaybackData, queue);
                 NowPlayingActivity.start(getActivity(), null, getItemView(startPosition));
             }
         }

@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.media.session;
 
 import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -29,39 +29,40 @@ import android.support.v4.media.session.MediaSessionCompat;
  */
 final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
-    @NonNull
-    private final Context mContext;
-
     private final SearchUtils mSearchUtils;
+    
+    private final PlaybackServiceControl mPlaybackServiceControl;
 
-    MediaSessionCallback(@NonNull final Context context) {
-        mContext = context.getApplicationContext();
+    MediaSessionCallback(
+            @NonNull final Context context,
+            @NonNull final PlaybackServiceControl playbackServiceControl) {
         mSearchUtils = new SearchUtils(context);
+        mPlaybackServiceControl = playbackServiceControl;
     }
 
     @Override
     public void onPlay() {
-        PlaybackServiceControl.play(mContext);
+        mPlaybackServiceControl.play();
     }
 
     @Override
     public void onStop() {
-        PlaybackServiceControl.stop(mContext);
+        mPlaybackServiceControl.stop();
     }
 
     @Override
     public void onPause() {
-        PlaybackServiceControl.pause(mContext);
+        mPlaybackServiceControl.pause();
     }
 
     @Override
     public void onSkipToPrevious() {
-        PlaybackServiceControl.prev(mContext);
+        mPlaybackServiceControl.prev();
     }
 
     @Override
     public void onSkipToNext() {
-        PlaybackServiceControl.next(mContext);
+        mPlaybackServiceControl.next();
     }
 
     @Override

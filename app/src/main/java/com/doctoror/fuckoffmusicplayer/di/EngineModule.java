@@ -24,10 +24,12 @@ import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackNotificationFactoryImpl;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControlImpl;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -56,6 +58,12 @@ final class EngineModule {
     @Singleton
     PlaybackParams providePlaybackParams(@NonNull final Context context) {
         return new PlaybackParamsImpl(context);
+    }
+
+    @Provides
+    @Singleton
+    PlaybackServiceControl providePlaybackServiceControl(@NonNull final Context context) {
+        return new PlaybackServiceControlImpl(context);
     }
 
     @Provides

@@ -24,7 +24,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
 
 import android.databinding.DataBindingUtil;
@@ -48,6 +48,9 @@ public final class PlaybackStatusFragment extends BaseFragment {
 
     @Inject
     PlaybackData mPlaybackData;
+
+    @Inject
+    PlaybackServiceControl mPlaybackServiceControl;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -99,7 +102,7 @@ public final class PlaybackStatusFragment extends BaseFragment {
     }
 
     private void onBtnPlayClick() {
-        PlaybackServiceControl.playPause(getActivity());
+        mPlaybackServiceControl.playPause();
     }
 
     private void onRootClick(@NonNull final View view) {

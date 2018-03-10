@@ -38,7 +38,7 @@ import com.doctoror.fuckoffmusicplayer.formatter.ArtistAlbumFormatter;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Objects;
@@ -159,6 +159,9 @@ public final class NowPlayingActivity extends BaseActivity {
     PlaybackParams mPlaybackParams;
 
     @Inject
+    PlaybackServiceControl mPlaybackServiceControl;
+
+    @Inject
     QueueProviderFiles mFileQueueProvider;
 
     private Media mBoundTrack;
@@ -213,7 +216,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(final SeekBar seekBar) {
-                PlaybackServiceControl.seek(NowPlayingActivity.this,
+                mPlaybackServiceControl.seek(
                         (float) seekBar.getProgress() / (float) seekBar.getMax());
                 mSeekBarTracking = false;
             }
@@ -454,19 +457,19 @@ public final class NowPlayingActivity extends BaseActivity {
     public void onPlayClick() {
         switch (mState) {
             case PlaybackState.STATE_IDLE:
-                PlaybackServiceControl.play(this);
+                mPlaybackServiceControl.play();
                 break;
 
             case PlaybackState.STATE_PAUSED:
-                PlaybackServiceControl.playPause(this);
+                mPlaybackServiceControl.playPause();
                 break;
 
             case PlaybackState.STATE_PLAYING:
-                PlaybackServiceControl.playPause(this);
+                mPlaybackServiceControl.playPause();
                 break;
 
             case PlaybackState.STATE_ERROR:
-                PlaybackServiceControl.play(this);
+                mPlaybackServiceControl.play();
                 break;
 
             case PlaybackState.STATE_LOADING:
@@ -477,12 +480,12 @@ public final class NowPlayingActivity extends BaseActivity {
 
     @OnClick(R.id.btnPrev)
     public void onPrevClick() {
-        PlaybackServiceControl.prev(this);
+        mPlaybackServiceControl.prev();
     }
 
     @OnClick(R.id.btnNext)
     public void onNextClick() {
-        PlaybackServiceControl.next(this);
+        mPlaybackServiceControl.next();
     }
 
     @OnClick(R.id.btnShuffle)
