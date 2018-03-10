@@ -32,7 +32,7 @@ public final class MediaSessionFactoryImpl implements MediaSessionFactory {
 
     private final Context context;
     private final Class<? extends Activity> sessionActivityClass;
-    private final MediaSessionCallback mediaSessionCallback;
+    private final MediaSessionCompat.Callback mediaSessionCallback;
 
     private final ComponentName mediaButtonReceiver;
     private final PendingIntent mediaButtonIntent;
@@ -40,7 +40,7 @@ public final class MediaSessionFactoryImpl implements MediaSessionFactory {
     public MediaSessionFactoryImpl(
             @NonNull final Context context,
             @NonNull final Class<? extends Activity> sessionActivityClass,
-            @NonNull final MediaSessionCallback mediaSessionCallback) {
+            @NonNull final MediaSessionCompat.Callback mediaSessionCallback) {
         this.context = context;
         this.sessionActivityClass = sessionActivityClass;
         this.mediaSessionCallback = mediaSessionCallback;

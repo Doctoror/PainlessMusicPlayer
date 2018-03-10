@@ -22,6 +22,7 @@ import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
@@ -35,7 +36,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
@@ -123,9 +123,9 @@ public final class PlaybackService extends Service {
 
     private MediaPlayer mMediaPlayer;
 
+    @Nullable
     private AudioManager mAudioManager;
 
-    private MediaSessionHolder mMediaSessionHolder;
     private PlaybackReporter mPlaybackReporter;
 
     private boolean mAudioFocusRequested;
@@ -155,6 +155,9 @@ public final class PlaybackService extends Service {
 
     @Inject
     MediaPlayerFactory mMediaPlayerFactory;
+
+    @Inject
+    MediaSessionHolder mMediaSessionHolder;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -189,7 +192,6 @@ public final class PlaybackService extends Service {
 
         mAudioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
-        mMediaSessionHolder = MediaSessionHolder.getInstance(this);
         mMediaSessionHolder.openSession();
 
         final MediaSessionCompat mediaSession = mMediaSessionHolder.getMediaSession();
@@ -600,7 +602,9 @@ public final class PlaybackService extends Service {
         }
         mAudioEffects.relese();
         mMediaPlayer.release();
-        mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
+        if (mAudioManager != null) {
+            mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
+        }
         mAudioFocusRequested = false;
         mMediaSessionHolder.closeSession();
         if (mWakeLock != null && mWakeLock.isHeld()) {
@@ -611,8 +615,13 @@ public final class PlaybackService extends Service {
     private void ensureFocusRequested() {
         if (!mAudioFocusRequested) {
             mAudioFocusRequested = true;
-            final int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
-                    AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            final int result;
+            if (mAudioManager != null) {
+                result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
+                        AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+            } else {
+                result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
+            }
             mPlayOnFocusGain = true;
             mFocusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
         }

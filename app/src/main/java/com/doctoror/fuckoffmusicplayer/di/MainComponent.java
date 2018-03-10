@@ -35,7 +35,7 @@ import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsFragment
 import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
-import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserServiceImpl;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackService;
@@ -102,11 +102,11 @@ public interface MainComponent {
 
     void inject(PlaybackService target);
 
+    void inject(MediaBrowserServiceImpl target);
+
     void inject(MediaManagerService target);
 
     void inject(SingleRowAppWidgetProvider target);
-
-    void inject(MediaSessionHolder target);
 
     void inject(SettingsActivity target);
 }

@@ -13,75 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.media.session;
+package com.doctoror.fuckoffmusicplayer.data.media.session;
 
 import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 
-import android.annotation.SuppressLint;
-import android.app.PendingIntent;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
-
-import javax.inject.Inject;
 
 /**
  * {@link MediaSessionCompat} holder
  */
-public final class MediaSessionHolder {
+public final class MediaSessionHolderImpl implements MediaSessionHolder {
 
-    private static final String TAG = "MediaSessionHolder";
-
-    @SuppressLint("StaticFieldLeak") // Is not a leak for application context
-    private static MediaSessionHolder instance;
-
-    @NonNull
-    public static MediaSessionHolder getInstance(@NonNull final Context context) {
-        if (instance == null) {
-            synchronized (MediaSessionHolder.class) {
-                if (instance == null) {
-                    instance = new MediaSessionHolder(context.getApplicationContext());
-                }
-            }
-        }
-        return instance;
-    }
-
-    @NonNull
-    private final Context context;
+    private final MediaSessionFactory mediaSessionFactory;
+    private final PlaybackData playbackData;
+    private final PlaybackReporterFactory playbackReporterFactory;
 
     private volatile int openCount;
 
     private MediaSessionCompat mediaSession;
 
-    @Inject
-    MediaSessionCompat.Callback mediaSessionCallback;
-
-    @Inject
-    PlaybackData playbackData;
-
-    @Inject
-    PlaybackReporterFactory playbackReporterFactory;
-
-    private MediaSessionHolder(@NonNull final Context context) {
-        DaggerHolder.getInstance(context).mainComponent().inject(this);
-        this.context = context;
+    public MediaSessionHolderImpl(
+            @NonNull final MediaSessionFactory mediaSessionFactory,
+            @NonNull final PlaybackData playbackData,
+            @NonNull final PlaybackReporterFactory playbackReporterFactory) {
+        this.mediaSessionFactory = mediaSessionFactory;
+        this.playbackData = playbackData;
+        this.playbackReporterFactory = playbackReporterFactory;
     }
 
     public void openSession() {
-        synchronized (MediaSessionHolder.class) {
+        synchronized (MediaSessionHolderImpl.class) {
             openCount++;
             if (openCount == 1) {
                 doOpenSession();
@@ -90,7 +61,7 @@ public final class MediaSessionHolder {
     }
 
     public void closeSession() {
-        synchronized (MediaSessionHolder.class) {
+        synchronized (MediaSessionHolderImpl.class) {
             openCount--;
             if (openCount == 0) {
                 doCloseSession();
@@ -99,25 +70,7 @@ public final class MediaSessionHolder {
     }
 
     private void doOpenSession() {
-        final ComponentName mediaButtonReceiver = new ComponentName(context,
-                MediaButtonReceiver.class);
-
-        final PendingIntent broadcastIntent = PendingIntent
-                .getBroadcast(context, 1, new Intent(context, MediaButtonReceiver.class),
-                        PendingIntent.FLAG_UPDATE_CURRENT);
-
-        final MediaSessionCompat mediaSession = new MediaSessionCompat(context, TAG,
-                mediaButtonReceiver, broadcastIntent);
-
-        mediaSession.setCallback(mediaSessionCallback);
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        mediaSession.setActive(true);
-        mediaSession.setSessionActivity(PendingIntent.getActivity(context, 1,
-                new Intent(context, NowPlayingActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
-
-        this.mediaSession = mediaSession;
-
+        this.mediaSession = mediaSessionFactory.newMediaSession();
         Handlers.runOnIoThread(() -> reportMediaAndState(mediaSession));
     }
 

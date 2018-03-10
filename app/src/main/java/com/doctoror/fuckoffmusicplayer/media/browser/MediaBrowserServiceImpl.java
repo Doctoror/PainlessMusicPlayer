@@ -17,7 +17,7 @@
 package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 
 import android.os.Bundle;
 import android.service.media.MediaBrowserService;
@@ -29,6 +29,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * {@link MediaBrowserService} implementation
  */
@@ -36,10 +38,12 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
 
     private static final String TAG = "MediaBrowserServiceImpl";
 
-    private MediaSessionHolder mMediaSessionHolder;
     private MediaBrowserImpl mMediaBrowser;
 
     private PackageValidator mPackageValidator;
+
+    @Inject
+    MediaSessionHolder mMediaSessionHolder;
 
     @Override
     public void onCreate() {
@@ -47,7 +51,6 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
         mPackageValidator = new PackageValidator(this);
         mMediaBrowser = new MediaBrowserImpl(this);
 
-        mMediaSessionHolder = MediaSessionHolder.getInstance(this);
         mMediaSessionHolder.openSession();
 
         final MediaSessionCompat mediaSession = mMediaSessionHolder.getMediaSession();
@@ -92,7 +95,7 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
     }
 
     @Override
-    public void onLoadItem(final String itemId, final Result<MediaItem> result) {
+    public void onLoadItem(final String itemId, @NonNull final Result<MediaItem> result) {
         if (Log.logDEnabled()) {
             Log.d(TAG, "OnLoadItem: itemId=" + itemId);
         }
