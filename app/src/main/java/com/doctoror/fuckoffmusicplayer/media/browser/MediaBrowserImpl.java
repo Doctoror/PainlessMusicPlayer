@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.media.browser;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.media.browser.MediaBrowserConstants;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
@@ -57,12 +58,6 @@ public final class MediaBrowserImpl {
     private static final String MEDIA_ID_CURENT_QUEUE = "CURRENT_QUEUE";
     private static final String MEDIA_ID_RECENT_ALBUMS = "RECENT_ALBUMS";
     private static final String MEDIA_ID_GENRES = "GENRES";
-
-    static final String MEDIA_ID_PREFIX_GENRE = "GENRE/";
-    static final String MEDIA_ID_PREFIX_ALBUM = "ALBUM/";
-
-    static final String MEDIA_ID_RANDOM = "RANDOM";
-    static final String MEDIA_ID_RECENT = "RECENT";
 
     @NonNull
     private final Context mContext;
@@ -172,7 +167,7 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemRandom() {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_RANDOM)
+                .setMediaId(MediaBrowserConstants.MEDIA_ID_RANDOM)
                 .setTitle(mContext.getText(R.string.Random_playlist))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
@@ -181,7 +176,7 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemRecent() {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_RECENT)
+                .setMediaId(MediaBrowserConstants.MEDIA_ID_RECENT)
                 .setTitle(mContext.getText(R.string.Recently_added))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
@@ -247,7 +242,7 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemGenre(@NonNull final Cursor c) {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_PREFIX_GENRE.concat(c.getString(GenresProvider.COLUMN_ID)))
+                .setMediaId(MediaBrowserConstants.MEDIA_ID_PREFIX_GENRE.concat(c.getString(GenresProvider.COLUMN_ID)))
                 .setTitle(c.getString(GenresProvider.COLUMN_NAME))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
@@ -256,7 +251,7 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemAlbum(@NonNull final Cursor c) {
         final MediaDescriptionCompat.Builder description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MEDIA_ID_PREFIX_ALBUM.concat(c.getString(AlbumsProvider.COLUMN_ID)))
+                .setMediaId(MediaBrowserConstants.MEDIA_ID_PREFIX_ALBUM.concat(c.getString(AlbumsProvider.COLUMN_ID)))
                 .setTitle(c.getString(AlbumsProvider.COLUMN_ALBUM));
         final String art = c.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (!TextUtils.isEmpty(art)) {

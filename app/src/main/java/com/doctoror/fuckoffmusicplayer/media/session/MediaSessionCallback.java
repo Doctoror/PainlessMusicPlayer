@@ -15,22 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.media.session;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
-import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
-
-import java.util.List;
 
 import io.reactivex.schedulers.Schedulers;
 
@@ -39,22 +35,27 @@ import io.reactivex.schedulers.Schedulers;
  */
 final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
-    private final Resources resources;
-    private final SearchUtils searchUtils;
-    private final PlaybackServiceControl playbackServiceControl;
-    private final QueueFromSearchProvider queueFromSearchProvider;
+    private static final String TAG = "MediaSessionCallback";
+
+    private final MediaIdPlaybackInitializer mediaIdPlaybackInitializer;
+    private final MediaBrowserQueueProvider mediaBrowserQueueProvider;
+
     private final PlaybackInitializer playbackInitializer;
+    private final PlaybackServiceControl playbackServiceControl;
+
+    private final SearchPlaybackInitializer searchPlaybackInitializer;
 
     MediaSessionCallback(
-            @NonNull final Context context,
+            @NonNull final MediaIdPlaybackInitializer mediaIdPlaybackInitializer,
+            @NonNull final MediaBrowserQueueProvider mediaBrowserQueueProvider,
+            @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceControl playbackServiceControl,
-            @NonNull final QueueFromSearchProvider queueFromSearchProvider,
-            @NonNull final PlaybackInitializer playbackInitializer) {
-        this.resources = context.getResources();
-        searchUtils = new SearchUtils(context);
-        this.playbackServiceControl = playbackServiceControl;
-        this.queueFromSearchProvider = queueFromSearchProvider;
+            @NonNull final SearchPlaybackInitializer searchPlaybackInitializer) {
+        this.mediaIdPlaybackInitializer = mediaIdPlaybackInitializer;
+        this.mediaBrowserQueueProvider = mediaBrowserQueueProvider;
         this.playbackInitializer = playbackInitializer;
+        this.playbackServiceControl = playbackServiceControl;
+        this.searchPlaybackInitializer = searchPlaybackInitializer;
     }
 
     @Override
@@ -83,26 +84,35 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
     }
 
     @Override
-    public void onPlayFromSearch(final String query, final Bundle extras) {
-        queueFromSearchProvider.queueSourceFromSearch(query, extras)
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::onQueueLoaded, (t) -> onQueueLoadFailed(query));
+    public void onPlayFromSearch(@Nullable final String query, @Nullable final Bundle extras) {
+        searchPlaybackInitializer.playFromSearch(query, extras);
     }
 
     @Override
-    public void onPlayFromMediaId(final String mediaId, final Bundle extras) {
-        Handlers.runOnIoThread(() -> searchUtils.onPlayFromMediaId(mediaId));
+    public void onPlayFromMediaId(@Nullable final String mediaId, @Nullable final Bundle extras) {
+        if (TextUtils.isEmpty(mediaId)) {
+            Log.w(TAG, "Media ID is null or empty");
+            return;
+        }
+
+        mediaBrowserQueueProvider.fromMediaBrowserId(mediaId)
+                .take(1)
+                .subscribeOn(Schedulers.io())
+                .subscribe((queue) -> {
+                    if (queue.isEmpty()) {
+                        // Normal case when media id may not resemble album or genre.
+                        mediaIdPlaybackInitializer.playFromMediaId(mediaIdToLong(mediaId));
+                    } else {
+                        playbackInitializer.setQueueAndPlay(queue, 0);
+                    }
+                }, (t) -> Log.w(TAG, "Failed to load queue for media id = " + mediaId));
     }
 
-    private void onQueueLoaded(@NonNull final List<Media> queue) {
-        playbackInitializer.setQueueAndPlay(queue, 0);
-    }
-
-    private void onQueueLoadFailed(@NonNull final String query) {
-        final CharSequence message = TextUtils.isEmpty(query)
-                ? resources.getText(R.string.No_media_found)
-                : resources.getString(R.string.No_media_found_for_s, query);
-
-        playbackServiceControl.stopWithError(message);
+    private long mediaIdToLong(@NonNull final String mediaId) {
+        try {
+            return Long.parseLong(mediaId);
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Media id is not a number, is " + mediaId);
+        }
     }
 }

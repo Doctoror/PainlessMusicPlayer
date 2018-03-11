@@ -20,12 +20,15 @@ import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
 import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
@@ -70,6 +73,15 @@ public final class MediaSessionHolder {
     private MediaSessionCompat mediaSession;
 
     @Inject
+    MediaBrowserQueueProvider mediaBrowserQueueProvider;
+
+    @Inject
+    MediaIdPlaybackInitializer mediaIdPlaybackInitializer;
+
+    @Inject
+    SearchPlaybackInitializer searchPlaybackInitializer;
+
+    @Inject
     PlaybackData playbackData;
 
     @Inject
@@ -80,9 +92,6 @@ public final class MediaSessionHolder {
 
     @Inject
     PlaybackServiceControl mPlaybackServiceControl;
-
-    @Inject
-    QueueFromSearchProvider mQueueFromSearchProvider;
 
     private MediaSessionHolder(@NonNull final Context context) {
         DaggerHolder.getInstance(context).mainComponent().inject(this);
@@ -119,10 +128,12 @@ public final class MediaSessionHolder {
                 mediaButtonReceiver, broadcastIntent);
 
         mediaSession.setCallback(new MediaSessionCallback(
-                context,
+                mediaIdPlaybackInitializer,
+                mediaBrowserQueueProvider,
+                mPlaybackInitializer,
                 mPlaybackServiceControl,
-                mQueueFromSearchProvider,
-                mPlaybackInitializer));
+                searchPlaybackInitializer));
+
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setActive(true);

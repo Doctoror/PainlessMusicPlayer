@@ -20,6 +20,7 @@ import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
@@ -44,6 +45,12 @@ final class AppContextModule {
     @Singleton
     Context provideContext() {
         return mContext;
+    }
+
+    @Provides
+    @Singleton
+    Resources provideResources() {
+        return mContext.getResources();
     }
 
     @Provides

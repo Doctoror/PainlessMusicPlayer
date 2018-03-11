@@ -16,20 +16,20 @@
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
-import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Pair;
@@ -52,27 +52,30 @@ public final class NowPlayingActivityIntentHandler {
     private static final String TAG = "IntentHandler";
 
     @Inject
-    PlaybackData mPlaybackData;
+    PlaybackData playbackData;
 
     @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
+    SearchPlaybackInitializer searchPlaybackInitializer;
 
     @Inject
-    QueueProviderFiles mQueueProviderFiles;
+    PlaybackServiceControl playbackServiceControl;
+
+    @Inject
+    QueueProviderFiles queueProviderFiles;
 
     @NonNull
-    private final Activity mActivity;
+    private final Activity activity;
 
     NowPlayingActivityIntentHandler(@NonNull final Activity activity) {
         DaggerHolder.getInstance(activity).mainComponent().inject(this);
-        mActivity = activity;
+        this.activity = activity;
     }
 
     void handleIntent(@NonNull final Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            onActionView(mActivity, mPlaybackData, intent, mQueueProviderFiles);
+            onActionView(activity, playbackData, intent, queueProviderFiles);
         } else if (MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH.equals(intent.getAction())) {
-            onActionPlayFromSearch(mActivity, intent);
+            onActionPlayFromSearch(intent);
         }
     }
 
@@ -97,7 +100,7 @@ public final class NowPlayingActivityIntentHandler {
                         R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
                         .show();
             } else {
-                QueueUtils.play(mPlaybackServiceControl, playbackData, queue);
+                QueueUtils.play(playbackServiceControl, playbackData, queue);
             }
         }
     }
@@ -110,10 +113,10 @@ public final class NowPlayingActivityIntentHandler {
         }
     }
 
-    private static void onActionPlayFromSearch(@NonNull final Activity activity,
-            @NonNull final Intent intent) {
-        Handlers.runOnIoThread(() -> new SearchUtils(activity).onPlayFromSearch(
-                intent.getStringExtra(SearchManager.QUERY), intent.getExtras()));
+    private void onActionPlayFromSearch(@NonNull final Intent intent) {
+        final String query = intent.getStringExtra(SearchManager.QUERY);
+        final Bundle extras = intent.getExtras();
+        searchPlaybackInitializer.playFromSearch(query, extras);
     }
 
     @NonNull
