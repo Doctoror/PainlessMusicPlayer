@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue.provider;
+package com.doctoror.fuckoffmusicplayer.domain.playback.initializer;
 
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.List;
 
-import io.reactivex.Observable;
+public interface PlaybackInitializer {
 
-public interface QueueFromSearchProvider {
-
-    @NonNull
-    Observable<List<Media>> queueSourceFromSearch(
-            @NonNull String query,
-            @Nullable Bundle extras);
+    void setQueueAndPlay(@NonNull List<Media> queue, int position);
 }

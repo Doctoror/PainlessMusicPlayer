@@ -20,6 +20,7 @@ import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
@@ -72,6 +73,9 @@ public final class MediaSessionHolder {
     PlaybackData playbackData;
 
     @Inject
+    PlaybackInitializer mPlaybackInitializer;
+
+    @Inject
     PlaybackReporterFactory playbackReporterFactory;
 
     @Inject
@@ -115,7 +119,10 @@ public final class MediaSessionHolder {
                 mediaButtonReceiver, broadcastIntent);
 
         mediaSession.setCallback(new MediaSessionCallback(
-                context, mPlaybackServiceControl, mQueueFromSearchProvider));
+                context,
+                mPlaybackServiceControl,
+                mQueueFromSearchProvider,
+                mPlaybackInitializer));
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setActive(true);

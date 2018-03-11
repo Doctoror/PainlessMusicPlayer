@@ -39,6 +39,10 @@ public final class QueueUtils {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * @deprecated use {@link com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer}
+     */
+    @Deprecated
     public static void play(
             @NonNull final PlaybackServiceControl control,
             @NonNull final PlaybackData playbackData,
@@ -49,6 +53,10 @@ public final class QueueUtils {
         play(control, playbackData, mediaList, 0);
     }
 
+    /**
+     * @deprecated use {@link com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer}
+     */
+    @Deprecated
     public static void play(
             @NonNull final PlaybackServiceControl control,
             @NonNull final PlaybackData playbackData,
