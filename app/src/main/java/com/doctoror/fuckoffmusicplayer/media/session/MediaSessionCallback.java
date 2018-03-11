@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.media.session;
 
 import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
 import com.doctoror.fuckoffmusicplayer.media.browser.SearchUtils;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 
@@ -33,11 +34,16 @@ final class MediaSessionCallback extends MediaSessionCompat.Callback {
     
     private final PlaybackServiceControl mPlaybackServiceControl;
 
+    // TODO use it
+    private final QueueFromSearchProvider mQueueFromSearchProvider;
+
     MediaSessionCallback(
             @NonNull final Context context,
-            @NonNull final PlaybackServiceControl playbackServiceControl) {
+            @NonNull final PlaybackServiceControl playbackServiceControl,
+            @NonNull final QueueFromSearchProvider queueFromSearchProvider) {
         mSearchUtils = new SearchUtils(context);
         mPlaybackServiceControl = playbackServiceControl;
+        mQueueFromSearchProvider = queueFromSearchProvider;
     }
 
     @Override

@@ -56,7 +56,8 @@ import dagger.Component;
         FormatterModule.class,
         EngineModule.class,
         MediaStoreProvidersModule.class,
-        MediaModule.class
+        MediaModule.class,
+        QueueModule.class
 })
 public interface MainComponent {
 
