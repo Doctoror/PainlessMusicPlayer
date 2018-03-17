@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.media.session;
+package com.doctoror.fuckoffmusicplayer.data.media.session;
 
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
@@ -33,26 +33,26 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * {@link MediaSessionCompat.Callback} implementation
  */
-final class MediaSessionCallback extends MediaSessionCompat.Callback {
+public final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
     private static final String TAG = "MediaSessionCallback";
 
-    private final MediaIdPlaybackInitializer mediaIdPlaybackInitializer;
     private final MediaBrowserQueueProvider mediaBrowserQueueProvider;
+    private final MediaIdPlaybackInitializer mediaIdPlaybackInitializer;
 
     private final PlaybackInitializer playbackInitializer;
     private final PlaybackServiceControl playbackServiceControl;
 
     private final SearchPlaybackInitializer searchPlaybackInitializer;
 
-    MediaSessionCallback(
-            @NonNull final MediaIdPlaybackInitializer mediaIdPlaybackInitializer,
+    public MediaSessionCallback(
             @NonNull final MediaBrowserQueueProvider mediaBrowserQueueProvider,
+            @NonNull final MediaIdPlaybackInitializer mediaIdPlaybackInitializer,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceControl playbackServiceControl,
             @NonNull final SearchPlaybackInitializer searchPlaybackInitializer) {
-        this.mediaIdPlaybackInitializer = mediaIdPlaybackInitializer;
         this.mediaBrowserQueueProvider = mediaBrowserQueueProvider;
+        this.mediaIdPlaybackInitializer = mediaIdPlaybackInitializer;
         this.playbackInitializer = playbackInitializer;
         this.playbackServiceControl = playbackServiceControl;
         this.searchPlaybackInitializer = searchPlaybackInitializer;

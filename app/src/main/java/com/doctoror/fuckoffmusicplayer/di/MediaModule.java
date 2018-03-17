@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.di;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumMediaIdsProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionCallback;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
 import com.doctoror.fuckoffmusicplayer.data.playlist.RecentActivityManagerImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderAlbumsMediaStore;
@@ -31,6 +32,10 @@ import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
@@ -39,10 +44,12 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
+import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.media.session.MediaSessionCompat;
 
 import javax.inject.Singleton;
 
@@ -78,6 +85,21 @@ final class MediaModule {
     MediaStoreMediaProvider provideMediaStoreMediaProvider(
             @NonNull final ContentResolver contentResolver) {
         return new MediaStoreMediaProvider(contentResolver);
+    }
+
+    @Provides
+    MediaSessionCompat.Callback provideMediaSessionCallback(
+            @NonNull final MediaBrowserQueueProvider mediaBrowserQueueProvider,
+            @NonNull final MediaIdPlaybackInitializer mediaIdPlaybackInitializer,
+            @NonNull final PlaybackInitializer playbackInitializer,
+            @NonNull final PlaybackServiceControl playbackServiceControl,
+            @NonNull final SearchPlaybackInitializer searchPlaybackInitializer) {
+        return new MediaSessionCallback(
+                mediaBrowserQueueProvider,
+                mediaIdPlaybackInitializer,
+                playbackInitializer,
+                playbackServiceControl,
+                searchPlaybackInitializer);
     }
 
     @Provides

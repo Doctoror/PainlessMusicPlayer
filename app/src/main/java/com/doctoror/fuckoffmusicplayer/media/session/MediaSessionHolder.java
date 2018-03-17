@@ -19,12 +19,7 @@ import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
@@ -72,25 +67,13 @@ public final class MediaSessionHolder {
     private MediaSessionCompat mediaSession;
 
     @Inject
-    MediaBrowserQueueProvider mediaBrowserQueueProvider;
-
-    @Inject
-    MediaIdPlaybackInitializer mediaIdPlaybackInitializer;
-
-    @Inject
-    SearchPlaybackInitializer searchPlaybackInitializer;
+    MediaSessionCompat.Callback mediaSessionCallback;
 
     @Inject
     PlaybackData playbackData;
 
     @Inject
-    PlaybackInitializer mPlaybackInitializer;
-
-    @Inject
     PlaybackReporterFactory playbackReporterFactory;
-
-    @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
 
     private MediaSessionHolder(@NonNull final Context context) {
         DaggerHolder.getInstance(context).mainComponent().inject(this);
@@ -126,13 +109,7 @@ public final class MediaSessionHolder {
         final MediaSessionCompat mediaSession = new MediaSessionCompat(context, TAG,
                 mediaButtonReceiver, broadcastIntent);
 
-        mediaSession.setCallback(new MediaSessionCallback(
-                mediaIdPlaybackInitializer,
-                mediaBrowserQueueProvider,
-                mPlaybackInitializer,
-                mPlaybackServiceControl,
-                searchPlaybackInitializer));
-
+        mediaSession.setCallback(mediaSessionCallback);
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setActive(true);
