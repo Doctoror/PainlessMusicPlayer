@@ -17,12 +17,11 @@ package com.doctoror.fuckoffmusicplayer.data.media;
 
 import com.doctoror.fuckoffmusicplayer.data.util.SelectionUtils;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 
 import android.content.ContentResolver;
-import android.database.Cursor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import java.io.IOException;
@@ -33,15 +32,21 @@ import java.io.IOException;
 public final class MediaManagerMediaStore implements MediaManager {
 
     @NonNull
-    private final ContentResolver mContentResolver;
+    private final ContentResolver contentResolver;
 
-    public MediaManagerMediaStore(@NonNull final ContentResolver contentResolver) {
-        mContentResolver = contentResolver;
+    @NonNull
+    private final AlbumMediaIdsProvider albumMediaIdsProvider;
+
+    public MediaManagerMediaStore(
+            @NonNull final ContentResolver contentResolver,
+            @NonNull final AlbumMediaIdsProvider albumMediaIdsProvider) {
+        this.contentResolver = contentResolver;
+        this.albumMediaIdsProvider = albumMediaIdsProvider;
     }
 
     @Override
     public void deletePlaylist(final long id) throws IOException {
-        final int count = mContentResolver.delete(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
+        final int count = contentResolver.delete(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
                 MediaStore.Audio.Playlists._ID + '=' + id, null);
         if (count != 1) {
             throw new IOException(
@@ -51,7 +56,7 @@ public final class MediaManagerMediaStore implements MediaManager {
 
     @Override
     public void deleteMedia(final long id) throws IOException {
-        final int count = mContentResolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+        final int count = contentResolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 MediaStore.Audio.Media._ID + '=' + id, null);
         if (count != 1) {
             throw new IOException(
@@ -61,23 +66,12 @@ public final class MediaManagerMediaStore implements MediaManager {
 
     @Override
     public void deleteAlbum(final long id) throws IOException {
-        final long[] mediaIds = getAlbumMediaIds(mContentResolver, id);
-        deleteMedias(mContentResolver, mediaIds);
-    }
-
-    @NonNull
-    public static long[] getAlbumMediaIds(@NonNull final ContentResolver resolver,
-            final long id) throws IOException {
-        final Cursor c = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                new String[] {MediaStore.Audio.Media._ID},
-                MediaStore.Audio.Media.ALBUM_ID + '=' + id,
-                null,
-                null);
-        return getFirstLongColumnForAllRowsAndClose(c);
+        final long[] mediaIds = albumMediaIdsProvider.getAlbumMediaIds(id);
+        deleteMedias(contentResolver, mediaIds);
     }
 
     @WorkerThread
-    static void deleteMedias(
+    private static void deleteMedias(
             @NonNull final ContentResolver resolver,
             @NonNull final long[] ids) throws IOException {
         final int count = deleteMediasSilently(resolver, ids);
@@ -93,20 +87,5 @@ public final class MediaManagerMediaStore implements MediaManager {
             @NonNull final long[] ids) {
         return resolver.delete(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, ids), null);
-    }
-
-    @NonNull
-    private static long[] getFirstLongColumnForAllRowsAndClose(@Nullable final Cursor c)
-            throws IOException {
-        if (c == null) {
-            throw new IOException("Query returned null");
-        }
-        final long[] result = new long[c.getCount()];
-        int i = 0;
-        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext(), i++) {
-            result[i] = c.getLong(0);
-        }
-        c.close();
-        return result;
     }
 }

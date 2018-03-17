@@ -15,15 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.queue;
 
-import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
-import android.content.ContentResolver;
 import android.support.annotation.NonNull;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,20 +32,6 @@ public final class QueueUtils {
 
     private QueueUtils() {
         throw new UnsupportedOperationException();
-    }
-
-    public static void removeAlbumFromCurrentQueue(
-            @NonNull final ContentResolver contentResolver,
-            @NonNull final PlaybackData playbackData,
-            final long albumId) {
-        final long[] ids;
-        try {
-            ids = MediaManagerMediaStore.getAlbumMediaIds(contentResolver, albumId);
-        } catch (IOException e) {
-            Log.w(TAG, "Will not remove album from current queue", e);
-            return;
-        }
-        removeMediasFromCurrentQueue(playbackData, ids);
     }
 
     public static void removeMediasFromCurrentQueue(

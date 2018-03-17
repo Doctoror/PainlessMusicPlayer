@@ -22,6 +22,7 @@ import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveAlbumFromQueueUseCase;
 import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.Manifest;
@@ -77,10 +78,13 @@ public final class MediaManagerService extends IntentService {
     }
 
     @Inject
-    MediaManager mMediaManager;
+    MediaManager mediaManager;
 
     @Inject
-    PlaybackData mPlaybackData;
+    PlaybackData playbackData;
+
+    @Inject
+    RemoveAlbumFromQueueUseCase removeAlbumFromQueueUseCase;
 
     public MediaManagerService() {
         super(TAG);
@@ -128,9 +132,9 @@ public final class MediaManagerService extends IntentService {
         }
 
         final long targetId = getTargetId(intent);
-        QueueUtils.removeMediasFromCurrentQueue(mPlaybackData, targetId);
+        QueueUtils.removeMediasFromCurrentQueue(playbackData, targetId);
         try {
-            mMediaManager.deleteMedia(targetId);
+            mediaManager.deleteMedia(targetId);
         } catch (SecurityIoException e) {
             showToast(R.string.Media_on_removable_storage_cannot_be_deleted);
         } catch (IOException e) {
@@ -147,10 +151,10 @@ public final class MediaManagerService extends IntentService {
         }
 
         final long albumId = getTargetId(intent);
-        QueueUtils.removeAlbumFromCurrentQueue(getContentResolver(), mPlaybackData, albumId);
+        removeAlbumFromQueueUseCase.removeAlbumFromCurrentQueue(albumId);
 
         try {
-            mMediaManager.deleteAlbum(albumId);
+            mediaManager.deleteAlbum(albumId);
         } catch (SecurityIoException e) {
             showToast(R.string.Media_on_removable_storage_cannot_be_deleted);
         } catch (IOException e) {
@@ -168,7 +172,7 @@ public final class MediaManagerService extends IntentService {
 
         final long targetId = getTargetId(intent);
         try {
-            mMediaManager.deletePlaylist(targetId);
+            mediaManager.deletePlaylist(targetId);
         } catch (SecurityIoException e) {
             showToast(R.string.Media_on_removable_storage_cannot_be_deleted);
         } catch (IOException e) {

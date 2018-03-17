@@ -27,6 +27,7 @@ import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
@@ -77,9 +78,11 @@ final class MediaStoreProvidersModule {
 
     @Provides
     @Singleton
-    MediaManager provideMediaManager(@NonNull final ContentResolver resolver) {
+    MediaManager provideMediaManager(
+            @NonNull final ContentResolver resolver,
+            @NonNull final AlbumMediaIdsProvider albumMediaIdsProvider) {
         return new MediaManagerSet(
                 new MediaManagerFile(resolver),
-                new MediaManagerMediaStore(resolver));
+                new MediaManagerMediaStore(resolver, albumMediaIdsProvider));
     }
 }
