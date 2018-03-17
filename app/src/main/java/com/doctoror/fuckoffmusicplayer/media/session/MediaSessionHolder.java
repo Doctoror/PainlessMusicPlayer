@@ -25,7 +25,6 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
