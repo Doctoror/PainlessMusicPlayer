@@ -70,18 +70,29 @@ final class MediaModule {
 
     @Provides
     @Singleton
+    AlbumThumbHolder provideAlbumThumbHolder(@NonNull final Context context) {
+        return new AlbumThumbHolderImpl(context);
+    }
+
+    @Provides
+    @Singleton
+    PlaybackData providePlaybackData(@NonNull final Context context,
+            @NonNull final RecentActivityManager recentActivityManager) {
+        return new PlaybackDataImpl(context, recentActivityManager);
+    }
+
+    @Provides
+    @Singleton
     RecentActivityManager provideRecentActivityManager(@NonNull final Context context) {
         return RecentActivityManagerImpl.getInstance(context);
     }
 
     @Provides
-    @Singleton
     MediaProvider provideMediaProvider(@NonNull final ContentResolver contentResolver) {
-        return new MediaStoreMediaProvider(contentResolver);
+        return provideMediaStoreMediaProvider(contentResolver);
     }
 
     @Provides
-    @Singleton
     MediaStoreMediaProvider provideMediaStoreMediaProvider(
             @NonNull final ContentResolver contentResolver) {
         return new MediaStoreMediaProvider(contentResolver);
@@ -150,18 +161,5 @@ final class MediaModule {
     QueueProviderRecentlyScanned provideQueueProviderRecentlyScanned(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new QueueProviderRecentlyScannedMediaStore(mediaProvider);
-    }
-
-    @Provides
-    @Singleton
-    PlaybackData providePlaybackData(@NonNull final Context context,
-            @NonNull final RecentActivityManager recentActivityManager) {
-        return new PlaybackDataImpl(context, recentActivityManager);
-    }
-
-    @Provides
-    @Singleton
-    AlbumThumbHolder provideAlbumThumbHolder(@NonNull final Context context) {
-        return new AlbumThumbHolderImpl(context);
     }
 }

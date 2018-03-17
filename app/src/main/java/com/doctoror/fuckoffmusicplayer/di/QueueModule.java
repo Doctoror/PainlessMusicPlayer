@@ -44,8 +44,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveMediasFromCurr
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 
@@ -53,7 +51,6 @@ import dagger.Provides;
 final class QueueModule {
 
     @Provides
-    @Singleton
     PlaybackInitializer providePlaybackInitializer(
             @NonNull final PlaybackServiceControl control,
             @NonNull final PlaybackData playbackData) {
@@ -61,7 +58,6 @@ final class QueueModule {
     }
 
     @Provides
-    @Singleton
     MediaBrowserQueueProvider mediaBrowserQueueProvider(
             @NonNull final QueueProviderAlbums queueProviderAlbums,
             @NonNull final QueueProviderGenres queueProviderGenres,
@@ -75,7 +71,6 @@ final class QueueModule {
     }
 
     @Provides
-    @Singleton
     MediaIdPlaybackInitializer mediaIdPlaybackInitializer(
             @NonNull final Resources resources,
             @NonNull final MediaProvider mediaProvider,
@@ -91,7 +86,6 @@ final class QueueModule {
     }
 
     @Provides
-    @Singleton
     SearchPlaybackInitializer searchPlaybackInitializer(
             @NonNull final Resources resources,
             @NonNull final PlaybackInitializer playbackInitializer,
@@ -119,7 +113,6 @@ final class QueueModule {
     }
 
     @Provides
-    @Singleton
     QueueFromSearchProvider provideQueueFromSearchProvider(
             @NonNull final QueueProviderArtists artistPlaylistFactory,
             @NonNull final QueueProviderAlbums albumPlaylistFactory,
