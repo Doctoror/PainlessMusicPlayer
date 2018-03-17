@@ -82,13 +82,6 @@ final class MediaModule {
 
     @Provides
     @Singleton
-    PlaybackData providePlaybackData(@NonNull final Context context,
-            @NonNull final RecentActivityManager recentActivityManager) {
-        return new PlaybackDataImpl(context, recentActivityManager);
-    }
-
-    @Provides
-    @Singleton
     RecentActivityManager provideRecentActivityManager(@NonNull final Context context) {
         return RecentActivityManagerImpl.getInstance(context);
     }

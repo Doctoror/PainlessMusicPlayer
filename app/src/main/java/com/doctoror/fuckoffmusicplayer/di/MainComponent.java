@@ -56,6 +56,7 @@ import dagger.Component;
         EngineModule.class,
         MediaStoreProvidersModule.class,
         MediaModule.class,
+        PlaybackModule.class,
         QueueModule.class
 })
 public interface MainComponent {

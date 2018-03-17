@@ -51,13 +51,6 @@ import dagger.Provides;
 final class QueueModule {
 
     @Provides
-    PlaybackInitializer providePlaybackInitializer(
-            @NonNull final PlaybackServiceControl control,
-            @NonNull final PlaybackData playbackData) {
-        return new PlaybackInitializerImpl(control, playbackData);
-    }
-
-    @Provides
     MediaBrowserQueueProvider mediaBrowserQueueProvider(
             @NonNull final QueueProviderAlbums queueProviderAlbums,
             @NonNull final QueueProviderGenres queueProviderGenres,
@@ -68,21 +61,6 @@ final class QueueModule {
                 queueProviderGenres,
                 queueProviderRecentlyScanned,
                 queueProviderRandom);
-    }
-
-    @Provides
-    MediaIdPlaybackInitializer mediaIdPlaybackInitializer(
-            @NonNull final Resources resources,
-            @NonNull final MediaProvider mediaProvider,
-            @NonNull final PlaybackInitializer playbackInitializer,
-            @NonNull final PlaybackData playbackData,
-            @NonNull final PlaybackServiceControl playbackServiceControl) {
-        return new MediaIdPlaybackInitializerImpl(
-                resources.getText(R.string.No_media_found),
-                mediaProvider,
-                playbackInitializer,
-                playbackData,
-                playbackServiceControl);
     }
 
     @Provides
