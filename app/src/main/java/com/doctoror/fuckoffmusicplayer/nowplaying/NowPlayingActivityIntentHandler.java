@@ -18,12 +18,10 @@ package com.doctoror.fuckoffmusicplayer.nowplaying;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
-import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -52,13 +50,10 @@ public final class NowPlayingActivityIntentHandler {
     private static final String TAG = "IntentHandler";
 
     @Inject
-    PlaybackData playbackData;
+    PlaybackInitializer playbackInitializer;
 
     @Inject
     SearchPlaybackInitializer searchPlaybackInitializer;
-
-    @Inject
-    PlaybackServiceControl playbackServiceControl;
 
     @Inject
     QueueProviderFiles queueProviderFiles;
@@ -73,26 +68,24 @@ public final class NowPlayingActivityIntentHandler {
 
     void handleIntent(@NonNull final Intent intent) {
         if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-            onActionView(activity, playbackData, intent, queueProviderFiles);
+            onActionView(activity, intent, queueProviderFiles);
         } else if (MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH.equals(intent.getAction())) {
             onActionPlayFromSearch(intent);
         }
     }
 
     private void onActionView(@NonNull final Activity activity,
-            @NonNull final PlaybackData playbackData,
             @NonNull final Intent intent,
             @NonNull final QueueProviderFiles queueProvider) {
         queueFromActionView(queueProvider, intent)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(q -> onActionViewQueueLoaded(activity, playbackData, q),
+                .subscribe(q -> onActionViewQueueLoaded(activity, q),
                         t -> onActionViewQueueLoadFailed(activity));
     }
 
     private void onActionViewQueueLoaded(
             @NonNull final Activity activity,
-            @NonNull final PlaybackData playbackData,
             @NonNull final List<Media> queue) {
         if (!activity.isFinishing()) {
             if (queue.isEmpty()) {
@@ -100,7 +93,7 @@ public final class NowPlayingActivityIntentHandler {
                         R.string.Failed_to_start_playback, Toast.LENGTH_LONG)
                         .show();
             } else {
-                QueueUtils.play(playbackServiceControl, playbackData, queue);
+                playbackInitializer.setQueueAndPlay(queue, 0);
             }
         }
     }
