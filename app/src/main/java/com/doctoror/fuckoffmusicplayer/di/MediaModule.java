@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.data.media.AlbumMediaIdsProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
@@ -27,6 +27,8 @@ import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderGenresMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRandomMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRecentlyScannedMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
@@ -54,8 +56,14 @@ import dagger.Provides;
 final class MediaModule {
 
     @Provides
+    AlbumMediaIdsProvider provideAlbumMediaIdsProvider(
+            @NonNull final ContentResolver contentResolver) {
+        return new AlbumMediaIdsProviderImpl(contentResolver);
+    }
+
+    @Provides
     @Singleton
-    RecentActivityManager provideRecentPlaylistsManager(@NonNull final Context context) {
+    RecentActivityManager provideRecentActivityManager(@NonNull final Context context) {
         return RecentActivityManagerImpl.getInstance(context);
     }
 
