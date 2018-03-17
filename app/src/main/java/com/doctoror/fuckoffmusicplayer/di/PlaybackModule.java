@@ -27,7 +27,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlayba
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderSearch;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -75,12 +75,12 @@ final class PlaybackModule {
             @NonNull final Resources resources,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceControl playbackServiceControl,
-            @NonNull final QueueFromSearchProvider queueFromSearchProvider) {
+            @NonNull final QueueProviderSearch queueProviderSearch) {
         return new SearchPlaybackInitializerImpl(
                 resources.getText(R.string.No_media_found),
                 resources.getString(R.string.No_media_found_for_s),
                 playbackInitializer,
                 playbackServiceControl,
-                queueFromSearchProvider);
+                queueProviderSearch);
     }
 }

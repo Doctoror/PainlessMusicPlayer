@@ -24,18 +24,18 @@ import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderPlaylistsMediaSto
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRandomMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRecentlyScannedMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.provider.MediaBrowserQueueProviderImpl;
-import com.doctoror.fuckoffmusicplayer.data.queue.provider.QueueFromSearchProviderImpl;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderMediaBrowserImpl;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderSearchImpl;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderMediaBrowser;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderSearch;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
 
 import android.content.ContentResolver;
 import android.support.annotation.NonNull;
@@ -45,28 +45,6 @@ import dagger.Provides;
 
 @Module
 final class QueueProvidersModule {
-
-    @Provides
-    MediaBrowserQueueProvider mediaBrowserQueueProvider(
-            @NonNull final QueueProviderAlbums queueProviderAlbums,
-            @NonNull final QueueProviderGenres queueProviderGenres,
-            @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,
-            @NonNull final QueueProviderRandom queueProviderRandom) {
-        return new MediaBrowserQueueProviderImpl(
-                queueProviderAlbums,
-                queueProviderGenres,
-                queueProviderRecentlyScanned,
-                queueProviderRandom);
-    }
-
-    @Provides
-    QueueFromSearchProvider provideQueueFromSearchProvider(
-            @NonNull final QueueProviderArtists artistPlaylistFactory,
-            @NonNull final QueueProviderAlbums albumPlaylistFactory,
-            @NonNull final QueueProviderTracks tracksQueueProvide) {
-        return new QueueFromSearchProviderImpl(
-                artistPlaylistFactory, albumPlaylistFactory, tracksQueueProvide);
-    }
 
     @Provides
     QueueProviderAlbums provideQueueProviderAlbums(
@@ -93,6 +71,26 @@ final class QueueProvidersModule {
     }
 
     @Provides
+    QueueProviderMediaBrowser provideQueueProviderMediaBrowser(
+            @NonNull final QueueProviderAlbums queueProviderAlbums,
+            @NonNull final QueueProviderGenres queueProviderGenres,
+            @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,
+            @NonNull final QueueProviderRandom queueProviderRandom) {
+        return new QueueProviderMediaBrowserImpl(
+                queueProviderAlbums,
+                queueProviderGenres,
+                queueProviderRecentlyScanned,
+                queueProviderRandom);
+    }
+
+    @Provides
+    QueueProviderPlaylists provideQueueProviderPlaylists(
+            @NonNull final ContentResolver resolver,
+            @NonNull final MediaStoreMediaProvider mediaProvider) {
+        return new QueueProviderPlaylistsMediaStore(resolver, mediaProvider);
+    }
+
+    @Provides
     QueueProviderRandom provideQueueProviderRandom(
             @NonNull final MediaStoreMediaProvider mediaProvider) {
         return new QueueProviderRandomMediaStore(mediaProvider);
@@ -105,9 +103,12 @@ final class QueueProvidersModule {
     }
 
     @Provides
-    QueueProviderPlaylists provideQueueProviderPlaylists(@NonNull final ContentResolver resolver,
-            @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new QueueProviderPlaylistsMediaStore(resolver, mediaProvider);
+    QueueProviderSearch provideQueueProviderSearch(
+            @NonNull final QueueProviderArtists artistPlaylistFactory,
+            @NonNull final QueueProviderAlbums albumPlaylistFactory,
+            @NonNull final QueueProviderTracks tracksQueueProvide) {
+        return new QueueProviderSearchImpl(
+                artistPlaylistFactory, albumPlaylistFactory, tracksQueueProvide);
     }
 
     @Provides

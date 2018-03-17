@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.queue.provider;
+package com.doctoror.fuckoffmusicplayer.data.queue;
 
 import com.doctoror.fuckoffmusicplayer.data.media.browser.MediaBrowserConstants;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
@@ -21,7 +21,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderMediaBrowser;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,14 +32,14 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
-public final class MediaBrowserQueueProviderImpl implements MediaBrowserQueueProvider {
+public final class QueueProviderMediaBrowserImpl implements QueueProviderMediaBrowser {
 
     private final QueueProviderAlbums queueProviderAlbums;
     private final QueueProviderGenres queueProviderGenres;
     private final QueueProviderRecentlyScanned queueProviderRecentlyScanned;
     private final QueueProviderRandom queueProviderRandom;
 
-    public MediaBrowserQueueProviderImpl(
+    public QueueProviderMediaBrowserImpl(
             @NonNull final QueueProviderAlbums queueProviderAlbums,
             @NonNull final QueueProviderGenres queueProviderGenres,
             @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,

@@ -20,7 +20,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderMediaBrowser;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,24 +37,24 @@ public final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
     private static final String TAG = "MediaSessionCallback";
 
-    private final MediaBrowserQueueProvider mediaBrowserQueueProvider;
     private final MediaIdPlaybackInitializer mediaIdPlaybackInitializer;
 
     private final PlaybackInitializer playbackInitializer;
     private final PlaybackServiceControl playbackServiceControl;
 
+    private final QueueProviderMediaBrowser mediaBrowserQueueProvider;
     private final SearchPlaybackInitializer searchPlaybackInitializer;
 
     public MediaSessionCallback(
-            @NonNull final MediaBrowserQueueProvider mediaBrowserQueueProvider,
             @NonNull final MediaIdPlaybackInitializer mediaIdPlaybackInitializer,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceControl playbackServiceControl,
+            @NonNull final QueueProviderMediaBrowser queueProviderMediaBrowser,
             @NonNull final SearchPlaybackInitializer searchPlaybackInitializer) {
-        this.mediaBrowserQueueProvider = mediaBrowserQueueProvider;
         this.mediaIdPlaybackInitializer = mediaIdPlaybackInitializer;
         this.playbackInitializer = playbackInitializer;
         this.playbackServiceControl = playbackServiceControl;
+        this.mediaBrowserQueueProvider = queueProviderMediaBrowser;
         this.searchPlaybackInitializer = searchPlaybackInitializer;
     }
 

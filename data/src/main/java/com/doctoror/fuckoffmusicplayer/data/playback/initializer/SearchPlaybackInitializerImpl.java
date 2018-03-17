@@ -19,7 +19,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderSearch;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,19 +37,19 @@ public final class SearchPlaybackInitializerImpl implements SearchPlaybackInitia
 
     private final PlaybackInitializer playbackInitializer;
     private final PlaybackServiceControl playbackServiceControl;
-    private final QueueFromSearchProvider queueFromSearchProvider;
+    private final QueueProviderSearch queueProviderSearch;
 
     public SearchPlaybackInitializerImpl(
             @NonNull final CharSequence noMediaFoundText,
             @NonNull final String noMediaFoundNonFormattedText,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceControl playbackServiceControl,
-            @NonNull final QueueFromSearchProvider queueFromSearchProvider) {
+            @NonNull final QueueProviderSearch queueProviderSearch) {
         this.noMediaFoundText = noMediaFoundText;
         this.noMediaFoundNonFormattedText = noMediaFoundNonFormattedText;
         this.playbackInitializer = playbackInitializer;
         this.playbackServiceControl = playbackServiceControl;
-        this.queueFromSearchProvider = queueFromSearchProvider;
+        this.queueProviderSearch = queueProviderSearch;
     }
 
     @Override
@@ -59,7 +59,7 @@ public final class SearchPlaybackInitializerImpl implements SearchPlaybackInitia
             return;
         }
 
-        queueFromSearchProvider.queueSourceFromSearch(query, extras)
+        queueProviderSearch.queueSourceFromSearch(query, extras)
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::setQueueAndPlay, (t) -> onQueueLoadFailed(query));

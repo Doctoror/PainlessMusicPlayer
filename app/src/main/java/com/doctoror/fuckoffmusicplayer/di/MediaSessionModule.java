@@ -25,7 +25,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderMediaBrowser;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 
@@ -43,16 +43,16 @@ final class MediaSessionModule {
 
     @Provides
     MediaSessionCompat.Callback provideMediaSessionCallback(
-            @NonNull final MediaBrowserQueueProvider mediaBrowserQueueProvider,
+            @NonNull final QueueProviderMediaBrowser queueProviderMediaBrowser,
             @NonNull final MediaIdPlaybackInitializer mediaIdPlaybackInitializer,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceControl playbackServiceControl,
             @NonNull final SearchPlaybackInitializer searchPlaybackInitializer) {
         return new MediaSessionCallback(
-                mediaBrowserQueueProvider,
                 mediaIdPlaybackInitializer,
                 playbackInitializer,
                 playbackServiceControl,
+                queueProviderMediaBrowser,
                 searchPlaybackInitializer);
     }
 

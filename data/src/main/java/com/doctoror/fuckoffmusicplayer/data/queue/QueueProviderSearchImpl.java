@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.queue.provider;
+package com.doctoror.fuckoffmusicplayer.data.queue;
 
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderSearch;
 
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,13 +31,13 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
-public final class QueueFromSearchProviderImpl implements QueueFromSearchProvider {
+public final class QueueProviderSearchImpl implements QueueProviderSearch {
 
     private final QueueProviderArtists artistPlaylistFactory;
     private final QueueProviderAlbums albumPlaylistFactory;
     private final QueueProviderTracks tracksQueueProvider;
 
-    public QueueFromSearchProviderImpl(
+    public QueueProviderSearchImpl(
             @NonNull final QueueProviderArtists artistPlaylistFactory,
             @NonNull final QueueProviderAlbums albumPlaylistFactory,
             @NonNull final QueueProviderTracks tracksQueueProvider) {
