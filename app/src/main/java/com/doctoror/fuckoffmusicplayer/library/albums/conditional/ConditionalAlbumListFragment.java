@@ -29,13 +29,11 @@ import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
@@ -147,10 +145,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     QueueProviderAlbums mQueueFactory;
 
     @Inject
-    PlaybackData mPlaybackData;
-
-    @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
+    PlaybackInitializer mPlaybackInitializer;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -304,7 +299,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             if (queue.isEmpty()) {
                 onQueueEmpty();
             } else {
-                QueueUtils.play(mPlaybackServiceControl, mPlaybackData, queue);
+                mPlaybackInitializer.setQueueAndPlay(queue, 0);
                 prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
                         albumArt, null), true);
             }
