@@ -25,9 +25,9 @@ import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
@@ -36,7 +36,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.media.session.MediaSessionHolder;
-import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 import com.doctoror.fuckoffmusicplayer.util.RandomHolder;
 
 import android.Manifest;
@@ -161,6 +160,9 @@ public final class PlaybackService extends Service {
     PlaybackData mPlaybackData;
 
     @Inject
+    PlaybackInitializer mPlaybackInitializer;
+
+    @Inject
     PlaybackParams mPlaybackParams;
 
     @Inject
@@ -168,9 +170,6 @@ public final class PlaybackService extends Service {
 
     @Inject
     PlaybackReporterFactory mPlaybackReporterFactory;
-
-    @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
 
     @Inject
     QueueProviderRecentlyScanned mRecentlyScannedPlaylistFactory;
@@ -478,7 +477,7 @@ public final class PlaybackService extends Service {
             mRecentlyScannedPlaylistFactory.recentlyScannedQueue()
                     .subscribeOn(Schedulers.io())
                     .subscribe(
-                            q -> QueueUtils.play(mPlaybackServiceControl, mPlaybackData, q),
+                            q -> mPlaybackInitializer.setQueueAndPlay(q, 0),
                             t -> Log.w(TAG, "Failed to load recently scanned", t));
         }
     }
