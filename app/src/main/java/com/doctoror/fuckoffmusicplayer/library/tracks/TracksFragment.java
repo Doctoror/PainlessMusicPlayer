@@ -18,15 +18,13 @@ package com.doctoror.fuckoffmusicplayer.library.tracks;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -43,7 +41,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 /**
- * "Tracks" list fragment
+ * "Tracks" list fragment.
  */
 public final class TracksFragment extends LibraryListFragment {
 
@@ -53,16 +51,13 @@ public final class TracksFragment extends LibraryListFragment {
     private Cursor mData;
 
     @Inject
+    PlaybackInitializer mPlaybackInitializer;
+
+    @Inject
     TracksProvider mTracksProvider;
 
     @Inject
     QueueProviderTracks mPlaylistFactory;
-
-    @Inject
-    PlaybackData mPlaybackData;
-
-    @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -70,7 +65,7 @@ public final class TracksFragment extends LibraryListFragment {
         DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
 
         mAdapter = new TracksRecyclerAdapter(getActivity());
-        mAdapter.setOnTrackClickListener(this::onTrackClick);
+        mAdapter.setOnTrackClickListener((startPosition, trackId) -> onTrackClick(startPosition));
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_tracks_found));
     }
@@ -128,7 +123,7 @@ public final class TracksFragment extends LibraryListFragment {
         return mPlaylistFactory.fromTracks(ids, MediaStoreTracksProvider.SORT_ORDER);
     }
 
-    private void onTrackClick(final int startPosition, final long trackId) {
+    private void onTrackClick(final int startPosition) {
         disposeOnStop(Observable.fromCallable(() -> createLimitedQueue(startPosition))
                 .flatMap(this::queueFromIds)
                 .take(1)
@@ -145,7 +140,7 @@ public final class TracksFragment extends LibraryListFragment {
             if (queue.isEmpty()) {
                 onQueueEmpty();
             } else {
-                QueueUtils.play(mPlaybackServiceControl, mPlaybackData, queue);
+                mPlaybackInitializer.setQueueAndPlay(queue, 0);
                 NowPlayingActivity.start(getActivity(), null, getItemView(startPosition));
             }
         }
