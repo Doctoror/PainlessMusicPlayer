@@ -22,6 +22,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.initializer.SearchPlaybackI
 import com.doctoror.fuckoffmusicplayer.data.queue.provider.MediaBrowserQueueProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.provider.QueueFromSearchProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveAlbumFromQueueUseCaseImpl;
+import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveMediasFromCurrentQueueUseCaseImpl;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
@@ -38,6 +39,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
 import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveAlbumFromQueueUseCase;
+import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveMediasFromCurrentQueueUseCase;
 
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
@@ -106,8 +108,14 @@ final class QueueModule {
     @Provides
     RemoveAlbumFromQueueUseCase provideRemoveAlbumFromQueueUseCase(
             @NonNull final AlbumMediaIdsProvider albumMediaIdsProvider,
+            @NonNull final RemoveMediasFromCurrentQueueUseCase useCase) {
+        return new RemoveAlbumFromQueueUseCaseImpl(albumMediaIdsProvider, useCase);
+    }
+
+    @Provides
+    RemoveMediasFromCurrentQueueUseCase provideRemoveMediasFromCurrentQueueUseCase(
             @NonNull final PlaybackData playbackData) {
-        return new RemoveAlbumFromQueueUseCaseImpl(albumMediaIdsProvider, playbackData);
+        return new RemoveMediasFromCurrentQueueUseCaseImpl(playbackData);
     }
 
     @Provides

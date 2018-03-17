@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveAlbumFromQueueUseCase;
-import com.doctoror.fuckoffmusicplayer.queue.QueueUtils;
+import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveMediasFromCurrentQueueUseCase;
 
 import android.Manifest;
 import android.app.IntentService;
@@ -86,6 +86,9 @@ public final class MediaManagerService extends IntentService {
     @Inject
     RemoveAlbumFromQueueUseCase removeAlbumFromQueueUseCase;
 
+    @Inject
+    RemoveMediasFromCurrentQueueUseCase removeMediasFromCurrentQueueUseCase;
+
     public MediaManagerService() {
         super(TAG);
     }
@@ -132,7 +135,8 @@ public final class MediaManagerService extends IntentService {
         }
 
         final long targetId = getTargetId(intent);
-        QueueUtils.removeMediasFromCurrentQueue(playbackData, targetId);
+        removeMediasFromCurrentQueueUseCase.removeMediasFromCurrentQueue(targetId);
+
         try {
             mediaManager.deleteMedia(targetId);
         } catch (SecurityIoException e) {

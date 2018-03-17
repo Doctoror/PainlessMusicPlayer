@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.queue;
+package com.doctoror.fuckoffmusicplayer.data.queue.usecase;
 
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveMediasFromCurrentQueueUseCase;
 
 import android.support.annotation.NonNull;
 
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Queue utils
- */
-public final class QueueUtils {
+public final class RemoveMediasFromCurrentQueueUseCaseImpl implements
+        RemoveMediasFromCurrentQueueUseCase {
 
-    private static final String TAG = "QueueUtils";
+    private final PlaybackData playbackData;
 
-    private QueueUtils() {
-        throw new UnsupportedOperationException();
+    public RemoveMediasFromCurrentQueueUseCaseImpl(@NonNull final PlaybackData playbackData) {
+        this.playbackData = playbackData;
     }
 
-    public static void removeMediasFromCurrentQueue(
-            @NonNull final PlaybackData playbackData,
-            @NonNull final long... mediaIds) {
+    @Override
+    public void removeMediasFromCurrentQueue(@NonNull final long... mediaIds) {
         final List<Media> queue = playbackData.getQueue();
         boolean modified = false;
         if (queue != null) {
@@ -49,8 +47,7 @@ public final class QueueUtils {
         }
     }
 
-    private static boolean removeFromQueue(@NonNull final List<Media> queue,
-            final long id) {
+    private static boolean removeFromQueue(@NonNull final List<Media> queue, final long id) {
         final Iterator<Media> i = queue.iterator();
         while (i.hasNext()) {
             if (i.next().getId() == id) {
