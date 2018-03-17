@@ -54,8 +54,9 @@ import dagger.Component;
         AppContextModule.class,
         FormatterModule.class,
         EngineModule.class,
-        MediaStoreProvidersModule.class,
         MediaModule.class,
+        MediaSessionModule.class,
+        MediaStoreProvidersModule.class,
         PlaybackModule.class,
         QueueModule.class
 })

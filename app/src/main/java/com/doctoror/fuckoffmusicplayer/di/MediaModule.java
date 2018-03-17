@@ -18,10 +18,6 @@ package com.doctoror.fuckoffmusicplayer.di;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumMediaIdsProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionCallback;
-import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionFactoryImpl;
-import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionHolderImpl;
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
 import com.doctoror.fuckoffmusicplayer.data.playlist.RecentActivityManagerImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderAlbumsMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderArtistsMediaStore;
@@ -33,13 +29,6 @@ import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
-import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
@@ -48,14 +37,10 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
-import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.media.session.MediaSessionCompat;
 
 import javax.inject.Singleton;
 
@@ -95,38 +80,6 @@ final class MediaModule {
     MediaStoreMediaProvider provideMediaStoreMediaProvider(
             @NonNull final ContentResolver contentResolver) {
         return new MediaStoreMediaProvider(contentResolver);
-    }
-
-    @Provides
-    MediaSessionCompat.Callback provideMediaSessionCallback(
-            @NonNull final MediaBrowserQueueProvider mediaBrowserQueueProvider,
-            @NonNull final MediaIdPlaybackInitializer mediaIdPlaybackInitializer,
-            @NonNull final PlaybackInitializer playbackInitializer,
-            @NonNull final PlaybackServiceControl playbackServiceControl,
-            @NonNull final SearchPlaybackInitializer searchPlaybackInitializer) {
-        return new MediaSessionCallback(
-                mediaBrowserQueueProvider,
-                mediaIdPlaybackInitializer,
-                playbackInitializer,
-                playbackServiceControl,
-                searchPlaybackInitializer);
-    }
-
-    @Provides
-    MediaSessionFactory provideMediaSessionFactory(
-            @NonNull final Context context,
-            @NonNull final MediaSessionCompat.Callback mediaSessionCallback) {
-        return new MediaSessionFactoryImpl(context, NowPlayingActivity.class, mediaSessionCallback);
-    }
-
-    @Provides
-    @Singleton
-    MediaSessionHolder provideMediaSesionHolder(
-            @NonNull final MediaSessionFactory mediaSessionFactory,
-            @NonNull final PlaybackData playbackData,
-            @NonNull final PlaybackReporterFactory playbackReporterFactory) {
-        return new MediaSessionHolderImpl(
-                mediaSessionFactory, playbackData, playbackReporterFactory);
     }
 
     @Provides
