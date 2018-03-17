@@ -19,6 +19,7 @@ import com.doctoror.fuckoffmusicplayer.data.media.AlbumMediaIdsProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionCallback;
+import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionFactoryImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
 import com.doctoror.fuckoffmusicplayer.data.playlist.RecentActivityManagerImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderAlbumsMediaStore;
@@ -31,6 +32,7 @@ import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
@@ -45,6 +47,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.domain.queue.provider.MediaBrowserQueueProvider;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -111,6 +114,13 @@ final class MediaModule {
                 playbackInitializer,
                 playbackServiceControl,
                 searchPlaybackInitializer);
+    }
+
+    @Provides
+    MediaSessionFactory provideMediaSessionFactory(
+            @NonNull final Context context,
+            @NonNull final MediaSessionCallback mediaSessionCallback) {
+        return new MediaSessionFactoryImpl(context, NowPlayingActivity.class, mediaSessionCallback);
     }
 
     @Provides
