@@ -19,7 +19,6 @@ import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 
 import android.content.ContentResolver;
 import android.support.annotation.NonNull;
@@ -37,37 +36,6 @@ public final class QueueUtils {
 
     private QueueUtils() {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated use {@link com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer}
-     */
-    @Deprecated
-    public static void play(
-            @NonNull final PlaybackServiceControl control,
-            @NonNull final PlaybackData playbackData,
-            @NonNull final List<Media> mediaList) {
-        if (mediaList.isEmpty()) {
-            throw new IllegalArgumentException("Will not play empty playlist");
-        }
-        play(control, playbackData, mediaList, 0);
-    }
-
-    /**
-     * @deprecated use {@link com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer}
-     */
-    @Deprecated
-    public static void play(
-            @NonNull final PlaybackServiceControl control,
-            @NonNull final PlaybackData playbackData,
-            @NonNull final List<Media> mediaList,
-            final int position) {
-        playbackData.setMediaPosition(0);
-        playbackData.setPlayQueuePosition(position);
-        playbackData.setPlayQueue(mediaList);
-        playbackData.persistAsync();
-
-        control.play();
     }
 
     public static void removeAlbumFromCurrentQueue(
