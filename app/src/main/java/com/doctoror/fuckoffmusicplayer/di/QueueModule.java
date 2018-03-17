@@ -15,21 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.playback.initializer.MediaIdPlaybackInitializerImpl;
-import com.doctoror.fuckoffmusicplayer.data.playback.initializer.PlaybackInitializerImpl;
-import com.doctoror.fuckoffmusicplayer.data.playback.initializer.SearchPlaybackInitializerImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.provider.MediaBrowserQueueProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.provider.QueueFromSearchProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveAlbumFromQueueUseCaseImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveMediasFromCurrentQueueUseCaseImpl;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
@@ -41,7 +32,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProv
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveAlbumFromQueueUseCase;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveMediasFromCurrentQueueUseCase;
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
 import dagger.Module;
@@ -61,20 +51,6 @@ final class QueueModule {
                 queueProviderGenres,
                 queueProviderRecentlyScanned,
                 queueProviderRandom);
-    }
-
-    @Provides
-    SearchPlaybackInitializer searchPlaybackInitializer(
-            @NonNull final Resources resources,
-            @NonNull final PlaybackInitializer playbackInitializer,
-            @NonNull final PlaybackServiceControl playbackServiceControl,
-            @NonNull final QueueFromSearchProvider queueFromSearchProvider) {
-        return new SearchPlaybackInitializerImpl(
-                resources.getText(R.string.No_media_found),
-                resources.getString(R.string.No_media_found_for_s),
-                playbackInitializer,
-                playbackServiceControl,
-                queueFromSearchProvider);
     }
 
     @Provides

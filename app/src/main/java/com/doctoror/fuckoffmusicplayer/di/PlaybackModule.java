@@ -19,12 +19,15 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.initializer.MediaIdPlaybackInitializerImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.initializer.PlaybackInitializerImpl;
+import com.doctoror.fuckoffmusicplayer.data.playback.initializer.SearchPlaybackInitializerImpl;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+import com.doctoror.fuckoffmusicplayer.domain.queue.provider.QueueFromSearchProvider;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -65,5 +68,19 @@ final class PlaybackModule {
             @NonNull final PlaybackServiceControl control,
             @NonNull final PlaybackData playbackData) {
         return new PlaybackInitializerImpl(control, playbackData);
+    }
+
+    @Provides
+    SearchPlaybackInitializer searchPlaybackInitializer(
+            @NonNull final Resources resources,
+            @NonNull final PlaybackInitializer playbackInitializer,
+            @NonNull final PlaybackServiceControl playbackServiceControl,
+            @NonNull final QueueFromSearchProvider queueFromSearchProvider) {
+        return new SearchPlaybackInitializerImpl(
+                resources.getText(R.string.No_media_found),
+                resources.getString(R.string.No_media_found_for_s),
+                playbackInitializer,
+                playbackServiceControl,
+                queueFromSearchProvider);
     }
 }
