@@ -28,8 +28,8 @@ import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
@@ -161,7 +161,7 @@ public final class QueueActivity extends BaseActivity
     PlaybackData mPlaybackData;
 
     @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
+    PlaybackInitializer mPlaybackInitializer;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -391,7 +391,7 @@ public final class QueueActivity extends BaseActivity
     private void onPlayClick(@NonNull final View clickedView,
             final int queuePosition) {
 
-        QueueUtils.play(mPlaybackServiceControl, mPlaybackData, queue, queuePosition);
+        mPlaybackInitializer.setQueueAndPlay(queue, queuePosition);
         final Media media = CollectionUtils.getItemSafe(queue, queuePosition);
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media != null ? media.getAlbumArt() : null);
