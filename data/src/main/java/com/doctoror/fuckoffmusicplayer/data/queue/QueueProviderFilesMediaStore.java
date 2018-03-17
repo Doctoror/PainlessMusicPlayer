@@ -37,7 +37,7 @@ import io.reactivex.Observable;
  */
 public final class QueueProviderFilesMediaStore implements QueueProviderFiles {
 
-    private static final String TAG = "MediaStoreFilePlaylistFactory";
+    private static final String TAG = "QueueProviderFilesMediaStore";
 
     @NonNull
     private final MediaStoreMediaProvider mMediaProvider;
