@@ -71,13 +71,6 @@ final class MediaStoreProvidersModule {
 
     @Provides
     @Singleton
-    QueueProviderPlaylists providePlaylistsProvider(@NonNull final ContentResolver resolver,
-            @NonNull final MediaStoreMediaProvider mediaProvider) {
-        return new QueueProviderPlaylistsMediaStore(resolver, mediaProvider);
-    }
-
-    @Provides
-    @Singleton
     MediaManager provideMediaManager(
             @NonNull final ContentResolver resolver,
             @NonNull final AlbumMediaIdsProvider albumMediaIdsProvider) {
