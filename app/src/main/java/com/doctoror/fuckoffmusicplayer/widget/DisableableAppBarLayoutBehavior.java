@@ -16,6 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.widget;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
@@ -31,8 +33,9 @@ public class DisableableAppBarLayoutBehavior extends AppBarLayout.Behavior {
     public DisableableAppBarLayoutBehavior() {
     }
 
-    public DisableableAppBarLayoutBehavior(final Context context,
-            final AttributeSet attrs) {
+    public DisableableAppBarLayoutBehavior(
+            @NonNull final Context context,
+            @Nullable final AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -41,9 +44,14 @@ public class DisableableAppBarLayoutBehavior extends AppBarLayout.Behavior {
     }
 
     @Override
-    public boolean onStartNestedScroll(final CoordinatorLayout parent, final AppBarLayout child,
-            final View directTargetChild, final View target, final int nestedScrollAxes) {
-        return mEnabled && super
-                .onStartNestedScroll(parent, child, directTargetChild, target, nestedScrollAxes);
+    public boolean onStartNestedScroll(
+            @NonNull final CoordinatorLayout parent,
+            @NonNull final AppBarLayout child,
+            @NonNull final View directTargetChild,
+            @NonNull final View target,
+            final int nestedScrollAxes,
+            final int type) {
+        return mEnabled && super.onStartNestedScroll(
+                parent, child, directTargetChild, target, nestedScrollAxes, type);
     }
 }
