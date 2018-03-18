@@ -39,6 +39,11 @@ All formats that are supported by [ExoPlayer](https://google.github.io/ExoPlayer
 
 Does not support FLAC.
 
+## Architecture
+
+Mostly crap, recently I've been refactoring dependency injection and breaking into multi-layer architecture.
+It still needs some DI reorganizing, better MVVM architecture and tests. It needs lots of tests.
+
 ## Screenshots
 
 ![screenshot](/screenshots/recent_activity.png?raw=true)
