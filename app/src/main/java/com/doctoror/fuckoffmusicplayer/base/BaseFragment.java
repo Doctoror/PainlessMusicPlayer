@@ -27,17 +27,17 @@ import io.reactivex.disposables.Disposable;
  */
 public abstract class BaseFragment extends Fragment {
 
-    private final Object mOnStopDisposableLock = new Object();
+    private final Object onStopDisposableLock = new Object();
 
-    private CompositeDisposable mOnStopDisposable;
+    private CompositeDisposable onStopDisposable;
 
     @NonNull
     private CompositeDisposable getOnStopDisposable() {
-        synchronized (mOnStopDisposableLock) {
-            if (mOnStopDisposable == null) {
-                mOnStopDisposable = new CompositeDisposable();
+        synchronized (onStopDisposableLock) {
+            if (onStopDisposable == null) {
+                onStopDisposable = new CompositeDisposable();
             }
-            return mOnStopDisposable;
+            return onStopDisposable;
         }
     }
 
@@ -61,11 +61,11 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if (mOnStopDisposable != null) {
-            synchronized (mOnStopDisposableLock) {
-                if (mOnStopDisposable != null) {
-                    mOnStopDisposable.dispose();
-                    mOnStopDisposable = null;
+        if (onStopDisposable != null) {
+            synchronized (onStopDisposableLock) {
+                if (onStopDisposable != null) {
+                    onStopDisposable.dispose();
+                    onStopDisposable = null;
                 }
             }
         }
