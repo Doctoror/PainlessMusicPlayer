@@ -50,14 +50,14 @@ final class ExoMediaPlayer implements MediaPlayer {
 
     private static final String TAG = "ExoMediaPlayer";
 
-    private SimpleExoPlayer mExoPlayer;
-    private DataSource.Factory mDataSourceFactory;
+    private SimpleExoPlayer exoPlayer;
+    private DataSource.Factory dataSourceFactory;
 
-    private MediaPlayerListener mMediaPlayerListener;
-    private MediaSource mMediaSource;
+    private MediaPlayerListener mediaPlayerListener;
+    private MediaSource mediaSource;
 
-    private Uri mLoadingMediaUri;
-    private Uri mLoadedMediaUri;
+    private Uri loadingMediaUri;
+    private Uri loadedMediaUri;
 
     ExoMediaPlayer() {
 
@@ -65,73 +65,73 @@ final class ExoMediaPlayer implements MediaPlayer {
 
     @Override
     public void setListener(@Nullable final MediaPlayerListener listener) {
-        mMediaPlayerListener = listener;
+        mediaPlayerListener = listener;
     }
 
     @Override
     public void init(@NonNull final Context context) {
         final TrackSelector trackSelector = new DefaultTrackSelector();
 
-        mExoPlayer = ExoPlayerFactory.newSimpleInstance(
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(
                 new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
-        mExoPlayer.addListener(mEventListener);
-        mExoPlayer.addAudioDebugListener(mAudioRendererEventListener);
+        exoPlayer.addListener(mEventListener);
+        exoPlayer.addAudioDebugListener(mAudioRendererEventListener);
 
-        mDataSourceFactory = new DefaultDataSourceFactory(context,
+        dataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Fuck Off Music Player"));
     }
 
     @Override
     public void load(@NonNull final Uri uri) {
-        if (mMediaSource != null) {
-            mMediaSource.releaseSource();
+        if (mediaSource != null) {
+            mediaSource.releaseSource();
         }
-        if (mMediaPlayerListener != null) {
-            mMediaPlayerListener.onLoading();
+        if (mediaPlayerListener != null) {
+            mediaPlayerListener.onLoading();
         }
-        mMediaSource = new ExtractorMediaSource.Factory(mDataSourceFactory).createMediaSource(uri);
+        mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
 
-        mLoadingMediaUri = uri;
-        mExoPlayer.prepare(mMediaSource);
+        loadingMediaUri = uri;
+        exoPlayer.prepare(mediaSource);
     }
 
     @Override
     public void play() {
-        mExoPlayer.setPlayWhenReady(true);
+        exoPlayer.setPlayWhenReady(true);
     }
 
     @Override
     public void pause() {
-        mExoPlayer.setPlayWhenReady(false);
+        exoPlayer.setPlayWhenReady(false);
     }
 
     @Override
     public void seekTo(final long millis) {
-        mExoPlayer.seekTo(millis);
+        exoPlayer.seekTo(millis);
     }
 
     @Override
     public long getCurrentPosition() {
-        return mExoPlayer.getCurrentPosition();
+        return exoPlayer.getCurrentPosition();
     }
 
     @Nullable
     @Override
     public Uri getLoadedMediaUri() {
-        return mLoadedMediaUri;
+        return loadedMediaUri;
     }
 
     @Override
     public void stop() {
-        mExoPlayer.stop();
-        if (mMediaSource != null) {
-            mMediaSource.releaseSource();
+        exoPlayer.stop();
+        if (mediaSource != null) {
+            mediaSource.releaseSource();
         }
     }
 
     @Override
     public void release() {
-        mExoPlayer.release();
+        exoPlayer.release();
     }
 
     private final AudioRendererEventListener mAudioRendererEventListener
@@ -149,8 +149,8 @@ final class ExoMediaPlayer implements MediaPlayer {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onAudioSessionId: " + audioSessionId);
             }
-            if (mMediaPlayerListener != null) {
-                mMediaPlayerListener.onAudioSessionId(audioSessionId);
+            if (mediaPlayerListener != null) {
+                mediaPlayerListener.onAudioSessionId(audioSessionId);
             }
         }
 
@@ -186,8 +186,8 @@ final class ExoMediaPlayer implements MediaPlayer {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onAudioDisabled");
             }
-            if (mMediaPlayerListener != null) {
-                mMediaPlayerListener.onAudioSessionId(SESSION_ID_NOT_SET);
+            if (mediaPlayerListener != null) {
+                mediaPlayerListener.onAudioSessionId(SESSION_ID_NOT_SET);
             }
         }
     };
@@ -214,19 +214,19 @@ final class ExoMediaPlayer implements MediaPlayer {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onPlayerStateChanged: " + playbackState);
             }
-            if (mMediaPlayerListener != null) {
+            if (mediaPlayerListener != null) {
                 switch (playbackState) {
                     case Player.STATE_READY:
-                        mLoadedMediaUri = mLoadingMediaUri;
+                        loadedMediaUri = loadingMediaUri;
                         if (playWhenReady) {
-                            mMediaPlayerListener.onPlaybackStarted();
+                            mediaPlayerListener.onPlaybackStarted();
                         } else {
-                            mMediaPlayerListener.onPlaybackPaused();
+                            mediaPlayerListener.onPlaybackPaused();
                         }
                         break;
 
                     case Player.STATE_ENDED:
-                        mMediaPlayerListener.onPlaybackFinished();
+                        mediaPlayerListener.onPlaybackFinished();
                         break;
                 }
             }
@@ -244,8 +244,8 @@ final class ExoMediaPlayer implements MediaPlayer {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onPlayerError: " + (error == null ? "null" : error));
             }
-            if (mMediaPlayerListener != null) {
-                mMediaPlayerListener.onPlayerError(error);
+            if (mediaPlayerListener != null) {
+                mediaPlayerListener.onPlayerError(error);
             }
         }
 
