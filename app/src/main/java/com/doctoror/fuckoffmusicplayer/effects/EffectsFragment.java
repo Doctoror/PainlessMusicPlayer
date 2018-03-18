@@ -38,18 +38,18 @@ import io.reactivex.functions.Consumer;
 
 public final class EffectsFragment extends Fragment {
 
-    private final EffectsFragmentModel mModel = new EffectsFragmentModel();
+    private final EffectsFragmentModel model = new EffectsFragmentModel();
 
-    private FragmentEffectsBinding mBinding;
+    private FragmentEffectsBinding binding;
 
     @Inject
-    AudioEffects mAudioEffects;
+    AudioEffects audioEffects;
 
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidInjection.inject(this);
-        mAudioEffects.addObserver(mAudioEffectsObserver);
+        audioEffects.addObserver(mAudioEffectsObserver);
     }
 
     @Nullable
@@ -58,7 +58,7 @@ public final class EffectsFragment extends Fragment {
                              @Nullable final Bundle savedInstanceState) {
         final FragmentEffectsBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_effects, container, false);
-        binding.setModel(mModel);
+        binding.setModel(model);
         binding.switchBassBoost.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> setBassBoostEnabled(isChecked));
         RxSeekBar.userChanges(binding.seekBarBassBoost).subscribe(new Consumer<Integer>() {
@@ -75,53 +75,53 @@ public final class EffectsFragment extends Fragment {
             }
         });
 
-        binding.switchEqualizer.setEnabled(mAudioEffects.getSessionId() != 0);
+        binding.switchEqualizer.setEnabled(audioEffects.getSessionId() != 0);
         binding.switchEqualizer.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> setEqualizerEnabled(isChecked));
 
-        mBinding = binding;
+        this.binding = binding;
         return binding.getRoot();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mModel.setBassBoostStrength(mAudioEffects.getBassBoostStrength());
-        mModel.setBassBoostEnabled(mAudioEffects.isBassBoostEnabled());
-        mModel.setEqualizerEnabled(mAudioEffects.isEqualizerEnabled());
-        mBinding.equalizerView.setEqualizer(mAudioEffects.getEqualizer());
+        model.setBassBoostStrength(audioEffects.getBassBoostStrength());
+        model.setBassBoostEnabled(audioEffects.isBassBoostEnabled());
+        model.setEqualizerEnabled(audioEffects.isEqualizerEnabled());
+        binding.equalizerView.setEqualizer(audioEffects.getEqualizer());
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mBinding.equalizerView.setEqualizer(null);
+        binding.equalizerView.setEqualizer(null);
     }
 
     private void setBassBoostEnabled(final boolean enabled) {
-        mModel.setBassBoostEnabled(enabled);
-        mAudioEffects.setBassBoostEnabled(enabled);
+        model.setBassBoostEnabled(enabled);
+        audioEffects.setBassBoostEnabled(enabled);
     }
 
     private void setBassBoostStrength(final int strength) {
-        mModel.setBassBoostStrength(strength);
-        mAudioEffects.setBassBoostStrength(strength);
+        model.setBassBoostStrength(strength);
+        audioEffects.setBassBoostStrength(strength);
     }
 
     private void setEqualizerEnabled(final boolean enabled) {
-        mModel.setEqualizerEnabled(enabled);
-        mAudioEffects.setEqualizerEnabled(enabled);
-        mBinding.equalizerView.setEqualizer(mAudioEffects.getEqualizer());
+        model.setEqualizerEnabled(enabled);
+        audioEffects.setEqualizerEnabled(enabled);
+        binding.equalizerView.setEqualizer(audioEffects.getEqualizer());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mAudioEffects.deleteObserver(mAudioEffectsObserver);
+        audioEffects.deleteObserver(mAudioEffectsObserver);
     }
 
     private final Observer mAudioEffectsObserver = (observable, data) -> {
-        mBinding.equalizerView.setEqualizer(mAudioEffects.getEqualizer());
-        mBinding.switchEqualizer.setEnabled(mAudioEffects.getSessionId() != 0);
+        binding.equalizerView.setEqualizer(audioEffects.getEqualizer());
+        binding.switchEqualizer.setEnabled(audioEffects.getSessionId() != 0);
     };
 }
