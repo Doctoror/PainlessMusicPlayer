@@ -34,8 +34,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -54,7 +52,6 @@ final class ExoMediaPlayer implements MediaPlayer {
 
     private SimpleExoPlayer mExoPlayer;
     private DataSource.Factory mDataSourceFactory;
-    private ExtractorsFactory mExtractorsFactory;
 
     private MediaPlayerListener mMediaPlayerListener;
     private MediaSource mMediaSource;
@@ -82,7 +79,6 @@ final class ExoMediaPlayer implements MediaPlayer {
 
         mDataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Fuck Off Music Player"));
-        mExtractorsFactory = new DefaultExtractorsFactory();
     }
 
     @Override
@@ -93,8 +89,7 @@ final class ExoMediaPlayer implements MediaPlayer {
         if (mMediaPlayerListener != null) {
             mMediaPlayerListener.onLoading();
         }
-        mMediaSource = new ExtractorMediaSource(uri, mDataSourceFactory, mExtractorsFactory,
-                null, null);
+        mMediaSource = new ExtractorMediaSource.Factory(mDataSourceFactory).createMediaSource(uri);
 
         mLoadingMediaUri = uri;
         mExoPlayer.prepare(mMediaSource);
