@@ -34,10 +34,10 @@ import io.reactivex.Observable;
 public final class MediaStoreArtistsProvider implements ArtistsProvider {
 
     @NonNull
-    private final ContentResolver mContentResolver;
+    private final ContentResolver contentResolver;
 
     public MediaStoreArtistsProvider(@NonNull final ContentResolver contentResolver) {
-        mContentResolver = contentResolver;
+        this.contentResolver = contentResolver;
     }
 
     @Override
@@ -48,7 +48,7 @@ public final class MediaStoreArtistsProvider implements ArtistsProvider {
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter,
             @Nullable final Integer limit) {
-        return RxCursorLoader.create(mContentResolver, newQuery(searchFilter, limit));
+        return RxCursorLoader.create(contentResolver, newQuery(searchFilter, limit));
     }
 
     @NonNull
