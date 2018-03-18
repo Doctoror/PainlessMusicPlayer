@@ -48,7 +48,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.Locale;
 
-public final class ExoMediaPlayer implements MediaPlayer {
+final class ExoMediaPlayer implements MediaPlayer {
 
     private static final String TAG = "ExoMediaPlayer";
 
@@ -62,7 +62,7 @@ public final class ExoMediaPlayer implements MediaPlayer {
     private Uri mLoadingMediaUri;
     private Uri mLoadedMediaUri;
 
-    public ExoMediaPlayer() {
+    ExoMediaPlayer() {
 
     }
 
