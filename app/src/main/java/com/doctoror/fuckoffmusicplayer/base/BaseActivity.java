@@ -43,19 +43,19 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class BaseActivity extends BaseInjectionActivity {
 
-    private final Object mOnStopDisposableLock = new Object();
+    private final Object onStopDisposableLock = new Object();
 
-    private CompositeDisposable mOnStopDisposable;
+    private CompositeDisposable onStopDisposable;
 
     @Theme
-    private int mThemeUsed;
+    private int themeUsed;
 
-    private boolean mFragmentTransactionsAllowed;
+    private boolean fragmentTransactionsAllowed;
 
-    private boolean mFinishingAfterTransition;
+    private boolean finishingAfterTransition;
 
     @Inject
-    Settings mSettings;
+    Settings settings;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -63,19 +63,19 @@ public abstract class BaseActivity extends BaseInjectionActivity {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         AndroidInjection.inject(this);
 
-        mThemeUsed = mSettings.getTheme();
+        themeUsed = settings.getTheme();
 
-        mFragmentTransactionsAllowed = true;
-        mFinishingAfterTransition = false;
+        fragmentTransactionsAllowed = true;
+        finishingAfterTransition = false;
     }
 
     @NonNull
     private CompositeDisposable getOnStopDisposable() {
-        synchronized (mOnStopDisposableLock) {
-            if (mOnStopDisposable == null) {
-                mOnStopDisposable = new CompositeDisposable();
+        synchronized (onStopDisposableLock) {
+            if (onStopDisposable == null) {
+                onStopDisposable = new CompositeDisposable();
             }
-            return mOnStopDisposable;
+            return onStopDisposable;
         }
     }
 
@@ -97,11 +97,11 @@ public abstract class BaseActivity extends BaseInjectionActivity {
     }
 
     public Settings getSettings() {
-        return mSettings;
+        return settings;
     }
 
     public boolean isFinishingAfterTransition() {
-        return mFinishingAfterTransition;
+        return finishingAfterTransition;
     }
 
     protected final void restart() {
@@ -119,9 +119,9 @@ public abstract class BaseActivity extends BaseInjectionActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mFragmentTransactionsAllowed = true;
+        fragmentTransactionsAllowed = true;
         // Theme changed while this Activity was in background
-        if (mThemeUsed != mSettings.getTheme()) {
+        if (themeUsed != settings.getTheme()) {
             restart();
         }
     }
@@ -129,17 +129,17 @@ public abstract class BaseActivity extends BaseInjectionActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mFragmentTransactionsAllowed = true;
+        fragmentTransactionsAllowed = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mOnStopDisposable != null) {
-            synchronized (mOnStopDisposableLock) {
-                if (mOnStopDisposable != null) {
-                    mOnStopDisposable.dispose();
-                    mOnStopDisposable = null;
+        if (onStopDisposable != null) {
+            synchronized (onStopDisposableLock) {
+                if (onStopDisposable != null) {
+                    onStopDisposable.dispose();
+                    onStopDisposable = null;
                 }
             }
         }
@@ -148,17 +148,17 @@ public abstract class BaseActivity extends BaseInjectionActivity {
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
-        mFragmentTransactionsAllowed = false;
+        fragmentTransactionsAllowed = false;
     }
 
     protected final boolean areFragmentTransactionsAllowed() {
-        return mFragmentTransactionsAllowed;
+        return fragmentTransactionsAllowed;
     }
 
     @Override
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void finishAfterTransition() {
-        mFinishingAfterTransition = true;
+        finishingAfterTransition = true;
         super.finishAfterTransition();
     }
 
