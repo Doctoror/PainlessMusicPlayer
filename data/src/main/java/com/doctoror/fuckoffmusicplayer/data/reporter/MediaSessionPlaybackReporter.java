@@ -15,15 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.reporter;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
@@ -33,6 +24,15 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 
 import java.io.File;
 import java.util.List;
@@ -50,7 +50,7 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     private final MediaSessionCompat mMediaSession;
     private final RequestManager mGlide;
 
-    public MediaSessionPlaybackReporter(
+    MediaSessionPlaybackReporter(
             @NonNull final Context context,
             @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final MediaSessionCompat mediaSession) {
@@ -114,11 +114,12 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaybackStateChanged(@PlaybackState final int state,
+    public void reportPlaybackStateChanged(
+            @PlaybackState final int state,
             @Nullable final CharSequence errorMessage) {
         @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
         final boolean isPlaying = playbackState == PlaybackStateCompat.STATE_PLAYING;
-        mMediaSession.setPlaybackState(new PlaybackStateCompat.Builder()
+        final PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PLAY
                         | PlaybackStateCompat.ACTION_PAUSE
                         | PlaybackStateCompat.ACTION_PLAY_PAUSE
@@ -127,9 +128,13 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
                         | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
                         | PlaybackStateCompat.ACTION_SEEK_TO
                         | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH)
-                .setErrorMessage(errorMessage)
-                .setState(playbackState, 0, isPlaying ? 1 : 0)
-                .build());
+                .setState(playbackState, 0, isPlaying ? 1 : 0);
+
+        if (errorMessage != null) {
+            builder.setErrorMessage(PlaybackStateCompat.ERROR_CODE_APP_ERROR, errorMessage);
+        }
+
+        mMediaSession.setPlaybackState(builder.build());
     }
 
     @Override
