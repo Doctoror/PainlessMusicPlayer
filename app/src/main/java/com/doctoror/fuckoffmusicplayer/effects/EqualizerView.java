@@ -51,13 +51,13 @@ public class EqualizerView extends RecyclerView {
         void onBandChange(short band, short value);
     }
 
-    private Equalizer mEqualizer;
-    private AdapterImpl mAdapter;
+    private Equalizer equalizer;
+    private AdapterImpl adapter;
 
-    private int mEqLevelRange;
-    private int mMinEqLevel;
+    private int eqLevelRange;
+    private int minEqLevel;
 
-    private OnBandChangeListener mOnBandChangeListener;
+    private OnBandChangeListener onBandChangeListener;
 
     @Inject
     AudioEffects mAudioEffects;
@@ -84,12 +84,12 @@ public class EqualizerView extends RecyclerView {
     }
 
     public void setOnBandChangeListener(@Nullable final OnBandChangeListener onBandChangeListener) {
-        mOnBandChangeListener = onBandChangeListener;
+        this.onBandChangeListener = onBandChangeListener;
     }
 
     public void setEqualizer(@Nullable final Equalizer equalizer) {
-        if (mEqualizer != equalizer) {
-            mEqualizer = equalizer;
+        if (this.equalizer != equalizer) {
+            this.equalizer = equalizer;
             rebuild();
         }
     }
@@ -97,30 +97,30 @@ public class EqualizerView extends RecyclerView {
     @Override
     public void setEnabled(final boolean enabled) {
         super.setEnabled(enabled);
-        if (mAdapter != null) {
-            mAdapter.setEnabled(enabled);
-            mAdapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.setEnabled(enabled);
+            adapter.notifyDataSetChanged();
         }
     }
 
     private void rebuild() {
-        if (mEqualizer == null) {
-            if (mAdapter != null) {
-                mAdapter.clear();
+        if (equalizer == null) {
+            if (adapter != null) {
+                adapter.clear();
             }
         } else {
-            final List<Item> items = buildItems(mEqualizer);
-            if (mAdapter == null) {
-                mAdapter = new AdapterImpl(getContext(), items);
-                mAdapter.setMinEqLevel(mMinEqLevel);
-                mAdapter.setEqLevelRange(mEqLevelRange);
-                mAdapter.setOnBandChangeListener(mInternalBandChangeListener);
-                mAdapter.setEnabled(isEnabled());
-                setAdapter(mAdapter);
+            final List<Item> items = buildItems(equalizer);
+            if (adapter == null) {
+                adapter = new AdapterImpl(getContext(), items);
+                adapter.setMinEqLevel(minEqLevel);
+                adapter.setEqLevelRange(eqLevelRange);
+                adapter.setOnBandChangeListener(mInternalBandChangeListener);
+                adapter.setEnabled(isEnabled());
+                setAdapter(adapter);
             } else {
-                mAdapter.setMinEqLevel(mMinEqLevel);
-                mAdapter.setEqLevelRange(mEqLevelRange);
-                mAdapter.setItems(items);
+                adapter.setMinEqLevel(minEqLevel);
+                adapter.setEqLevelRange(eqLevelRange);
+                adapter.setItems(items);
             }
         }
     }
@@ -132,8 +132,8 @@ public class EqualizerView extends RecyclerView {
         final short minEQLevel = bandLevelRange[0];
         final short maxEQLevel = bandLevelRange[1];
 
-        mEqLevelRange = maxEQLevel - minEQLevel;
-        mMinEqLevel = minEQLevel;
+        eqLevelRange = maxEQLevel - minEQLevel;
+        minEqLevel = minEQLevel;
         final Resources res = getResources();
         for (short i = 0; i < equalizer.getNumberOfBands(); i++) {
             final Item item = new Item();
@@ -156,10 +156,10 @@ public class EqualizerView extends RecyclerView {
     }
 
     private final OnBandChangeListener mInternalBandChangeListener = (band, value) -> {
-        mEqualizer.setBandLevel(band, value);
-        mAudioEffects.saveEqualizerSettings(mEqualizer.getProperties());
-        if (mOnBandChangeListener != null) {
-            mOnBandChangeListener.onBandChange(band, value);
+        equalizer.setBandLevel(band, value);
+        mAudioEffects.saveEqualizerSettings(equalizer.getProperties());
+        if (onBandChangeListener != null) {
+            onBandChangeListener.onBandChange(band, value);
         }
     };
 
@@ -167,7 +167,6 @@ public class EqualizerView extends RecyclerView {
 
         int seekBarValue;
         String title;
-
     }
 
     static final class VH extends ViewHolder {
@@ -183,11 +182,11 @@ public class EqualizerView extends RecyclerView {
 
     private static final class AdapterImpl extends BaseRecyclerAdapter<Item, VH> {
 
-        private int mEqLevelRange;
-        private int mMinEqLevel;
-        private boolean mEnabled;
+        private int eqLevelRange;
+        private int minEqLevel;
+        private boolean enabled;
 
-        private OnBandChangeListener mOnBandChangeListener;
+        private OnBandChangeListener onBandChangeListener;
 
         AdapterImpl(@NonNull final Context context,
                 @Nullable final List<Item> items) {
@@ -195,37 +194,38 @@ public class EqualizerView extends RecyclerView {
         }
 
         void setEnabled(final boolean enabled) {
-            mEnabled = enabled;
+            this.enabled = enabled;
         }
 
         void setEqLevelRange(final int range) {
-            mEqLevelRange = range;
+            eqLevelRange = range;
         }
 
         void setMinEqLevel(final int minEqLevel) {
-            mMinEqLevel = minEqLevel;
+            this.minEqLevel = minEqLevel;
         }
 
         void setOnBandChangeListener(@Nullable final OnBandChangeListener onBandChangeListener) {
-            mOnBandChangeListener = onBandChangeListener;
+            this.onBandChangeListener = onBandChangeListener;
         }
 
         @Override
-        public VH onCreateViewHolder(final ViewGroup parent, final int viewType) {
+        @NonNull
+        public VH onCreateViewHolder(@NonNull final ViewGroup parent, final int viewType) {
             final VH vh = new VH(getLayoutInflater().inflate(
                     R.layout.equalizer_band, parent, false));
-            vh.bandValue.setMax(mEqLevelRange);
+            vh.bandValue.setMax(eqLevelRange);
             vh.bandValue.setOnSeekBarChangeListener(new OnSeekBarChangeListenerAdapter() {
 
                 @Override
                 public void onProgressChanged(final SeekBar seekBar, final int progress,
                         final boolean fromUser) {
-                    if (fromUser && mOnBandChangeListener != null) {
+                    if (fromUser && onBandChangeListener != null) {
                         final int position = vh.getAdapterPosition();
                         final Item item = getItem(position);
                         item.seekBarValue = progress;
-                        mOnBandChangeListener.onBandChange((short) position,
-                                (short) (progress + mMinEqLevel));
+                        onBandChangeListener.onBandChange((short) position,
+                                (short) (progress + minEqLevel));
                     }
                 }
             });
@@ -233,13 +233,13 @@ public class EqualizerView extends RecyclerView {
         }
 
         @Override
-        public void onBindViewHolder(final VH holder, final int position) {
+        public void onBindViewHolder(@NonNull final VH holder, final int position) {
             final Item item = getItem(position);
             holder.bandName.setText(item.title);
             holder.bandValue.setProgress(item.seekBarValue);
 
-            holder.bandName.setEnabled(mEnabled);
-            holder.bandValue.setEnabled(mEnabled);
+            holder.bandName.setEnabled(enabled);
+            holder.bandValue.setEnabled(enabled);
         }
     }
 }
