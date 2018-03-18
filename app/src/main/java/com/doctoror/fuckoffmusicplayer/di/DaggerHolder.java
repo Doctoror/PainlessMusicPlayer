@@ -23,32 +23,32 @@ import android.support.annotation.NonNull;
  */
 public final class DaggerHolder {
 
-    private static volatile DaggerHolder sInstance;
+    private static volatile DaggerHolder instance;
 
     @NonNull
     public static DaggerHolder getInstance(@NonNull final Context context) {
-        if (sInstance == null) {
+        if (instance == null) {
             synchronized (DaggerHolder.class) {
-                if (sInstance == null) {
-                    sInstance = new DaggerHolder(context.getApplicationContext());
+                if (instance == null) {
+                    instance = new DaggerHolder(context.getApplicationContext());
                 }
             }
         }
-        return sInstance;
+        return instance;
     }
 
     @NonNull
-    private final MainComponent mMainComponent;
+    private final MainComponent mainComponent;
 
     private DaggerHolder(@NonNull final Context context) {
         final AppModule appContextModule = new AppModule(context);
-        mMainComponent = DaggerMainComponent.builder()
+        mainComponent = DaggerMainComponent.builder()
                 .appContextModule(appContextModule)
                 .build();
     }
 
     @NonNull
     public MainComponent mainComponent() {
-        return mMainComponent;
+        return mainComponent;
     }
 }
