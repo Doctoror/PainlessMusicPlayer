@@ -15,14 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import android.support.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveAlbumFromQueueUseCaseImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveMediasFromCurrentQueueUseCaseImpl;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveAlbumFromQueueUseCase;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveMediasFromCurrentQueueUseCase;
-
-import android.support.annotation.NonNull;
 
 import dagger.Module;
 import dagger.Provides;

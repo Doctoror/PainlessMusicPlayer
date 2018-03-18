@@ -15,6 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.data.effects.AudioEffectsImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackParamsImpl;
 import com.doctoror.fuckoffmusicplayer.data.player.MediaPlayerFactoryImpl;
@@ -30,9 +33,6 @@ import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackNotificationFactoryImpl;
 import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControlImpl;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
 

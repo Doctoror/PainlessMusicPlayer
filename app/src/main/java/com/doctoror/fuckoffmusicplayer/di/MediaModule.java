@@ -15,32 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.support.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumMediaIdsProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.data.playlist.RecentActivityManagerImpl;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderAlbumsMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderArtistsMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderFilesMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderGenresMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRandomMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRecentlyScannedMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderGenres;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
-
-import android.content.ContentResolver;
-import android.content.Context;
-import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
 

@@ -15,17 +15,20 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import android.content.ContentResolver;
+import android.support.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderAlbumsMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderArtistsMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderFilesMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderGenresMediaStore;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderMediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderPlaylistsMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRandomMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderRecentlyScannedMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderMediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderSearchImpl;
+import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderTracksMediaStore;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
@@ -36,9 +39,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderSearch;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
-
-import android.content.ContentResolver;
-import android.support.annotation.NonNull;
 
 import dagger.Module;
 import dagger.Provides;

@@ -15,6 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.support.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.initializer.MediaIdPlaybackInitializerImpl;
@@ -28,10 +32,6 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderSearch;
-
-import android.content.Context;
-import android.content.res.Resources;
-import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
 

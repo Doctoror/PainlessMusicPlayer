@@ -15,13 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
-import com.doctoror.fuckoffmusicplayer.data.settings.SettingsImpl;
-import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+
+import com.doctoror.fuckoffmusicplayer.data.settings.SettingsImpl;
+import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 
 import javax.inject.Singleton;
 

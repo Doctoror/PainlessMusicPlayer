@@ -15,14 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.di;
 
+import android.content.ContentResolver;
+import android.support.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.data.albums.MediaStoreAlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.data.artists.MediaStoreArtistsProvider;
 import com.doctoror.fuckoffmusicplayer.data.genres.MediaStoreGenresProvider;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerFile;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaManagerSet;
-import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.data.queue.QueueProviderPlaylistsMediaStore;
 import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
@@ -30,11 +31,7 @@ import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
 import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
-
-import android.content.ContentResolver;
-import android.support.annotation.NonNull;
 
 import javax.inject.Singleton;
 
