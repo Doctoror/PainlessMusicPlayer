@@ -39,29 +39,25 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public final class MediaStoreProvidersModule {
+final class MediaStoreProvidersModule {
 
     @Provides
-    @Singleton
     ArtistsProvider provideArtistsProvider(@NonNull final ContentResolver resolver) {
         return new MediaStoreArtistsProvider(resolver);
     }
 
     @Provides
-    @Singleton
     AlbumsProvider provideAlbumsProvider(@NonNull final ContentResolver resolver,
             @NonNull final RecentActivityManager recentActivityManager) {
         return new MediaStoreAlbumsProvider(resolver, recentActivityManager);
     }
 
     @Provides
-    @Singleton
     GenresProvider provideGenresProvider(@NonNull final ContentResolver resolver) {
         return new MediaStoreGenresProvider(resolver);
     }
 
     @Provides
-    @Singleton
     TracksProvider provideTracksProvider(@NonNull final ContentResolver resolver) {
         return new MediaStoreTracksProvider(resolver);
     }
