@@ -38,7 +38,6 @@ final class EngineModule {
     }
 
     @Provides
-    @Singleton
     MediaPlayerFactory provideMediaPlayerFactory() {
         return new MediaPlayerFactoryImpl();
     }
