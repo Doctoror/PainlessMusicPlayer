@@ -15,10 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.base;
 
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -32,17 +28,20 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
+import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends BaseInjectionActivity {
 
     private final Object mOnStopDisposableLock = new Object();
 
@@ -62,7 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         mThemeUsed = mSettings.getTheme();
 

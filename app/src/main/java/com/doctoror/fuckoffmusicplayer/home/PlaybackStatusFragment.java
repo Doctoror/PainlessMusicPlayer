@@ -15,18 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.home;
 
-import com.bumptech.glide.Glide;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
-import com.doctoror.fuckoffmusicplayer.databinding.PlaybackStatusBarBinding;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
-
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,9 +23,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
+import com.doctoror.fuckoffmusicplayer.databinding.PlaybackStatusBarBinding;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
+
 import java.util.List;
 
 import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 
 /**
  * Playback status bar fragment
@@ -55,13 +56,13 @@ public final class PlaybackStatusFragment extends BaseFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
     }
 
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-            final Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         final PlaybackStatusBarBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.playback_status_bar, container, false,
                 BindingAdapters.glideBindingComponent(Glide.with(this)));

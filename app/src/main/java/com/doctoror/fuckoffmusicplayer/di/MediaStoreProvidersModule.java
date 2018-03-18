@@ -42,7 +42,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-final class MediaStoreProvidersModule {
+public final class MediaStoreProvidersModule {
 
     @Provides
     @Singleton

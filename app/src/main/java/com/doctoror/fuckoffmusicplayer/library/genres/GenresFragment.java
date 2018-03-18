@@ -15,13 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.genres;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
-import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
-import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsActivity;
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -30,8 +23,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
+import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsActivity;
+
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 
 /**
@@ -47,7 +47,7 @@ public final class GenresFragment extends LibraryListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         mAdapter = new GenresRecyclerAdapter(getActivity());
         mAdapter.setOnGenreClickListener(this::onGenreClick);
@@ -71,7 +71,7 @@ public final class GenresFragment extends LibraryListFragment {
     }
 
     private void onGenreClick(final int position, final long genreId,
-            @Nullable final String genre) {
+                              @Nullable final String genre) {
         final Intent intent = Henson.with(getActivity()).gotoGenreAlbumsActivity()
                 .genre(genre)
                 .genreId(genreId)

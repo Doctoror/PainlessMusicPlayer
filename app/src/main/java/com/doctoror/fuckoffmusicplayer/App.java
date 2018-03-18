@@ -20,16 +20,18 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.settings.DayNightModeMapper;
 
-import android.app.Application;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatDelegate;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjector;
+import dagger.android.DaggerApplication;
+
 /**
  * Application
  */
-public final class App extends Application {
+public final class App extends DaggerApplication {
 
     @Inject
     DayNightModeMapper mDayNightModeMapper;
@@ -42,7 +44,6 @@ public final class App extends Application {
         super.onCreate();
         initLogger();
         initStrictMode();
-        initDagger();
         initTheme();
     }
 
@@ -68,12 +69,13 @@ public final class App extends Application {
         }
     }
 
-    private void initDagger() {
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
-    }
-
     private void initTheme() {
         AppCompatDelegate.setDefaultNightMode(
                 mDayNightModeMapper.toDayNightMode(mSettings.getTheme()));
+    }
+
+    @Override
+    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+        return DaggerHolder.getInstance(this).mainComponent();
     }
 }

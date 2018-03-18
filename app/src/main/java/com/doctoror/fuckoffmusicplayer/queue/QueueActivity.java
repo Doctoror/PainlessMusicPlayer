@@ -15,38 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.queue;
 
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
-import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
-import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
-import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.InjectExtra;
-
-import org.parceler.Parcel;
-import org.parceler.Parcels;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -75,6 +43,37 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
+import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
+import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
+
+import org.parceler.Parcel;
+import org.parceler.Parcels;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -84,6 +83,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.AndroidInjection;
 
 /**
  * "Playlist" activity
@@ -167,7 +167,7 @@ public final class QueueActivity extends BaseActivity
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mMediumAnimTime = getResources().getInteger(android.R.integer.config_mediumAnimTime);
@@ -232,7 +232,7 @@ public final class QueueActivity extends BaseActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public void onLayoutChildren(final RecyclerView.Recycler recycler,
-                    final RecyclerView.State state) {
+                                         final RecyclerView.State state) {
                 super.onLayoutChildren(recycler, state);
                 setAppBarCollapsibleIfNeeded();
             }
@@ -270,8 +270,8 @@ public final class QueueActivity extends BaseActivity
             b.listener(new RequestListener<String, GlideDrawable>() {
                 @Override
                 public boolean onException(final Exception e, final String model,
-                        final Target<GlideDrawable> target,
-                        final boolean isFirstResource) {
+                                           final Target<GlideDrawable> target,
+                                           final boolean isFirstResource) {
                     mCoverUri = null;
                     showPlaceholderArt();
                     onImageSet();
@@ -280,9 +280,9 @@ public final class QueueActivity extends BaseActivity
 
                 @Override
                 public boolean onResourceReady(final GlideDrawable resource,
-                        final String model,
-                        final Target<GlideDrawable> target, final boolean isFromMemoryCache,
-                        final boolean isFirstResource) {
+                                               final String model,
+                                               final Target<GlideDrawable> target, final boolean isFromMemoryCache,
+                                               final boolean isFirstResource) {
                     onImageSet();
                     return false;
                 }
@@ -389,7 +389,7 @@ public final class QueueActivity extends BaseActivity
     }
 
     private void onPlayClick(@NonNull final View clickedView,
-            final int queuePosition) {
+                             final int queuePosition) {
 
         mPlaybackInitializer.setQueueAndPlay(queue, queuePosition);
         final Media media = CollectionUtils.getItemSafe(queue, queuePosition);
@@ -405,7 +405,7 @@ public final class QueueActivity extends BaseActivity
     }
 
     private void startNowPlayingActivity(@Nullable final View albumArt,
-            @Nullable final View listItemView) {
+                                         @Nullable final View listItemView) {
         if (isNowPlayingQueue) {
             // Note that starting a transition from here when returning to already running
             // NowPlayingActivity causes memory leak in ExitTransitionCoordinator. Thus null views
@@ -490,7 +490,7 @@ public final class QueueActivity extends BaseActivity
 
         @Override
         public void onTrackClick(@NonNull final View itemView,
-                final int position) {
+                                 final int position) {
             onPlayClick(itemView, position);
         }
 
@@ -533,8 +533,8 @@ public final class QueueActivity extends BaseActivity
 
         @Override
         public boolean onMove(final RecyclerView recyclerView,
-                final RecyclerView.ViewHolder source,
-                final RecyclerView.ViewHolder target) {
+                              final RecyclerView.ViewHolder source,
+                              final RecyclerView.ViewHolder target) {
             //noinspection SimplifiableIfStatement
             if (source.getItemViewType() != target.getItemViewType()) {
                 return false;
@@ -545,7 +545,7 @@ public final class QueueActivity extends BaseActivity
 
         @Override
         public int getMovementFlags(final RecyclerView recyclerView,
-                final RecyclerView.ViewHolder viewHolder) {
+                                    final RecyclerView.ViewHolder viewHolder) {
             final int swipeFlags = ItemTouchHelper.LEFT;
             int dragFlags = 0;
             if (mAdapter.getItemCount() > 1) {
@@ -610,7 +610,7 @@ public final class QueueActivity extends BaseActivity
     private static final class QueueActivityLollipop {
 
         static void applyTransitions(@NonNull final BaseActivity activity,
-                final boolean hasCardView) {
+                                     final boolean hasCardView) {
             TransitionUtils.clearSharedElementsOnReturn(activity);
             final Window window = activity.getWindow();
             window.setReturnTransition(hasCardView

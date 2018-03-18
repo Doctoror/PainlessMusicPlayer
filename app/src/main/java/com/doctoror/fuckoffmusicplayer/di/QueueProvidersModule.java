@@ -44,7 +44,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-final class QueueProvidersModule {
+public final class QueueProvidersModule {
 
     @Provides
     QueueProviderAlbums provideQueueProviderAlbums(

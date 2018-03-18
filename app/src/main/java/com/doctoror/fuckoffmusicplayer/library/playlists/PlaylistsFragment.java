@@ -15,19 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.playlists;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
-import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -43,6 +30,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
+import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
+import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsActivity;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +50,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -87,7 +87,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
         setCanShowEmptyView(false);
 
         mAdapter = new PlaylistsRecyclerAdapter(getActivity(),
@@ -100,7 +100,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-            @Nullable final Bundle savedInstanceState) {
+                             @Nullable final Bundle savedInstanceState) {
         final View view = super.onCreateView(inflater, container, savedInstanceState);
         if (view != null) {
             mUnbinder = ButterKnife.bind(this, view);
@@ -159,7 +159,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
     }
 
     private void loadLivePlaylistAndPlay(@NonNull final LivePlaylist livePlaylist,
-            final int position) {
+                                         final int position) {
         if (mLoading) {
             return;
         } else {
@@ -194,8 +194,8 @@ public final class PlaylistsFragment extends LibraryListFragment {
     }
 
     private void loadLivePlaylistAndPlay(final int position,
-            @NonNull final String name,
-            @NonNull final Observable<List<Media>> queueSource) {
+                                         @NonNull final String name,
+                                         @NonNull final Observable<List<Media>> queueSource) {
         disposeOnStop(queueSource
                 .take(1)
                 .subscribeOn(Schedulers.io())
@@ -206,8 +206,8 @@ public final class PlaylistsFragment extends LibraryListFragment {
     }
 
     private void onLivePlaylistLoaded(final int position,
-            @NonNull final String name,
-            @NonNull final List<Media> medias) {
+                                      @NonNull final String name,
+                                      @NonNull final List<Media> medias) {
         if (isAdded()) {
             onQueueLoaded(itemViewForPosition(position), name, medias);
         }
@@ -229,7 +229,7 @@ public final class PlaylistsFragment extends LibraryListFragment {
     }
 
     private void goToRecentAlbumsActivity(@NonNull final Activity context,
-            final int position) {
+                                          final int position) {
         final long[] recentAlbums = mRecentActivityManager.getRecentlyPlayedAlbums();
         if (recentAlbums.length == 0) {
             Toast.makeText(context, R.string.You_played_no_albums_yet, Toast.LENGTH_LONG).show();
@@ -265,8 +265,8 @@ public final class PlaylistsFragment extends LibraryListFragment {
     }
 
     private void onQueueLoaded(@Nullable final View itemView,
-            @Nullable final String name,
-            @Nullable final List<Media> queue) {
+                               @Nullable final String name,
+                               @Nullable final List<Media> queue) {
         if (queue != null && !queue.isEmpty()) {
             final Intent intent = Henson.with(getActivity()).gotoQueueActivity()
                     .hasCoverTransition(false)
@@ -299,8 +299,8 @@ public final class PlaylistsFragment extends LibraryListFragment {
 
         @Override
         public void onPlaylistClick(final long id,
-                @Nullable final String name,
-                final int position) {
+                                    @Nullable final String name,
+                                    final int position) {
             disposeOnStop(mPlaylistsProvider.loadQueue(id)
                     .take(1)
                     .subscribeOn(Schedulers.io())

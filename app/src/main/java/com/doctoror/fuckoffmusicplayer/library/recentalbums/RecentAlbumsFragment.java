@@ -15,16 +15,16 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.recentalbums;
 
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
-
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
+
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 
 /**
@@ -38,7 +38,7 @@ public final class RecentAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
     }
 
     @Override

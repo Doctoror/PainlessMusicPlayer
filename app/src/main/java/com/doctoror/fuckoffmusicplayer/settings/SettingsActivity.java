@@ -15,17 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.settings;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
-import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.InjectExtra;
-
-import org.parceler.Parcel;
-import org.parceler.Parcels;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -37,10 +26,21 @@ import android.support.v7.app.AppCompatDelegate;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
+
+import org.parceler.Parcel;
+import org.parceler.Parcels;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 
 /**
  * Settings activity
@@ -67,7 +67,7 @@ public final class SettingsActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         Dart.inject(this);
         restoreInstanceState(savedInstanceState);

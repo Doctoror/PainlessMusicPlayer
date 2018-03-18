@@ -15,21 +15,21 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.artistalbums;
 
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
-
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragment;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 
 /**
@@ -60,7 +60,7 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         artistId = getArguments().getLong(EXTRA_ARTIST_ID);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
     }
 
     @NonNull

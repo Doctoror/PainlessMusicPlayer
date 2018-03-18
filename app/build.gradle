@@ -106,7 +106,9 @@ dependencies {
     annotationProcessor d.butterKnifeCompiler
 
     implementation d.dagger
+    implementation d.daggerAndroid
     annotationProcessor d.daggerCompiler
+    annotationProcessor d.daggerAndroidProcessor
 
     implementation d.dart
     annotationProcessor d.dartProcessor

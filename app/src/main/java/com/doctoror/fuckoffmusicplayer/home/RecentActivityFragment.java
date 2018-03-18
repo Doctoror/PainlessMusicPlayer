@@ -15,19 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.home;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.library.LibraryPermissionsFragment;
-import com.doctoror.fuckoffmusicplayer.library.albums.AlbumClickHandler;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
-import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
-
-import org.parceler.Parcel;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -43,11 +30,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.library.LibraryPermissionsFragment;
+import com.doctoror.fuckoffmusicplayer.library.albums.AlbumClickHandler;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
+
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiFunction;
@@ -82,7 +82,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         setHasOptionsMenu(true);
 
@@ -106,7 +106,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-            @Nullable final Bundle savedInstanceState) {
+                             @Nullable final Bundle savedInstanceState) {
         final FragmentRecentActivityBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_recent_activity, container, false);
         setupRecyclerView(binding.recyclerView);

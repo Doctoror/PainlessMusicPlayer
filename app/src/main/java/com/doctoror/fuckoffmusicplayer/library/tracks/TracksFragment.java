@@ -15,9 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.widget.Toast;
+
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
@@ -26,16 +31,11 @@ import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
 
-import android.database.Cursor;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.widget.Toast;
-
 import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -62,7 +62,7 @@ public final class TracksFragment extends LibraryListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         mAdapter = new TracksRecyclerAdapter(getActivity());
         mAdapter.setOnTrackClickListener((startPosition, trackId) -> onTrackClick(startPosition));
@@ -104,7 +104,7 @@ public final class TracksFragment extends LibraryListFragment {
                 }
                 tracks = new long[limit];
                 for (int trackIndex = 0, i = startPosition; i < startPosition + limit;
-                        trackIndex++, i++) {
+                     trackIndex++, i++) {
                     if (data.moveToPosition(i)) {
                         tracks[trackIndex] = data.getLong(TracksProvider.COLUMN_ID);
                     } else {
@@ -135,7 +135,7 @@ public final class TracksFragment extends LibraryListFragment {
     }
 
     private void onQueueLoaded(final int startPosition,
-            @NonNull final List<Media> queue) {
+                               @NonNull final List<Media> queue) {
         if (isAdded()) {
             if (queue.isEmpty()) {
                 onQueueEmpty();

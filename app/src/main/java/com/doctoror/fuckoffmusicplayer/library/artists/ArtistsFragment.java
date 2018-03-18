@@ -15,13 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.artists;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
-import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
-import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -31,8 +24,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
+import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsActivity;
+
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 
 /**
@@ -48,7 +48,7 @@ public final class ArtistsFragment extends LibraryListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         mAdapter = new ArtistsRecyclerAdapter(getActivity());
         mAdapter.setOnArtistClickListener(this::onArtistClick);
@@ -72,7 +72,7 @@ public final class ArtistsFragment extends LibraryListFragment {
     }
 
     private void onArtistClick(final int position, final long artistId,
-            @Nullable final String artist) {
+                               @Nullable final String artist) {
         final Activity activity = getActivity();
         final Intent intent = Henson.with(activity).gotoArtistAlbumsActivity()
                 .artist(artist)

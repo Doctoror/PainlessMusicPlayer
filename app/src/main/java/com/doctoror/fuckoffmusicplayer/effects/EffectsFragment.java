@@ -15,12 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.effects;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.databinding.FragmentEffectsBinding;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
-import com.jakewharton.rxbinding2.widget.RxSeekBar;
-
 import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -29,10 +23,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentEffectsBinding;
+import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
+import com.jakewharton.rxbinding2.widget.RxSeekBar;
+
 import java.util.Observer;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
@@ -48,14 +48,14 @@ public final class EffectsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
         mAudioEffects.addObserver(mAudioEffectsObserver);
     }
 
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-            @Nullable final Bundle savedInstanceState) {
+                             @Nullable final Bundle savedInstanceState) {
         final FragmentEffectsBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_effects, container, false);
         binding.setModel(mModel);

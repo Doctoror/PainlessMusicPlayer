@@ -15,14 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.albums;
 
-import com.bumptech.glide.Glide;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
-import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
-
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -31,13 +23,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.library.LibraryListFragment;
+import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
+
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 
-/**
- * Created by Yaroslav Mytkalyk on 17.10.16.
- */
 public final class AlbumsFragment extends LibraryListFragment {
 
     private static final String TAG_DIALOG_DELETE = "AlbumsFragment.TAG_DIALOG_DELETE";
@@ -55,7 +52,7 @@ public final class AlbumsFragment extends LibraryListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         mAdapter = new AlbumsRecyclerAdapter(getActivity(), Glide.with(this));
         mAdapter.setOnAlbumClickListener(new AlbumsRecyclerAdapter.OnAlbumClickListener() {
@@ -116,7 +113,7 @@ public final class AlbumsFragment extends LibraryListFragment {
     }
 
     private void onAlbumClick(final int position, final long albumId,
-            @Nullable final String albumName) {
+                              @Nullable final String albumName) {
         AlbumClickHandler.onAlbumClick(this,
                 mQueueProvider,
                 albumId,

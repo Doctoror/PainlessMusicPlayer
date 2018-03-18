@@ -15,31 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.albums.conditional;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
-import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -67,6 +42,30 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
+import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -76,6 +75,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -150,7 +150,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHolder.getInstance(getActivity()).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         mRequestManager = Glide.with(this);
 
@@ -162,7 +162,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-            @Nullable final Bundle savedInstanceState) {
+                             @Nullable final Bundle savedInstanceState) {
         final FragmentConditionalAlbumListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_conditional_album_list, container, false);
         binding.setModel(mModel);
@@ -182,7 +182,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
             public void onLayoutChildren(final RecyclerView.Recycler recycler,
-                    final RecyclerView.State state) {
+                                         final RecyclerView.State state) {
                 super.onLayoutChildren(recycler, state);
                 setAppBarCollapsibleIfNeeded();
             }
@@ -234,8 +234,8 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void onListItemClick(final int position,
-            final long albumId,
-            @Nullable final String queueName) {
+                                 final long albumId,
+                                 @Nullable final String queueName) {
         disposeOnStop(queueFromAlbum(albumId)
                 .take(1)
                 .subscribeOn(Schedulers.io())
@@ -250,8 +250,8 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void onQueueLoaded(final int position,
-            @Nullable final String queueName,
-            @NonNull final List<Media> queue) {
+                               @Nullable final String queueName,
+                               @NonNull final List<Media> queue) {
         if (isAdded()) {
             onQueueLoaded(queue, ViewUtils.getItemView(recyclerView, position),
                     queueName);
@@ -259,8 +259,8 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void onQueueLoaded(@NonNull final List<Media> queue,
-            @Nullable final View itemView,
-            @Nullable final String queueName) {
+                               @Nullable final View itemView,
+                               @Nullable final String queueName) {
         final Activity activity = getActivity();
         if (queue.isEmpty()) {
             onQueueEmpty();
@@ -307,7 +307,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction,
-            final boolean fadeDim) {
+                                     final boolean fadeDim) {
         if (!TransitionUtils.supportsActivityTransitions() || fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
@@ -432,18 +432,18 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                         .listener(new RequestListener<String, GlideDrawable>() {
                             @Override
                             public boolean onException(final Exception e, final String model,
-                                    final Target<GlideDrawable> target,
-                                    final boolean isFirstResource) {
+                                                       final Target<GlideDrawable> target,
+                                                       final boolean isFirstResource) {
                                 showPlaceholderAlbumArt();
                                 return true;
                             }
 
                             @Override
                             public boolean onResourceReady(final GlideDrawable resource,
-                                    final String model,
-                                    final Target<GlideDrawable> target,
-                                    final boolean isFromMemoryCache,
-                                    final boolean isFirstResource) {
+                                                           final String model,
+                                                           final Target<GlideDrawable> target,
+                                                           final boolean isFromMemoryCache,
+                                                           final boolean isFirstResource) {
                                 ((AppCompatActivity) getActivity())
                                         .supportStartPostponedEnterTransition();
                                 return false;
@@ -476,7 +476,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private static final class LollipopUtils {
 
         static void applyTransitions(@NonNull final BaseActivity activity,
-                final boolean hasCardView) {
+                                     final boolean hasCardView) {
             TransitionUtils.clearSharedElementsOnReturn(activity);
             activity.getWindow().setReturnTransition(hasCardView
                     ? new CardVerticalGateTransition()

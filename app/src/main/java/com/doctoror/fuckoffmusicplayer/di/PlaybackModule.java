@@ -39,7 +39,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-final class PlaybackModule {
+public final class PlaybackModule {
 
     @Provides
     @Singleton

@@ -15,36 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.nowplaying;
 
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
-import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
-import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
-import com.doctoror.fuckoffmusicplayer.formatter.ArtistAlbumFormatter;
-import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
-import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.Objects;
-import com.f2prateek.dart.Dart;
-import com.f2prateek.dart.InjectExtra;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -72,6 +42,35 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.data.util.Objects;
+import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
+import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
+import com.doctoror.fuckoffmusicplayer.formatter.ArtistAlbumFormatter;
+import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
+import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
+import com.f2prateek.dart.Dart;
+import com.f2prateek.dart.InjectExtra;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -79,6 +78,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.AndroidInjection;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -93,8 +93,8 @@ public final class NowPlayingActivity extends BaseActivity {
     public static final String TRANSITION_NAME_ROOT = "NowPlayingActivity.TRANSITION_NAME_ROOT";
 
     public static void start(@NonNull final Activity activity,
-            @Nullable final View albumArt,
-            @Nullable final View listItemView) {
+                             @Nullable final View albumArt,
+                             @Nullable final View listItemView) {
         final Intent intent = Henson.with(activity)
                 .gotoNowPlayingActivity()
                 .hasCoverTransition(albumArt != null)
@@ -171,7 +171,7 @@ public final class NowPlayingActivity extends BaseActivity {
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Dart.inject(this);
-        DaggerHolder.getInstance(this).mainComponent().inject(this);
+        AndroidInjection.inject(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -248,8 +248,8 @@ public final class NowPlayingActivity extends BaseActivity {
             b.listener(new RequestListener<String, GlideDrawable>() {
                 @Override
                 public boolean onException(final Exception e, final String model,
-                        final Target<GlideDrawable> target,
-                        final boolean isFirstResource) {
+                                           final Target<GlideDrawable> target,
+                                           final boolean isFirstResource) {
                     albumArt.setAlpha(0f);
                     albumArt.setImageResource(R.drawable.album_art_placeholder);
                     albumArt.animate().alpha(1f).start();
@@ -259,9 +259,9 @@ public final class NowPlayingActivity extends BaseActivity {
 
                 @Override
                 public boolean onResourceReady(final GlideDrawable resource,
-                        final String model,
-                        final Target<GlideDrawable> target, final boolean isFromMemoryCache,
-                        final boolean isFirstResource) {
+                                               final String model,
+                                               final Target<GlideDrawable> target, final boolean isFromMemoryCache,
+                                               final boolean isFirstResource) {
                     onArtProcessed();
                     return false;
                 }
