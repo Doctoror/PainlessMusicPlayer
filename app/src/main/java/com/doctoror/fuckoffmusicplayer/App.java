@@ -34,10 +34,10 @@ import dagger.android.DaggerApplication;
 public final class App extends DaggerApplication {
 
     @Inject
-    DayNightModeMapper mDayNightModeMapper;
+    DayNightModeMapper dayNightModeMapper;
 
     @Inject
-    Settings mSettings;
+    Settings settings;
 
     @Override
     public void onCreate() {
@@ -71,7 +71,7 @@ public final class App extends DaggerApplication {
 
     private void initTheme() {
         AppCompatDelegate.setDefaultNightMode(
-                mDayNightModeMapper.toDayNightMode(mSettings.getTheme()));
+                dayNightModeMapper.toDayNightMode(settings.getTheme()));
     }
 
     @Override
