@@ -18,17 +18,17 @@ package com.doctoror.fuckoffmusicplayer;
 public final class RuntimePermissions {
 
     // Request once per-app instance
-    private static boolean sPermissionRequested;
+    private static boolean permissionRequested;
 
     private RuntimePermissions() {
         throw new UnsupportedOperationException();
     }
 
     public static boolean arePermissionsRequested() {
-        return sPermissionRequested;
+        return permissionRequested;
     }
 
-    public static void setPermissionsRequested(final boolean requested) {
-        sPermissionRequested = requested;
+    public static void setPermissionsRequested() {
+        permissionRequested = true;
     }
 }

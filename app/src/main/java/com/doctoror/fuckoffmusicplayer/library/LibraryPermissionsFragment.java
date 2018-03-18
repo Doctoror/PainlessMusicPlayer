@@ -94,7 +94,7 @@ public abstract class LibraryPermissionsFragment extends BaseFragment {
 
     protected final void requestPermission() {
         mPermissionRequested = true;
-        RuntimePermissions.setPermissionsRequested(true);
+        RuntimePermissions.setPermissionsRequested();
         getRxPermissions().request(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .subscribe(granted -> {
                     mHasPermissions = granted;
