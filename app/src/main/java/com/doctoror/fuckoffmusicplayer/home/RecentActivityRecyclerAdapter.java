@@ -1,12 +1,5 @@
 package com.doctoror.fuckoffmusicplayer.home;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumViewHolder;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +8,14 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumViewHolder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,12 +31,16 @@ final class RecentActivityRecyclerAdapter
         void onAlbumClick(int position, long id, @Nullable String album);
     }
 
-    private final RequestManager glide;
+    private final RequestOptions requestOptions = new RequestOptions()
+            .error(R.drawable.album_art_placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.NONE);
+
+    private final RequestManager requestManager;
     private OnAlbumClickListener onAlbumClickListener;
 
     RecentActivityRecyclerAdapter(@NonNull final Context context) {
         super(context);
-        glide = Glide.with(context);
+        requestManager = Glide.with(context);
     }
 
     void setOnAlbumClickListener(@NonNull final OnAlbumClickListener l) {
@@ -53,7 +58,7 @@ final class RecentActivityRecyclerAdapter
     }
 
     private void onAlbumClick(final int position, final long id,
-            @Nullable final String album) {
+                              @Nullable final String album) {
         if (onAlbumClickListener != null) {
             onAlbumClickListener.onAlbumClick(position, id, album);
         }
@@ -122,12 +127,11 @@ final class RecentActivityRecyclerAdapter
         holder.text1.setText(item.title);
         final String artLocation = item.albumArt;
         if (TextUtils.isEmpty(artLocation)) {
-            Glide.clear(holder.image);
+            requestManager.clear(holder.image);
             holder.image.setImageResource(R.drawable.album_art_placeholder);
         } else {
-            glide.load(artLocation)
-                    .error(R.drawable.album_art_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+            requestManager.load(artLocation)
+                    .apply(requestOptions)
                     .into(holder.image);
         }
     }

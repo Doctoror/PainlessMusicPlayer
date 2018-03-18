@@ -15,16 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.albums;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumWithMenuViewHolder;
-import com.l4digital.fastscroll.FastScroller;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -39,16 +29,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
+import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumWithMenuViewHolder;
+import com.l4digital.fastscroll.FastScroller;
+
 /**
  * "Albums" recycler adapter
  */
 final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMenuViewHolder>
         implements FastScroller.SectionIndexer {
 
-    @NonNull
+    private final RequestOptions requestOptions = new RequestOptions()
+            .error(R.drawable.album_art_placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.NONE);
+
     private final LayoutInflater mLayoutInflater;
 
-    @NonNull
     private final RequestManager mRequestManager;
 
     interface OnAlbumClickListener {
@@ -60,7 +62,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
 
     private OnAlbumClickListener mOnAlbumClickListener;
 
-    AlbumsRecyclerAdapter(final Context context,
+    AlbumsRecyclerAdapter(
+            @NonNull final Context context,
             @NonNull final RequestManager requestManager) {
         super(null);
         mLayoutInflater = LayoutInflater.from(context);
@@ -104,8 +107,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
     }
 
     private boolean onMenuItemClick(@NonNull final MenuItem menuItem,
-            final long itemId,
-            @NonNull final String name) {
+                                    final long itemId,
+                                    @NonNull final String name) {
         switch (menuItem.getItemId()) {
             case R.id.actionDelete:
                 if (mOnAlbumClickListener != null) {
@@ -124,19 +127,20 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
         viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
         final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {
-            Glide.clear(viewHolder.image);
+            mRequestManager.clear(viewHolder.image);
             viewHolder.image.setImageResource(R.drawable.album_art_placeholder);
         } else {
             mRequestManager
                     .load(artLocation)
-                    .error(R.drawable.album_art_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .apply(requestOptions)
                     .into(viewHolder.image);
         }
     }
 
+    @NonNull
     @Override
-    public AlbumWithMenuViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+    public AlbumWithMenuViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent, final int viewType) {
         final AlbumWithMenuViewHolder vh = new AlbumWithMenuViewHolder(
                 mLayoutInflater.inflate(R.layout.recycler_item_album_with_menu, parent, false));
 

@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -42,11 +43,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
-import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
@@ -115,6 +119,15 @@ public final class NowPlayingActivity extends BaseActivity {
     }
 
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
+
+    private final RequestOptions requestOptions = new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.NONE);
+
+    private final RequestOptions requestOptionsDontAnimate = new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .dontAnimate();
+
+    private RequestManager mRequestManager;
 
     @SuppressWarnings("FieldCanBeLocal") // Ensure not collected
     private NavigationController mNavigationController;
@@ -185,6 +198,8 @@ public final class NowPlayingActivity extends BaseActivity {
             NowPlayingActivityLollipop.applyTransitions(this);
         }
 
+        mRequestManager = Glide.with(this);
+
         mTransitionPostponed = false;
         mTransitionStarted = false;
 
@@ -235,38 +250,21 @@ public final class NowPlayingActivity extends BaseActivity {
             supportPostponeEnterTransition();
         }
         if (TextUtils.isEmpty(artUri)) {
-            Glide.clear(albumArt);
+            mRequestManager.clear(albumArt);
             albumArt.setImageResource(R.drawable.album_art_placeholder);
             onArtProcessed();
         } else {
-            final DrawableRequestBuilder<String> b = Glide.with(this)
-                    .load(artUri)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE);
-            if (hasCoverTransition || hasListViewTransition) {
-                b.dontAnimate();
-            }
-            b.listener(new RequestListener<String, GlideDrawable>() {
-                @Override
-                public boolean onException(final Exception e, final String model,
-                                           final Target<GlideDrawable> target,
-                                           final boolean isFirstResource) {
-                    albumArt.setAlpha(0f);
-                    albumArt.setImageResource(R.drawable.album_art_placeholder);
-                    albumArt.animate().alpha(1f).start();
-                    onArtProcessed();
-                    return true;
-                }
+            final RequestBuilder<Drawable> b = mRequestManager
+                    .asDrawable()
+                    .load(artUri);
 
-                @Override
-                public boolean onResourceReady(final GlideDrawable resource,
-                                               final String model,
-                                               final Target<GlideDrawable> target, final boolean isFromMemoryCache,
-                                               final boolean isFirstResource) {
-                    onArtProcessed();
-                    return false;
-                }
-            })
-                    .into(albumArt);
+            if (hasCoverTransition || hasListViewTransition) {
+                b.apply(requestOptionsDontAnimate);
+            } else {
+                b.apply(requestOptions);
+            }
+
+            b.listener(new AlbumArtRequestListener()).into(albumArt);
         }
     }
 
@@ -539,6 +537,33 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private final Consumer<Long> mMediaPositionConsumer = this::bindProgress;
 
+    private final class AlbumArtRequestListener implements RequestListener<Drawable> {
+
+        @Override
+        public boolean onLoadFailed(
+                @Nullable final GlideException e,
+                @NonNull final Object model,
+                @NonNull final Target<Drawable> target,
+                final boolean isFirstResource) {
+            albumArt.setAlpha(0f);
+            albumArt.setImageResource(R.drawable.album_art_placeholder);
+            albumArt.animate().alpha(1f).start();
+            onArtProcessed();
+            return true;
+        }
+
+        @Override
+        public boolean onResourceReady(
+                @NonNull final Drawable resource,
+                @NonNull final Object model,
+                @NonNull final Target<Drawable> target,
+                @NonNull final DataSource dataSource,
+                final boolean isFirstResource) {
+            onArtProcessed();
+            return false;
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static final class NowPlayingActivityLollipop {
 
@@ -550,6 +575,5 @@ public final class NowPlayingActivity extends BaseActivity {
                     ? new RootViewVerticalGateTransition()
                     : new ArtAndControlsGateTransition());
         }
-
     }
 }

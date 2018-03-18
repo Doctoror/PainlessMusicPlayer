@@ -1,14 +1,5 @@
 package com.doctoror.fuckoffmusicplayer.playback;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.doctoror.fuckoffmusicplayer.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,6 +16,16 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -32,6 +33,9 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
 
     private static final String TAG = "PlaybackNotification";
     private static final String CHANNEL_ID = "NowPlaying";
+
+    private final RequestOptions requestOptions = new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.NONE);
 
     @NonNull
     @Override
@@ -70,7 +74,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     }
 
     @NonNull
-    private static Bitmap loadAlbumArt(
+    private Bitmap loadAlbumArt(
             @NonNull final Context context,
             @NonNull final Media media) {
         Bitmap art = null;
@@ -78,10 +82,11 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
         if (!TextUtils.isEmpty(artLocation)) {
             final int dp128 = (int) (context.getResources().getDisplayMetrics().density * 128);
             try {
-                art = Glide.with(context).load(artLocation)
+                art = Glide.with(context)
                         .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .into(dp128, dp128)
+                        .apply(requestOptions)
+                        .load(artLocation)
+                        .submit(dp128, dp128)
                         .get();
             } catch (InterruptedException | ExecutionException e) {
                 Log.w(TAG, e);
@@ -131,8 +136,8 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     }
 
     private static void addAction2(@NonNull final Context context,
-            @NonNull final NotificationCompat.Builder b,
-            @PlaybackState final int state) {
+                                   @NonNull final NotificationCompat.Builder b,
+                                   @PlaybackState final int state) {
         final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
                 PlaybackServiceIntentFactory.intentPlayPause(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -147,7 +152,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     }
 
     private static void addAction3(@NonNull final Context context,
-            @NonNull final NotificationCompat.Builder b) {
+                                   @NonNull final NotificationCompat.Builder b) {
         final int direction = context.getResources().getInteger(R.integer.layoutDirection);
         switch (direction) {
             case View.LAYOUT_DIRECTION_RTL:
@@ -162,7 +167,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     }
 
     private static void addActionPrev(@NonNull final Context context,
-            @NonNull final NotificationCompat.Builder b) {
+                                      @NonNull final NotificationCompat.Builder b) {
         final PendingIntent prevIntent = PendingIntent.getService(context, 1,
                 PlaybackServiceIntentFactory.intentPrev(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -172,7 +177,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     }
 
     private static void addActionNext(@NonNull final Context context,
-            @NonNull final NotificationCompat.Builder b) {
+                                      @NonNull final NotificationCompat.Builder b) {
         final PendingIntent nextIntent = PendingIntent.getService(context, 2,
                 PlaybackServiceIntentFactory.intentNext(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);

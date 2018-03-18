@@ -16,14 +16,13 @@
 package com.doctoror.fuckoffmusicplayer.library.albums.conditional;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -44,9 +43,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
@@ -89,6 +90,10 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private static final String TAG = "ConditionalAlbumListFragment";
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
+
+    private final RequestOptions requestOptions = new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .dontAnimate();
 
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
@@ -240,10 +245,10 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                 .take(1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(q -> onQueueLoaded(position, queueName, q), this::onQueueLoadFailed));
+                .subscribe(q -> onQueueLoaded(position, queueName, q), (t) -> onQueueLoadFailed()));
     }
 
-    private void onQueueLoadFailed(@NonNull final Throwable t) {
+    private void onQueueLoadFailed() {
         if (isAdded()) {
             onQueueEmpty();
         }
@@ -301,26 +306,16 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             } else {
                 mPlaybackInitializer.setQueueAndPlay(queue, 0);
                 prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
-                        albumArt, null), true);
+                        albumArt, null));
             }
         }
     }
 
-    private void prepareViewsAndExit(@NonNull final Runnable exitAction,
-                                     final boolean fadeDim) {
+    private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
         if (!TransitionUtils.supportsActivityTransitions() || fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
-            if (fadeDim) {
-                albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
-            }
-            fab.animate().scaleX(0f).scaleY(0f).setDuration(mAnimTime)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(final Animator animation) {
-                            exitAction.run();
-                        }
-                    }).start();
+            albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
         }
     }
 
@@ -331,13 +326,13 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             mDisposableData = disposeOnStop(load()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::onDataLoaded, this::onDataLoadFailed));
+                    .subscribe(this::onDataLoaded, (t) -> onDataLoadFailed()));
         } else {
             Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
         }
     }
 
-    private void onDataLoadFailed(@NonNull final Throwable t) {
+    private void onDataLoadFailed() {
         if (mDisposableDataOld != null) {
             mDisposableDataOld.dispose();
             mDisposableDataOld = null;
@@ -426,36 +421,18 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             if (TextUtils.isEmpty(pic)) {
                 showPlaceholderAlbumArt();
             } else {
-                mRequestManager.load(pic)
-                        .dontAnimate()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .listener(new RequestListener<String, GlideDrawable>() {
-                            @Override
-                            public boolean onException(final Exception e, final String model,
-                                                       final Target<GlideDrawable> target,
-                                                       final boolean isFirstResource) {
-                                showPlaceholderAlbumArt();
-                                return true;
-                            }
-
-                            @Override
-                            public boolean onResourceReady(final GlideDrawable resource,
-                                                           final String model,
-                                                           final Target<GlideDrawable> target,
-                                                           final boolean isFromMemoryCache,
-                                                           final boolean isFirstResource) {
-                                ((AppCompatActivity) getActivity())
-                                        .supportStartPostponedEnterTransition();
-                                return false;
-                            }
-                        })
+                mRequestManager
+                        .asDrawable()
+                        .apply(requestOptions)
+                        .load(pic)
+                        .listener(new AlbumArtRequestListener())
                         .into(albumArt);
             }
         }
     }
 
     private void showPlaceholderAlbumArt() {
-        Glide.clear(albumArt);
+        mRequestManager.clear(albumArt);
         albumArt.setImageResource(R.drawable.album_art_placeholder);
         albumArt.setAlpha(1f);
         ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
@@ -470,6 +447,30 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             }
         }
         return null;
+    }
+
+    private final class AlbumArtRequestListener implements RequestListener<Drawable> {
+
+        @Override
+        public boolean onLoadFailed(
+                @Nullable final GlideException e,
+                @NonNull final Object model,
+                @NonNull final Target<Drawable> target,
+                final boolean isFirstResource) {
+            showPlaceholderAlbumArt();
+            return true;
+        }
+
+        @Override
+        public boolean onResourceReady(
+                @NonNull final Drawable resource,
+                @NonNull final Object model,
+                @NonNull final Target<Drawable> target,
+                @NonNull final DataSource dataSource,
+                final boolean isFirstResource) {
+            ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+            return false;
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

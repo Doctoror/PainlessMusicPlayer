@@ -28,6 +28,7 @@ import android.util.DisplayMetrics;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
@@ -49,6 +50,10 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     private final AlbumThumbHolder mAlbumThumbHolder;
     private final MediaSessionCompat mMediaSession;
     private final RequestManager mGlide;
+
+    private final RequestOptions requestOptions = new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .centerCrop();
 
     MediaSessionPlaybackReporter(
             @NonNull final Context context,
@@ -79,11 +84,12 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
             // Load bitmap because of https://code.google.com/p/android/issues/detail?id=194874
             try {
                 //noinspection SuspiciousNameCombination
-                artBitmapLarge = mGlide.load(art)
+                artBitmapLarge = mGlide
                         .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .apply(requestOptions)
+                        .load(art)
                         // Optimized for lock screen
-                        .into(mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels)
+                        .submit(mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels)
                         .get();
             } catch (ExecutionException | InterruptedException e) {
                 Log.w(TAG, "Failed loading art image", e);
@@ -92,12 +98,12 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
             final int dp84 = (int) (84f * mDisplayMetrics.density);
 
             try {
-                artBitmapSmall = mGlide.load(art)
+                artBitmapSmall = mGlide
                         .asBitmap()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .centerCrop()
+                        .apply(requestOptions)
+                        .load(art)
                         // Optimized for medium appwidget
-                        .into(dp84, dp84)
+                        .submit(dp84, dp84)
                         .get();
             } catch (ExecutionException | InterruptedException e) {
                 Log.w(TAG, "Failed loading art image", e);

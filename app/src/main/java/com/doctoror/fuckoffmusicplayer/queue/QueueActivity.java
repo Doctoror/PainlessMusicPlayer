@@ -17,10 +17,12 @@ package com.doctoror.fuckoffmusicplayer.queue;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -43,11 +45,14 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
@@ -99,7 +104,17 @@ public final class QueueActivity extends BaseActivity
     private static final String EXTRA_STATE = "EXTRA_STATE";
     private static final String TAG_DIALOG_DELETE = "TAG_DIALOG_DELETE";
 
+    private final RequestOptions requestOptions = new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.NONE);
+
+    private final RequestOptions dontAnimateOptions = new RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .dontAnimate();
+
     private final QueueActivityModel mModel = new QueueActivityModel();
+
+    private RequestManager mRequestManager;
+
     private QueueRecyclerAdapter mAdapter;
     private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
 
@@ -168,6 +183,7 @@ public final class QueueActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         Dart.inject(this);
         AndroidInjection.inject(this);
+        mRequestManager = Glide.with(this);
 
         mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mMediumAnimTime = getResources().getInteger(android.R.integer.config_mediumAnimTime);
@@ -260,39 +276,27 @@ public final class QueueActivity extends BaseActivity
             showPlaceholderArt();
             onImageSet();
         } else {
-            final DrawableRequestBuilder<String> b = Glide.with(this)
-                    .load(pic)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE);
-            if (hasCoverTransition || hasItemViewTransition) {
-                supportPostponeEnterTransition();
-                b.dontAnimate();
-            }
-            b.listener(new RequestListener<String, GlideDrawable>() {
-                @Override
-                public boolean onException(final Exception e, final String model,
-                                           final Target<GlideDrawable> target,
-                                           final boolean isFirstResource) {
-                    mCoverUri = null;
-                    showPlaceholderArt();
-                    onImageSet();
-                    return true;
-                }
-
-                @Override
-                public boolean onResourceReady(final GlideDrawable resource,
-                                               final String model,
-                                               final Target<GlideDrawable> target, final boolean isFromMemoryCache,
-                                               final boolean isFirstResource) {
-                    onImageSet();
-                    return false;
-                }
-            })
-                    .into(albumArt);
+            loadAlbumArt(pic);
         }
     }
 
+    @SuppressLint("CheckResult")
+    private void loadAlbumArt(@NonNull final String uri) {
+        final RequestBuilder<Drawable> b = mRequestManager
+                .asDrawable()
+                .load(uri);
+
+        if (hasCoverTransition || hasItemViewTransition) {
+            supportPostponeEnterTransition();
+            b.apply(dontAnimateOptions);
+        } else {
+            b.apply(requestOptions);
+        }
+        b.listener(new AlbumArtRequestListener()).into(albumArt);
+    }
+
     private void showPlaceholderArt() {
-        Glide.clear(albumArt);
+        mRequestManager.clear(albumArt);
         albumArt.setImageResource(R.drawable.album_art_placeholder);
         albumArt.setAlpha(1f);
     }
@@ -484,6 +488,32 @@ public final class QueueActivity extends BaseActivity
 
         List<Media> queue;
         CoordinatorLayoutUtil.AnchorParams fabAnchorParams;
+    }
+
+    private final class AlbumArtRequestListener implements RequestListener<Drawable> {
+
+        @Override
+        public boolean onLoadFailed(
+                @Nullable final GlideException e,
+                @NonNull final Object model,
+                @NonNull final Target<Drawable> target,
+                final boolean isFirstResource) {
+            mCoverUri = null;
+            showPlaceholderArt();
+            onImageSet();
+            return true;
+        }
+
+        @Override
+        public boolean onResourceReady(
+                @NonNull final Drawable resource,
+                @NonNull final Object model,
+                @NonNull final Target<Drawable> target,
+                @NonNull final DataSource dataSource,
+                final boolean isFirstResource) {
+            onImageSet();
+            return false;
+        }
     }
 
     private final class TrackListenerImpl implements QueueRecyclerAdapter.TrackListener {

@@ -15,11 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.doctoror.fuckoffmusicplayer.R;
-
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.databinding.BindingAdapter;
@@ -37,6 +32,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
+
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.doctoror.fuckoffmusicplayer.R;
 
 import java.util.Locale;
 
@@ -59,24 +59,28 @@ public final class BindingAdapters {
 
     public static final class GlideBindingComponent implements DataBindingComponent {
 
-        @NonNull
-        private final RequestManager mRequestManager;
+        private final RequestManager requestManager;
 
         GlideBindingComponent(@NonNull final RequestManager requestManager) {
-            mRequestManager = requestManager;
+            this.requestManager = requestManager;
         }
 
         @BindingAdapter({"placeholder", "imageUri"})
-        public void setImageUri(@NonNull final ImageView imageView,
+        public void setImageUri(
+                @NonNull final ImageView imageView,
                 @Nullable final Drawable placeholder,
                 @Nullable final String imageUri) {
             if (imageUri == null) {
-                Glide.clear(imageView);
+                requestManager.clear(imageView);
                 imageView.setImageDrawable(placeholder);
             } else {
-                mRequestManager.load(imageUri)
-                        .error(placeholder)
+                final RequestOptions requestOptions = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .error(placeholder);
+
+                requestManager
+                        .load(imageUri)
+                        .apply(requestOptions)
                         .into(imageView);
             }
         }
@@ -88,7 +92,8 @@ public final class BindingAdapters {
     }
 
     @BindingAdapter("formattedDuration")
-    public static void setFormattedDuration(@NonNull final TextView textView,
+    public static void setFormattedDuration(
+            @NonNull final TextView textView,
             final long seconds) {
         if (seconds < 0) {
             throw new IllegalArgumentException("Seconds must be a positive value");
@@ -112,13 +117,15 @@ public final class BindingAdapters {
     }
 
     @BindingAdapter("recyclerAdapter")
-    public static void setRecyclerAdapter(@NonNull final RecyclerView recyclerView,
+    public static void setRecyclerAdapter(
+            @NonNull final RecyclerView recyclerView,
             @Nullable final RecyclerView.Adapter<?> adapter) {
         recyclerView.setAdapter(adapter);
     }
 
     @BindingAdapter({"drawableTop", "tintAttr"})
-    public static void setDrawableTopTintedFromAttr(@NonNull final TextView textView,
+    public static void setDrawableTopTintedFromAttr(
+            @NonNull final TextView textView,
             @Nullable Drawable top,
             @AttrRes final int tintAttr) {
         final Drawable[] drawables = textView.getCompoundDrawables();
@@ -133,7 +140,8 @@ public final class BindingAdapters {
     }
 
     @BindingAdapter({"srcRes", "tintAttr"})
-    public static void setSrcResTintedFromAttr(@NonNull final ImageView imageView,
+    public static void setSrcResTintedFromAttr(
+            @NonNull final ImageView imageView,
             @DrawableRes final int res,
             @AttrRes final int tintAttr) {
         Drawable src = ContextCompat.getDrawable(imageView.getContext(), res);
@@ -141,7 +149,8 @@ public final class BindingAdapters {
     }
 
     @BindingAdapter({"src", "tintAttr"})
-    public static void setSrcTintedFromAttr(@NonNull final ImageView imageView,
+    public static void setSrcTintedFromAttr(
+            @NonNull final ImageView imageView,
             @Nullable Drawable src,
             @AttrRes final int tintAttr) {
         if (src != null) {
@@ -152,7 +161,8 @@ public final class BindingAdapters {
     }
 
     @BindingAdapter({"src", "tintNormal", "useActivatedSrcTint"})
-    public static void setUseActivatedSrcTint(@NonNull final ImageView imageView,
+    public static void setUseActivatedSrcTint(
+            @NonNull final ImageView imageView,
             @Nullable final Drawable src,
             @ColorInt final int tintNormal,
             final boolean useActivatedSrcTint) {
@@ -170,7 +180,8 @@ public final class BindingAdapters {
     }
 
     @NonNull
-    private static ColorStateList activatedTint(@NonNull final Context context,
+    private static ColorStateList activatedTint(
+            @NonNull final Context context,
             @ColorInt final int tintNormal) {
 
         final int[][] states = new int[][]{
@@ -187,7 +198,8 @@ public final class BindingAdapters {
     }
 
     @BindingAdapter("displayedChild")
-    public static void setDisplayedChild(@NonNull final ViewAnimator viewAnimator,
+    public static void setDisplayedChild(
+            @NonNull final ViewAnimator viewAnimator,
             final int child) {
         if (viewAnimator.getDisplayedChild() != child) {
             viewAnimator.setDisplayedChild(child);
@@ -195,13 +207,15 @@ public final class BindingAdapters {
     }
 
     @BindingAdapter("srcRes")
-    public static void setImageResource(@NonNull final ImageView imageView,
+    public static void setImageResource(
+            @NonNull final ImageView imageView,
             @DrawableRes final int src) {
         imageView.setImageResource(src);
     }
 
     @BindingAdapter("colorFilter")
-    public static void setColorFiler(@NonNull final ImageView imageView,
+    public static void setColorFiler(
+            @NonNull final ImageView imageView,
             @ColorInt final int color) {
         imageView.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }

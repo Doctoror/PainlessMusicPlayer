@@ -15,13 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.albums.conditional;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -29,6 +22,13 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
 
 /**
  * Albums list
@@ -41,16 +41,18 @@ final class ConditionalAlbumsRecyclerAdapter
         void onAlbumClick(int position, long albumId, @Nullable String albumName);
     }
 
-    @NonNull
+    private final RequestOptions requestOptions = new RequestOptions()
+            .error(R.drawable.album_art_placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.NONE);
+
     private final LayoutInflater mLayoutInflater;
 
-    @NonNull
     private final RequestManager mRequestManager;
 
     private OnAlbumClickListener mOnAlbumClickListener;
 
     ConditionalAlbumsRecyclerAdapter(final Context context,
-            @NonNull final RequestManager requestManager) {
+                                     @NonNull final RequestManager requestManager) {
         super(null);
         mLayoutInflater = LayoutInflater.from(context);
         mRequestManager = requestManager;
@@ -70,8 +72,8 @@ final class ConditionalAlbumsRecyclerAdapter
     }
 
     private void onAlbumClick(final int positon,
-            final long id,
-            @NonNull final String album) {
+                              final long id,
+                              @NonNull final String album) {
         if (mOnAlbumClickListener != null) {
             mOnAlbumClickListener.onAlbumClick(positon, id, album);
         }
@@ -83,19 +85,20 @@ final class ConditionalAlbumsRecyclerAdapter
         viewHolder.text2.setText(cursor.getString(AlbumsProvider.COLUMN_FIRST_YEAR));
         final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {
-            Glide.clear(viewHolder.image);
+            mRequestManager.clear(viewHolder.image);
             viewHolder.image.setImageResource(R.drawable.album_art_placeholder);
         } else {
             mRequestManager
                     .load(artLocation)
-                    .error(R.drawable.album_art_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .apply(requestOptions)
                     .into(viewHolder.image);
         }
     }
 
+    @NonNull
     @Override
-    public AlbumListViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+    public AlbumListViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent, final int viewType) {
         final AlbumListViewHolder vh = new AlbumListViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_two_line_icon, parent, false));
         vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));
