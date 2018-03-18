@@ -18,38 +18,34 @@ package com.doctoror.fuckoffmusicplayer.effects;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 
-/**
- * Created by Yaroslav Mytkalyk on 23.10.16.
- */
-
 public final class EffectsFragmentModel {
 
-    private final ObservableBoolean mBassBoostEnabled = new ObservableBoolean();
-    private final ObservableInt mBassBoostStrength = new ObservableInt();
+    private final ObservableBoolean bassBoostEnabled = new ObservableBoolean();
+    private final ObservableInt bassBoostStrength = new ObservableInt();
 
-    private final ObservableBoolean mEqualizerEnabled = new ObservableBoolean();
+    private final ObservableBoolean equalizerEnabled = new ObservableBoolean();
 
     public ObservableBoolean isBassBoostEnabled() {
-        return mBassBoostEnabled;
+        return bassBoostEnabled;
     }
 
-    public void setBassBoostEnabled(final boolean enabled) {
-        mBassBoostEnabled.set(enabled);
+    void setBassBoostEnabled(final boolean enabled) {
+        bassBoostEnabled.set(enabled);
     }
 
     public ObservableInt getBassBoostStrength() {
-        return mBassBoostStrength;
+        return bassBoostStrength;
     }
 
-    public void setBassBoostStrength(final int strength) {
-        mBassBoostStrength.set(strength);
+    void setBassBoostStrength(final int strength) {
+        bassBoostStrength.set(strength);
     }
 
     public ObservableBoolean isEqualizerEnabled() {
-        return mEqualizerEnabled;
+        return equalizerEnabled;
     }
 
-    public void setEqualizerEnabled(final boolean equalizerEnabled) {
-        mEqualizerEnabled.set(equalizerEnabled);
+    void setEqualizerEnabled(final boolean equalizerEnabled) {
+        this.equalizerEnabled.set(equalizerEnabled);
     }
 }
