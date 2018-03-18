@@ -69,6 +69,7 @@ android {
             shrinkResources true
 
             proguardFile getDefaultProguardFile('proguard-android.txt')
+            proguardFile 'proguard-dagger.pro'
             proguardFile 'proguard-dart.pro'
             proguardFile 'proguard-parceler.pro'
             proguardFile 'proguard-rules.pro'
