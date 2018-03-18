@@ -17,13 +17,13 @@ package com.doctoror.fuckoffmusicplayer.home;
 
 final class RecentActivityHeader {
 
-    private final CharSequence mTitle;
+    private final CharSequence title;
 
     RecentActivityHeader(final CharSequence title) {
-        mTitle = title;
+        this.title = title;
     }
 
     public CharSequence getTitle() {
-        return mTitle;
+        return title;
     }
 }

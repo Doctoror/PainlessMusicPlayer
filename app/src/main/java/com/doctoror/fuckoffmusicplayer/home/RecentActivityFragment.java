@@ -68,16 +68,16 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
     private static final int ANIMATOR_CHILD_ERROR = 3;
     private static final int ANIMATOR_CHILD_CONTENT = 4;
 
-    private final RecentActivityFragmentModel mModel = new RecentActivityFragmentModel();
+    private final RecentActivityFragmentModel model = new RecentActivityFragmentModel();
 
-    private RecyclerView mRecyclerView;
-    private RecentActivityRecyclerAdapter mAdapter;
-
-    @Inject
-    AlbumsProvider mAlbumsProvider;
+    private RecyclerView recyclerView;
+    private RecentActivityRecyclerAdapter adapter;
 
     @Inject
-    QueueProviderAlbums mQueueProvider;
+    AlbumsProvider albumsProvider;
+
+    @Inject
+    QueueProviderAlbums queueProvider;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -86,21 +86,21 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
         setHasOptionsMenu(true);
 
-        mAdapter = new RecentActivityRecyclerAdapter(getActivity());
-        mAdapter.setOnAlbumClickListener(new OnAlbumClickListener());
+        adapter = new RecentActivityRecyclerAdapter(getActivity());
+        adapter.setOnAlbumClickListener(new OnAlbumClickListener());
 
-        mModel.setRecyclerAdapter(mAdapter);
+        model.setRecyclerAdapter(adapter);
     }
 
     @Override
     protected void onPermissionGranted() {
-        mModel.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
+        model.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
         load();
     }
 
     @Override
     protected void onPermissionDenied() {
-        mModel.setDisplayedChild(ANIMATOR_CHILD_PERMISSION_DENIED);
+        model.setDisplayedChild(ANIMATOR_CHILD_PERMISSION_DENIED);
     }
 
     @Nullable
@@ -110,10 +110,10 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         final FragmentRecentActivityBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_recent_activity, container, false);
         setupRecyclerView(binding.recyclerView);
-        binding.setModel(mModel);
+        binding.setModel(model);
         binding.getRoot().findViewById(R.id.btnRequest)
                 .setOnClickListener(v -> requestPermission());
-        mRecyclerView = binding.recyclerView;
+        recyclerView = binding.recyclerView;
         return binding.getRoot();
     }
 
@@ -147,10 +147,10 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
             final Observable<Cursor> recentlyPlayed =
-                    mAlbumsProvider.loadRecentlyPlayedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
+                    albumsProvider.loadRecentlyPlayedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
 
             final Observable<Cursor> recentlyScanned =
-                    mAlbumsProvider.loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
+                    albumsProvider.loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
 
             disposeOnStop(Observable.combineLatest(recentlyPlayed,
                     recentlyScanned,
@@ -165,14 +165,14 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     private void onError(@NonNull final Throwable t) {
         if (isAdded()) {
-            mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
+            model.setDisplayedChild(ANIMATOR_CHILD_ERROR);
         }
     }
 
     private void onRecentActivityLoaded(@NonNull final List<Object> data) {
         if (isAdded()) {
-            mAdapter.setItems(data);
-            mModel.setDisplayedChild(data.isEmpty() || dataIsOnlyHeaders(data)
+            adapter.setItems(data);
+            model.setDisplayedChild(data.isEmpty() || dataIsOnlyHeaders(data)
                     ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
         }
     }
@@ -192,10 +192,10 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         @Override
         public void onAlbumClick(final int position, final long id, @Nullable final String album) {
             AlbumClickHandler.onAlbumClick(RecentActivityFragment.this,
-                    mQueueProvider,
+                    queueProvider,
                     id,
                     album,
-                    () -> ViewUtils.getItemView(mRecyclerView, position));
+                    () -> ViewUtils.getItemView(recyclerView, position));
         }
     }
 
@@ -203,10 +203,10 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
             implements BiFunction<Cursor, Cursor, List<Object>> {
 
         @NonNull
-        private final Resources mRes;
+        private final Resources res;
 
         RecyclerAdapterDataFunc(@NonNull final Resources res) {
-            mRes = res;
+            this.res = res;
         }
 
         @Override
@@ -215,12 +215,11 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
             try {
                 final List<AlbumItem> rPlayedList = AlbumItemsFactory.itemsFromCursor(rPlayed);
                 if (!rPlayedList.isEmpty()) {
-                    data.add(new RecentActivityHeader(
-                            mRes.getText(R.string.Recently_played_albums)));
+                    data.add(new RecentActivityHeader(res.getText(R.string.Recently_played_albums)));
                     data.addAll(rPlayedList);
                 }
 
-                data.add(new RecentActivityHeader(mRes.getText(R.string.Recently_added)));
+                data.add(new RecentActivityHeader(res.getText(R.string.Recently_added)));
                 data.addAll(AlbumItemsFactory.itemsFromCursor(rAdded));
             } finally {
                 rPlayed.close();

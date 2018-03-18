@@ -10,45 +10,45 @@ import android.support.annotation.Nullable;
  */
 public final class PlaybackStatusBarModel {
 
-    private final ObservableField<CharSequence> mTitle = new ObservableField<>();
-    private final ObservableField<CharSequence> mArtist = new ObservableField<>();
+    private final ObservableField<CharSequence> title = new ObservableField<>();
+    private final ObservableField<CharSequence> artist = new ObservableField<>();
 
-    private final ObservableField<String> mImageUri = new ObservableField<>();
-    private final ObservableInt mBtnPlayRes = new ObservableInt();
+    private final ObservableField<String> imageUri = new ObservableField<>();
+    private final ObservableInt btnPlayRes = new ObservableInt();
 
     @NonNull
     public ObservableField<String> getImageUri() {
-        return mImageUri;
+        return imageUri;
     }
 
-    public void setImageUri(@Nullable final String imageUri) {
-        mImageUri.set(imageUri);
+    void setImageUri(@Nullable final String imageUri) {
+        this.imageUri.set(imageUri);
     }
 
     @NonNull
     public ObservableInt getBtnPlayRes() {
-        return mBtnPlayRes;
+        return btnPlayRes;
     }
 
-    public void setBtnPlayRes(final int btnPlayRes) {
-        mBtnPlayRes.set(btnPlayRes);
+    void setBtnPlayRes(final int btnPlayRes) {
+        this.btnPlayRes.set(btnPlayRes);
     }
 
     @NonNull
     public ObservableField<CharSequence> getTitle() {
-        return mTitle;
+        return title;
     }
 
     public void setTitle(@Nullable final CharSequence title) {
-        mTitle.set(title);
+        this.title.set(title);
     }
 
     @NonNull
     public ObservableField<CharSequence> getArtist() {
-        return mArtist;
+        return artist;
     }
 
     public void setArtist(@Nullable final CharSequence artist) {
-        mArtist.set(artist);
+        this.artist.set(artist);
     }
 }

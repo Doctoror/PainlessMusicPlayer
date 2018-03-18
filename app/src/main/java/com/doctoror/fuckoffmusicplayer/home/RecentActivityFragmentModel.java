@@ -26,24 +26,24 @@ import android.support.v7.widget.RecyclerView;
  */
 public final class RecentActivityFragmentModel {
 
-    private final ObservableInt mDisplayedChild = new ObservableInt();
-    private final ObservableField<RecyclerView.Adapter> mRecyclerAdapter = new ObservableField<>();
+    private final ObservableInt displayedChild = new ObservableInt();
+    private final ObservableField<RecyclerView.Adapter> recyclerAdapter = new ObservableField<>();
 
     @NonNull
     public ObservableInt getDisplayedChild() {
-        return mDisplayedChild;
+        return displayedChild;
     }
 
     @NonNull
     public ObservableField<RecyclerView.Adapter> getRecyclerAdapter() {
-        return mRecyclerAdapter;
+        return recyclerAdapter;
     }
 
     public void setRecyclerAdapter(@Nullable final RecyclerView.Adapter<?> adapter) {
-        mRecyclerAdapter.set(adapter);
+        recyclerAdapter.set(adapter);
     }
 
-    public void setDisplayedChild(final int displayedChild) {
-        mDisplayedChild.set(displayedChild);
+    void setDisplayedChild(final int displayedChild) {
+        this.displayedChild.set(displayedChild);
     }
 }

@@ -19,9 +19,6 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Yaroslav Mytkalyk on 11.01.17.
- */
 final class RecentActivityRecyclerAdapter
         extends BaseRecyclerAdapter<Object, RecyclerView.ViewHolder> {
 
@@ -33,16 +30,16 @@ final class RecentActivityRecyclerAdapter
         void onAlbumClick(int position, long id, @Nullable String album);
     }
 
-    private final RequestManager mGlide;
-    private OnAlbumClickListener mOnAlbumClickListener;
+    private final RequestManager glide;
+    private OnAlbumClickListener onAlbumClickListener;
 
     RecentActivityRecyclerAdapter(@NonNull final Context context) {
         super(context);
-        mGlide = Glide.with(context);
+        glide = Glide.with(context);
     }
 
     void setOnAlbumClickListener(@NonNull final OnAlbumClickListener l) {
-        mOnAlbumClickListener = l;
+        onAlbumClickListener = l;
     }
 
     private void onItemClick(final int position) {
@@ -57,8 +54,8 @@ final class RecentActivityRecyclerAdapter
 
     private void onAlbumClick(final int position, final long id,
             @Nullable final String album) {
-        if (mOnAlbumClickListener != null) {
-            mOnAlbumClickListener.onAlbumClick(position, id, album);
+        if (onAlbumClickListener != null) {
+            onAlbumClickListener.onAlbumClick(position, id, album);
         }
     }
 
@@ -128,7 +125,7 @@ final class RecentActivityRecyclerAdapter
             Glide.clear(holder.image);
             holder.image.setImageResource(R.drawable.album_art_placeholder);
         } else {
-            mGlide.load(artLocation)
+            glide.load(artLocation)
                     .error(R.drawable.album_art_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(holder.image);

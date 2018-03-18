@@ -23,10 +23,6 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Yaroslav Mytkalyk on 11.01.17.
- */
-
 final class AlbumItemsFactory {
 
     private AlbumItemsFactory() {

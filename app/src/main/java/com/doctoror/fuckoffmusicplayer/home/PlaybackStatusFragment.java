@@ -45,13 +45,13 @@ import dagger.android.AndroidInjection;
  */
 public final class PlaybackStatusFragment extends BaseFragment {
 
-    private final PlaybackStatusBarModel mModel = new PlaybackStatusBarModel();
+    private final PlaybackStatusBarModel model = new PlaybackStatusBarModel();
 
     @Inject
-    PlaybackData mPlaybackData;
+    PlaybackData playbackData;
 
     @Inject
-    PlaybackServiceControl mPlaybackServiceControl;
+    PlaybackServiceControl playbackServiceControl;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -66,7 +66,7 @@ public final class PlaybackStatusFragment extends BaseFragment {
         final PlaybackStatusBarBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.playback_status_bar, container, false,
                 BindingAdapters.glideBindingComponent(Glide.with(this)));
-        binding.setModel(mModel);
+        binding.setModel(model);
         binding.btnPlay.setOnClickListener(v -> onBtnPlayClick());
         binding.getRoot().setOnClickListener(this::onRootClick);
         return binding.getRoot();
@@ -75,20 +75,20 @@ public final class PlaybackStatusFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-        disposeOnStop(mPlaybackData.playbackStateObservable()
+        disposeOnStop(playbackData.playbackStateObservable()
                 .subscribe(this::onStateChanged));
 
-        disposeOnStop(mPlaybackData.queuePositionObservable()
+        disposeOnStop(playbackData.queuePositionObservable()
                 .subscribe(this::onQueuePositionChanged));
     }
 
     private void onStateChanged(@PlaybackState final int state) {
-        mModel.setBtnPlayRes(state == PlaybackState.STATE_PLAYING
+        model.setBtnPlayRes(state == PlaybackState.STATE_PLAYING
                 ? R.drawable.ic_pause_white_24dp : R.drawable.ic_play_arrow_white_24dp);
     }
 
     private void onQueuePositionChanged(final int position) {
-        final List<Media> queue = mPlaybackData.getQueue();
+        final List<Media> queue = playbackData.getQueue();
         if (queue != null && position < queue.size()) {
             onMediaChanged(queue.get(position));
         }
@@ -96,14 +96,14 @@ public final class PlaybackStatusFragment extends BaseFragment {
 
     private void onMediaChanged(@Nullable final Media media) {
         if (media != null) {
-            mModel.setTitle(media.getTitle());
-            mModel.setArtist(media.getArtist());
-            mModel.setImageUri(media.getAlbumArt());
+            model.setTitle(media.getTitle());
+            model.setArtist(media.getArtist());
+            model.setImageUri(media.getAlbumArt());
         }
     }
 
     private void onBtnPlayClick() {
-        mPlaybackServiceControl.playPause();
+        playbackServiceControl.playPause();
     }
 
     private void onRootClick(@NonNull final View view) {

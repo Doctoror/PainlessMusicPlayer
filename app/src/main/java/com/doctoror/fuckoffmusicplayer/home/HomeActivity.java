@@ -59,31 +59,31 @@ public final class HomeActivity extends BaseActivity {
 
     private static final String KEY_INSTANCE_STATE = "INSTANCE_STATE";
 
-    private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @SuppressWarnings("FieldCanBeLocal") // Ensure not collected
-    private NavigationController mNavigationController;
+    private NavigationController navigationController;
 
     @BindView(R.id.playbackStatusCard)
-    View mPlaybackStatusCard;
+    View playbackStatusCard;
 
     @BindView(R.id.drawerLayout)
-    DrawerLayout mDrawerLayout;
+    DrawerLayout drawerLayout;
 
     @BindView(R.id.navigationView)
-    NavigationView mNavigationView;
+    NavigationView navigationView;
 
     @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
 
-    private int mNavigationItem = R.id.navigationRecentActivity;
+    private int navigationItem = R.id.navigationRecentActivity;
 
     @Nullable
     @InjectExtra
     Integer drawerClosedAction;
 
     @Inject
-    PlaybackData mPlaybackData;
+    PlaybackData playbackData;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -93,11 +93,11 @@ public final class HomeActivity extends BaseActivity {
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
         initNavigation();
 
         if (savedInstanceState == null) {
-            drawerClosedAction = mNavigationItem;
+            drawerClosedAction = navigationItem;
             performDrawerClosedAction();
         } else {
             restoreInstanceState(savedInstanceState);
@@ -121,22 +121,22 @@ public final class HomeActivity extends BaseActivity {
     }
 
     private void initNavigation() {
-        mNavigationView.setCheckedItem(mNavigationItem);
+        navigationView.setCheckedItem(navigationItem);
 
-        mActionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.Navigation_drawer, R.string.Navigation_drawer);
 
-        mDrawerLayout.addDrawerListener(mActionBarDrawerToggle);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
-        mNavigationController = new NavigationController(this, mDrawerLayout);
-        mNavigationController.bind();
+        navigationController = new NavigationController(this, drawerLayout);
+        navigationController.bind();
     }
 
     private void restoreInstanceState(final Bundle savedInstanceState) {
         final InstanceState state = Parcels
                 .unwrap(savedInstanceState.getParcelable(KEY_INSTANCE_STATE));
         if (state != null) {
-            mNavigationItem = state.navigationItem;
+            navigationItem = state.navigationItem;
             setTitle(state.title);
         }
     }
@@ -145,7 +145,7 @@ public final class HomeActivity extends BaseActivity {
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         final InstanceState state = new InstanceState();
-        state.navigationItem = mNavigationItem;
+        state.navigationItem = navigationItem;
         state.title = getTitle().toString();
         outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(state));
     }
@@ -153,26 +153,26 @@ public final class HomeActivity extends BaseActivity {
     @Override
     protected void onPostCreate(@Nullable final Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mActionBarDrawerToggle.syncState();
+        actionBarDrawerToggle.syncState();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        disposeOnStop(mPlaybackData.queuePositionObservable()
+        disposeOnStop(playbackData.queuePositionObservable()
                 .subscribe(this::onQueuePositionChanged));
     }
 
     private void onQueuePositionChanged(final int position) {
-        final List<Media> queue = mPlaybackData.getQueue();
-        runOnUiThread(() -> mPlaybackStatusCard.setVisibility(
+        final List<Media> queue = playbackData.getQueue();
+        runOnUiThread(() -> playbackStatusCard.setVisibility(
                 queue != null && position < queue.size() ? View.VISIBLE : View.GONE));
     }
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(mNavigationView)) {
-            mDrawerLayout.closeDrawer(mNavigationView);
+        if (drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.closeDrawer(navigationView);
         } else {
             super.onBackPressed();
         }
@@ -211,7 +211,7 @@ public final class HomeActivity extends BaseActivity {
                     setTitle(R.string.Tracks);
                     break;
             }
-            mNavigationItem = drawerClosedAction;
+            navigationItem = drawerClosedAction;
             drawerClosedAction = null;
         }
     }
