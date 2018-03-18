@@ -35,28 +35,28 @@ import dagger.Provides;
 final class AppModule {
 
     @NonNull
-    private final Context mContext;
+    private final Context context;
 
     AppModule(@NonNull final Context context) {
-        mContext = context;
+        this.context = context;
     }
 
     @Provides
     @Singleton
     Context provideContext() {
-        return mContext;
+        return context;
     }
 
     @Provides
     @Singleton
     Resources provideResources() {
-        return mContext.getResources();
+        return context.getResources();
     }
 
     @Provides
     @Singleton
     ContentResolver provideContentResolver() {
-        return mContext.getContentResolver();
+        return context.getContentResolver();
     }
 
     @Provides
