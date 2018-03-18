@@ -15,7 +15,16 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.player;
 
+import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
+import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -36,15 +45,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
-import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
-
-import android.content.Context;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.Locale;
 
@@ -75,8 +75,8 @@ public final class ExoMediaPlayer implements MediaPlayer {
     public void init(@NonNull final Context context) {
         final TrackSelector trackSelector = new DefaultTrackSelector();
 
-        mExoPlayer = ExoPlayerFactory
-                .newSimpleInstance(context, trackSelector, new DefaultLoadControl());
+        mExoPlayer = ExoPlayerFactory.newSimpleInstance(
+                new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
         mExoPlayer.addListener(mEventListener);
         mExoPlayer.addAudioDebugListener(mAudioRendererEventListener);
 
@@ -161,8 +161,8 @@ public final class ExoMediaPlayer implements MediaPlayer {
 
         @Override
         public void onAudioDecoderInitialized(final String decoderName,
-                final long initializedTimestampMs,
-                final long initializationDurationMs) {
+                                              final long initializedTimestampMs,
+                                              final long initializationDurationMs) {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onAudioDecoderInitialized: " + (decoderName == null ? "null"
                         : decoderName));
@@ -178,7 +178,7 @@ public final class ExoMediaPlayer implements MediaPlayer {
 
         @Override
         public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs,
-                long elapsedSinceLastFeedMs) {
+                                        long elapsedSinceLastFeedMs) {
             if (Log.logDEnabled()) {
                 Log.d(TAG, String.format(Locale.US,
                         "onAudioSinkUnderrun, bufferSize = '%d', bufferSizeMs = '%d', elapsedSinceLastFeedMs = '%d",
@@ -201,7 +201,7 @@ public final class ExoMediaPlayer implements MediaPlayer {
 
         @Override
         public void onTracksChanged(final TrackGroupArray trackGroups,
-                final TrackSelectionArray trackSelections) {
+                                    final TrackSelectionArray trackSelections) {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onTracksChanged()");
             }
