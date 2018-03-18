@@ -19,20 +19,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.data.effects.AudioEffectsImpl;
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackParamsImpl;
 import com.doctoror.fuckoffmusicplayer.data.player.MediaPlayerFactoryImpl;
-import com.doctoror.fuckoffmusicplayer.data.reporter.PlaybackReporterFactoryImpl;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackNotificationFactoryImpl;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceControlImpl;
 
 import javax.inject.Singleton;
 
@@ -52,33 +41,5 @@ final class EngineModule {
     @Singleton
     MediaPlayerFactory provideMediaPlayerFactory() {
         return new MediaPlayerFactoryImpl();
-    }
-
-    @Provides
-    @Singleton
-    PlaybackParams providePlaybackParams(@NonNull final Context context) {
-        return new PlaybackParamsImpl(context);
-    }
-
-    @Provides
-    @Singleton
-    PlaybackServiceControl providePlaybackServiceControl(@NonNull final Context context) {
-        return new PlaybackServiceControlImpl(context);
-    }
-
-    @Provides
-    @Singleton
-    PlaybackReporterFactory providePlaybackReporterFactory(
-            @NonNull final Context context,
-            @NonNull final AlbumThumbHolder albumThumbHolder,
-            @NonNull final Settings settings,
-            @NonNull final PlaybackData playbackData) {
-        return new PlaybackReporterFactoryImpl(context, albumThumbHolder, settings, playbackData);
-    }
-
-    @Provides
-    @Singleton
-    PlaybackNotificationFactory providePlaybackNotificationFactory() {
-        return new PlaybackNotificationFactoryImpl();
     }
 }
