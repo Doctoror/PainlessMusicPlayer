@@ -49,7 +49,7 @@ import dagger.android.AndroidInjector;
 @Component(modules = {
         ActivitiesContributes.class,
         AndroidInjectionModule.class,
-        AppContextModule.class,
+        AppModule.class,
         FormatterModule.class,
         FragmentsContributes.class,
         EngineModule.class,

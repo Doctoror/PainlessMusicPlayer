@@ -32,12 +32,12 @@ import dagger.Provides;
  * Dagger context module
  */
 @Module
-final class AppContextModule {
+final class AppModule {
 
     @NonNull
     private final Context mContext;
 
-    AppContextModule(@NonNull final Context context) {
+    AppModule(@NonNull final Context context) {
         mContext = context;
     }
 

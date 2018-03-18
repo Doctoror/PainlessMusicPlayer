@@ -41,7 +41,7 @@ public final class DaggerHolder {
     private final MainComponent mMainComponent;
 
     private DaggerHolder(@NonNull final Context context) {
-        final AppContextModule appContextModule = new AppContextModule(context);
+        final AppModule appContextModule = new AppModule(context);
         mMainComponent = DaggerMainComponent.builder()
                 .appContextModule(appContextModule)
                 .build();
