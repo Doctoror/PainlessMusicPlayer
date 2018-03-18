@@ -22,15 +22,15 @@ import io.reactivex.disposables.Disposable;
  */
 final class TrackableDisposable implements Disposable {
 
-    private boolean mDisposed;
+    private boolean disposed;
 
     @Override
     public void dispose() {
-        mDisposed = true;
+        disposed = true;
     }
 
     @Override
     public boolean isDisposed() {
-        return mDisposed;
+        return disposed;
     }
 }
