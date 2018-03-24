@@ -138,7 +138,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".appwidget.SingleRowAppWidgetProvider">
+        <receiver android:name=".presentation.appwidget.SingleRowAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action

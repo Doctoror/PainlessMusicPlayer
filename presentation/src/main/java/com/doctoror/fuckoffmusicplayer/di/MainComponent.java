@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.App;
-import com.doctoror.fuckoffmusicplayer.appwidget.SingleRowAppWidgetProvider;
+import com.doctoror.fuckoffmusicplayer.presentation.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.di.contributes.ActivitiesContributes;
 import com.doctoror.fuckoffmusicplayer.di.contributes.FragmentsContributes;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
