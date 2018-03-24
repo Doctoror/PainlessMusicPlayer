@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;

@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.home.PlaybackStatusBarModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.home.PlaybackStatusBarModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

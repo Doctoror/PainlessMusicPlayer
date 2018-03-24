@@ -52,7 +52,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;

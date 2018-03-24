@@ -27,7 +27,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;

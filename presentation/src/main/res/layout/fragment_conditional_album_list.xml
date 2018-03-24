@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional.ConditionalAlbumListModel"/>
     </data>
 
     <com.doctoror.fuckoffmusicplayer.widget.DisableableCoordinatorLayout

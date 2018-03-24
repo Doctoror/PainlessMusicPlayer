@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivityModel"/>
 
         <import type="com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode"/>
     </data>

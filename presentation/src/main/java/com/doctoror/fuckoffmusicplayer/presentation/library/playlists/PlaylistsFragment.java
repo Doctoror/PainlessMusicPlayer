@@ -30,7 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.doctoror.fuckoffmusicplayer.Henson;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;

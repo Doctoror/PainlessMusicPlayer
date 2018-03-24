@@ -22,7 +22,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [ 'dart.henson.package' : 'com.doctoror.fuckoffmusicplayer' ]
+                arguments = [ 'dart.henson.package' : 'com.doctoror.fuckoffmusicplayer.presentation' ]
             }
         }
     }

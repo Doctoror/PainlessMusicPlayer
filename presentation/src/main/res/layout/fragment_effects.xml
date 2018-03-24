@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.effects.EffectsFragmentModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.effects.EffectsFragmentModel"/>
     </data>
 
     <android.support.v4.widget.NestedScrollView
