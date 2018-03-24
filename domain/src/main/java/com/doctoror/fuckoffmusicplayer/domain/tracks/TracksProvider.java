@@ -33,6 +33,5 @@ public interface TracksProvider {
 
     Observable<Cursor> load(
             @Nullable String searchFilter,
-            @Nullable Integer limit,
             boolean includeSearchByArtist);
 }

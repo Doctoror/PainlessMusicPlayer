@@ -15,16 +15,16 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.tracks;
 
-import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
-import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
-import com.doctoror.rxcursorloader.RxCursorLoader;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
+import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
+import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import io.reactivex.Observable;
 
@@ -34,7 +34,7 @@ public final class MediaStoreTracksProvider implements TracksProvider {
     public static final String SELECTION_NON_HIDDEN_MUSIC = MediaStore.Audio.Media.IS_MUSIC + "=1"
             + " AND " + MediaStore.Audio.Media.DATA + " NOT LIKE '%/.%'";
 
-    public static final String SORT_ORDER = MediaStore.Audio.Media.TITLE;
+    private static final String SORT_ORDER = MediaStore.Audio.Media.TITLE;
 
     @NonNull
     private final ContentResolver mContentResolver;
@@ -45,21 +45,19 @@ public final class MediaStoreTracksProvider implements TracksProvider {
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return load(searchFilter, null, true);
+        return load(searchFilter, true);
     }
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter,
-            @Nullable final Integer limit,
-            final boolean includeSearchByArtist) {
+                                   final boolean includeSearchByArtist) {
         return RxCursorLoader
-                .create(mContentResolver, newParams(searchFilter, limit, includeSearchByArtist));
+                .create(mContentResolver, newParams(searchFilter, includeSearchByArtist));
     }
 
     @NonNull
     private static RxCursorLoader.Query newParams(
             @Nullable final String searchFilter,
-            @Nullable final Integer limit,
             final boolean includeSearchByArtist) {
         final String wrapped = TextUtils.isEmpty(searchFilter) ? null
                 : SqlUtils.escapeAndWrapForLikeArgument(searchFilter);
@@ -78,22 +76,16 @@ public final class MediaStoreTracksProvider implements TracksProvider {
                         .append(" LIKE ").append(wrapped);
             }
         }
-        final RxCursorLoader.Query.Builder b = new RxCursorLoader.Query.Builder()
+        return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
                         MediaStore.Audio.Media._ID,
                         MediaStore.Audio.Media.TITLE,
                         MediaStore.Audio.Media.ARTIST
                 })
-                .setSelection(selection.toString());
-
-        if (limit == null) {
-            b.setSortOrder(SORT_ORDER);
-        } else {
-            b.setSortOrder(SORT_ORDER + " LIMIT " + limit);
-        }
-
-        return b.create();
+                .setSelection(selection.toString())
+                .setSortOrder(SORT_ORDER)
+                .create();
     }
 
 }
