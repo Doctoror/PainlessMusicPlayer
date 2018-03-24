@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.settings;
+package com.doctoror.fuckoffmusicplayer.presentation.settings;
 
 import android.support.v7.app.AppCompatDelegate;
 

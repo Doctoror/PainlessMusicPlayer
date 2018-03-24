@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.presentation.Henson;
-import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.settings.SettingsActivity;
 
 public final class NavigationController {
 

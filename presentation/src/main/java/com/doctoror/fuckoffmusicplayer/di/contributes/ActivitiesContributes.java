@@ -24,7 +24,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.genrealbums.GenreAlb
 import com.doctoror.fuckoffmusicplayer.presentation.library.recentalbums.RecentAlbumsActivityContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivityContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivityContributes;
-import com.doctoror.fuckoffmusicplayer.settings.SettingsActivityContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.settings.SettingsActivityContributes;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;

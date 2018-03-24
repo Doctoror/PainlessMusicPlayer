@@ -106,7 +106,7 @@
         </activity>
 
         <activity
-            android:name=".settings.SettingsActivity"
+            android:name=".presentation.settings.SettingsActivity"
             android:theme="@style/AppTheme"
             android:label="@string/Settings"
             android:parentActivityName=".presentation.home.HomeActivity"/>

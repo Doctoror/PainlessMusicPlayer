@@ -21,7 +21,7 @@ import android.support.v7.app.AppCompatDelegate;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.settings.DayNightModeMapper;
+import com.doctoror.fuckoffmusicplayer.presentation.settings.DayNightModeMapper;
 
 import javax.inject.Inject;
 
