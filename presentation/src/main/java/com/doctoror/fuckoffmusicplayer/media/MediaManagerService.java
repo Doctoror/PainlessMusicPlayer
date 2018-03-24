@@ -21,7 +21,6 @@ import com.doctoror.fuckoffmusicplayer.data.media.SecurityIoException;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveAlbumFromQueueUseCase;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveMediasFromCurrentQueueUseCase;
 
@@ -79,9 +78,6 @@ public final class MediaManagerService extends IntentService {
 
     @Inject
     MediaManager mediaManager;
-
-    @Inject
-    PlaybackData playbackData;
 
     @Inject
     RemoveAlbumFromQueueUseCase removeAlbumFromQueueUseCase;
