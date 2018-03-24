@@ -63,7 +63,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;

@@ -82,7 +82,7 @@
             android:label="@string/Effects"/>
 
         <activity
-            android:name=".nowplaying.NowPlayingActivity"
+            android:name=".presentation.nowplaying.NowPlayingActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:parentActivityName=".presentation.home.HomeActivity"

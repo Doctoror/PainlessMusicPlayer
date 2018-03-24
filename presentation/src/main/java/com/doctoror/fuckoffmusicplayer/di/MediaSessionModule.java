@@ -31,7 +31,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderMediaBrowser;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity;
 
 import javax.inject.Singleton;
 

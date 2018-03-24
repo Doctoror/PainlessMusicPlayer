@@ -22,7 +22,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivityContributes
 import com.doctoror.fuckoffmusicplayer.presentation.library.artistalbums.ArtistAlbumsActivityContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.library.genrealbums.GenreAlbumsActivityContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.library.recentalbums.RecentAlbumsActivityContributes;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivityContributes;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivityContributes;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivityContributes;
 

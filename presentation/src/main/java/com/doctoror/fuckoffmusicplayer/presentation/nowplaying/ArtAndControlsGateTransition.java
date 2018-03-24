@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.nowplaying;
+package com.doctoror.fuckoffmusicplayer.presentation.nowplaying;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
@@ -25,9 +25,10 @@ import android.os.Build;
  * Exit transition for {@link NowPlayingActivity} content view
  */
 @TargetApi(Build.VERSION_CODES.KITKAT)
-final class RootViewVerticalGateTransition extends VerticalGateTransition {
+final class ArtAndControlsGateTransition extends VerticalGateTransition {
 
-    RootViewVerticalGateTransition() {
-        setUpperViewId(R.id.root);
+    ArtAndControlsGateTransition() {
+        setUpperViewId(R.id.albumArtContainer);
+        setBottomViewId(R.id.controlsContainer);
     }
 }

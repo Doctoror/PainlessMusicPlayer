@@ -28,7 +28,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
 import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity;
 
 import java.util.List;
 

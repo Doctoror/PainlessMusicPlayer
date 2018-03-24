@@ -34,7 +34,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.formatter.FormatterModule;
 import com.doctoror.fuckoffmusicplayer.presentation.media.MediaManagerService;
 import com.doctoror.fuckoffmusicplayer.presentation.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.presentation.media.browser.MediaBrowserServiceImpl;
-import com.doctoror.fuckoffmusicplayer.nowplaying.NowPlayingActivityIntentHandler;
+import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivityIntentHandler;
 
 import javax.inject.Singleton;
 
