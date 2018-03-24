@@ -37,7 +37,7 @@ import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SpacesItemDecoration;
 
 import org.parceler.Parcel;

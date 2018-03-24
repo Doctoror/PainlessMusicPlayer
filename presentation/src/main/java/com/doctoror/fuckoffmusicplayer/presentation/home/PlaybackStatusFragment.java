@@ -32,7 +32,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
+import com.doctoror.fuckoffmusicplayer.presentation.util.BindingAdapters;
 
 import java.util.List;
 

@@ -26,8 +26,8 @@ import android.view.ViewGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
-import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.DrawableUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.SingleLineItemIconViewHolder;
 import com.l4digital.fastscroll.FastScroller;

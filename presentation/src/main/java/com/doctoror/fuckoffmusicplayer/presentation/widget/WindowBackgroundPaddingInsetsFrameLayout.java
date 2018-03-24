@@ -23,7 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
-import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.ThemeUtils;
 
 /**
  * {@link PaddingInsetsFrameLayout} that will draw window background on padded area.

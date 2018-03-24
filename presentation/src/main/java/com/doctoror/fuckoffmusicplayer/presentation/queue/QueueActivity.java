@@ -69,8 +69,8 @@ import com.doctoror.fuckoffmusicplayer.presentation.transition.SlideFromBottomHe
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionListenerAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.VerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.CoordinatorLayoutUtil;
+import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.DisableableAppBarLayout;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.ItemTouchHelperViewHolder;
 import com.f2prateek.dart.Dart;

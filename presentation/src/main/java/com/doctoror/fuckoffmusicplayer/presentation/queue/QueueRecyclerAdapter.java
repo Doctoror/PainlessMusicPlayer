@@ -27,8 +27,8 @@ import android.widget.PopupMenu;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
-import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.BindingAdapters;
+import com.doctoror.fuckoffmusicplayer.presentation.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.BaseRecyclerAdapter;
 
 import java.util.List;

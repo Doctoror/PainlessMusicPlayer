@@ -36,9 +36,9 @@ import android.view.ViewGroup;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
-import com.doctoror.fuckoffmusicplayer.util.SearchViewUtils;
-import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.SearchViewUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager;
+import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 

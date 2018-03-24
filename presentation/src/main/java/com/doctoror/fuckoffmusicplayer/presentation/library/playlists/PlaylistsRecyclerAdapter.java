@@ -32,7 +32,7 @@ import android.widget.PopupMenu;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
-import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.SingleLineItemIconMenuViewHolder;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.SingleLineItemIconViewHolder;
