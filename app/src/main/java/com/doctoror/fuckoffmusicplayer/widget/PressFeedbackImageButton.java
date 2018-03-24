@@ -26,9 +26,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 
-/**
- * Created by Yaroslav Mytkalyk on 22.10.16.
- */
 public class PressFeedbackImageButton extends AppCompatImageButton {
 
     private final ColorFilter mColorFilter = new PorterDuffColorFilter(

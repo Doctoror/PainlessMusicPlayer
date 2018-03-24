@@ -19,9 +19,6 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.transition.Transition;
 
-/**
- * Created by Yaroslav Mytkalyk on 10.11.16.
- */
 @TargetApi(Build.VERSION_CODES.KITKAT)
 public class TransitionListenerAdapter implements Transition.TransitionListener {
 

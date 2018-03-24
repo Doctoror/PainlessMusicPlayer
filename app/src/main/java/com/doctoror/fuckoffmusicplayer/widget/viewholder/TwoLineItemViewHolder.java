@@ -23,9 +23,6 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by Yaroslav Mytkalyk on 17.10.16.
- */
 public class TwoLineItemViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(android.R.id.text1) public TextView text1;

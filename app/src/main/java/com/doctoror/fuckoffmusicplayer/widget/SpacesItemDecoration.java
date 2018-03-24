@@ -19,10 +19,6 @@ import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-/**
- * Created by Yaroslav Mytkalyk on 18.10.16.
- */
-
 public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
 
     private final int mSpacing;

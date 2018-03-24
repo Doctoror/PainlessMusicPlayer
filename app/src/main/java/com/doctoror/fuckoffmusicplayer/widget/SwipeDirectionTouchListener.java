@@ -19,9 +19,6 @@ import android.content.res.Resources;
 import android.view.MotionEvent;
 import android.view.View;
 
-/**
- * Created by Yaroslav Mytkalyk on 18.10.16.
- */
 public abstract class SwipeDirectionTouchListener implements View.OnTouchListener {
 
     private static final int SWIPE_THRESHOLD = (int)

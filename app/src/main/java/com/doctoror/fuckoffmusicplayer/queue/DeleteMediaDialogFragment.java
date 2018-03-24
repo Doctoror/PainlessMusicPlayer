@@ -23,9 +23,6 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-/**
- * Created by Yaroslav Mytkalyk on 12.01.17.
- */
 public final class DeleteMediaDialogFragment extends DeleteItemDialogFragment {
 
     public interface Callback {

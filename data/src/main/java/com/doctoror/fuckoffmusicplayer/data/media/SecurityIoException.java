@@ -17,12 +17,9 @@ package com.doctoror.fuckoffmusicplayer.data.media;
 
 import java.io.IOException;
 
-/**
- * Created by Yaroslav Mytkalyk on 17.01.17.
- */
 public class SecurityIoException extends IOException {
 
-    public SecurityIoException(final String message) {
+    SecurityIoException(final String message) {
         super(message);
     }
 }

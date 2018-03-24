@@ -19,9 +19,6 @@ import org.parceler.Parcel;
 
 import android.net.Uri;
 
-/**
- * Created by Yaroslav Mytkalyk on 19.10.16.
- */
 @Parcel
 public final class Media {
 

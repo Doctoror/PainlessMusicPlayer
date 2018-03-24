@@ -24,9 +24,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-/**
- * Created by Yaroslav Mytkalyk on 09.01.17.
- */
 public final class DeletePlaylistDialogFragment extends DeleteItemDialogFragment {
 
     public static void show(@NonNull final Context context,

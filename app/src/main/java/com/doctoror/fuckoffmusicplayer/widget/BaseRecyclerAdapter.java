@@ -26,10 +26,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by Yaroslav Mytkalyk on 20.10.16.
- */
-
 public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> {
 

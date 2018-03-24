@@ -17,10 +17,6 @@ package com.doctoror.fuckoffmusicplayer.widget;
 
 import android.widget.SeekBar;
 
-/**
- * Created by Yaroslav Mytkalyk on 23.10.16.
- */
-
 public class OnSeekBarChangeListenerAdapter implements SeekBar.OnSeekBarChangeListener {
 
     @Override
