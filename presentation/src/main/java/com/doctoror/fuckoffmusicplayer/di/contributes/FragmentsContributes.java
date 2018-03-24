@@ -17,15 +17,15 @@ package com.doctoror.fuckoffmusicplayer.di.contributes;
 
 import com.doctoror.fuckoffmusicplayer.presentation.effects.EffectsFragmentContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeFragmentsContributes;
-import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.artists.ArtistsFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.genres.GenresFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.playlists.PlaylistsFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.recentalbums.RecentAlbumsFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.library.tracks.TracksFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumsFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional.ConditionalAlbumListFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.artistalbums.ArtistAlbumsFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.artists.ArtistsFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.genrealbums.GenreAlbumsFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.genres.GenresFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.playlists.PlaylistsFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.recentalbums.RecentAlbumsFragmentContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.library.tracks.TracksFragmentContributes;
 
 import dagger.Module;
 

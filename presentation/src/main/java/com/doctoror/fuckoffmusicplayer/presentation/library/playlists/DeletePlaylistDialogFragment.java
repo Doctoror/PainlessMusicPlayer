@@ -13,45 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.queue;
+package com.doctoror.fuckoffmusicplayer.presentation.library.playlists;
 
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.presentation.library.DeleteItemDialogFragment;
 import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
 
-public final class DeleteMediaDialogFragment extends DeleteItemDialogFragment {
+public final class DeletePlaylistDialogFragment extends DeleteItemDialogFragment {
 
-    private static final String TAG = "DeleteMediaDialogFragment";
-
-    public interface Callback {
-        void onPerformDelete(long id);
-    }
+    private static final String TAG = "DeletePlaylistDialogFragment";
 
     public static void show(
             @NonNull final Context context,
             @NonNull final FragmentManager fragmentManager,
-            final long albumId,
-            @NonNull final String albumName) {
+            final long id,
+            @Nullable final String name) {
         DeleteItemDialogFragment.show(context,
-                DeleteMediaDialogFragment.class,
+                DeletePlaylistDialogFragment.class,
                 fragmentManager,
                 TAG,
-                albumId,
-                albumName);
+                id,
+                name);
     }
 
     @Override
     protected void performDelete() {
         final Activity activity = getActivity();
         if (activity != null) {
-            if (activity instanceof Callback) {
-                ((Callback) activity).onPerformDelete(getTargetId());
-            }
-            MediaManagerService.deleteMedia(activity, getTargetId());
+            MediaManagerService.deletePlaylist(activity, getTargetId());
         }
     }
 }

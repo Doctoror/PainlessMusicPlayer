@@ -57,17 +57,17 @@
         </activity>
 
         <activity
-            android:name=".library.artistalbums.ArtistAlbumsActivity"
+            android:name=".presentation.library.artistalbums.ArtistAlbumsActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:parentActivityName=".presentation.home.HomeActivity"/>
 
         <activity
-            android:name=".library.genrealbums.GenreAlbumsActivity"
+            android:name=".presentation.library.genrealbums.GenreAlbumsActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:parentActivityName=".presentation.home.HomeActivity"/>
 
         <activity
-            android:name=".library.recentalbums.RecentAlbumsActivity"
+            android:name=".presentation.library.recentalbums.RecentAlbumsActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:label="@string/Recently_played_albums"/>
 
