@@ -26,7 +26,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,12 +60,12 @@ public final class QueueProviderFilesMediaStore implements QueueProviderFiles {
     }
 
     @NonNull
-    private static List<Media> queueFromFile(@NonNull final Uri uri) throws IOException {
+    private static List<Media> queueFromFile(@NonNull final Uri uri) {
         return Collections.singletonList(mediaFromFile(uri));
     }
 
     @NonNull
-    private static Media mediaFromFile(@NonNull final Uri uri) throws IOException {
+    private static Media mediaFromFile(@NonNull final Uri uri) {
         final MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
             r.setDataSource(uri.getPath());
