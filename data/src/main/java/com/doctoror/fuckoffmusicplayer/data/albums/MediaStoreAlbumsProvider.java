@@ -15,19 +15,19 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.albums;
 
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreVolumeNames;
-import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.data.util.SelectionUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
-import com.doctoror.rxcursorloader.RxCursorLoader;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreVolumeNames;
+import com.doctoror.fuckoffmusicplayer.data.util.SelectionUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -49,21 +49,14 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     private final RecentActivityManager mRecentActivityManager;
 
     public MediaStoreAlbumsProvider(@NonNull final ContentResolver contentResolver,
-            @NonNull final RecentActivityManager recentActivityManager) {
+                                    @NonNull final RecentActivityManager recentActivityManager) {
         mContentResolver = contentResolver;
         mRecentActivityManager = recentActivityManager;
     }
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return load(searchFilter, null);
-    }
-
-    @Override
-    public Observable<Cursor> load(
-            @Nullable final String searchFilter,
-            @Nullable final Integer limit) {
-        return RxCursorLoader.create(mContentResolver, newParams(searchFilter, limit));
+        return RxCursorLoader.create(mContentResolver, newParams(searchFilter));
     }
 
     @Override
@@ -169,18 +162,17 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
      * @return params
      */
     @NonNull
-    private static RxCursorLoader.Query newParams(@Nullable final String searchFilter,
-            @Nullable final Integer limit) {
-        final RxCursorLoader.Query.Builder b = newParamsBuilder()
-                .setSelection(TextUtils.isEmpty(searchFilter)
-                        ? null : MediaStore.Audio.Albums.ALBUM + " LIKE " + SqlUtils
-                        .escapeAndWrapForLikeArgument(searchFilter));
+    private static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
+        return newParamsBuilder()
+                .setSelection(searchFilterToSelection(searchFilter))
+                .create();
+    }
 
-        if (limit != null) {
-            b.setSortOrder(SORT_ORDER + " LIMIT " + limit);
-        }
-
-        return b.create();
+    @Nullable
+    private static String searchFilterToSelection(@Nullable final String searchFilter) {
+        return TextUtils.isEmpty(searchFilter)
+                ? null : MediaStore.Audio.Albums.ALBUM + " LIKE " + SqlUtils
+                .escapeAndWrapForLikeArgument(searchFilter);
     }
 
     /**

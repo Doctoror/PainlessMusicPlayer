@@ -31,7 +31,6 @@ public interface AlbumsProvider {
     int COLUMN_FIRST_YEAR = 3;
 
     Observable<Cursor> load(@Nullable String searchFilter);
-    Observable<Cursor> load(@Nullable String searchFilter, @Nullable Integer limit);
 
     Observable<Cursor> loadForArtist(long artistId);
     Observable<Cursor> loadForGenre(long genreId);
