@@ -42,7 +42,7 @@ ext {
 
     testRunnerVersion = '1.0.1'
 
-    appDependencies = [
+    presentationDependencies = [
             aspectRatioLayout     : "com.github.doctoror.aspectratiolayout:library:$aspectRatioLayoutVersion",
 
             butterKnife           : "com.jakewharton:butterknife:$butterKnifeVersion",
@@ -79,7 +79,7 @@ ext {
             supportRecyclerView   : "com.android.support:recyclerview-v7:$supportVersion"
     ]
 
-    appTestDependencies = [
+    presentationTestDependencies = [
             junit     : "junit:junit:$jUnitVersion",
             testRunner: "com.android.support.test:runner:$testRunnerVersion"
     ]
