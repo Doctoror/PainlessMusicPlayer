@@ -25,7 +25,7 @@
             type="com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional.ConditionalAlbumListModel"/>
     </data>
 
-    <com.doctoror.fuckoffmusicplayer.widget.DisableableCoordinatorLayout
+    <com.doctoror.fuckoffmusicplayer.presentation.widget.DisableableCoordinatorLayout
         android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -113,6 +113,6 @@
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="bottom|right|end"/>
 
-    </com.doctoror.fuckoffmusicplayer.widget.DisableableCoordinatorLayout>
+    </com.doctoror.fuckoffmusicplayer.presentation.widget.DisableableCoordinatorLayout>
 
 </layout>
