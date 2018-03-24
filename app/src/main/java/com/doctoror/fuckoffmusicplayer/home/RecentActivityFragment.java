@@ -157,13 +157,13 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
                     new RecyclerAdapterDataFunc(getResources()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::onRecentActivityLoaded, this::onError));
+                    .subscribe(this::onRecentActivityLoaded, (t) -> onError()));
         } else {
             Log.w(TAG, "load() is called, READ_EXTERNAL_STORAGE is not granted");
         }
     }
 
-    private void onError(@NonNull final Throwable t) {
+    private void onError() {
         if (isAdded()) {
             model.setDisplayedChild(ANIMATOR_CHILD_ERROR);
         }
