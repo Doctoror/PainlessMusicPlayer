@@ -21,11 +21,14 @@ import android.support.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumMediaIdsProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
+import com.doctoror.fuckoffmusicplayer.data.media.CurrentMediaProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.data.playlist.RecentActivityManagerImpl;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 
 import javax.inject.Singleton;
@@ -49,6 +52,12 @@ final class MediaModule {
     @Singleton
     AlbumThumbHolder provideAlbumThumbHolder(@NonNull final Context context) {
         return new AlbumThumbHolderImpl(context);
+    }
+
+    @Provides
+    CurrentMediaProvider provideCurrentMediaProvider(
+            @NonNull final PlaybackData playbackData) {
+        return new CurrentMediaProviderImpl(playbackData);
     }
 
     @Provides

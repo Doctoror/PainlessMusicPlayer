@@ -19,6 +19,7 @@ import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
@@ -62,6 +63,8 @@ public final class PlaybackServiceImpl implements PlaybackService {
     private final AlbumThumbHolder mAlbumThumbHolder;
 
     private final AudioEffects mAudioEffects;
+
+    private final CurrentMediaProvider mCurrentMediaProvider;
 
     private final MediaPlayerFactory mMediaPlayerFactory;
 
@@ -116,6 +119,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
             @NonNull final Context context,
             @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final AudioEffects audioEffects,
+            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaPlayerFactory mediaPlayerFactory,
             @NonNull final MediaSessionHolder mediaSessionHolder,
             @NonNull final PlaybackData playbackData,
@@ -128,6 +132,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
         mContext = context;
         mAlbumThumbHolder = albumThumbHolder;
         mAudioEffects = audioEffects;
+        mCurrentMediaProvider = currentMediaProvider;
         mMediaPlayerFactory = mediaPlayerFactory;
         mMediaSessionHolder = mediaSessionHolder;
         mPlaybackData = playbackData;
@@ -344,7 +349,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
                 long seekPosition = 0;
                 // If restoring from stopped state, set seek position to what it was
                 if (mayContinueWhereStopped && mState == STATE_IDLE
-                        && finalMedia.equals(PlaybackDataUtils.getCurrentMedia(mPlaybackData))) {
+                        && finalMedia.equals(mCurrentMediaProvider.getCurrentMedia())) {
                     seekPosition = mPlaybackData.getMediaPosition();
                     if (seekPosition >= finalMedia.getDuration() - 100) {
                         seekPosition = 0;
@@ -377,7 +382,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
     }
 
     private void showNotification() {
-        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
+        final Media media = mCurrentMediaProvider.getCurrentMedia();
         if (media != null) {
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
@@ -466,7 +471,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
 
     @WorkerThread
     private void reportCurrentPlaybackPosition() {
-        final Media media = PlaybackDataUtils.getCurrentMedia(mPlaybackData);
+        final Media media = mCurrentMediaProvider.getCurrentMedia();
         if (media == null) {
             mPlaybackReporter.reportPositionChanged(0, 0);
         } else {

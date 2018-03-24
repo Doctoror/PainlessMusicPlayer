@@ -28,11 +28,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.di.DaggerServiceComponent;
 import com.doctoror.fuckoffmusicplayer.di.PlaybackServiceModule;
 import com.doctoror.fuckoffmusicplayer.di.ServiceModule;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
@@ -57,10 +57,12 @@ public final class PlaybackAndroidService extends Service {
 
     static final String ACTION_SEEK = "ACTION_SEEK";
     static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";
-    static final String EXTRA_MEDIA_ID = "EXTRA_MEDIA_ID";
     static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
     private final ResendStateReceiver resendStateReceiver = new ResendStateReceiver();
+
+    @Inject
+    CurrentMediaProvider currentMediaProvider;
 
     @Inject
     PlaybackData playbackData;
@@ -232,7 +234,7 @@ public final class PlaybackAndroidService extends Service {
     }
 
     private void onActionSeek(final float positionPercent) {
-        final Media media = PlaybackDataUtils.getCurrentMedia(playbackData);
+        final Media media = currentMediaProvider.getCurrentMedia();
         if (media != null) {
             final long duration = media.getDuration();
             if (duration > 0) {

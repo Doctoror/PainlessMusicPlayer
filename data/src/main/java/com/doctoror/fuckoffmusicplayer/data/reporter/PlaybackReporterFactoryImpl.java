@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
 
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
@@ -32,16 +33,19 @@ public final class PlaybackReporterFactoryImpl implements PlaybackReporterFactor
 
     private final Context context;
     private final AlbumThumbHolder albumThumbHolder;
+    private final CurrentMediaProvider currentMediaProvider;
     private final PlaybackData playbackData;
     private final Settings settings;
 
     public PlaybackReporterFactoryImpl(
             @NonNull final Context context,
             @NonNull final AlbumThumbHolder albumThumbHolder,
+            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final Settings settings,
             @NonNull final PlaybackData playbackData) {
         this.context = context;
         this.albumThumbHolder = albumThumbHolder;
+        this.currentMediaProvider = currentMediaProvider;
         this.settings = settings;
         this.playbackData = playbackData;
     }
@@ -53,8 +57,8 @@ public final class PlaybackReporterFactoryImpl implements PlaybackReporterFactor
         return new PlaybackReporterSet(
                 new AppWidgetPlaybackStateReporter(context),
                 new MediaSessionPlaybackReporter(context, albumThumbHolder, mediaSession),
-                new SLSPlaybackReporter(context, playbackData, settings),
-                new LastFmPlaybackReporter(context, playbackData, settings));
+                new SLSPlaybackReporter(context, currentMediaProvider, playbackData, settings),
+                new LastFmPlaybackReporter(context, currentMediaProvider, playbackData, settings));
     }
 
     @NonNull

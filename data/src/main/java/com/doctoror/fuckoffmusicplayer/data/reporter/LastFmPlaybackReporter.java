@@ -1,17 +1,17 @@
 package com.doctoror.fuckoffmusicplayer.data.reporter;
 
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.doctoror.fuckoffmusicplayer.data.util.Objects;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.data.util.Objects;
-
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -34,11 +34,12 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
 
     public LastFmPlaybackReporter(
             @NonNull final Context context,
+            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final PlaybackData playbackData,
             @NonNull final Settings settings) {
         this.context = context;
         this.settings = settings;
-        media = PlaybackDataUtils.getCurrentMedia(playbackData);
+        media = currentMediaProvider.getCurrentMedia();
         isPlaying = playbackData.getPlaybackState() == PlaybackState.STATE_PLAYING;
     }
 
@@ -54,7 +55,7 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
 
     @Override
     public void reportPlaybackStateChanged(@PlaybackState final int state,
-            @Nullable final CharSequence errorMessage) {
+                                           @Nullable final CharSequence errorMessage) {
         final boolean isPlaying = state == PlaybackState.STATE_PLAYING;
         if (this.isPlaying != isPlaying) {
             this.isPlaying = isPlaying;

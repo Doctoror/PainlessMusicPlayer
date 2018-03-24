@@ -7,6 +7,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackServiceImpl;
 import com.doctoror.fuckoffmusicplayer.di.scopes.ServiceScope;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
@@ -31,6 +32,7 @@ public final class PlaybackServiceModule {
             @NonNull final Service service,
             @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final AudioEffects audioEffects,
+            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaPlayerFactory mediaPlayerFactory,
             @NonNull final MediaSessionHolder mediaSessionHolder,
             @NonNull final PlaybackData playbackData,
@@ -43,6 +45,7 @@ public final class PlaybackServiceModule {
                 service,
                 albumThumbHolder,
                 audioEffects,
+                currentMediaProvider,
                 mediaPlayerFactory,
                 mediaSessionHolder,
                 playbackData,

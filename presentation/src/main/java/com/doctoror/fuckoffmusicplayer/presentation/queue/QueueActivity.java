@@ -55,9 +55,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
@@ -170,6 +170,9 @@ public final class QueueActivity extends BaseActivity
 
     private boolean mCreatedWithInstanceState;
     private Toast mToastRemovedFromQueue;
+
+    @Inject
+    CurrentMediaProvider currentMediaProvider;
 
     @Inject
     PlaybackData mPlaybackData;
@@ -381,7 +384,7 @@ public final class QueueActivity extends BaseActivity
     @WorkerThread
     private void onPlaybackStateChanged(@PlaybackState final int state) {
         final Media media = state == PlaybackState.STATE_PLAYING
-                ? PlaybackDataUtils.getCurrentMedia(mPlaybackData) : null;
+                ? currentMediaProvider.getCurrentMedia() : null;
         //noinspection WrongThread
         runOnUiThread(() -> onNowPlayingMediaChanged(media));
     }

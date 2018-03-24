@@ -20,8 +20,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Objects;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
@@ -62,11 +62,12 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
 
     SLSPlaybackReporter(
             @NonNull final Context context,
+            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final PlaybackData playbackData,
             @NonNull final Settings settings) {
         this.context = context;
         this.settings = settings;
-        media = PlaybackDataUtils.getCurrentMedia(playbackData);
+        media = currentMediaProvider.getCurrentMedia();
         state = playbackData.getPlaybackState();
     }
 
