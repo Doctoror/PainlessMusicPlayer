@@ -15,17 +15,17 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.queue;
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
-import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
-
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
+import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderArtists;
 
 import java.util.List;
 
@@ -41,16 +41,6 @@ public final class QueueProviderArtistsMediaStore implements QueueProviderArtist
 
     public QueueProviderArtistsMediaStore(@NonNull final MediaStoreMediaProvider mediaProvider) {
         mMediaProvider = mediaProvider;
-    }
-
-    @NonNull
-    @Override
-    public Observable<List<Media>> fromArtist(final long artistId) {
-        return mMediaProvider.load(MediaStoreTracksProvider.SELECTION_NON_HIDDEN_MUSIC + " AND "
-                        + MediaStore.Audio.Media.ARTIST_ID + '=' + artistId,
-                null,
-                MediaStore.Audio.Media.ALBUM_ID + ',' + MediaStore.Audio.Media.TRACK,
-                null);
     }
 
     @NonNull

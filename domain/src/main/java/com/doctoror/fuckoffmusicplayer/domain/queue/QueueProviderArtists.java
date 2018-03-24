@@ -25,9 +25,5 @@ import io.reactivex.Observable;
 public interface QueueProviderArtists {
 
     @NonNull
-    Observable<List<Media>> fromArtist(final long artistId);
-
-
-    @NonNull
     Observable<List<Media>> fromArtistSearch(@Nullable String query);
 }
