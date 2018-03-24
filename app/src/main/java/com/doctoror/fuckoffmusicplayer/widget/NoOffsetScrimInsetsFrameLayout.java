@@ -17,10 +17,7 @@
 package com.doctoror.fuckoffmusicplayer.widget;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
@@ -30,10 +27,6 @@ import android.widget.FrameLayout;
  * fitsSystemWindows
  */
 public class NoOffsetScrimInsetsFrameLayout extends FrameLayout {
-
-    private final Rect mTempRect = new Rect();
-
-    private Drawable mInsetForeground;
 
     private Rect mInsets;
 
@@ -58,60 +51,10 @@ public class NoOffsetScrimInsetsFrameLayout extends FrameLayout {
                             insets.getSystemWindowInsetTop(),
                             insets.getSystemWindowInsetRight(),
                             insets.getSystemWindowInsetBottom());
-                    setWillNotDraw(!insets.hasSystemWindowInsets() || mInsetForeground == null);
+                    setWillNotDraw(!insets.hasSystemWindowInsets());
                     ViewCompat.postInvalidateOnAnimation(NoOffsetScrimInsetsFrameLayout.this);
                     InsetsHolder.getInstance().onInsetsChanged(mInsets);
                     return insets;
                 });
-    }
-
-    @Override
-    public void draw(@NonNull Canvas canvas) {
-        super.draw(canvas);
-
-        int width = getWidth();
-        int height = getHeight();
-        if (mInsets != null && mInsetForeground != null) {
-            int sc = canvas.save();
-            canvas.translate(getScrollX(), getScrollY());
-
-            // Top
-            mTempRect.set(0, 0, width, mInsets.top);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            // Bottom
-            mTempRect.set(0, height - mInsets.bottom, width, height);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            // Left
-            mTempRect.set(0, mInsets.top, mInsets.left, height - mInsets.bottom);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            // Right
-            mTempRect.set(width - mInsets.right, mInsets.top, width, height - mInsets.bottom);
-            mInsetForeground.setBounds(mTempRect);
-            mInsetForeground.draw(canvas);
-
-            canvas.restoreToCount(sc);
-        }
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        if (mInsetForeground != null) {
-            mInsetForeground.setCallback(this);
-        }
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        if (mInsetForeground != null) {
-            mInsetForeground.setCallback(null);
-        }
     }
 }
