@@ -69,7 +69,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
 import com.doctoror.fuckoffmusicplayer.presentation.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.formatter.ArtistAlbumFormatter;
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
-import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;
+import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
 import com.f2prateek.dart.Dart;

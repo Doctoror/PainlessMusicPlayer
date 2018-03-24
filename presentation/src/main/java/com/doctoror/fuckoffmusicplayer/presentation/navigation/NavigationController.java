@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.navigation;
+package com.doctoror.fuckoffmusicplayer.presentation.navigation;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
