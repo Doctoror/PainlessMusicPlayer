@@ -15,16 +15,16 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.artists;
 
-import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
-import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
-import com.doctoror.rxcursorloader.RxCursorLoader;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
+import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
+import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import io.reactivex.Observable;
 
@@ -42,19 +42,12 @@ public final class MediaStoreArtistsProvider implements ArtistsProvider {
 
     @Override
     public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return load(searchFilter, null);
-    }
-
-    @Override
-    public Observable<Cursor> load(@Nullable final String searchFilter,
-            @Nullable final Integer limit) {
-        return RxCursorLoader.create(contentResolver, newQuery(searchFilter, limit));
+        return RxCursorLoader.create(contentResolver, newQuery(searchFilter));
     }
 
     @NonNull
-    private static RxCursorLoader.Query newQuery(@Nullable final String searchFilter,
-            @Nullable final Integer limit) {
-        final RxCursorLoader.Query.Builder b = new RxCursorLoader.Query.Builder()
+    private static RxCursorLoader.Query newQuery(@Nullable final String searchFilter) {
+        return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
                         MediaStore.Audio.Artists._ID,
@@ -63,14 +56,8 @@ public final class MediaStoreArtistsProvider implements ArtistsProvider {
                 })
                 .setSelection(TextUtils.isEmpty(searchFilter) ? null
                         : MediaStore.Audio.Artists.ARTIST + " LIKE "
-                                + SqlUtils.escapeAndWrapForLikeArgument(searchFilter));
-
-        if (limit == null) {
-            b.setSortOrder(MediaStore.Audio.Artists.ARTIST);
-        } else {
-            b.setSortOrder(MediaStore.Audio.Artists.ARTIST + " LIMIT " + limit);
-        }
-
-        return b.create();
+                        + SqlUtils.escapeAndWrapForLikeArgument(searchFilter))
+                .setSortOrder(MediaStore.Audio.Artists.ARTIST)
+                .create();
     }
 }
