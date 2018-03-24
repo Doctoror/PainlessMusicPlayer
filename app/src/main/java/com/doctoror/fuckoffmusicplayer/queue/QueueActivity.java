@@ -102,7 +102,6 @@ public final class QueueActivity extends BaseActivity
     public static final String TRANSITION_NAME_ROOT = "PlaylistActivity.TRANSITION_NAME_ROOT";
 
     private static final String EXTRA_STATE = "EXTRA_STATE";
-    private static final String TAG_DIALOG_DELETE = "TAG_DIALOG_DELETE";
 
     private final RequestOptions requestOptions = new RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.NONE);
@@ -527,7 +526,7 @@ public final class QueueActivity extends BaseActivity
         @Override
         public void onTrackDeleteClick(@NonNull final Media item) {
             DeleteMediaDialogFragment.show(QueueActivity.this, getFragmentManager(),
-                    TAG_DIALOG_DELETE, item.getId(), item.getTitle());
+                    item.getId(), item.getTitle());
         }
 
         @Override

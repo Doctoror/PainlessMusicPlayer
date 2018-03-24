@@ -60,8 +60,6 @@ import io.reactivex.schedulers.Schedulers;
  */
 public final class PlaylistsFragment extends LibraryListFragment {
 
-    private static final String TAG_DIALOG_DELETE = "PlaylistsFragment.TAG_DIALOG_DELETE";
-
     private PlaylistsRecyclerAdapter mAdapter;
 
     private Unbinder mUnbinder;
@@ -313,7 +311,6 @@ public final class PlaylistsFragment extends LibraryListFragment {
         public void onPlaylistDeleteClick(final long id, @Nullable final String name) {
             DeletePlaylistDialogFragment.show(getActivity(),
                     getFragmentManager(),
-                    TAG_DIALOG_DELETE,
                     id,
                     name);
         }

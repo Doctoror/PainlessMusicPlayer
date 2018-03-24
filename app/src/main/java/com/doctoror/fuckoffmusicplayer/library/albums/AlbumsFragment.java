@@ -37,8 +37,6 @@ import io.reactivex.Observable;
 
 public final class AlbumsFragment extends LibraryListFragment {
 
-    private static final String TAG_DIALOG_DELETE = "AlbumsFragment.TAG_DIALOG_DELETE";
-
     private AlbumsRecyclerAdapter mAdapter;
 
     private RecyclerView mRecyclerView;
@@ -108,8 +106,7 @@ public final class AlbumsFragment extends LibraryListFragment {
     }
 
     private void onAlbumDeleteClick(final long albumId, @Nullable final String name) {
-        DeleteAlbumDialogFragment.show(getActivity(), getFragmentManager(), TAG_DIALOG_DELETE,
-                albumId, name);
+        DeleteAlbumDialogFragment.show(getActivity(), getFragmentManager(), albumId, name);
     }
 
     private void onAlbumClick(final int position, final long albumId,

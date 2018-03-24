@@ -15,27 +15,28 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.albums;
 
-import com.doctoror.fuckoffmusicplayer.library.DeleteItemDialogFragment;
-import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
-
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.doctoror.fuckoffmusicplayer.library.DeleteItemDialogFragment;
+import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
+
 public final class DeleteAlbumDialogFragment extends DeleteItemDialogFragment {
 
+    private static final String TAG = "DeleteAlbumDialogFragment";
 
-    public static void show(@NonNull final Context context,
+    public static void show(
+            @NonNull final Context context,
             @NonNull final FragmentManager fragmentManager,
-            @NonNull final String tag,
             final long albumId,
             @Nullable final String albumName) {
         DeleteItemDialogFragment.show(context,
                 DeleteAlbumDialogFragment.class,
                 fragmentManager,
-                tag,
+                TAG,
                 albumId,
                 albumName);
     }
