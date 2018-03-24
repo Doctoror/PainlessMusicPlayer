@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.queue;
+package com.doctoror.fuckoffmusicplayer.presentation.queue;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.queue.QueueActivityModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivityModel"/>
     </data>
 
     <FrameLayout

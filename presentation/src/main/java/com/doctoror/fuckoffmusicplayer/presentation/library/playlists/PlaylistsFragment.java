@@ -39,7 +39,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
 import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.library.recentalbums.RecentAlbumsActivity;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 
 import java.util.ArrayList;

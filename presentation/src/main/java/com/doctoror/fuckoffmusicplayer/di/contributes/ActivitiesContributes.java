@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.artistalbums.ArtistA
 import com.doctoror.fuckoffmusicplayer.presentation.library.genrealbums.GenreAlbumsActivityContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.library.recentalbums.RecentAlbumsActivityContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivityContributes;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivityContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivityContributes;
 import com.doctoror.fuckoffmusicplayer.settings.SettingsActivityContributes;
 
 import dagger.Module;
