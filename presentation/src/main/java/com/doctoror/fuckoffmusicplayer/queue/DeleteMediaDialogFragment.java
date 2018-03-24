@@ -21,7 +21,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.presentation.library.DeleteItemDialogFragment;
-import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
+import com.doctoror.fuckoffmusicplayer.presentation.media.MediaManagerService;
 
 public final class DeleteMediaDialogFragment extends DeleteItemDialogFragment {
 

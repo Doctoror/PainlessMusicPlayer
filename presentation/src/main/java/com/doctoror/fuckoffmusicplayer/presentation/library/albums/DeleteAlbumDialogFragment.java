@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.presentation.library.DeleteItemDialogFragment;
-import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
+import com.doctoror.fuckoffmusicplayer.presentation.media.MediaManagerService;
 
 public final class DeleteAlbumDialogFragment extends DeleteItemDialogFragment {
 

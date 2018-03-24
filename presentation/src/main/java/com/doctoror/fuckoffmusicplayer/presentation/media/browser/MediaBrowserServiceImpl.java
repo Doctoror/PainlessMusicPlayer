@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.media.browser;
+package com.doctoror.fuckoffmusicplayer.presentation.media.browser;
 
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
