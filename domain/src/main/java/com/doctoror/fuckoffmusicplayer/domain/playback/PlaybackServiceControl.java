@@ -41,6 +41,4 @@ public interface PlaybackServiceControl {
     void next();
 
     void seek(float positionPercent);
-
-    void playMediaFromQueue(long mediaId);
 }

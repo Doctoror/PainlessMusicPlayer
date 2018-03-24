@@ -278,26 +278,6 @@ public final class PlaybackServiceImpl implements PlaybackService {
         mMediaPlayer.seekTo(position);
     }
 
-    @Override
-    public void playMediaFromQueue(
-            @NonNull final List<Media> queue,
-            final long mediaId) {
-        int mediaPosition = -1;
-        int loopPos = 0;
-        for (final Media media : queue) {
-            if (media.getId() == mediaId) {
-                mediaPosition = loopPos;
-                break;
-            }
-            loopPos++;
-        }
-        if (mediaPosition == -1) {
-            Log.w(TAG, "Media with id " + mediaId + " not found in current playlist");
-        } else {
-            play(queue, mediaPosition, false, false);
-        }
-    }
-
     private void pauseInner() {
         mMediaPlayer.pause();
         setState(STATE_PAUSED);

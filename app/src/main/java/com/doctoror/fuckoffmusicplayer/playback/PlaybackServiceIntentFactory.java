@@ -70,7 +70,7 @@ public final class PlaybackServiceIntentFactory {
 
     @NonNull
     static Intent intentStopWithError(@NonNull final Context context,
-            @NonNull final CharSequence errorMessage) {
+                                      @NonNull final CharSequence errorMessage) {
         final Intent intent = intentAction(context, PlaybackAndroidService.ACTION_STOP_WITH_ERROR);
         intent.putExtra(PlaybackAndroidService.EXTRA_ERROR_MESSAGE, errorMessage);
         return intent;
@@ -78,23 +78,15 @@ public final class PlaybackServiceIntentFactory {
 
     @NonNull
     static Intent intentSeek(@NonNull final Context context,
-            final float positionPercent) {
+                             final float positionPercent) {
         final Intent intent = intentAction(context, PlaybackAndroidService.ACTION_SEEK);
         intent.putExtra(PlaybackAndroidService.EXTRA_POSITION_PERCENT, positionPercent);
         return intent;
     }
 
     @NonNull
-    static Intent intentPlayMediaFromQueue(@NonNull final Context context,
-            final long mediaId) {
-        final Intent intent = intentAction(context, PlaybackAndroidService.ACTION_PLAY_MEDIA_FROM_QUEUE);
-        intent.putExtra(PlaybackAndroidService.EXTRA_MEDIA_ID, mediaId);
-        return intent;
-    }
-
-    @NonNull
     private static Intent intentAction(@NonNull final Context context,
-            @NonNull final String action) {
+                                       @NonNull final String action) {
         final Intent intent = new Intent(context, PlaybackAndroidService.class);
         intent.setAction(action);
         return intent;

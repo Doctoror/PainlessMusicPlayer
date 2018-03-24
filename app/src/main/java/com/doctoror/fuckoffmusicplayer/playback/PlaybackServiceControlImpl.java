@@ -1,15 +1,15 @@
 package com.doctoror.fuckoffmusicplayer.playback;
 
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
+
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 
 /**
  * Playback service control implementation
  */
 public final class PlaybackServiceControlImpl implements PlaybackServiceControl {
-    
+
     private final Context context;
 
     public PlaybackServiceControlImpl(@NonNull final Context context) {
@@ -64,10 +64,5 @@ public final class PlaybackServiceControlImpl implements PlaybackServiceControl 
     @Override
     public void seek(final float positionPercent) {
         context.startService(PlaybackServiceIntentFactory.intentSeek(context, positionPercent));
-    }
-
-    @Override
-    public void playMediaFromQueue(final long mediaId) {
-        context.startService(PlaybackServiceIntentFactory.intentPlayMediaFromQueue(context, mediaId));
     }
 }

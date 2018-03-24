@@ -37,8 +37,6 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 /**
@@ -47,7 +45,6 @@ import javax.inject.Inject;
 public final class PlaybackAndroidService extends Service {
 
     static final String ACTION_RESEND_STATE = "ACTION_RESEND_STATE";
-    static final String ACTION_PLAY_MEDIA_FROM_QUEUE = "ACTION_PLAY_MEDIA_FROM_QUEUE";
     static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
     static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
     static final String ACTION_PLAY = "ACTION_PLAY";
@@ -154,10 +151,6 @@ public final class PlaybackAndroidService extends Service {
                 onActionSeek(intent);
                 break;
 
-            case ACTION_PLAY_MEDIA_FROM_QUEUE:
-                onActionPlayMediaFromQueue(intent);
-                break;
-
             case Intent.ACTION_MEDIA_BUTTON:
                 onActionMediaButton(intent);
                 break;
@@ -247,14 +240,6 @@ public final class PlaybackAndroidService extends Service {
                 playbackData.setMediaPosition(position);
                 service.seek(position);
             }
-        }
-    }
-
-    private void onActionPlayMediaFromQueue(final Intent intent) {
-        final long mediaId = intent.getLongExtra(EXTRA_MEDIA_ID, 0);
-        final List<Media> queue = playbackData.getQueue();
-        if (queue != null) {
-            service.playMediaFromQueue(queue, mediaId);
         }
     }
 
