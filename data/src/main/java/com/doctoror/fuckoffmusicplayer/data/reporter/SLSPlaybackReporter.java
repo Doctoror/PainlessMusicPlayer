@@ -15,17 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.reporter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.Objects;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.data.util.Objects;
-
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -62,11 +63,10 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     SLSPlaybackReporter(
             @NonNull final Context context,
             @NonNull final PlaybackData playbackData,
-            @NonNull final Settings settings,
-            @Nullable final Media currentMedia) {
+            @NonNull final Settings settings) {
         this.context = context;
         this.settings = settings;
-        media = currentMedia;
+        media = PlaybackDataUtils.getCurrentMedia(playbackData);
         state = playbackData.getPlaybackState();
     }
 
@@ -82,7 +82,7 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
 
     @Override
     public void reportPlaybackStateChanged(@PlaybackState final int state,
-            @Nullable final CharSequence errorMessage) {
+                                           @Nullable final CharSequence errorMessage) {
         if (this.state != state) {
             report(media, this.state, state);
             this.state = state;
@@ -90,8 +90,8 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     }
 
     private void report(@Nullable final Media media,
-            @PlaybackState final int prevState,
-            @PlaybackState final int state) {
+                        @PlaybackState final int prevState,
+                        @PlaybackState final int state) {
         if (settings.isScrobbleEnabled() && media != null) {
             final Intent intent = new Intent(ACTION);
             intent.putExtra(APP_NAME, "Painless Music Player");
@@ -123,7 +123,7 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     }
 
     private static int toSlsState(@PlaybackState final int prevState,
-            @PlaybackState final int playbackState) {
+                                  @PlaybackState final int playbackState) {
         switch (playbackState) {
             case PlaybackState.STATE_IDLE:
                 return STATE_PAUSE;
