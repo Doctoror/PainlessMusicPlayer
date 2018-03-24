@@ -99,7 +99,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
         final long id = getItemId(position);
         final Cursor item = getCursor();
 
-        if (item.moveToPosition(position)) {
+        if (item != null && item.moveToPosition(position)) {
             final String albumName = item.getString(AlbumsProvider.COLUMN_ALBUM);
             popup.setOnMenuItemClickListener(menuItem -> onMenuItemClick(menuItem, id, albumName));
             popup.show();
@@ -123,7 +123,9 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
 
 
     @Override
-    public void onBindViewHolder(final AlbumWithMenuViewHolder viewHolder, final Cursor cursor) {
+    public void onBindViewHolder(
+            @NonNull final AlbumWithMenuViewHolder viewHolder,
+            @NonNull final Cursor cursor) {
         viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
         final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {

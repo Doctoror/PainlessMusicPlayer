@@ -32,9 +32,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-/**
- * Created by Yaroslav Mytkalyk on 17.10.16.
- */
 final class GenresRecyclerAdapter
         extends CursorRecyclerViewAdapter<SingleLineItemIconViewHolder>
         implements FastScroller.SectionIndexer {
@@ -80,13 +77,16 @@ final class GenresRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final SingleLineItemIconViewHolder viewHolder,
-            final Cursor cursor) {
+    public void onBindViewHolder(
+            @NonNull final SingleLineItemIconViewHolder viewHolder,
+            @NonNull final Cursor cursor) {
         viewHolder.text.setText(cursor.getString(GenresProvider.COLUMN_NAME));
     }
 
+    @NonNull
     @Override
-    public SingleLineItemIconViewHolder onCreateViewHolder(final ViewGroup parent,
+    public SingleLineItemIconViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent,
             final int viewType) {
         final SingleLineItemIconViewHolder vh = new SingleLineItemIconViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_single_line_icon, parent, false));

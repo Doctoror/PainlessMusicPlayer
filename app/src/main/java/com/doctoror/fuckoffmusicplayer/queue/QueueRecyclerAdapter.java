@@ -177,15 +177,18 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
     }
 
     @Override
-    public void onBindViewHolder(final QueueItemViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(
+            @NonNull final QueueItemViewHolder viewHolder, final int position) {
         final Media item = getItem(position);
         viewHolder.textTitle.setText(item.getTitle());
         viewHolder.textArtist.setText(item.getArtist());
         BindingAdapters.setFormattedDuration(viewHolder.textDuration, item.getDuration() / 1000L);
     }
 
+    @NonNull
     @Override
-    public QueueItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+    public QueueItemViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent, final int viewType) {
         switch (viewType) {
             case VIEW_TYPE_DEFAULT:
                 return onCreateViewHolderDefault(parent);

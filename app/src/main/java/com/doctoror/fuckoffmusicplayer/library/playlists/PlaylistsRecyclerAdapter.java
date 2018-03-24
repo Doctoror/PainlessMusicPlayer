@@ -15,14 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.playlists;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
-import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconMenuViewHolder;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
-import com.l4digital.fastscroll.FastScroller;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -37,6 +29,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
+import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
+import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconMenuViewHolder;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
+import com.l4digital.fastscroll.FastScroller;
 
 import java.util.List;
 
@@ -74,7 +74,7 @@ final class PlaylistsRecyclerAdapter
     private OnPlaylistClickListener mClickListener;
 
     PlaylistsRecyclerAdapter(@NonNull final Context context,
-            @NonNull final List<LivePlaylist> livePlaylists) {
+                             @NonNull final List<LivePlaylist> livePlaylists) {
         super(null);
         mLayoutInflater = LayoutInflater.from(context);
         mLivePlaylists = livePlaylists;
@@ -107,7 +107,7 @@ final class PlaylistsRecyclerAdapter
     private Cursor getCursorItem(final int position) {
         if (getItemViewType(position) == VIEW_TYPE_PLAYLIST) {
             final Cursor cursor = getCursor();
-            if (cursor.moveToPosition(position - mLivePlaylists.size())) {
+            if (cursor != null && cursor.moveToPosition(position - mLivePlaylists.size())) {
                 return cursor;
             }
         }
@@ -140,7 +140,7 @@ final class PlaylistsRecyclerAdapter
     }
 
     private void onPlaylistClick(final long id, @NonNull final String playlist,
-            final int position) {
+                                 final int position) {
         if (mClickListener != null) {
             mClickListener.onPlaylistClick(id, playlist, position);
         }
@@ -166,8 +166,8 @@ final class PlaylistsRecyclerAdapter
     }
 
     private boolean onMenuItemClick(@NonNull final MenuItem menuItem,
-            final long itemId,
-            @NonNull final String name) {
+                                    final long itemId,
+                                    @NonNull final String name) {
         switch (menuItem.getItemId()) {
             case R.id.actionDelete:
                 if (mClickListener != null) {
@@ -181,13 +181,16 @@ final class PlaylistsRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder,
-            final int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder viewHolder,
+                                 final int position) {
         if (position < mLivePlaylists.size()) {
             onBindViewHolderLivePlaylist((SingleLineItemIconViewHolder) viewHolder,
                     mLivePlaylists.get(position));
         } else {
             final Cursor cursor = getCursor();
+            if (cursor == null) {
+                throw new IllegalStateException("Cursor is null, position = " + position);
+            }
             final int cursorPos = position - mLivePlaylists.size();
             if (!cursor.moveToPosition(cursorPos)) {
                 throw new IllegalStateException("couldn't move cursor to position " + cursorPos);
@@ -197,18 +200,23 @@ final class PlaylistsRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, final Cursor cursor) {
+    public void onBindViewHolder(
+            @NonNull final RecyclerView.ViewHolder viewHolder,
+            @NonNull final Cursor cursor) {
         final SingleLineItemIconMenuViewHolder vh = (SingleLineItemIconMenuViewHolder) viewHolder;
         vh.text.setText(cursor.getString(QueueProviderPlaylists.COLUMN_NAME));
     }
 
-    private void onBindViewHolderLivePlaylist(final SingleLineItemIconViewHolder viewHolder,
+    private void onBindViewHolderLivePlaylist(
+            @NonNull final SingleLineItemIconViewHolder viewHolder,
             @NonNull final LivePlaylist livePlaylist) {
         viewHolder.text.setText(livePlaylist.getTitle());
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent,
+    public RecyclerView.ViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent,
             final int viewType) {
         switch (viewType) {
             case VIEW_TYPE_PLAYLIST_LIVE:
@@ -223,7 +231,8 @@ final class PlaylistsRecyclerAdapter
     }
 
     @NonNull
-    private RecyclerView.ViewHolder onCreateViewHolderLivePlaylist(final ViewGroup parent) {
+    private RecyclerView.ViewHolder onCreateViewHolderLivePlaylist(
+            @NonNull final ViewGroup parent) {
         final SingleLineItemIconViewHolder vh = new SingleLineItemIconViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_single_line_icon, parent, false));
         vh.icon.setImageDrawable(mIcon);
@@ -232,7 +241,8 @@ final class PlaylistsRecyclerAdapter
     }
 
     @NonNull
-    private RecyclerView.ViewHolder onCreateViewHolderPlaylist(final ViewGroup parent) {
+    private RecyclerView.ViewHolder onCreateViewHolderPlaylist(
+            @NonNull final ViewGroup parent) {
         final SingleLineItemIconMenuViewHolder vh = new SingleLineItemIconMenuViewHolder(
                 mLayoutInflater.inflate(R.layout.list_item_single_line_icon_with_menu, parent,
                         false));

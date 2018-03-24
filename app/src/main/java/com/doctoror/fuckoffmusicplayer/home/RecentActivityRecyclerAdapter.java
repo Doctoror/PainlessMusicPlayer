@@ -76,8 +76,10 @@ final class RecentActivityRecyclerAdapter
         throw new IllegalArgumentException("Unexpected item " + item + " for position " + position);
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent, final int viewType) {
         switch (viewType) {
             case VIEW_TYPE_HEADER:
                 return onCreateViewHolderHeader(parent);
@@ -105,7 +107,8 @@ final class RecentActivityRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(
+            @NonNull final RecyclerView.ViewHolder holder, final int position) {
         switch (getItemViewType(position)) {
             case VIEW_TYPE_HEADER:
                 onBindViewHolderHeader((HeaderViewHolder) holder, position);

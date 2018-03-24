@@ -80,7 +80,9 @@ final class ConditionalAlbumsRecyclerAdapter
     }
 
     @Override
-    public void onBindViewHolder(final AlbumListViewHolder viewHolder, final Cursor cursor) {
+    public void onBindViewHolder(
+            @NonNull final AlbumListViewHolder viewHolder,
+            @NonNull final Cursor cursor) {
         viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
         viewHolder.text2.setText(cursor.getString(AlbumsProvider.COLUMN_FIRST_YEAR));
         final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);

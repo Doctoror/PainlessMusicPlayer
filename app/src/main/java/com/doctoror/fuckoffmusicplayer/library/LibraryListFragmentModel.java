@@ -30,12 +30,12 @@ public final class LibraryListFragmentModel {
     private final ObservableField<CharSequence> mEmptyMessage = new ObservableField<>();
     private final ObservableField<RecyclerView.Adapter> mRecyclerAdapter = new ObservableField<>();
 
-    @Nullable
+    @NonNull
     public ObservableField<CharSequence> getEmptyMessage() {
         return mEmptyMessage;
     }
 
-    public void setEmptyMessage(@Nullable final CharSequence emptyMessage) {
+    void setEmptyMessage(@Nullable final CharSequence emptyMessage) {
         mEmptyMessage.set(emptyMessage);
     }
 

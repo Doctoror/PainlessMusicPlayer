@@ -67,13 +67,17 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
     }
 
     @Override
-    public void onBindViewHolder(final TwoLineItemViewHolder viewHolder, final Cursor cursor) {
+    public void onBindViewHolder(
+            @NonNull final TwoLineItemViewHolder viewHolder,
+            @NonNull final Cursor cursor) {
         viewHolder.text1.setText(cursor.getString(TracksProvider.COLUMN_TITLE));
         viewHolder.text2.setText(cursor.getString(TracksProvider.COLUMN_ARTIST));
     }
 
+    @NonNull
     @Override
-    public TwoLineItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
+    public TwoLineItemViewHolder onCreateViewHolder(
+            @NonNull final ViewGroup parent, final int viewType) {
         final TwoLineItemViewHolder vh = new TwoLineItemViewHolder(mLayoutInflater.inflate(
                 R.layout.list_item_two_line, parent, false));
         vh.itemView.setOnClickListener(v -> onItemClick(vh.getAdapterPosition()));

@@ -237,11 +237,13 @@ public abstract class BaseActivity extends BaseInjectionActivity {
             // http://stackoverflow.com/questions/19999619/navutils-navigateupto-does-not-start-any-activity
             final ActivityManager activityManager = (ActivityManager) activity.getSystemService(
                     Context.ACTIVITY_SERVICE);
-            final List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
-            for (final ActivityManager.AppTask t : tasks) {
-                if (t.getTaskInfo().numActivities == 1) {
-                    // If only one activity, we should recreate task
-                    return true;
+            if (activityManager != null) {
+                final List<ActivityManager.AppTask> tasks = activityManager.getAppTasks();
+                for (final ActivityManager.AppTask t : tasks) {
+                    if (t.getTaskInfo().numActivities == 1) {
+                        // If only one activity, we should recreate task
+                        return true;
+                    }
                 }
             }
             return false;
