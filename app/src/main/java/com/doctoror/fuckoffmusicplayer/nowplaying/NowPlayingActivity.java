@@ -387,7 +387,7 @@ public final class NowPlayingActivity extends BaseActivity {
 
     void bindTrack(@Nullable final Media track, final long position) {
         if (!isFinishingAfterTransition()) {
-            if (!Objects.equals(mBoundTrack, track)) {
+            if (Objects.notEqual(mBoundTrack, track)) {
                 mBoundTrack = track;
                 if (track != null) {
                     setAlbumArt(track.getAlbumArt());

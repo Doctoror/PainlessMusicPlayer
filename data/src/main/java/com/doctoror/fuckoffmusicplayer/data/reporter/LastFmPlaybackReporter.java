@@ -44,7 +44,7 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
 
     @Override
     public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
-        if (!Objects.equals(this.media, media)) {
+        if (Objects.notEqual(this.media, media)) {
             this.media = media;
             if (isPlaying) {
                 reportMetadata(media);
