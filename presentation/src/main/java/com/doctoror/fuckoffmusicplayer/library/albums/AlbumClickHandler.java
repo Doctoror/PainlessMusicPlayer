@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.library.albums;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;

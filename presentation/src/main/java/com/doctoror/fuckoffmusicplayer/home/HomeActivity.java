@@ -29,7 +29,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragment;

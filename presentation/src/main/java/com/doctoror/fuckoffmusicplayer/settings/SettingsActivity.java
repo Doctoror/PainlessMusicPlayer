@@ -28,7 +28,7 @@ import android.widget.RadioGroup;
 
 import com.doctoror.fuckoffmusicplayer.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;

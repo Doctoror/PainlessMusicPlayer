@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.library;
 
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions;
-import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.parceler.Parcel;

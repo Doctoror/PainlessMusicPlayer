@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.base;
+package com.doctoror.fuckoffmusicplayer.presentation.base;
 
 import android.app.Fragment;
 import android.support.annotation.MainThread;

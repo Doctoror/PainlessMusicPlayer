@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.base.BaseFragment;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.databinding.PlaybackStatusBarBinding;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
