@@ -34,11 +34,11 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
 
     private final List<T> mItems;
 
-    public BaseRecyclerAdapter(@NonNull final Context context) {
+    protected BaseRecyclerAdapter(@NonNull final Context context) {
         this(context, (List<T>) null);
     }
 
-    public BaseRecyclerAdapter(@NonNull final Context context, @Nullable final T[] items) {
+    protected BaseRecyclerAdapter(@NonNull final Context context, @Nullable final T[] items) {
         this(context, items == null ? null : Arrays.asList(items));
     }
 

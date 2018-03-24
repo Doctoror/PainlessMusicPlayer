@@ -33,7 +33,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
 
     private final DataSetObserver mDataSetObserver;
 
-    public CursorRecyclerViewAdapter() {
+    protected CursorRecyclerViewAdapter() {
         mDataSetObserver = new NotifyingDataSetObserver();
         if (mCursor != null) {
             mCursor.registerDataSetObserver(mDataSetObserver);
@@ -41,7 +41,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     }
 
     @Nullable
-    public Cursor getCursor() {
+    protected Cursor getCursor() {
         return mCursor;
     }
 
@@ -66,7 +66,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         super.setHasStableIds(true);
     }
 
-    public abstract void onBindViewHolder(@NonNull VH viewHolder, @NonNull Cursor cursor);
+    protected abstract void onBindViewHolder(@NonNull VH viewHolder, @NonNull Cursor cursor);
 
     @Override
     public void onBindViewHolder(@NonNull final VH viewHolder, final int position) {

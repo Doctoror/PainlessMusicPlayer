@@ -22,7 +22,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.view.WindowInsetsCompat;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
@@ -32,11 +31,11 @@ import android.widget.FrameLayout;
  */
 public class NoOffsetScrimInsetsFrameLayout extends FrameLayout {
 
-    Drawable mInsetForeground;
+    private final Rect mTempRect = new Rect();
 
-    Rect mInsets;
+    private Drawable mInsetForeground;
 
-    private Rect mTempRect = new Rect();
+    private Rect mInsets;
 
     public NoOffsetScrimInsetsFrameLayout(Context context) {
         this(context, null);
@@ -59,7 +58,6 @@ public class NoOffsetScrimInsetsFrameLayout extends FrameLayout {
                             insets.getSystemWindowInsetTop(),
                             insets.getSystemWindowInsetRight(),
                             insets.getSystemWindowInsetBottom());
-                    onInsetsChanged(insets);
                     setWillNotDraw(!insets.hasSystemWindowInsets() || mInsetForeground == null);
                     ViewCompat.postInvalidateOnAnimation(NoOffsetScrimInsetsFrameLayout.this);
                     InsetsHolder.getInstance().onInsetsChanged(mInsets);
@@ -116,8 +114,4 @@ public class NoOffsetScrimInsetsFrameLayout extends FrameLayout {
             mInsetForeground.setCallback(null);
         }
     }
-
-    protected void onInsetsChanged(WindowInsetsCompat insets) {
-    }
-
 }

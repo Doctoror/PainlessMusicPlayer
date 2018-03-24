@@ -87,7 +87,7 @@ public abstract class BaseActivity extends BaseInjectionActivity {
      */
     @NonNull
     @MainThread
-    public Disposable disposeOnStop(@NonNull final Disposable disposable) {
+    protected Disposable disposeOnStop(@NonNull final Disposable disposable) {
         //noinspection ConstantConditions
         if (disposable == null) {
             throw new NullPointerException("disposable must not be null");
@@ -96,7 +96,7 @@ public abstract class BaseActivity extends BaseInjectionActivity {
         return disposable;
     }
 
-    public Settings getSettings() {
+    protected Settings getSettings() {
         return settings;
     }
 
@@ -104,7 +104,7 @@ public abstract class BaseActivity extends BaseInjectionActivity {
         return finishingAfterTransition;
     }
 
-    protected final void restart() {
+    private void restart() {
         restart(new Intent(this, getClass()));
     }
 

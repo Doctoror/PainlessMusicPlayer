@@ -59,7 +59,7 @@ public class PressFeedbackImageButton extends AppCompatImageButton {
         }
     }
 
-    public static boolean isRipple(@Nullable final Drawable drawable) {
+    private static boolean isRipple(@Nullable final Drawable drawable) {
         //noinspection IfMayBeConditional
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return drawable instanceof RippleDrawable;

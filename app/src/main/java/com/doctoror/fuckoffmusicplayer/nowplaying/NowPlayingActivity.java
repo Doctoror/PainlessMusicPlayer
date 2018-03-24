@@ -92,9 +92,10 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private static final String TAG = "NowPlayingActivity";
 
-    public static final String TRANSITION_NAME_ALBUM_ART
+    private static final String TRANSITION_NAME_ALBUM_ART
             = "NowPlayingActivity.TRANSITION_NAME_ALBUM_ART";
-    public static final String TRANSITION_NAME_ROOT = "NowPlayingActivity.TRANSITION_NAME_ROOT";
+
+    private static final String TRANSITION_NAME_ROOT = "NowPlayingActivity.TRANSITION_NAME_ROOT";
 
     public static void start(@NonNull final Activity activity,
                              @Nullable final View albumArt,
@@ -385,7 +386,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 .subscribe(mMediaPositionConsumer));
     }
 
-    void bindTrack(@Nullable final Media track, final long position) {
+    private void bindTrack(@Nullable final Media track, final long position) {
         if (!isFinishingAfterTransition()) {
             if (Objects.notEqual(mBoundTrack, track)) {
                 mBoundTrack = track;
@@ -422,7 +423,7 @@ public final class NowPlayingActivity extends BaseActivity {
         }
     }
 
-    void bindState(final int state) {
+    private void bindState(final int state) {
         if (!isFinishingAfterTransition()) {
             mState = state;
             final int playBtnRes;

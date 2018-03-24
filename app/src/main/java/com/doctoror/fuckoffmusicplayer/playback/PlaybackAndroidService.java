@@ -61,7 +61,6 @@ public final class PlaybackAndroidService extends Service {
     static final String ACTION_SEEK = "ACTION_SEEK";
     static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";
     static final String EXTRA_MEDIA_ID = "EXTRA_MEDIA_ID";
-    static final String EXTRA_POSITION = "EXTRA_POSITION";
     static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
 
     private final ResendStateReceiver resendStateReceiver = new ResendStateReceiver();
@@ -236,8 +235,6 @@ public final class PlaybackAndroidService extends Service {
     private void onActionSeek(final Intent intent) {
         if (intent.hasExtra(EXTRA_POSITION_PERCENT)) {
             onActionSeek(intent.getFloatExtra(EXTRA_POSITION_PERCENT, 0f));
-        } else if (intent.hasExtra(EXTRA_POSITION)) {
-            onActionSeek(intent.getLongExtra(EXTRA_POSITION, 0));
         }
     }
 
@@ -248,16 +245,6 @@ public final class PlaybackAndroidService extends Service {
             if (duration > 0) {
                 final int position = (int) ((float) duration * positionPercent);
                 playbackData.setMediaPosition(position);
-                service.seek(position);
-            }
-        }
-    }
-
-    private void onActionSeek(final long position) {
-        final Media media = PlaybackDataUtils.getCurrentMedia(playbackData);
-        if (media != null) {
-            final long duration = media.getDuration();
-            if (duration > 0 && position < duration) {
                 service.seek(position);
             }
         }

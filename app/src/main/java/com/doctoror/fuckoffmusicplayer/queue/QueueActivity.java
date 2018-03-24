@@ -369,7 +369,7 @@ public final class QueueActivity extends BaseActivity
         }
     }
 
-    void onQueueEmpty() {
+    private void onQueueEmpty() {
         ActivityCompat.finishAfterTransition(this);
     }
 

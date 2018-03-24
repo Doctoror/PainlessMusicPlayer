@@ -74,7 +74,7 @@ public class SiriWaveView extends View {
         }
     }
 
-    public void init(Context context, AttributeSet attrs) {
+    private void init(Context context, AttributeSet attrs) {
         TypedArray a = context
                 .obtainStyledAttributes(attrs, com.alex.siriwaveview.R.styleable.SiriWaveView);
         frequency = a

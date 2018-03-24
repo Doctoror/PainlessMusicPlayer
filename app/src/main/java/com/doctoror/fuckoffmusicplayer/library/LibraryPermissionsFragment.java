@@ -111,7 +111,7 @@ public abstract class LibraryPermissionsFragment extends BaseFragment {
 
     protected abstract void onPermissionDenied();
 
-    protected final boolean hasPermissions() {
+    final boolean hasPermissions() {
         return mHasPermissions;
     }
 

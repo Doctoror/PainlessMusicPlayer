@@ -117,7 +117,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         return binding.getRoot();
     }
 
-    protected void setupRecyclerView(@NonNull final RecyclerView recyclerView) {
+    private void setupRecyclerView(@NonNull final RecyclerView recyclerView) {
         final int columns = getResources().getInteger(R.integer.recent_activity_grid_columns);
         final GridLayoutManager lm = new GridLayoutManager(getActivity(), columns);
         lm.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
