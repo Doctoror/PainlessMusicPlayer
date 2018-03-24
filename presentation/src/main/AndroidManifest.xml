@@ -125,7 +125,7 @@
 
         <service android:name=".presentation.media.MediaManagerService"/>
 
-        <service android:name=".playback.PlaybackAndroidService"
+        <service android:name=".presentation.playback.PlaybackAndroidService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>

@@ -37,7 +37,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceIntentFactory;
+import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackServiceIntentFactory;
 import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;
 
 import javax.inject.Inject;

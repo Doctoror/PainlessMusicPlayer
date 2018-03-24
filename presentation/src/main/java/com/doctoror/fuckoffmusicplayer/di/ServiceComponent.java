@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.di.scopes.ServiceScope;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackAndroidService;
+import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackAndroidService;
 
 import dagger.Component;
 

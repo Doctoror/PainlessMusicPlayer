@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.playback;
+package com.doctoror.fuckoffmusicplayer.presentation.playback;
 
 import android.app.Service;
 import android.support.annotation.NonNull;

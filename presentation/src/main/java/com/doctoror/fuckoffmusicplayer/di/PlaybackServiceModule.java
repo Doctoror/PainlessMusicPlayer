@@ -17,7 +17,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceViewImpl;
+import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackServiceViewImpl;
 
 import dagger.Module;
 import dagger.Provides;
