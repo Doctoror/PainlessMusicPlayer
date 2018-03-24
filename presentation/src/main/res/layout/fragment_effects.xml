@@ -68,7 +68,7 @@
                 android:text="@string/Equalizer"
                 android:checked="@{model.isEqualizerEnabled}"/>
 
-            <com.doctoror.fuckoffmusicplayer.effects.EqualizerView
+            <com.doctoror.fuckoffmusicplayer.presentation.effects.EqualizerView
                 android:id="@+id/equalizerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

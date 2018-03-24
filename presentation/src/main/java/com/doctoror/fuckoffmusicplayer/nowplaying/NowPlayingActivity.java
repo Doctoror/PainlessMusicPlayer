@@ -66,7 +66,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
-import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.formatter.ArtistAlbumFormatter;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.navigation.NavigationController;

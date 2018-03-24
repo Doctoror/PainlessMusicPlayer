@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.di.contributes;
 
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.di.scopes.ActivityScope;
-import com.doctoror.fuckoffmusicplayer.effects.AudioEffectsActivityContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.effects.AudioEffectsActivityContributes;
 import com.doctoror.fuckoffmusicplayer.home.HomeActivityContributes;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsActivityContributes;
 import com.doctoror.fuckoffmusicplayer.library.genrealbums.GenreAlbumsActivityContributes;
