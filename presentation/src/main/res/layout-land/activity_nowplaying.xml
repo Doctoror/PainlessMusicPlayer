@@ -36,7 +36,7 @@
             layout="@layout/activity_nowplaying_full_art"
             app:model="@{model}"/>
 
-        <com.doctoror.fuckoffmusicplayer.widget.WindowBackgroundPaddingInsetsFrameLayout
+        <com.doctoror.fuckoffmusicplayer.presentation.widget.WindowBackgroundPaddingInsetsFrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start">
@@ -44,7 +44,7 @@
             <include
                 layout="@layout/navigation_view"/>
 
-        </com.doctoror.fuckoffmusicplayer.widget.WindowBackgroundPaddingInsetsFrameLayout>
+        </com.doctoror.fuckoffmusicplayer.presentation.widget.WindowBackgroundPaddingInsetsFrameLayout>
 
     </android.support.v4.widget.DrawerLayout>
 

@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
-import com.doctoror.fuckoffmusicplayer.widget.ItemTouchHelperViewHolder;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.ItemTouchHelperViewHolder;
 
 import butterknife.BindDimen;
 import butterknife.BindView;

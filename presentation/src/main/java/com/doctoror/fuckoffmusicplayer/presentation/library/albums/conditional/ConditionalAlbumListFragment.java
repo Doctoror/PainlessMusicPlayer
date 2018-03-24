@@ -65,7 +65,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.transition.CardVerticalGateT
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
-import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.DisableableAppBarLayout;
 
 import java.util.List;
 

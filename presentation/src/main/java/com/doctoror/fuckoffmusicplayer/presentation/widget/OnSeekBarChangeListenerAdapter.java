@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2016 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.widget.viewholder;
+package com.doctoror.fuckoffmusicplayer.presentation.widget;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.TextView;
+import android.widget.SeekBar;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+public class OnSeekBarChangeListenerAdapter implements SeekBar.OnSeekBarChangeListener {
 
-/**
- * View holder for single line item
- */
-public final class SingleLineItemViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onProgressChanged(final SeekBar seekBar, final int progress,
+            final boolean fromUser) {
 
-    @BindView(android.R.id.text1) public TextView text;
+    }
 
-    public SingleLineItemViewHolder(final View itemView) {
-        super(itemView);
-        ButterKnife.bind(this, itemView);
+    @Override
+    public void onStartTrackingTouch(final SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(final SeekBar seekBar) {
+
     }
 }

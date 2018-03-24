@@ -33,9 +33,9 @@ import android.widget.PopupMenu;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconMenuViewHolder;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.SingleLineItemIconMenuViewHolder;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.SingleLineItemIconViewHolder;
 import com.l4digital.fastscroll.FastScroller;
 
 import java.util.List;

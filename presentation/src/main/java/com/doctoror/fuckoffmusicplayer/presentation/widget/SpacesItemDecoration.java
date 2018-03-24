@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.widget;
+package com.doctoror.fuckoffmusicplayer.presentation.widget;
 
-import android.widget.SeekBar;
+import android.graphics.Rect;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
-public class OnSeekBarChangeListenerAdapter implements SeekBar.OnSeekBarChangeListener {
+public class SpacesItemDecoration extends RecyclerView.ItemDecoration {
 
-    @Override
-    public void onProgressChanged(final SeekBar seekBar, final int progress,
-            final boolean fromUser) {
+    private final int mSpacing;
 
+    public SpacesItemDecoration(final int spacing) {
+        mSpacing = spacing;
     }
 
     @Override
-    public void onStartTrackingTouch(final SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(final SeekBar seekBar) {
-
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        outRect.left = mSpacing;
+        outRect.right = mSpacing;
+        outRect.bottom = mSpacing;
+        outRect.top = mSpacing;
     }
 }

@@ -110,7 +110,7 @@
             android:max="200"
             android:progress="@{model.progress}"/>
 
-        <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+        <com.doctoror.fuckoffmusicplayer.presentation.widget.PressFeedbackImageButton
             android:id="@+id/btnPlay"
             android:layout_width="@dimen/activity_nowplaying_play_button_size"
             android:layout_height="@dimen/activity_nowplaying_play_button_size"
@@ -123,7 +123,7 @@
             app:srcRes="@{model.btnPlayRes}"
             tools:src="@drawable/ic_play_arrow_white_36dp"/>
 
-        <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+        <com.doctoror.fuckoffmusicplayer.presentation.widget.PressFeedbackImageButton
             android:id="@+id/btnPrev"
             android:layout_width="@dimen/activity_nowplaying_button_size"
             android:layout_height="@dimen/activity_nowplaying_button_size"
@@ -136,7 +136,7 @@
             app:layout_constraintTop_toTopOf="@id/btnPlay"
             app:layout_constraintBottom_toBottomOf="@id/btnPlay"/>
 
-        <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+        <com.doctoror.fuckoffmusicplayer.presentation.widget.PressFeedbackImageButton
             android:id="@+id/btnNext"
             android:layout_width="@dimen/activity_nowplaying_button_size"
             android:layout_height="@dimen/activity_nowplaying_button_size"

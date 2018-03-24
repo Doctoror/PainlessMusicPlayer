@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.widget;
+package com.doctoror.fuckoffmusicplayer.presentation.widget;
 
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;

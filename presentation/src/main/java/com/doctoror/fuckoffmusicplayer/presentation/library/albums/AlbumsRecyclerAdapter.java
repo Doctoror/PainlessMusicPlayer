@@ -35,8 +35,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumWithMenuViewHolder;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.AlbumWithMenuViewHolder;
 import com.l4digital.fastscroll.FastScroller;
 
 /**

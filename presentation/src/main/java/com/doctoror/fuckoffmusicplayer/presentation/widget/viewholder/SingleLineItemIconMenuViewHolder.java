@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Yaroslav Mytkalyk
+ * Copyright (C) 2017 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.widget.viewholder;
+package com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.doctoror.fuckoffmusicplayer.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * "Album" ViewHolder
+ * Single line item with icon and menu view holder
  */
-public final class AlbumViewHolder extends RecyclerView.ViewHolder {
+public final class SingleLineItemIconMenuViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(android.R.id.text1) public TextView text1;
-    @BindView(android.R.id.icon) public ImageView image;
+    @BindView(android.R.id.icon) public ImageView icon;
+    @BindView(android.R.id.text1) public TextView text;
+    @BindView(R.id.btnMenu) public ImageView btnMenu;
 
-    public AlbumViewHolder(@NonNull final View itemView) {
+    public SingleLineItemIconMenuViewHolder(final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }

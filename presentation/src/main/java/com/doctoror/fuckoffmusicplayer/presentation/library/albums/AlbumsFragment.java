@@ -28,7 +28,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment;
-import com.doctoror.fuckoffmusicplayer.widget.SpacesItemDecoration;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.SpacesItemDecoration;
 
 import javax.inject.Inject;
 

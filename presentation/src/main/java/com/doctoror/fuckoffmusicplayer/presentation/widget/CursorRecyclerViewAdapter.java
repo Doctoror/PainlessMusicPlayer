@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.widget;
+package com.doctoror.fuckoffmusicplayer.presentation.widget;
 /*
  * Copyright (C) 2014 skyfish.jy@gmail.com
  * Copyright (C) 2016 Yaroslav Mytkalyk

@@ -33,7 +33,7 @@
         tools:layout_editor_absoluteY="31dp"
         tools:layout_editor_absoluteX="0dp"/>
 
-    <com.doctoror.fuckoffmusicplayer.widget.AutoStartSiriWaveView
+    <com.doctoror.fuckoffmusicplayer.presentation.widget.AutoStartSiriWaveView
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:waveAmount="4"

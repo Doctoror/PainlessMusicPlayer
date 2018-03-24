@@ -31,8 +31,8 @@ import android.widget.TextView;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
-import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.OnSeekBarChangeListenerAdapter;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.OnSeekBarChangeListenerAdapter;
 
 import java.math.RoundingMode;
 import java.text.NumberFormat;

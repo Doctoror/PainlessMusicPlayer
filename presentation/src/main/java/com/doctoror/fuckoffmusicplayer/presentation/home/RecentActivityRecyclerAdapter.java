@@ -14,8 +14,8 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.AlbumViewHolder;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.AlbumViewHolder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -40,7 +40,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.doctoror.fuckoffmusicplayer.widget.NoOffsetScrimInsetsFrameLayout
+            <com.doctoror.fuckoffmusicplayer.presentation.widget.NoOffsetScrimInsetsFrameLayout
                 android:id="@+id/albumArtContainer"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -111,7 +111,7 @@
 
                 </FrameLayout>
 
-            </com.doctoror.fuckoffmusicplayer.widget.NoOffsetScrimInsetsFrameLayout>
+            </com.doctoror.fuckoffmusicplayer.presentation.widget.NoOffsetScrimInsetsFrameLayout>
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/controlsContainer"
@@ -162,7 +162,7 @@
                     app:layout_constraintStart_toEndOf="@id/textPosition"
                     app:layout_constraintTop_toTopOf="@+id/textDuration"/>
 
-                <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+                <com.doctoror.fuckoffmusicplayer.presentation.widget.PressFeedbackImageButton
                     android:id="@+id/btnPlay"
                     android:layout_width="@dimen/activity_nowplaying_play_button_size"
                     android:layout_height="@dimen/activity_nowplaying_play_button_size"
@@ -175,7 +175,7 @@
                     app:srcRes="@{model.btnPlayRes}"
                     tools:src="@drawable/ic_play_arrow_white_36dp"/>
 
-                <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+                <com.doctoror.fuckoffmusicplayer.presentation.widget.PressFeedbackImageButton
                     android:id="@+id/btnPrev"
                     android:layout_width="@dimen/activity_nowplaying_button_size"
                     android:layout_height="@dimen/activity_nowplaying_button_size"
@@ -188,7 +188,7 @@
                     app:layout_constraintEnd_toStartOf="@id/btnPlay"
                     app:layout_constraintTop_toTopOf="@+id/btnPlay"/>
 
-                <com.doctoror.fuckoffmusicplayer.widget.PressFeedbackImageButton
+                <com.doctoror.fuckoffmusicplayer.presentation.widget.PressFeedbackImageButton
                     android:id="@+id/btnNext"
                     android:layout_width="@dimen/activity_nowplaying_button_size"
                     android:layout_height="@dimen/activity_nowplaying_button_size"
@@ -241,7 +241,7 @@
 
         </LinearLayout>
 
-        <com.doctoror.fuckoffmusicplayer.widget.WindowBackgroundPaddingInsetsFrameLayout
+        <com.doctoror.fuckoffmusicplayer.presentation.widget.WindowBackgroundPaddingInsetsFrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start">
@@ -249,7 +249,7 @@
             <include
                 layout="@layout/navigation_view"/>
 
-        </com.doctoror.fuckoffmusicplayer.widget.WindowBackgroundPaddingInsetsFrameLayout>
+        </com.doctoror.fuckoffmusicplayer.presentation.widget.WindowBackgroundPaddingInsetsFrameLayout>
 
     </android.support.v4.widget.DrawerLayout>
 

@@ -32,7 +32,7 @@
         android:fitsSystemWindows="true"
         tools:ignore="InconsistentLayout">
 
-        <com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout
+        <com.doctoror.fuckoffmusicplayer.presentation.widget.DisableableAppBarLayout
             android:id="@+id/appBar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/collapsingToolbarHeightAlbum"
@@ -71,7 +71,7 @@
 
             </android.support.design.widget.CollapsingToolbarLayout>
 
-        </com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout>
+        </com.doctoror.fuckoffmusicplayer.presentation.widget.DisableableAppBarLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
