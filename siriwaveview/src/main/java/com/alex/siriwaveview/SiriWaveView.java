@@ -31,8 +31,11 @@ import android.view.View;
 /**
  * Created by Alex on 6/25/2016.
  * Modified by Yaroslav Mytkalyk 1/14/2017
+ * Modified by Yaroslav Mytkalyk 3/24/2018
  */
 public class SiriWaveView extends View {
+
+    private static final float LEVEL = 1.0f;
 
     private Path mPath;
     private Paint mPaint;
@@ -47,9 +50,8 @@ public class SiriWaveView extends View {
     private int waveColor;
     private float phase;
     private float amplitude;
-    private float level = 1.0f;
 
-    ObjectAnimator mAmplitudeAnimator;
+    private ObjectAnimator mAmplitudeAnimator;
 
     public SiriWaveView(Context context) {
         super(context);
@@ -122,7 +124,7 @@ public class SiriWaveView extends View {
         mPath.reset();
 
         phase += phaseShift;
-        amplitude = Math.max(level, IdleAmplitude);
+        amplitude = Math.max(LEVEL, IdleAmplitude);
 
         for (int i = 0; i < waveNumber; i++) {
             float halfHeight = getHeight() / waveVerticalPosition;
@@ -134,8 +136,6 @@ public class SiriWaveView extends View {
             // Progress is a value between 1.0 and -0.5, determined by the current wave idx, which is used to alter the wave's amplitude.
             float progress = 1.0f - (float) i / waveNumber;
             float normedAmplitude = (1.5f * progress - 0.5f) * amplitude;
-
-            float multiplier = (float) Math.min(1.0, (progress / 3.0f * 2.0f) + (1.0f / 3.0f));
 
             for (int x = 0; x < width; x++) {
                 float scaling = (float) (-Math.pow(1 / mid * (x - mid), 2) + 1);
@@ -151,12 +151,10 @@ public class SiriWaveView extends View {
                 }
             }
         }
-
-        //mPath.close();
     }
 
     @Keep
-    public void setAmplitude(float amplitude) {
+    public void setAmplitude(final float amplitude) {
         this.amplitude = amplitude;
         invalidate();
     }
@@ -180,12 +178,12 @@ public class SiriWaveView extends View {
         }
     }
 
-    public void setWaveColor(int waveColor) {
+    public void setWaveColor(final int waveColor) {
         mPaint.setColor(waveColor);
         invalidate();
     }
 
-    public void setStrokeWidth(float strokeWidth) {
+    public void setStrokeWidth(final float strokeWidth) {
         mPaint.setStrokeWidth(strokeWidth);
         invalidate();
     }
