@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Yaroslav Mytkalyk
+ * Copyright (C) 2017 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.home;
+package com.doctoror.fuckoffmusicplayer.presentation.home;
 
-import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope;
+final class RecentActivityHeader {
 
-import dagger.Module;
-import dagger.android.ContributesAndroidInjector;
+    private final CharSequence title;
 
-@Module
-public interface HomeFragmentsContributes {
+    RecentActivityHeader(final CharSequence title) {
+        this.title = title;
+    }
 
-    @FragmentScope
-    @ContributesAndroidInjector()
-    PlaybackStatusFragment playbackStatusFragment();
-
-    @FragmentScope
-    @ContributesAndroidInjector()
-    RecentActivityFragment recentActivityFragment();
+    public CharSequence getTitle() {
+        return title;
+    }
 }

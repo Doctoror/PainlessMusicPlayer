@@ -30,7 +30,7 @@ import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.presentation.effects.EqualizerView;
-import com.doctoror.fuckoffmusicplayer.formatter.FormatterModule;
+import com.doctoror.fuckoffmusicplayer.presentation.formatter.FormatterModule;
 import com.doctoror.fuckoffmusicplayer.media.MediaManagerService;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.media.browser.MediaBrowserServiceImpl;

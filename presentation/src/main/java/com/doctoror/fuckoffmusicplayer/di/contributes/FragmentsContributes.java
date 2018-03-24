@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.di.contributes;
 
 import com.doctoror.fuckoffmusicplayer.presentation.effects.EffectsFragmentContributes;
-import com.doctoror.fuckoffmusicplayer.home.HomeFragmentsContributes;
+import com.doctoror.fuckoffmusicplayer.presentation.home.HomeFragmentsContributes;
 import com.doctoror.fuckoffmusicplayer.library.albums.AlbumsFragmentContributes;
 import com.doctoror.fuckoffmusicplayer.library.albums.conditional.ConditionalAlbumListFragmentContributes;
 import com.doctoror.fuckoffmusicplayer.library.artistalbums.ArtistAlbumsFragmentContributes;

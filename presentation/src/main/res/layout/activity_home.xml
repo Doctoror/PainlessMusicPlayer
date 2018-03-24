@@ -46,7 +46,7 @@
                 app:layout_scrollFlags="scroll|enterAlways">
 
                 <fragment
-                    class="com.doctoror.fuckoffmusicplayer.home.PlaybackStatusFragment"
+                    class="com.doctoror.fuckoffmusicplayer.presentation.home.PlaybackStatusFragment"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
                     android:tag="FRAGMENT_PLAYBACK_STATUS"

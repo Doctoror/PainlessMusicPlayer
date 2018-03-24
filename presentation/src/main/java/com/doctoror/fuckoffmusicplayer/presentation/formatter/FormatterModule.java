@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.formatter;
+package com.doctoror.fuckoffmusicplayer.presentation.formatter;
 
 import javax.inject.Singleton;
 

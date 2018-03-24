@@ -45,7 +45,7 @@
             android:resource="@mipmap/ic_launcher" />
 
         <activity
-            android:name=".home.HomeActivity"
+            android:name=".presentation.home.HomeActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -59,12 +59,12 @@
         <activity
             android:name=".library.artistalbums.ArtistAlbumsActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:parentActivityName=".home.HomeActivity"/>
+            android:parentActivityName=".presentation.home.HomeActivity"/>
 
         <activity
             android:name=".library.genrealbums.GenreAlbumsActivity"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:parentActivityName=".home.HomeActivity"/>
+            android:parentActivityName=".presentation.home.HomeActivity"/>
 
         <activity
             android:name=".library.recentalbums.RecentAlbumsActivity"
@@ -85,7 +85,7 @@
             android:name=".nowplaying.NowPlayingActivity"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:parentActivityName=".home.HomeActivity"
+            android:parentActivityName=".presentation.home.HomeActivity"
             android:label="@string/Now_Playing">
 
             <intent-filter>
@@ -109,7 +109,7 @@
             android:name=".settings.SettingsActivity"
             android:theme="@style/AppTheme"
             android:label="@string/Settings"
-            android:parentActivityName=".home.HomeActivity"/>
+            android:parentActivityName=".presentation.home.HomeActivity"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

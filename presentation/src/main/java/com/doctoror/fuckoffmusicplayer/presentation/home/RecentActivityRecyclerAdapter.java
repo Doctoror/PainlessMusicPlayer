@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.home;
+package com.doctoror.fuckoffmusicplayer.presentation.home;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
