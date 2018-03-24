@@ -64,11 +64,11 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity;
-import com.doctoror.fuckoffmusicplayer.transition.CardVerticalGateTransition;
-import com.doctoror.fuckoffmusicplayer.transition.SlideFromBottomHelper;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionListenerAdapter;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
-import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.presentation.transition.CardVerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.presentation.transition.SlideFromBottomHelper;
+import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionListenerAdapter;
+import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.transition.VerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.widget.DisableableAppBarLayout;

@@ -71,7 +71,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.formatter.ArtistAlbumFormatt
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivity;
-import com.doctoror.fuckoffmusicplayer.transition.TransitionUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 

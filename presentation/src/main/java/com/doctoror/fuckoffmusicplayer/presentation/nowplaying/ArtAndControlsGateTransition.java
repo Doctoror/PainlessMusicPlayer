@@ -19,7 +19,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.presentation.transition.VerticalGateTransition;
 
 /**
  * Exit transition for {@link NowPlayingActivity} content view

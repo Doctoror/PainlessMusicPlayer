@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.transition;
+package com.doctoror.fuckoffmusicplayer.presentation.transition;
+
+import android.annotation.TargetApi;
+import android.os.Build;
+
+import com.doctoror.fuckoffmusicplayer.R;
 
 /**
- * {@link android.view.View} properties
+ * {@link VerticalGateTransition} for app bar and card view
  */
-final class ViewProperties {
+@TargetApi(Build.VERSION_CODES.KITKAT)
+public final class CardVerticalGateTransition extends VerticalGateTransition {
 
-    static final String TRANSLATION_Y = "translationY";
-
-    private ViewProperties() {
-        throw new UnsupportedOperationException();
+    public CardVerticalGateTransition() {
+        setBottomViewId(R.id.cardView);
     }
-
 }
