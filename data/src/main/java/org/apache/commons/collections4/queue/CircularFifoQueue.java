@@ -16,6 +16,8 @@
  */
 package org.apache.commons.collections4.queue;
 
+import android.support.annotation.NonNull;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -368,6 +370,7 @@ public class CircularFifoQueue<E> extends AbstractCollection<E>
      *
      * @return an iterator over this queue's elements
      */
+    @NonNull
     @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
