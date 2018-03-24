@@ -626,11 +626,6 @@ public final class PlaybackServiceImpl implements PlaybackService {
         private List<Media> mQueue;
         private int mPosition;
 
-        @Nullable
-        protected final List<Media> getQueue() {
-            return mQueue;
-        }
-
         @Override
         public void playPrev() {
             synchronized (LOCK) {
