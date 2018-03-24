@@ -49,8 +49,7 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
 
     private OnArtistClickListener mClickListener;
 
-    ArtistsRecyclerAdapter(final Context context) {
-        super(null);
+    ArtistsRecyclerAdapter(@NonNull final Context context) {
         mLayoutInflater = LayoutInflater.from(context);
         mResources = context.getResources();
     }

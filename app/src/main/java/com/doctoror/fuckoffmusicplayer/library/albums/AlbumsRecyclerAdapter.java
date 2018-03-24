@@ -65,7 +65,6 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
     AlbumsRecyclerAdapter(
             @NonNull final Context context,
             @NonNull final RequestManager requestManager) {
-        super(null);
         mLayoutInflater = LayoutInflater.from(context);
         mRequestManager = requestManager;
     }

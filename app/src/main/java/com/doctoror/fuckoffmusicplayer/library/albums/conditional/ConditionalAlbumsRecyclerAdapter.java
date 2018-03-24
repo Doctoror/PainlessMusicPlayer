@@ -51,9 +51,9 @@ final class ConditionalAlbumsRecyclerAdapter
 
     private OnAlbumClickListener mOnAlbumClickListener;
 
-    ConditionalAlbumsRecyclerAdapter(final Context context,
-                                     @NonNull final RequestManager requestManager) {
-        super(null);
+    ConditionalAlbumsRecyclerAdapter(
+            @NonNull final Context context,
+            @NonNull final RequestManager requestManager) {
         mLayoutInflater = LayoutInflater.from(context);
         mRequestManager = requestManager;
     }

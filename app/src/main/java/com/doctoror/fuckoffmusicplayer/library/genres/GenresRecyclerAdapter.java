@@ -15,14 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.genres;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
-import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
-import com.l4digital.fastscroll.FastScroller;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -31,6 +23,14 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
+import com.doctoror.fuckoffmusicplayer.util.ThemeUtils;
+import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.SingleLineItemIconViewHolder;
+import com.l4digital.fastscroll.FastScroller;
 
 final class GenresRecyclerAdapter
         extends CursorRecyclerViewAdapter<SingleLineItemIconViewHolder>
@@ -48,8 +48,7 @@ final class GenresRecyclerAdapter
 
     private OnGenreClickListener mClickListener;
 
-    GenresRecyclerAdapter(final Context context) {
-        super(null);
+    GenresRecyclerAdapter(@NonNull final Context context) {
         mLayoutInflater = LayoutInflater.from(context);
         mIcon = DrawableUtils.getTintedDrawable(context, R.drawable.ic_library_music_black_40dp,
                 ThemeUtils.getColorStateList(context.getTheme(), android.R.attr.textColorPrimary));
@@ -70,7 +69,7 @@ final class GenresRecyclerAdapter
     }
 
     private void onGenreClick(final int position, final long id,
-            @NonNull final String genre) {
+                              @NonNull final String genre) {
         if (mClickListener != null) {
             mClickListener.onGenreClick(position, id, genre);
         }

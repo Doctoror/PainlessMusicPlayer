@@ -29,14 +29,11 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
 
     private boolean mDataValid;
 
-    private int mRowIdColumn;
+    private int mRowIdColumn = -1;
 
     private final DataSetObserver mDataSetObserver;
 
-    public CursorRecyclerViewAdapter(@Nullable final Cursor cursor) {
-        mCursor = cursor;
-        mDataValid = cursor != null;
-        mRowIdColumn = mDataValid ? mCursor.getColumnIndex("_id") : -1;
+    public CursorRecyclerViewAdapter() {
         mDataSetObserver = new NotifyingDataSetObserver();
         if (mCursor != null) {
             mCursor.registerDataSetObserver(mDataSetObserver);

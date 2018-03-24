@@ -15,12 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.library.tracks;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.TwoLineItemViewHolder;
-import com.l4digital.fastscroll.FastScroller;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -28,6 +22,12 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.TwoLineItemViewHolder;
+import com.l4digital.fastscroll.FastScroller;
 
 /**
  * Recycler view adapter for "Tracks" list
@@ -44,8 +44,7 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
 
     private OnTrackClickListener mClickListener;
 
-    TracksRecyclerAdapter(final Context context) {
-        super(null);
+    TracksRecyclerAdapter(@NonNull final Context context) {
         mLayoutInflater = LayoutInflater.from(context);
     }
 

@@ -73,9 +73,9 @@ final class PlaylistsRecyclerAdapter
 
     private OnPlaylistClickListener mClickListener;
 
-    PlaylistsRecyclerAdapter(@NonNull final Context context,
-                             @NonNull final List<LivePlaylist> livePlaylists) {
-        super(null);
+    PlaylistsRecyclerAdapter(
+            @NonNull final Context context,
+            @NonNull final List<LivePlaylist> livePlaylists) {
         mLayoutInflater = LayoutInflater.from(context);
         mLivePlaylists = livePlaylists;
         mIcon = DrawableUtils.getTintedDrawableFromAttrTint(context,
