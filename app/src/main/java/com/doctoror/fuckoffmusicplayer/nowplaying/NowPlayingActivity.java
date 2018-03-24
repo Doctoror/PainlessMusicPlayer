@@ -254,14 +254,14 @@ public final class NowPlayingActivity extends BaseActivity {
             albumArt.setImageResource(R.drawable.album_art_placeholder);
             onArtProcessed();
         } else {
-            final RequestBuilder<Drawable> b = mRequestManager
+            RequestBuilder<Drawable> b = mRequestManager
                     .asDrawable()
                     .load(artUri);
 
             if (hasCoverTransition || hasListViewTransition) {
-                b.apply(requestOptionsDontAnimate);
+                b = b.apply(requestOptionsDontAnimate);
             } else {
-                b.apply(requestOptions);
+                b = b.apply(requestOptions);
             }
 
             b.listener(new AlbumArtRequestListener()).into(albumArt);
