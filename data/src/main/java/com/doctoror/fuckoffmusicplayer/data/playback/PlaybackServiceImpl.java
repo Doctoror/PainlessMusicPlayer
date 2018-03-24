@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServicePresenter;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceView;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
@@ -75,7 +75,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
 
     private final PlaybackReporterFactory mPlaybackReporterFactory;
 
-    private final PlaybackServicePresenter mPlaybackServicePresenter;
+    private final PlaybackServiceView mPlaybackServicePresenter;
 
     private final QueueProviderRecentlyScanned queueProviderRecentlyScanned;
 
@@ -122,7 +122,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackParams playbackParams,
             @NonNull final PlaybackReporterFactory playbackReporterFactory,
-            @NonNull final PlaybackServicePresenter playbackServicePresenter,
+            @NonNull final PlaybackServiceView playbackServicePresenter,
             @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,
             @NonNull final Runnable stopAction) {
         mContext = context;

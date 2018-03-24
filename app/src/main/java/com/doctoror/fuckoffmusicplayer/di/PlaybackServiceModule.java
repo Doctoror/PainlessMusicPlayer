@@ -12,12 +12,12 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServicePresenter;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceView;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.playback.PlaybackServicePresenterImpl;
+import com.doctoror.fuckoffmusicplayer.playback.PlaybackServiceViewImpl;
 
 import dagger.Module;
 import dagger.Provides;
@@ -37,7 +37,7 @@ public final class PlaybackServiceModule {
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackParams playbackParams,
             @NonNull final PlaybackReporterFactory playbackReporterFactory,
-            @NonNull final PlaybackServicePresenter playbackServicePresenter,
+            @NonNull final PlaybackServiceView playbackServicePresenter,
             @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned) {
         return new PlaybackServiceImpl(
                 service,
@@ -56,11 +56,11 @@ public final class PlaybackServiceModule {
 
     @Provides
     @ServiceScope
-    PlaybackServicePresenter providePlaybackServicePresenter(
+    PlaybackServiceView providePlaybackServiceView(
             @NonNull final MediaSessionHolder mediaSessionHolder,
             @NonNull final PlaybackNotificationFactory playbackNotificationFactory,
             @NonNull final Service service) {
-        return new PlaybackServicePresenterImpl(
+        return new PlaybackServiceViewImpl(
                 mediaSessionHolder, playbackNotificationFactory, service);
     }
 }

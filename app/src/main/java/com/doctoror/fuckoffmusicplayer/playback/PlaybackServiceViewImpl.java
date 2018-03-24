@@ -10,11 +10,11 @@ import android.widget.Toast;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServicePresenter;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceView;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
-public class PlaybackServicePresenterImpl implements PlaybackServicePresenter {
+public class PlaybackServiceViewImpl implements PlaybackServiceView {
 
     private static final int NOTIFICATION_ID = 666;
 
@@ -22,7 +22,7 @@ public class PlaybackServicePresenterImpl implements PlaybackServicePresenter {
     private final PlaybackNotificationFactory playbackNotificationFactory;
     private final Service service;
 
-    public PlaybackServicePresenterImpl(
+    public PlaybackServiceViewImpl(
             @NonNull final MediaSessionHolder mediaSessionHolder,
             @NonNull final PlaybackNotificationFactory playbackNotificationFactory,
             @NonNull final Service service) {

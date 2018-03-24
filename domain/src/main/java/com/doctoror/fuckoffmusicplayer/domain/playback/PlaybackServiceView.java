@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
-public interface PlaybackServicePresenter {
+public interface PlaybackServiceView {
 
     void startForeground(@NonNull Media media, @PlaybackState int state);
 
