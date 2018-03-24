@@ -83,17 +83,14 @@ public abstract class BaseActivity extends BaseInjectionActivity {
      * Register a {@link Disposable} that will be disposed onStop()
      *
      * @param disposable the {@link Disposable} to register
-     * @return the registered {@link Disposable}
      */
-    @NonNull
     @MainThread
-    protected Disposable disposeOnStop(@NonNull final Disposable disposable) {
+    protected void disposeOnStop(@NonNull final Disposable disposable) {
         //noinspection ConstantConditions
         if (disposable == null) {
             throw new NullPointerException("disposable must not be null");
         }
         getOnStopDisposable().add(disposable);
-        return disposable;
     }
 
     protected Settings getSettings() {
