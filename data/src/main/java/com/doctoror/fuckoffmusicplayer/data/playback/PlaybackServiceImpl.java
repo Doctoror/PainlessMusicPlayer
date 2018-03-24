@@ -265,7 +265,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
 
     @Override
     public void playPrev() {
-        playPrevInner(true);
+        playPrevInner();
     }
 
     @Override
@@ -321,8 +321,8 @@ public final class PlaybackServiceImpl implements PlaybackService {
                 mayContinueWhereStopped, false);
     }
 
-    private void playPrevInner(final boolean isUserAction) {
-        getPlaybackController().playPrev(isUserAction);
+    private void playPrevInner() {
+        getPlaybackController().playPrev(true);
     }
 
     private void playNextInner(final boolean isUserAction) {
