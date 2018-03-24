@@ -118,7 +118,7 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
         }
     }
 
-    boolean onItemMove(final int fromPosition, final int toPosition) {
+    void onItemMove(final int fromPosition, final int toPosition) {
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 swap(i, i + 1);
@@ -131,7 +131,6 @@ final class QueueRecyclerAdapter extends BaseRecyclerAdapter<Media, QueueItemVie
             }
         }
         notifyItemMoved(fromPosition, toPosition);
-        return true;
     }
 
     void setTrackListener(@NonNull final TrackListener trackListener) {

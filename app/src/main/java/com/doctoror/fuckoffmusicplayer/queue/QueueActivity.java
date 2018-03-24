@@ -569,7 +569,8 @@ public final class QueueActivity extends BaseActivity
                 return false;
             }
 
-            return mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
+            mAdapter.onItemMove(source.getAdapterPosition(), target.getAdapterPosition());
+            return true;
         }
 
         @Override
