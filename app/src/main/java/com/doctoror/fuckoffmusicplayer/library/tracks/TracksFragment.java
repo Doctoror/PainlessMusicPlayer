@@ -22,7 +22,6 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
@@ -120,7 +119,7 @@ public final class TracksFragment extends LibraryListFragment {
 
     @NonNull
     private Observable<List<Media>> queueFromIds(@NonNull final long[] ids) {
-        return mPlaylistFactory.fromTracks(ids, MediaStoreTracksProvider.SORT_ORDER);
+        return mPlaylistFactory.fromTracks(ids);
     }
 
     private void onTrackClick(final int startPosition) {

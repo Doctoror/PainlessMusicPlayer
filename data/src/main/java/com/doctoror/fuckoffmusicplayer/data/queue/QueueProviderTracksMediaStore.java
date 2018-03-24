@@ -59,12 +59,11 @@ public final class QueueProviderTracksMediaStore implements QueueProviderTracks 
 
     @NonNull
     @Override
-    public Observable<List<Media>> fromTracks(@NonNull final long[] trackIds,
-            @Nullable final String sortOrder) {
+    public Observable<List<Media>> fromTracks(@NonNull final long[] trackIds) {
         return mMediaProvider.load(
                 SelectionUtils.inSelectionLong(MediaStore.Audio.Media._ID, trackIds),
                 null,
-                sortOrder,
+                MediaStore.Audio.Media.TITLE,
                 null);
     }
 

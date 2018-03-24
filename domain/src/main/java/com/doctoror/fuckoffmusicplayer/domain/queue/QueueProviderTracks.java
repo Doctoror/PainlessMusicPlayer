@@ -25,7 +25,7 @@ import io.reactivex.Observable;
 public interface QueueProviderTracks {
 
     @NonNull
-    Observable<List<Media>> fromTracks(@NonNull long[] trackIds, @Nullable String sortOrder);
+    Observable<List<Media>> fromTracks(@NonNull long[] trackIds);
 
     @NonNull
     Observable<List<Media>> fromTracksSearch(@Nullable String query);
