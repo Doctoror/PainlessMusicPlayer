@@ -15,18 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.parceler.Parcel;
 import org.parceler.Parcels;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 
 import java.util.concurrent.TimeUnit;
 

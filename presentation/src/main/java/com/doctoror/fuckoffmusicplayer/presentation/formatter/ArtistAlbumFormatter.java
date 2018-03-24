@@ -15,12 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.formatter;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import com.doctoror.fuckoffmusicplayer.R;
 
 public final class ArtistAlbumFormatter {
 

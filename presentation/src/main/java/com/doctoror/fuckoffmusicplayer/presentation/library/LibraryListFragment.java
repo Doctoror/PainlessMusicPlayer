@@ -15,18 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
-import com.doctoror.fuckoffmusicplayer.util.SearchViewUtils;
-import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
-import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
-import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
-import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
-
-import org.parceler.Parcel;
-import org.parceler.Parcels;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
@@ -44,6 +32,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
+import com.doctoror.fuckoffmusicplayer.util.SearchViewUtils;
+import com.doctoror.fuckoffmusicplayer.util.SoftInputManager;
+import com.doctoror.fuckoffmusicplayer.util.ViewUtils;
+import com.doctoror.fuckoffmusicplayer.widget.SwipeDirectionTouchListener;
+import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
+
+import org.parceler.Parcel;
+import org.parceler.Parcels;
 
 import java.util.concurrent.TimeUnit;
 

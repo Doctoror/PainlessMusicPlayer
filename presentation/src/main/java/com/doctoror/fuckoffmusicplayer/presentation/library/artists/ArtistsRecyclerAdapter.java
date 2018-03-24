@@ -15,12 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.artists;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
-import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.viewholder.TwoLineItemViewHolder;
-import com.l4digital.fastscroll.FastScroller;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -29,6 +23,12 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.widget.CursorRecyclerViewAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.viewholder.TwoLineItemViewHolder;
+import com.l4digital.fastscroll.FastScroller;
 
 /**
  * Artists recycler view adapter

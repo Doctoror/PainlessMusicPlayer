@@ -15,10 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
-import org.junit.Test;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -29,6 +25,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
+
+import com.doctoror.fuckoffmusicplayer.R;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

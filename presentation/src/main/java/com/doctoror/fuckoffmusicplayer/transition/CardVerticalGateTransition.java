@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.transition;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
 import android.annotation.TargetApi;
 import android.os.Build;
+
+import com.doctoror.fuckoffmusicplayer.R;
 
 /**
  * {@link VerticalGateTransition} for app bar and card view

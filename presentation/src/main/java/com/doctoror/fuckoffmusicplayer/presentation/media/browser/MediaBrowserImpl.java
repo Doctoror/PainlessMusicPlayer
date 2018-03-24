@@ -15,15 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.media.browser;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.media.browser.MediaBrowserConstants;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -36,6 +27,15 @@ import android.support.v4.media.MediaBrowserServiceCompat.BrowserRoot;
 import android.support.v4.media.MediaBrowserServiceCompat.Result;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.text.TextUtils;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.media.browser.MediaBrowserConstants;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
 import java.io.File;
 import java.util.ArrayList;

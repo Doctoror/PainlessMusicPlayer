@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 
 import java.util.ArrayList;
 import java.util.List;

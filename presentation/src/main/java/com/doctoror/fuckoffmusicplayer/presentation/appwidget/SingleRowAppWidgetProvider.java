@@ -27,18 +27,18 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
-import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataUtils;
+import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackServiceIntentFactory;
-import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;
 
 import javax.inject.Inject;
 

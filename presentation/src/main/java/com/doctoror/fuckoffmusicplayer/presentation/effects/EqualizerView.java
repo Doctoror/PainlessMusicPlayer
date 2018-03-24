@@ -15,12 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.effects;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
-import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
-import com.doctoror.fuckoffmusicplayer.widget.OnSeekBarChangeListenerAdapter;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.media.audiofx.Equalizer;
@@ -33,6 +27,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
+import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
+import com.doctoror.fuckoffmusicplayer.widget.OnSeekBarChangeListenerAdapter;
 
 import java.math.RoundingMode;
 import java.text.NumberFormat;

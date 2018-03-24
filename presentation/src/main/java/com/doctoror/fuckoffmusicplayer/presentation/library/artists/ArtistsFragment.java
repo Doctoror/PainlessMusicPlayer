@@ -24,9 +24,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
-import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.library.artistalbums.ArtistAlbumsActivity;
 

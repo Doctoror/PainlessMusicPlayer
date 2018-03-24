@@ -15,13 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums;
 
-import com.doctoror.fuckoffmusicplayer.presentation.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -32,6 +25,13 @@ import android.support.annotation.UiThread;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 import android.widget.Toast;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
+import com.doctoror.fuckoffmusicplayer.queue.QueueActivity;
 
 import java.util.List;
 

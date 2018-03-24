@@ -29,9 +29,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.library.artists.ArtistsFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.library.genres.GenresFragment;

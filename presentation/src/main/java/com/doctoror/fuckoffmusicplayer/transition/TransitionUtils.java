@@ -15,13 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.transition;
 
-import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
-
 import android.annotation.TargetApi;
 import android.app.SharedElementCallback;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.View;
+
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 
 import java.util.List;
 import java.util.Map;

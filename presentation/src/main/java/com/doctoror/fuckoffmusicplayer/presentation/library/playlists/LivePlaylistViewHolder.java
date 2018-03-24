@@ -15,13 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.playlists;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.doctoror.fuckoffmusicplayer.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

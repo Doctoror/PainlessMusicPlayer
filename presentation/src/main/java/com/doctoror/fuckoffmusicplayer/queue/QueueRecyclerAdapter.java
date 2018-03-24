@@ -15,12 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.queue;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
-import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
-import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
-
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
@@ -30,6 +24,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.util.BindingAdapters;
+import com.doctoror.fuckoffmusicplayer.util.DrawableUtils;
+import com.doctoror.fuckoffmusicplayer.widget.BaseRecyclerAdapter;
 
 import java.util.List;
 

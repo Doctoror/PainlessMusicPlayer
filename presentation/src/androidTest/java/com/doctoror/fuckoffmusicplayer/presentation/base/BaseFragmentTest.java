@@ -15,9 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.base;
 
-import org.junit.Test;
-
 import android.annotation.SuppressLint;
+
+import org.junit.Test;
 
 import io.reactivex.disposables.Disposable;
 

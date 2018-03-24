@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.widget;
 
-import com.alex.siriwaveview.SiriWaveView;
-
 import android.content.Context;
 import android.util.AttributeSet;
+
+import com.alex.siriwaveview.SiriWaveView;
 
 /**
  * Auto start {@link SiriWaveView}

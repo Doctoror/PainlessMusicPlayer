@@ -15,9 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -28,6 +25,9 @@ import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

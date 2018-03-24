@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import org.junit.Test;
-
 import android.content.res.ColorStateList;
 import android.support.test.InstrumentationRegistry;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 

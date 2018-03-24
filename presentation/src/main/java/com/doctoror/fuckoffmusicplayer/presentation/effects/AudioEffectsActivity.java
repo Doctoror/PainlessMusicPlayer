@@ -15,12 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.effects;
 
-import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
-import com.f2prateek.dart.Dart;
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
+import com.f2prateek.dart.Dart;
 
 public final class AudioEffectsActivity extends BaseActivity {
 

@@ -15,9 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.settings;
 
-import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
-
 import android.support.v7.app.AppCompatDelegate;
+
+import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
 
 import javax.inject.Inject;
 

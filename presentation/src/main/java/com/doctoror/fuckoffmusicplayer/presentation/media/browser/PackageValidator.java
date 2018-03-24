@@ -16,11 +16,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.media.browser;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -28,6 +23,11 @@ import android.content.pm.PackageManager;
 import android.content.res.XmlResourceParser;
 import android.os.Process;
 import android.util.Base64;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.util.ArrayList;

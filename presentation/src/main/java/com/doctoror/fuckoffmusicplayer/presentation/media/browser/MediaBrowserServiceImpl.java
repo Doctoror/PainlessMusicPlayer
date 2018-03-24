@@ -16,9 +16,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.media.browser;
 
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
-
 import android.os.Bundle;
 import android.service.media.MediaBrowserService;
 import android.support.annotation.NonNull;
@@ -26,6 +23,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.support.v4.media.MediaBrowserServiceCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
 
 import java.util.List;
 

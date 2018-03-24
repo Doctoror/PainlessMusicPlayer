@@ -15,9 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import org.parceler.Parcel;
-import org.parceler.ParcelConstructor;
-
 import android.graphics.Rect;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -25,6 +22,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.parceler.Parcel;
+import org.parceler.ParcelConstructor;
 
 /**
  * {@link CoordinatorLayout} utils

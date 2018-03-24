@@ -1,9 +1,5 @@
 package com.doctoror.fuckoffmusicplayer.presentation.navigation;
 
-import com.doctoror.fuckoffmusicplayer.presentation.Henson;
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -11,6 +7,10 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.presentation.Henson;
+import com.doctoror.fuckoffmusicplayer.settings.SettingsActivity;
 
 public final class NavigationController {
 

@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.transition;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -27,6 +25,8 @@ import android.transition.Transition;
 import android.transition.TransitionValues;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.doctoror.fuckoffmusicplayer.R;
 
 import java.util.ArrayList;
 import java.util.Collection;

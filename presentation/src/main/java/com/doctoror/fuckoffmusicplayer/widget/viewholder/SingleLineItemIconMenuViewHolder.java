@@ -15,12 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.widget.viewholder;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.doctoror.fuckoffmusicplayer.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

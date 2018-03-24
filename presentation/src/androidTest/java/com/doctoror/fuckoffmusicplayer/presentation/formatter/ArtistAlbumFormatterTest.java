@@ -15,12 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.formatter;
 
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+
 import com.doctoror.fuckoffmusicplayer.R;
 
 import org.junit.Test;
-
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 
 import static org.junit.Assert.assertEquals;
 

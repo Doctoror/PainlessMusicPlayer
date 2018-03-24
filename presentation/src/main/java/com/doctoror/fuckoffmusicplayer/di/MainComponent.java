@@ -16,7 +16,6 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.App;
-import com.doctoror.fuckoffmusicplayer.presentation.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.di.contributes.ActivitiesContributes;
 import com.doctoror.fuckoffmusicplayer.di.contributes.FragmentsContributes;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
@@ -29,6 +28,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
+import com.doctoror.fuckoffmusicplayer.presentation.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.presentation.effects.EqualizerView;
 import com.doctoror.fuckoffmusicplayer.presentation.formatter.FormatterModule;
 import com.doctoror.fuckoffmusicplayer.presentation.media.MediaManagerService;

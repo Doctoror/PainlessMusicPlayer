@@ -15,14 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.nowplaying;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
-
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -32,6 +24,14 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 import android.widget.Toast;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderFiles;
 
 import java.io.IOException;
 import java.util.List;

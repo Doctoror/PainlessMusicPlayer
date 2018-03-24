@@ -15,14 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.settings;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.tbruyelle.rxpermissions2.RxPermissions;
-
 import android.Manifest;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 /**
  * Offers to switch ACCESS_COARSE_LOCATION permission for better daynight theme accuracy

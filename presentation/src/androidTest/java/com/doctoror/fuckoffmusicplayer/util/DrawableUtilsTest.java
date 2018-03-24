@@ -15,10 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.util;
 
-import com.doctoror.fuckoffmusicplayer.R;
-
-import org.junit.Test;
-
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,6 +23,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.v4.content.ContextCompat;
+
+import com.doctoror.fuckoffmusicplayer.R;
+
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 

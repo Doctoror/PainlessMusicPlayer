@@ -15,11 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.nowplaying;
 
-import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
-
 import android.annotation.TargetApi;
 import android.os.Build;
+
+import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.transition.VerticalGateTransition;
 
 /**
  * Exit transition for {@link NowPlayingActivity} content view
