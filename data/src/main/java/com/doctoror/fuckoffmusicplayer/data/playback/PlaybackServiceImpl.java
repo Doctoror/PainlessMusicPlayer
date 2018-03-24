@@ -302,7 +302,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
     }
 
     private void playPrevInner() {
-        getPlaybackController().playPrev(true);
+        getPlaybackController().playPrev();
     }
 
     private void playNextInner(final boolean isUserAction) {
@@ -612,7 +612,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
 
         void playNext(boolean isUserAction);
 
-        void playPrev(boolean isUserAction);
+        void playPrev();
 
         void setQueue(@Nullable List<Media> queue);
 
@@ -632,17 +632,13 @@ public final class PlaybackServiceImpl implements PlaybackService {
         }
 
         @Override
-        public void playPrev(final boolean isUserAction) {
+        public void playPrev() {
             synchronized (LOCK) {
                 if (mQueue != null && !mQueue.isEmpty()) {
                     @RepeatMode final int repeatMode = mPlaybackParams.getRepeatMode();
                     switch (repeatMode) {
                         case RepeatMode.NONE:
-                            if (!isUserAction && mPosition == 0) {
-                                onPlay(mQueue, mPosition);
-                            } else {
-                                onPlay(mQueue, prevPos(mQueue, mPosition));
-                            }
+                            onPlay(mQueue, prevPos(mQueue, mPosition));
                             break;
 
                         case RepeatMode.QUEUE:
@@ -650,11 +646,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
                             break;
 
                         case RepeatMode.TRACK:
-                            if (isUserAction) {
-                                onPlay(mQueue, prevPos(mQueue, mPosition));
-                            } else {
-                                onPlay(mQueue, mPosition);
-                            }
+                            onPlay(mQueue, mPosition);
                             break;
                     }
                 }
