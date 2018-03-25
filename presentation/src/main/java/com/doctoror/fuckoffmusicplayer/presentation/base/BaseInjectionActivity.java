@@ -35,8 +35,8 @@ public abstract class BaseInjectionActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         AndroidInjection.inject(this);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
