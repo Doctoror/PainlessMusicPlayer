@@ -82,6 +82,8 @@ public final class HomeActivity extends BaseActivity {
         AndroidInjection.inject(this);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
+        binding.setModel(viewModel);
+
         navigationView = findViewById(R.id.navigationView);
 
         setSupportActionBar(binding.toolbar);
