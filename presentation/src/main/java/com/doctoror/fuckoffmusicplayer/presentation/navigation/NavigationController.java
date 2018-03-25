@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2018 Yaroslav Mytkalyk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.doctoror.fuckoffmusicplayer.presentation.navigation;
 
 import android.content.Context;
@@ -15,26 +30,26 @@ import com.doctoror.fuckoffmusicplayer.presentation.settings.SettingsActivity;
 public final class NavigationController {
 
     @NonNull
-    private final Context mContext;
+    private final Context context;
 
     @NonNull
-    private final DrawerLayout mDrawerLayout;
+    private final DrawerLayout drawerLayout;
 
     @NonNull
-    private final NavigationView mNavigationView;
+    private final NavigationView navigationView;
 
-    private Integer mDrawerClosedAction;
+    private NavigationItem drawerClosedAction;
 
     public NavigationController(
             @NonNull final Context context,
             @NonNull final View view) {
-        mContext = context;
-        mDrawerLayout = view.findViewById(R.id.drawerLayout);
-        mNavigationView = view.findViewById(R.id.navigationView);
+        this.context = context;
+        drawerLayout = view.findViewById(R.id.drawerLayout);
+        navigationView = view.findViewById(R.id.navigationView);
     }
 
     public void bind() {
-        mDrawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
             @Override
             public void onDrawerClosed(@NonNull final View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -42,26 +57,26 @@ public final class NavigationController {
             }
         });
 
-        mNavigationView.setNavigationItemSelectedListener(new NavigationListener());
+        navigationView.setNavigationItemSelectedListener(new NavigationListener());
     }
 
     private void performDrawerClosedAction() {
-        if (mDrawerClosedAction != null) {
-            switch (mDrawerClosedAction) {
-                case R.id.navigationSettings:
-                    mContext.startActivity(new Intent(mContext, SettingsActivity.class));
+        if (drawerClosedAction != null) {
+            switch (drawerClosedAction) {
+                case SETTINGS:
+                    context.startActivity(new Intent(context, SettingsActivity.class));
                     break;
 
                 default:
-                    final Intent intent = Henson.with(mContext)
+                    final Intent intent = Henson.with(context)
                             .gotoHomeActivity()
-                            .drawerClosedAction(mDrawerClosedAction)
+                            .navigationAction(drawerClosedAction)
                             .build();
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    mContext.startActivity(intent);
+                    context.startActivity(intent);
                     break;
             }
-            mDrawerClosedAction = null;
+            drawerClosedAction = null;
         }
     }
 
@@ -70,8 +85,8 @@ public final class NavigationController {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-            mDrawerClosedAction = item.getItemId();
-            mDrawerLayout.closeDrawers();
+            drawerClosedAction = NavigationItem.fromId(item.getItemId());
+            drawerLayout.closeDrawers();
             return true;
         }
     }

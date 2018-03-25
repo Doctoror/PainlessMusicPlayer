@@ -19,18 +19,17 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
+import android.databinding.ObservableField;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.databinding.ActivityHomeBinding;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumsFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.library.artists.ArtistsFragment;
@@ -38,18 +37,14 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.genres.GenresFragmen
 import com.doctoror.fuckoffmusicplayer.presentation.library.playlists.PlaylistsFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationController;
+import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationItem;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
-import org.parceler.Parcel;
 import org.parceler.Parcels;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 
 /**
@@ -59,95 +54,104 @@ public final class HomeActivity extends BaseActivity {
 
     private static final String KEY_INSTANCE_STATE = "INSTANCE_STATE";
 
+    private final OnNavigationChangeCallback onNavigationChangeCallback
+            = new OnNavigationChangeCallback();
+
+    private ActivityHomeBinding binding;
+
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @SuppressWarnings("FieldCanBeLocal") // Ensure not collected
     private NavigationController navigationController;
 
-    @BindView(R.id.playbackStatusCard)
-    View playbackStatusCard;
-
-    @BindView(R.id.drawerLayout)
-    DrawerLayout drawerLayout;
-
-    @BindView(R.id.navigationView)
-    NavigationView navigationView;
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    private int navigationItem = R.id.navigationRecentActivity;
+    private NavigationView navigationView;
 
     @Nullable
     @InjectExtra
-    Integer drawerClosedAction;
+    NavigationItem navigationAction;
 
     @Inject
-    PlaybackData playbackData;
+    HomePresenter presenter;
+
+    @Inject
+    HomeViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidInjection.inject(this);
 
-        setContentView(R.layout.activity_home);
-        ButterKnife.bind(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
+        navigationView = findViewById(R.id.navigationView);
 
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
         initNavigation();
 
-        if (savedInstanceState == null) {
-            drawerClosedAction = navigationItem;
-            performDrawerClosedAction();
-        } else {
-            restoreInstanceState(savedInstanceState);
-        }
+        getLifecycle().addObserver(presenter);
 
-        handleIntent();
+        handleIntent(savedInstanceState == null);
     }
 
     @Override
     protected void onNewIntent(@NonNull final Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleIntent();
+        handleIntent(false);
     }
 
-    private void handleIntent() {
+    private void handleIntent(final boolean navigateToDefaultWhenNoAction) {
         Dart.inject(this);
-        if (drawerClosedAction != null) {
-            performDrawerClosedAction();
+        if (navigationAction != null) {
+            presenter.navigateTo(navigationAction);
+            navigationAction = null;
+        } else {
+            presenter.navigateTo(NavigationItem.RECENT_ACTIVITY);
         }
     }
 
     private void initNavigation() {
-        navigationView.setCheckedItem(navigationItem);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                binding.drawerLayout,
+                binding.toolbar,
+                R.string.Navigation_drawer,
+                R.string.Navigation_drawer);
 
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.Navigation_drawer, R.string.Navigation_drawer);
+        binding.drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-
-        navigationController = new NavigationController(this, drawerLayout);
+        navigationController = new NavigationController(this, binding.drawerLayout);
         navigationController.bind();
     }
 
-    private void restoreInstanceState(final Bundle savedInstanceState) {
-        final InstanceState state = Parcels
-                .unwrap(savedInstanceState.getParcelable(KEY_INSTANCE_STATE));
-        if (state != null) {
-            navigationItem = state.navigationItem;
-            setTitle(state.title);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        viewModel.navigationItem.addOnPropertyChangedCallback(onNavigationChangeCallback);
+        if (viewModel.navigationItem.get() != null) {
+            onNavigationChangeCallback.onPropertyChanged(viewModel.navigationItem, 0);
         }
     }
 
     @Override
-    protected void onSaveInstanceState(final Bundle outState) {
+    protected void onStop() {
+        super.onStop();
+        viewModel.navigationItem.removeOnPropertyChangedCallback(onNavigationChangeCallback);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull final Bundle outState) {
         super.onSaveInstanceState(outState);
-        final InstanceState state = new InstanceState();
-        state.navigationItem = navigationItem;
-        state.title = getTitle().toString();
-        outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(state));
+        outState.putParcelable(KEY_INSTANCE_STATE, Parcels.wrap(viewModel));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        final HomeViewModel state = Parcels.unwrap(
+                savedInstanceState.getParcelable(KEY_INSTANCE_STATE));
+        if (state != null) {
+            viewModel.applyFrom(state);
+        }
     }
 
     @Override
@@ -157,62 +161,44 @@ public final class HomeActivity extends BaseActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        disposeOnStop(playbackData.queuePositionObservable()
-                .subscribe(this::onQueuePositionChanged));
-    }
-
-    private void onQueuePositionChanged(final int position) {
-        final List<Media> queue = playbackData.getQueue();
-        runOnUiThread(() -> playbackStatusCard.setVisibility(
-                queue != null && position < queue.size() ? View.VISIBLE : View.GONE));
-    }
-
-    @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(navigationView)) {
-            drawerLayout.closeDrawer(navigationView);
+        if (binding.drawerLayout.isDrawerOpen(navigationView)) {
+            binding.drawerLayout.closeDrawer(navigationView);
         } else {
             super.onBackPressed();
         }
     }
 
-    private void performDrawerClosedAction() {
-        if (drawerClosedAction != null) {
-            switch (drawerClosedAction) {
-                case R.id.navigationRecentActivity:
-                    setMainFragment(RecentActivityFragment.class.getCanonicalName());
-                    setTitle(R.string.Recent_Activity);
-                    break;
+    private void navigateTo(@NonNull final NavigationItem navigationitem) {
+        final String target = resolveNavigationTarget(navigationitem);
+        if (target != null) {
+            setMainFragment(target);
+        }
+    }
 
-                case R.id.navigationPlaylists:
-                    setMainFragment(PlaylistsFragment.class.getCanonicalName());
-                    setTitle(R.string.Playlists);
-                    break;
+    @Nullable
+    private String resolveNavigationTarget(@NonNull final NavigationItem navigationitem) {
+        switch (navigationitem) {
+            case RECENT_ACTIVITY:
+                return RecentActivityFragment.class.getCanonicalName();
 
-                case R.id.navigationArtists:
-                    setMainFragment(ArtistsFragment.class.getCanonicalName());
-                    setTitle(R.string.Artists);
-                    break;
+            case PLAYLISTS:
+                return PlaylistsFragment.class.getCanonicalName();
 
-                case R.id.navigationAlbums:
-                    setMainFragment(AlbumsFragment.class.getCanonicalName());
-                    setTitle(R.string.Albums);
-                    break;
+            case ARTISTS:
+                return ArtistsFragment.class.getCanonicalName();
 
-                case R.id.navigationGenres:
-                    setMainFragment(GenresFragment.class.getCanonicalName());
-                    setTitle(R.string.Genres);
-                    break;
+            case ALBUMS:
+                return AlbumsFragment.class.getCanonicalName();
 
-                case R.id.navigationTracks:
-                    setMainFragment(TracksFragment.class.getCanonicalName());
-                    setTitle(R.string.Tracks);
-                    break;
-            }
-            navigationItem = drawerClosedAction;
-            drawerClosedAction = null;
+            case GENRES:
+                return GenresFragment.class.getCanonicalName();
+
+            case TRACKS:
+                return TracksFragment.class.getCanonicalName();
+
+            default:
+                return null;
         }
     }
 
@@ -232,10 +218,18 @@ public final class HomeActivity extends BaseActivity {
         }
     }
 
-    @Parcel
-    static final class InstanceState {
+    private final class OnNavigationChangeCallback
+            extends Observable.OnPropertyChangedCallback {
 
-        int navigationItem;
-        String title;
+        @Override
+        public void onPropertyChanged(@NonNull final Observable sender, final int propertyId) {
+            //noinspection unchecked
+            final ObservableField<NavigationItem> o = (ObservableField<NavigationItem>) sender;
+            final NavigationItem value = o.get();
+            if (value != null) {
+                navigateTo(value);
+                o.set(null);
+            }
+        }
     }
 }
