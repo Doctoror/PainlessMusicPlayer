@@ -21,7 +21,6 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
 
-import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.scopes.ActivityScope;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
@@ -36,22 +35,25 @@ final class SettingsPresenter extends BasePresenter {
     private final DayNightPermissionProvider dayNightPermissionProvider;
     private final SettingsViewModel viewModel;
     private final Settings settings;
+    private final ThemeToButtonIdMapper themeToButtonIdMapper;
 
     @Inject
     SettingsPresenter(
             @NonNull final DayNightModeMapper dayNightModeMapper,
             @NonNull final DayNightPermissionProvider dayNightPermissionProvider,
             @NonNull final SettingsViewModel viewModel,
-            @NonNull final Settings settings) {
+            @NonNull final Settings settings,
+            @NonNull final ThemeToButtonIdMapper themeToButtonIdMapper) {
         this.dayNightModeMapper = dayNightModeMapper;
         this.dayNightPermissionProvider = dayNightPermissionProvider;
         this.viewModel = viewModel;
         this.settings = settings;
+        this.themeToButtonIdMapper = themeToButtonIdMapper;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     public void onCreate() {
-        viewModel.themeCheckedItem.set(themeToButtonId(settings.getTheme()));
+        viewModel.themeCheckedItem.set(themeToButtonIdMapper.themeToButtonId(settings.getTheme()));
         viewModel.isScrobbleEnabled.set(settings.isScrobbleEnabled());
 
         requestDayNightAccuracyIfRequired();
@@ -64,7 +66,7 @@ final class SettingsPresenter extends BasePresenter {
     }
 
     void onThemeClick(@IdRes final int buttonId) {
-        @Theme final int theme = buttonIdToTheme(buttonId);
+        @Theme final int theme = themeToButtonIdMapper.buttonIdToTheme(buttonId);
         if (settings.getTheme() != theme) {
             settings.setTheme(theme);
             AppCompatDelegate.setDefaultNightMode(dayNightModeMapper.toDayNightMode(theme));
@@ -83,40 +85,6 @@ final class SettingsPresenter extends BasePresenter {
         if (!dayNightPermissionProvider.hasPermission()) {
             viewModel.suppressDayNightWarnings = true;
             viewModel.dayNightAccuracyDialogShown.set(true);
-        }
-    }
-
-    @IdRes
-    private static int themeToButtonId(@Theme final int theme) {
-        switch (theme) {
-            case Theme.DAY:
-                return R.id.radioDay;
-
-            case Theme.NIGHT:
-                return R.id.radioNight;
-
-            case Theme.DAYNIGHT:
-                return R.id.radioDayNight;
-
-            default:
-                throw new IllegalArgumentException("Unexpected theme: " + theme);
-        }
-    }
-
-    @Theme
-    private static int buttonIdToTheme(@IdRes final int buttonId) {
-        switch (buttonId) {
-            case R.id.radioDay:
-                return Theme.DAY;
-
-            case R.id.radioNight:
-                return Theme.NIGHT;
-
-            case R.id.radioDayNight:
-                return Theme.DAYNIGHT;
-
-            default:
-                throw new IllegalArgumentException("Unexpected button id: " + buttonId);
         }
     }
 }
