@@ -14,84 +14,99 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbarStyle="outsideOverlay">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <data>
+
+        <variable
+            name="model"
+            type="com.doctoror.fuckoffmusicplayer.presentation.settings.SettingsViewModel" />
+    </data>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin">
+        android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/Theme"
-            android:textColor="?attr/colorAccent"/>
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
 
-        <RadioGroup
-            android:id="@+id/radioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp">
-
-            <RadioButton
-                android:id="@+id/radioNight"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:minHeight="48dp"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:text="@string/Dark"/>
+                android:text="@string/Theme"
+                android:textColor="?attr/colorAccent" />
 
-            <RadioButton
-                android:id="@+id/radioDay"
+            <RadioGroup
+                android:id="@+id/radioGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:minHeight="48dp"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:text="@string/Light"/>
+                android:layout_marginTop="12dp"
+                app:check="@{model.themeCheckedItem}">
 
-            <RadioButton
-                android:id="@+id/radioDayNight"
+                <RadioButton
+                    android:id="@+id/radioNight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="@string/Dark"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/radioDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="@string/Light"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/radioDayNight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:text="@string/Day_Night"
+                    android:textSize="16sp" />
+
+            </RadioGroup>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="@string/Scrobbling"
+                android:textColor="?attr/colorAccent" />
+
+            <CheckBox
+                android:id="@+id/checkboxScrobble"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:checked="@{model.isScrobbleEnabled}"
                 android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:minHeight="48dp"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:text="@string/Day_Night"/>
+                android:paddingStart="16dp"
+                android:text="@string/Send_playback_details_to_Lastfm_Scrobbler"
+                tools:ignore="RtlSymmetry" />
 
-        </RadioGroup>
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:text="@string/Scrobbling"
-            android:textColor="?attr/colorAccent"/>
+    </ScrollView>
 
-        <CheckBox
-            android:id="@+id/checkboxScrobble"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:paddingStart="16dp"
-            android:paddingLeft="16dp"
-            android:text="@string/Send_playback_details_to_Lastfm_Scrobbler"
-            tools:ignore="RtlSymmetry"/>
-
-    </LinearLayout>
-</ScrollView>
+</layout>

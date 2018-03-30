@@ -15,21 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.settings;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
+import android.databinding.ObservableBoolean;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatDelegate;
-import android.widget.CompoundButton;
-import android.widget.RadioGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
+import com.doctoror.fuckoffmusicplayer.databinding.ActivitySettingsBinding;
 import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.mvvm.OnPropertyChangedCallback;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -38,8 +35,6 @@ import org.parceler.Parcels;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
 
 /**
@@ -51,18 +46,20 @@ public final class SettingsActivity extends BaseActivity {
 
     private static final String EXTRA_STATE = "EXTRA_STATE";
 
-    @BindView(R.id.radioGroup)
-    RadioGroup mRadioGroup;
+    private final DayNightAccuracyDialogCallback dayNightAccuracyDialogCallback
+            = new DayNightAccuracyDialogCallback();
 
-    @BindView(R.id.checkboxScrobble)
-    CompoundButton mBtnScrobble;
+    private final RestartCallback restartCallback = new RestartCallback();
 
     @InjectExtra
     @Nullable
     Boolean suppressDayNightWarnings;
 
     @Inject
-    DayNightModeMapper mDayNightModeMapper;
+    SettingsPresenter presenter;
+
+    @Inject
+    SettingsViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -74,10 +71,8 @@ public final class SettingsActivity extends BaseActivity {
 
         initView();
         initActionBar();
-    }
 
-    private boolean suppressDayNightWarnings() {
-        return suppressDayNightWarnings != null && suppressDayNightWarnings;
+        getLifecycle().addObserver(presenter);
     }
 
     private void initActionBar() {
@@ -90,30 +85,21 @@ public final class SettingsActivity extends BaseActivity {
     }
 
     private void initView() {
-        setContentView(R.layout.activity_settings);
-        ButterKnife.bind(this);
-        bindTheme(getSettings().getTheme());
+        viewModel.suppressDayNightWarnings =
+                suppressDayNightWarnings != null && suppressDayNightWarnings;
 
-        mRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
-            @Theme final int theme = buttonIdToTheme(id);
-            getSettings().setTheme(theme);
-            AppCompatDelegate.setDefaultNightMode(mDayNightModeMapper.toDayNightMode(theme));
-            restart(Henson.with(SettingsActivity.this).gotoSettingsActivity()
-                    .suppressDayNightWarnings(suppressDayNightWarnings)
-                    .build());
-        });
+        final ActivitySettingsBinding binding = DataBindingUtil
+                .setContentView(this, R.layout.activity_settings);
 
-        mBtnScrobble.setChecked(getSettings().isScrobbleEnabled());
-        mBtnScrobble.setOnCheckedChangeListener(
-                (cb, value) -> getSettings().setScrobbleEnabled(value));
-    }
+        binding.setModel(viewModel);
+        binding.executePendingBindings();
 
-    @Override
-    protected void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        final InstanceState instanceState = new InstanceState();
-        instanceState.suppressDayNightWarnings = suppressDayNightWarnings;
-        outState.putParcelable(EXTRA_STATE, Parcels.wrap(instanceState));
+        binding.radioGroup.setOnCheckedChangeListener((radioGroup, id) ->
+                presenter.onThemeClick(id)
+        );
+
+        binding.checkboxScrobble.setOnCheckedChangeListener(
+                (cb, value) -> presenter.onScrobbleEnabled(value));
     }
 
     private void restoreInstanceState(@Nullable final Bundle instanceState) {
@@ -123,59 +109,77 @@ public final class SettingsActivity extends BaseActivity {
         }
     }
 
-    private void bindTheme(@Theme final int theme) {
-        mRadioGroup.check(themeToButtonId(theme));
-        if (theme == Theme.DAYNIGHT && !suppressDayNightWarnings()) {
-            checkPermissions();
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        final InstanceState instanceState = new InstanceState();
+        instanceState.suppressDayNightWarnings = viewModel.suppressDayNightWarnings;
+        outState.putParcelable(EXTRA_STATE, Parcels.wrap(instanceState));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        bindViewModel();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindViewModel();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getLifecycle().removeObserver(presenter);
+    }
+
+    private void bindViewModel() {
+        viewModel.dayNightAccuracyDialogShown
+                .addOnPropertyChangedCallback(dayNightAccuracyDialogCallback);
+
+        viewModel.restart.addOnPropertyChangedCallback(restartCallback);
+
+        dayNightAccuracyDialogCallback.onPropertyChanged2(viewModel.dayNightAccuracyDialogShown, 0);
+    }
+
+    private void unbindViewModel() {
+        viewModel.restart.removeOnPropertyChangedCallback(restartCallback);
+
+        viewModel.dayNightAccuracyDialogShown
+                .removeOnPropertyChangedCallback(dayNightAccuracyDialogCallback);
+    }
+
+    private final class DayNightAccuracyDialogCallback
+            extends OnPropertyChangedCallback<ObservableBoolean> {
+
+        @Override
+        protected void onPropertyChanged2(
+                @NonNull final ObservableBoolean sender, final int propertyId) {
+            if (sender.get()) {
+                sender.set(false);
+                new DaynightAccuracyDialog().show(getFragmentManager(), TAG_DIALOG_DAYNIGHT_ACCURACY);
+            }
         }
     }
 
-    @IdRes
-    private static int themeToButtonId(@Theme final int theme) {
-        switch (theme) {
-            case Theme.DAY:
-                return R.id.radioDay;
+    private final class RestartCallback extends OnPropertyChangedCallback<ObservableBoolean> {
 
-            case Theme.NIGHT:
-                return R.id.radioNight;
-
-            case Theme.DAYNIGHT:
-                return R.id.radioDayNight;
-
-            default:
-                throw new IllegalArgumentException("Unexpected theme: " + theme);
-        }
-    }
-
-    @Theme
-    private static int buttonIdToTheme(@IdRes final int buttonId) {
-        switch (buttonId) {
-            case R.id.radioDay:
-                return Theme.DAY;
-
-            case R.id.radioNight:
-                return Theme.NIGHT;
-
-            case R.id.radioDayNight:
-                return Theme.DAYNIGHT;
-
-            default:
-                throw new IllegalArgumentException("Unexpected button id: " + buttonId);
-        }
-    }
-
-    private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            suppressDayNightWarnings = Boolean.TRUE;
-            new DaynightAccuracyDialog().show(getFragmentManager(), TAG_DIALOG_DAYNIGHT_ACCURACY);
+        @Override
+        protected void onPropertyChanged2(@NonNull ObservableBoolean sender, int propertyId) {
+            if (sender.get()) {
+                sender.set(false);
+                restart(Henson.with(SettingsActivity.this).gotoSettingsActivity()
+                        .suppressDayNightWarnings(viewModel.suppressDayNightWarnings)
+                        .build());
+            }
         }
     }
 
     @Parcel
     static final class InstanceState {
 
-        @Nullable
-        Boolean suppressDayNightWarnings;
+        boolean suppressDayNightWarnings;
     }
 }
