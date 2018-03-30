@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
 
@@ -22,7 +23,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [ 'dart.henson.package' : 'com.doctoror.fuckoffmusicplayer.presentation' ]
+                arguments = ['dart.henson.package': 'com.doctoror.fuckoffmusicplayer.presentation']
             }
         }
     }
@@ -95,7 +96,11 @@ dependencies {
     def td = rootProject.ext.presentationTestDependencies
 
     androidTestImplementation td.testRunner
+
     testImplementation td.junit
+    testImplementation td.kotlin
+    testImplementation td.mockito
+    testImplementation td.mockitoKotlin
 
     implementation project(':siriwaveview')
     implementation project(':domain')

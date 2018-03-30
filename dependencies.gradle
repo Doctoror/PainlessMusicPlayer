@@ -29,6 +29,9 @@ ext {
 
     jUnitVersion = '4.12'
 
+    mockitoKotlinVersion = '1.5.0'
+    mockitoVersion = '2.17.0'
+
     parcelerVersion = '1.1.10'
     protobufVersion = '3.1.0'
 
@@ -80,8 +83,14 @@ ext {
     ]
 
     presentationTestDependencies = [
-            junit     : "junit:junit:$jUnitVersion",
-            testRunner: "com.android.support.test:runner:$testRunnerVersion"
+            junit        : "junit:junit:$jUnitVersion",
+
+            kotlin       : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+
+            mockito      : "org.mockito:mockito-core:$mockitoVersion",
+            mockitoKotlin: "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
+
+            testRunner   : "com.android.support.test:runner:$testRunnerVersion"
     ]
 
     dataDependencies = [
