@@ -41,13 +41,13 @@ public final class HomeViewModel {
     @ParcelPropertyConverter(ObservableIntConverter.class)
     public final ObservableInt title = new ObservableInt();
 
-    public final ObservableField<NavigationItem> navigationItem = new ObservableField<>();
+    final ObservableField<NavigationItem> navigationItem = new ObservableField<>();
 
     public final NavigationViewModel navigationModel;
 
     @Inject
     @ParcelConstructor
-    public HomeViewModel(@NonNull final NavigationViewModel navigationModel) {
+    HomeViewModel(@NonNull final NavigationViewModel navigationModel) {
         this.navigationModel = navigationModel;
     }
 
