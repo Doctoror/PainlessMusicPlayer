@@ -95,6 +95,12 @@ public final class HomeActivity extends BaseActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getLifecycle().removeObserver(presenter);
+    }
+
+    @Override
     protected void onNewIntent(@NonNull final Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
