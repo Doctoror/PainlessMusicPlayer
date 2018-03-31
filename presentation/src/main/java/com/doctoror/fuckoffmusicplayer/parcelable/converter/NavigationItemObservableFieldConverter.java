@@ -27,16 +27,36 @@ import org.parceler.ParcelConverter;
 public final class NavigationItemObservableFieldConverter
         implements ParcelConverter<ObservableField<NavigationItem>> {
 
+    private static final int VALUE_NULL = -1;
+    private static final int VALUE_NULL_CONTENTS = -2;
+
     @Override
     public void toParcel(
             @Nullable final ObservableField<NavigationItem> input,
             @NonNull final Parcel parcel) {
-        parcel.writeInt(input != null ? input.get().ordinal() : -1);
+        final int value;
+        if (input == null) {
+            value = VALUE_NULL;
+        } else if (input.get() == null) {
+            value = VALUE_NULL_CONTENTS;
+        } else {
+            value = input.get().ordinal();
+        }
+        parcel.writeInt(value);
     }
 
     @Override
     public ObservableField<NavigationItem> fromParcel(@NonNull final Parcel parcel) {
         final int value = parcel.readInt();
-        return new ObservableField<>(value != -1 ? NavigationItem.values()[value] : null);
+        switch (value) {
+            case VALUE_NULL:
+                return null;
+
+            case VALUE_NULL_CONTENTS:
+                return new ObservableField<>();
+
+            default:
+                return new ObservableField<>(NavigationItem.values()[value]);
+        }
     }
 }
