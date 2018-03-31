@@ -35,7 +35,7 @@ class NavigationItemObservableFieldConverterTest {
         underTest.toParcel(null, parcel)
 
         // Then
-        assertNull(valueFromParcel(underTest, parcel))
+        assertNull(valueFromParcelConverter(underTest, parcel))
     }
 
     @Test
@@ -48,7 +48,7 @@ class NavigationItemObservableFieldConverterTest {
         underTest.toParcel(value, parcel)
 
         // Then
-        assertEquals(value, valueFromParcel(underTest, parcel))
+        assertEquals(value, valueFromParcelConverter(underTest, parcel))
     }
 
     @Test
@@ -61,18 +61,7 @@ class NavigationItemObservableFieldConverterTest {
         underTest.toParcel(value, parcel)
 
         // Then
-        assertEquals(value, valueFromParcel(underTest, parcel))
-    }
-
-    private fun valueFromParcel(
-            converter: NavigationItemObservableFieldConverter,
-            parcel: Parcel): ObservableField<NavigationItem>? {
-        parcel.setDataPosition(0)
-        try {
-            return converter.fromParcel(parcel)
-        } finally {
-            parcel.recycle()
-        }
+        assertEquals(value, valueFromParcelConverter(underTest, parcel))
     }
 
     private fun assertEquals(
