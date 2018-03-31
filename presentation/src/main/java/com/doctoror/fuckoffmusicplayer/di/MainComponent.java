@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.di;
 import com.doctoror.fuckoffmusicplayer.App;
 import com.doctoror.fuckoffmusicplayer.di.contributes.ActivitiesContributes;
 import com.doctoror.fuckoffmusicplayer.di.contributes.FragmentsContributes;
+import com.doctoror.fuckoffmusicplayer.di.contributes.ServicesContributes;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
@@ -59,7 +60,8 @@ import dagger.android.AndroidInjector;
         MediaStoreProvidersModule.class,
         PlaybackModule.class,
         QueueModule.class,
-        QueueProvidersModule.class
+        QueueProvidersModule.class,
+        ServicesContributes.class
 })
 public interface MainComponent extends AndroidInjector<App> {
 

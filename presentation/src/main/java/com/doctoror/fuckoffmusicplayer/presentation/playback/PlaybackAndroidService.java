@@ -28,16 +28,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
-import com.doctoror.fuckoffmusicplayer.di.DaggerServiceComponent;
-import com.doctoror.fuckoffmusicplayer.di.PlaybackServiceModule;
-import com.doctoror.fuckoffmusicplayer.di.ServiceModule;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
 import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 
 /**
  * Media playback Service
@@ -73,13 +71,7 @@ public final class PlaybackAndroidService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerServiceComponent.builder()
-                .mainComponent(DaggerHolder.getInstance(this).mainComponent())
-                .playbackServiceModule(new PlaybackServiceModule())
-                .serviceModule(new ServiceModule(this))
-                .build()
-                .inject(this);
-
+        AndroidInjection.inject(this);
         registerReceiver(resendStateReceiver, new IntentFilter(ACTION_RESEND_STATE));
     }
 
