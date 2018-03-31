@@ -96,6 +96,7 @@ dependencies {
     def td = rootProject.ext.presentationTestDependencies
 
     androidTestImplementation td.testRunner
+    androidTestImplementation td.kotlin
 
     testImplementation td.junit
     testImplementation td.kotlin
