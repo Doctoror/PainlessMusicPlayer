@@ -36,10 +36,10 @@ import javax.inject.Inject;
 public final class HomeViewModel {
 
     @ParcelPropertyConverter(ObservableIntConverter.class)
-    public final ObservableInt playbackStatusCardVisibility = new ObservableInt(View.GONE);
+    public ObservableInt playbackStatusCardVisibility = new ObservableInt(View.GONE);
 
     @ParcelPropertyConverter(ObservableIntConverter.class)
-    public final ObservableInt title = new ObservableInt();
+    public ObservableInt title = new ObservableInt();
 
     public final NavigationViewModel navigationModel;
 

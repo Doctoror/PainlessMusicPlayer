@@ -30,7 +30,7 @@ import javax.inject.Inject;
 public final class NavigationViewModel {
 
     @ParcelPropertyConverter(NavigationItemObservableFieldConverter.class)
-    public final ObservableField<NavigationItem> navigationItem = new ObservableField<>();
+    public ObservableField<NavigationItem> navigationItem = new ObservableField<>();
 
     @Inject
     public NavigationViewModel() {
