@@ -68,6 +68,8 @@ ext {
             henson                : "com.f2prateek.dart:henson:$dartVersion",
             hensonProcessor       : "com.f2prateek.dart:henson-processor:$dartVersion",
 
+            kotlin                : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+
             parceler              : "org.parceler:parceler-api:$parcelerVersion",
             parcelerProcessor     : "org.parceler:parceler:$parcelerVersion",
 
@@ -84,8 +86,6 @@ ext {
 
     presentationTestDependencies = [
             junit        : "junit:junit:$jUnitVersion",
-
-            kotlin       : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
 
             mockito      : "org.mockito:mockito-core:$mockitoVersion",
             mockitoKotlin: "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",

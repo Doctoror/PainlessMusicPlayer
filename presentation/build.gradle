@@ -96,10 +96,8 @@ dependencies {
     def td = rootProject.ext.presentationTestDependencies
 
     androidTestImplementation td.testRunner
-    androidTestImplementation td.kotlin
 
     testImplementation td.junit
-    testImplementation td.kotlin
     testImplementation td.mockito
     testImplementation td.mockitoKotlin
 
@@ -126,6 +124,8 @@ dependencies {
 
     implementation d.henson
     annotationProcessor d.hensonProcessor
+
+    implementation d.kotlin
 
     implementation d.parceler
     annotationProcessor d.parcelerProcessor
