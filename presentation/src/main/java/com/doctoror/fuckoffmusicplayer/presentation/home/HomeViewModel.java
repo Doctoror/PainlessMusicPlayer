@@ -15,19 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
-import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 import android.view.View;
 
 import com.doctoror.fuckoffmusicplayer.di.scopes.ActivityScope;
-import com.doctoror.fuckoffmusicplayer.parcelable.converter.ObservableIntConverter;
-import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationItem;
+import com.doctoror.fuckoffmusicplayer.presentation.mvvm.ParcelableObservableInt;
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationViewModel;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
-import org.parceler.ParcelPropertyConverter;
 
 import javax.inject.Inject;
 
@@ -35,11 +31,11 @@ import javax.inject.Inject;
 @ActivityScope
 public final class HomeViewModel {
 
-    @ParcelPropertyConverter(ObservableIntConverter.class)
-    public ObservableInt playbackStatusCardVisibility = new ObservableInt(View.GONE);
+    public ParcelableObservableInt playbackStatusCardVisibility
+            = new ParcelableObservableInt(View.GONE);
 
-    @ParcelPropertyConverter(ObservableIntConverter.class)
-    public ObservableInt title = new ObservableInt();
+    public ParcelableObservableInt title
+            = new ParcelableObservableInt();
 
     public final NavigationViewModel navigationModel;
 
