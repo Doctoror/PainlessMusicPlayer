@@ -60,7 +60,6 @@ final class HomePresenter extends BasePresenter {
         if (shouldSetAsCurrentNavigationItem(item)) {
             viewModel.title.set(item.title);
         }
-        viewModel.navigationItem.set(item);
         viewModel.navigationModel.navigationItem.set(item);
     }
 

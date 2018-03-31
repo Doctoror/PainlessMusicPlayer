@@ -106,7 +106,6 @@ class HomePresenterTest {
 
         // Then
         assertEquals(item.title, item.title)
-        assertEquals(item, viewModel.navigationItem.get())
         assertEquals(item, viewModel.navigationModel.navigationItem.get())
     }
 
@@ -120,7 +119,6 @@ class HomePresenterTest {
 
         // Then
         assertEquals(0, viewModel.title.get())
-        assertEquals(item, viewModel.navigationItem.get())
         assertEquals(item, viewModel.navigationModel.navigationItem.get())
     }
 }

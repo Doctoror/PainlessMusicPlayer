@@ -134,16 +134,20 @@ public final class HomeActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        viewModel.navigationItem.addOnPropertyChangedCallback(onNavigationChangeCallback);
-        if (viewModel.navigationItem.get() != null) {
-            onNavigationChangeCallback.onPropertyChanged(viewModel.navigationItem, 0);
+        viewModel.navigationModel.navigationItem
+                .addOnPropertyChangedCallback(onNavigationChangeCallback);
+
+        if (viewModel.navigationModel.navigationItem.get() != null) {
+            onNavigationChangeCallback.onPropertyChanged(
+                    viewModel.navigationModel.navigationItem, 0);
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        viewModel.navigationItem.removeOnPropertyChangedCallback(onNavigationChangeCallback);
+        viewModel.navigationModel.navigationItem
+                .removeOnPropertyChangedCallback(onNavigationChangeCallback);
     }
 
     @Override

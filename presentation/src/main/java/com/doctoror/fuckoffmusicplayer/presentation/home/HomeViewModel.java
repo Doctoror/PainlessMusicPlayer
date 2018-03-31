@@ -41,8 +41,6 @@ public final class HomeViewModel {
     @ParcelPropertyConverter(ObservableIntConverter.class)
     public final ObservableInt title = new ObservableInt();
 
-    final ObservableField<NavigationItem> navigationItem = new ObservableField<>();
-
     public final NavigationViewModel navigationModel;
 
     @Inject
