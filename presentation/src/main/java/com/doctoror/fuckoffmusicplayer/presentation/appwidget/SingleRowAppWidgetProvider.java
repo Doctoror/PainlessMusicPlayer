@@ -29,7 +29,6 @@ import android.widget.RemoteViews;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;
-import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
@@ -41,6 +40,8 @@ import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackServiceIntentFactory;
 
 import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 
 /**
  * Launcher {@link AppWidgetProvider}
@@ -65,7 +66,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        DaggerHolder.getInstance(context).mainComponent().inject(this);
+        AndroidInjection.inject(this, context);
         if (AppWidgetPlaybackStateReporter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
             @PlaybackState final int state = intent.getIntExtra(
                     AppWidgetPlaybackStateReporter.EXTRA_STATE, PlaybackState.STATE_IDLE);

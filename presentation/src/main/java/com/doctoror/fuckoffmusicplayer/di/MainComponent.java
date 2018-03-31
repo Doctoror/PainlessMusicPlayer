@@ -17,20 +17,12 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import com.doctoror.fuckoffmusicplayer.App;
 import com.doctoror.fuckoffmusicplayer.di.contributes.ActivitiesContributes;
+import com.doctoror.fuckoffmusicplayer.di.contributes.BroadcastReceiverContributes;
 import com.doctoror.fuckoffmusicplayer.di.contributes.FragmentsContributes;
 import com.doctoror.fuckoffmusicplayer.di.contributes.ServicesContributes;
-import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
-import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-import com.doctoror.fuckoffmusicplayer.presentation.appwidget.SingleRowAppWidgetProvider;
 import com.doctoror.fuckoffmusicplayer.presentation.effects.EqualizerView;
 import com.doctoror.fuckoffmusicplayer.presentation.formatter.FormatterModule;
 import com.doctoror.fuckoffmusicplayer.presentation.media.MediaManagerService;
@@ -52,6 +44,7 @@ import dagger.android.AndroidInjector;
         ActivitiesContributes.class,
         AndroidInjectionModule.class,
         AppModule.class,
+        BroadcastReceiverContributes.class,
         FormatterModule.class,
         FragmentsContributes.class,
         EngineModule.class,
@@ -65,25 +58,9 @@ import dagger.android.AndroidInjector;
 })
 public interface MainComponent extends AndroidInjector<App> {
 
-    AudioEffects exposeAudioEffects();
-
-    AlbumThumbHolder exposeAlbumThumbHolder();
-
     CurrentMediaProvider exposeCurrentMediaProvider();
 
-    MediaPlayerFactory exposeMediaPlayerFactory();
-
-    MediaSessionHolder exposeMediaSessionHolder();
-
-    PlaybackData exposePlaybackData();
-
     PlaybackInitializer exposePlaybackInitializer();
-
-    PlaybackNotificationFactory exposePlaybackNotificationFactory();
-
-    PlaybackParams exposePlaybackParams();
-
-    PlaybackReporterFactory exposePlaybackReporterFactory();
 
     QueueProviderRecentlyScanned exposeQueueProviderRecentlyScanned();
 
@@ -96,6 +73,4 @@ public interface MainComponent extends AndroidInjector<App> {
     void inject(MediaBrowserServiceImpl target);
 
     void inject(MediaManagerService target);
-
-    void inject(SingleRowAppWidgetProvider target);
 }
