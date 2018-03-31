@@ -240,7 +240,6 @@ public final class HomeActivity extends BaseActivity {
             final NavigationItem value = o.get();
             if (value != null) {
                 navigateTo(value);
-                o.set(null);
             }
         }
     }
