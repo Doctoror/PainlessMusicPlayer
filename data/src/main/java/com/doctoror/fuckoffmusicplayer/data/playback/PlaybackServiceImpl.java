@@ -343,7 +343,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         }
 
         playOnFocusGain = true;
-        audioFocusRequester.ensureFocusRequested();
+        audioFocusRequester.requestAudioFocus();
         if (!audioFocusRequester.getFocusGranted()) {
             return;
         }

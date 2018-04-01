@@ -71,7 +71,7 @@ class AudioFocusRequester(
         audioFocusRequested = false
     }
 
-    fun ensureFocusRequested() {
+    fun requestAudioFocus() {
         if (!audioFocusRequested) {
             audioFocusRequested = true
             val result = audioManager?.requestAudioFocus(audioFocusRequest)
