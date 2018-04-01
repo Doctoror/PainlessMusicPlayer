@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.settings;
+package com.doctoror.fuckoffmusicplayer.domain.settings
 
 /**
  * App settings
  */
-public interface Settings {
+interface Settings {
 
-    boolean isScrobbleEnabled();
-    void setScrobbleEnabled(boolean enabled);
+    var isScrobbleEnabled: Boolean
 
     @Theme
-    int getTheme();
-    void setTheme(@Theme int theme);
+    var theme: Int
 }
