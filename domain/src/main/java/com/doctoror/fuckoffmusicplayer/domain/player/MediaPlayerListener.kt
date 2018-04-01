@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.player;
+package com.doctoror.fuckoffmusicplayer.domain.player
 
-public interface MediaPlayerListener {
+interface MediaPlayerListener {
 
-    void onLoading();
-    void onAudioSessionId(int audioSessionId);
-    void onPlaybackStarted();
-    void onPlaybackFinished();
-    void onPlaybackPaused();
-    void onPlayerError(Exception error);
+    fun onLoading()
+    fun onAudioSessionId(audioSessionId: Int)
+    fun onPlaybackStarted()
+    fun onPlaybackFinished()
+    fun onPlaybackPaused()
+    fun onPlayerError(error: Exception)
 }
