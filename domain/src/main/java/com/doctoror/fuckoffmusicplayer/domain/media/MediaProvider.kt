@@ -13,25 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.media;
+package com.doctoror.fuckoffmusicplayer.domain.media
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import io.reactivex.Observable
 
-import java.util.List;
+interface MediaProvider {
 
-import io.reactivex.Observable;
+    fun load(selection: String?,
+             selectionArgs: Array<String>?,
+             orderBy: String?,
+             limit: Int?): Observable<List<Media>>
 
-public interface MediaProvider {
-
-    @NonNull
-    Observable<List<Media>> load(@Nullable final String selection,
-            @Nullable final String[] selectionArgs,
-            @Nullable final String orderBy,
-            @Nullable final Integer limit);
-
-    @NonNull
-    Observable<List<Media>> load(long id);
+    fun load(id: Long): Observable<List<Media>>
 }
