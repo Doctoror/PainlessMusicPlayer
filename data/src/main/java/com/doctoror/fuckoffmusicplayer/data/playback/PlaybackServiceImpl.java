@@ -16,22 +16,22 @@
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.util.SparseIntArray;
 
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
+import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController;
+import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerNormal;
+import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerShuffle;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquirer;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayCurrentOrNewQueueUseCase;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayMediaFromQueueUseCase;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporters;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.StopOnAudioNoisyUseCase;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakeLockAcquirer;
-import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
-import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
@@ -49,13 +49,12 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -69,8 +68,6 @@ import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STAT
 
 public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements PlaybackService {
 
-    private static final String TAG = "PlaybackServiceImpl";
-
     private final Context mContext;
 
     private final AlbumThumbHolder mAlbumThumbHolder;
@@ -79,19 +76,13 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final CurrentMediaProvider mCurrentMediaProvider;
 
-    private final MediaPlayerFactory mMediaPlayerFactory;
-
     private final MediaSessionHolder mMediaSessionHolder;
 
     private final PlaybackData mPlaybackData;
 
-    private final PlaybackInitializer mPlaybackInitializer;
-
     private final PlaybackParams mPlaybackParams;
 
     private final PlaybackServiceView mPlaybackServicePresenter;
-
-    private final QueueProviderRecentlyScanned queueProviderRecentlyScanned;
 
     private final Runnable mStopAction;
 
@@ -99,15 +90,17 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final AudioFocusRequester audioFocusRequester;
 
-    private final PlaybackReporters playbackReporters;
+    private final PlayMediaFromQueueUseCase playMediaFromQueueUseCase;
 
-    private final Runnable runnableReportCurrentMedia;
+    private final PlayCurrentOrNewQueueUseCase playCurrentOrNewQueueUseCase;
+
+    private final PlaybackReporters playbackReporters;
 
     private boolean playOnFocusGain;
 
     private PlaybackState mState = STATE_IDLE;
 
-    private MediaPlayer mMediaPlayer;
+    private final MediaPlayer mMediaPlayer;
 
     private Media mCurrentTrack;
 
@@ -139,13 +132,10 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mAlbumThumbHolder = albumThumbHolder;
         mAudioEffects = audioEffects;
         mCurrentMediaProvider = currentMediaProvider;
-        mMediaPlayerFactory = mediaPlayerFactory;
         mMediaSessionHolder = mediaSessionHolder;
         mPlaybackData = playbackData;
-        mPlaybackInitializer = playbackInitializer;
         mPlaybackParams = playbackParams;
         mPlaybackServicePresenter = playbackServicePresenter;
-        this.queueProviderRecentlyScanned = queueProviderRecentlyScanned;
         mStopAction = stopAction;
 
         audioFocusRequester = new AudioFocusRequester(context, new AudioFocusListenerImpl());
@@ -155,7 +145,23 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 mediaSessionHolder,
                 playbackReporterFactory);
 
-        runnableReportCurrentMedia = playbackReporters::reportCurrentMedia;
+        mMediaPlayer = mediaPlayerFactory.newMediaPlayer();
+        mMediaPlayer.setListener(new MediaPlayerListenerImpl());
+
+        playMediaFromQueueUseCase = new PlayMediaFromQueueUseCase(
+                currentMediaProvider,
+                audioFocusRequester,
+                mMediaPlayer,
+                playbackData,
+                playbackReporters);
+
+        playCurrentOrNewQueueUseCase = new PlayCurrentOrNewQueueUseCase(
+                this::getPlaybackController,
+                playbackData,
+                playbackInitializer,
+                playMediaFromQueueUseCase,
+                queueProviderRecentlyScanned);
+
         init();
     }
 
@@ -174,10 +180,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mDestroying = false;
         mErrorMessage = null;
 
-        mMediaPlayer = mMediaPlayerFactory.newMediaPlayer();
-        mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(mContext);
-
         mDisposableQueue = mPlaybackData.queueObservable().subscribe(new QueueConsumer());
     }
 
@@ -186,17 +189,17 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         boolean created = false;
         if (mPlaybackController == null) {
             mPlaybackController = mPlaybackParams.isShuffleEnabled()
-                    ? new PlaybackControllerShuffle()
-                    : new PlaybackControllerNormal();
+                    ? newPlaybackControllerShuffle()
+                    : newPlaybackControllerNormal();
             created = true;
         } else if (mPlaybackParams.isShuffleEnabled()) {
             if (!PlaybackControllerShuffle.class.equals(mPlaybackController.getClass())) {
-                mPlaybackController = new PlaybackControllerShuffle();
+                mPlaybackController = newPlaybackControllerShuffle();
                 created = true;
             }
         } else {
             if (!PlaybackControllerNormal.class.equals(mPlaybackController.getClass())) {
-                mPlaybackController = new PlaybackControllerNormal();
+                mPlaybackController = newPlaybackControllerNormal();
                 created = true;
             }
         }
@@ -205,6 +208,22 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             mPlaybackController.setPositionInQueue(mPlaybackData.getQueuePosition());
         }
         return mPlaybackController;
+    }
+
+    @NonNull
+    private PlaybackController newPlaybackControllerNormal() {
+        return new PlaybackControllerNormal(
+                mPlaybackParams,
+                playMediaFromQueueUseCase,
+                mStopAction);
+    }
+
+    @NonNull
+    private PlaybackController newPlaybackControllerShuffle() {
+        return new PlaybackControllerShuffle(
+                mPlaybackParams,
+                playMediaFromQueueUseCase,
+                mStopAction);
     }
 
     @Override
@@ -228,6 +247,12 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 // Do nothing
                 break;
         }
+    }
+
+    private void playCurrentOrNewQueue() {
+        Completable.fromAction(playCurrentOrNewQueueUseCase::playCurrentOrNewQueue)
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     @Override
@@ -287,30 +312,25 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         setState(STATE_PAUSED);
     }
 
-    private void playCurrentOrNewQueue() {
-        final List<Media> playlist = mPlaybackData.getQueue();
-        if (playlist != null && !playlist.isEmpty()) {
-            play(playlist, mPlaybackData.getQueuePosition(), true, false);
-        } else {
-            queueProviderRecentlyScanned.recentlyScannedQueue()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(
-                            q -> mPlaybackInitializer.setQueueAndPlay(q, 0),
-                            t -> Log.w(TAG, "Failed to load recently scanned", t));
-        }
-    }
-
     private void playCurrent(final boolean mayContinueWhereStopped) {
-        play(mPlaybackData.getQueue(), mPlaybackData.getQueuePosition(),
-                mayContinueWhereStopped, false);
+        Completable.fromAction(() -> playMediaFromQueueUseCase.play(
+                mPlaybackData.getQueue(),
+                mPlaybackData.getQueuePosition(),
+                mayContinueWhereStopped))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     private void playPrevInner() {
-        getPlaybackController().playPrev();
+        Completable.fromAction(() -> getPlaybackController().playPrev())
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     private void playNextInner(final boolean isUserAction) {
-        getPlaybackController().playNext(isUserAction);
+        Completable.fromAction(() -> getPlaybackController().playNext(isUserAction))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     private void restart() {
@@ -319,64 +339,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             mMediaPlayer.stop();
         }
         playCurrent(false);
-    }
-
-    private void play(@Nullable final List<Media> queue,
-                      final int position,
-                      final boolean mayContinueWhereStopped,
-                      final boolean fromPlaybackController) {
-        if (queue == null) {
-            throw new IllegalArgumentException("Play queue is null");
-        }
-
-        playOnFocusGain = true;
-        audioFocusRequester.requestAudioFocus();
-        if (!audioFocusRequester.getFocusGranted()) {
-            return;
-        }
-
-        Media media = CollectionUtils.getItemSafe(queue, position);
-        if (media == null) {
-            media = queue.get(0);
-        }
-        final Media finalMedia = media;
-        if (mState == STATE_PAUSED && mCurrentTrack != null
-                && media.getId() == mCurrentTrack.getId()) {
-            mMediaPlayer.play();
-            mExecutor.submit(runnableReportCurrentMedia);
-        } else {
-            mExecutor.submit(() -> {
-                long seekPosition = 0;
-                // If restoring from stopped state, set seek position to what it was
-                if (mayContinueWhereStopped && mState == STATE_IDLE
-                        && finalMedia.equals(mCurrentMediaProvider.getCurrentMedia())) {
-                    seekPosition = mPlaybackData.getMediaPosition();
-                    if (seekPosition >= finalMedia.getDuration() - 100) {
-                        seekPosition = 0;
-                    }
-                }
-                mPlaybackData.setPlayQueuePosition(position);
-                mPlaybackData.setMediaPosition(seekPosition);
-                mCurrentTrack = finalMedia;
-
-                if (!fromPlaybackController) {
-                    getPlaybackController().setPositionInQueue(position);
-                }
-
-                playbackReporters.reportCurrentMedia();
-
-                mMediaPlayer.stop();
-
-                final Uri uri = finalMedia.getData();
-                if (uri != null) {
-                    mMediaPlayer.load(uri);
-                    if (seekPosition != 0) {
-                        mMediaPlayer.seekTo(seekPosition);
-                    }
-                    mMediaPlayer.play();
-                }
-            });
-        }
     }
 
     @Nullable
@@ -456,7 +418,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         }
     }
 
-    private final MediaPlayerListener mMediaPlayerListener = new MediaPlayerListener() {
+    private final class MediaPlayerListenerImpl implements MediaPlayerListener {
 
         @Override
         public void onAudioSessionId(final int audioSessionId) {
@@ -509,7 +471,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             setState(STATE_ERROR);
             mStopAction.run();
         }
-    };
+    }
 
     private final class QueueConsumer implements Consumer<List<Media>> {
 
@@ -534,160 +496,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                         // This track is not in new queue
                         restart();
                     }
-                }
-            }
-        }
-    }
-
-    private interface PlaybackController {
-
-        void playNext(boolean isUserAction);
-
-        void playPrev();
-
-        void setQueue(@Nullable List<Media> queue);
-
-        void setPositionInQueue(int position);
-    }
-
-    private class PlaybackControllerNormal implements PlaybackController {
-
-        private final Object LOCK = new Object();
-
-        private List<Media> mQueue;
-        private int mPosition;
-
-        @Override
-        public void playPrev() {
-            synchronized (LOCK) {
-                if (mQueue != null && !mQueue.isEmpty()) {
-                    switch (mPlaybackParams.getRepeatMode()) {
-                        case NONE:
-                            onPlay(mQueue, prevPos(mQueue, mPosition));
-                            break;
-
-                        case QUEUE:
-                            onPlay(mQueue, prevPos(mQueue, mPosition));
-                            break;
-
-                        case TRACK:
-                            onPlay(mQueue, mPosition);
-                            break;
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void playNext(final boolean isUserAction) {
-            synchronized (LOCK) {
-                if (mQueue != null && !mQueue.isEmpty()) {
-                    switch (mPlaybackParams.getRepeatMode()) {
-                        case NONE:
-                            if (!isUserAction && mPosition == mQueue.size() - 1) {
-                                mStopAction.run();
-                            } else {
-                                onPlay(mQueue, nextPos(mQueue, mPosition));
-                            }
-                            break;
-
-                        case QUEUE:
-                            onPlay(mQueue, nextPos(mQueue, mPosition));
-                            break;
-
-                        case TRACK:
-                            if (isUserAction) {
-                                onPlay(mQueue, nextPos(mQueue, mPosition));
-                            } else {
-                                onPlay(mQueue, mPosition);
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-
-        private void onPlay(@Nullable final List<Media> list, final int position) {
-            mPosition = position;
-            play(list, position);
-        }
-
-        protected void play(@Nullable final List<Media> list, final int position) {
-            PlaybackServiceImpl.this.play(list, position, false, true);
-        }
-
-        @Override
-        public void setQueue(final List<Media> queue) {
-            synchronized (LOCK) {
-                mQueue = queue;
-            }
-        }
-
-        @Override
-        public void setPositionInQueue(final int position) {
-            synchronized (LOCK) {
-                mPosition = position;
-            }
-        }
-
-        private int prevPos(@Nullable final List<Media> list, final int position) {
-            if (list == null) {
-                throw new IllegalArgumentException("Playlist is null");
-            }
-            if (position - 1 < 0) {
-                return list.size() - 1;
-            }
-            return position - 1;
-        }
-
-        private int nextPos(@Nullable final List<Media> list,
-                            final int position) {
-            if (list == null) {
-                throw new IllegalArgumentException("Playlist is null");
-            }
-            if (position + 1 >= list.size()) {
-                return 0;
-            }
-            return position + 1;
-        }
-    }
-
-    private final class PlaybackControllerShuffle extends PlaybackControllerNormal {
-
-        private final Object mLock = new Object();
-
-        @NonNull
-        private final SparseIntArray mShuffledPositions = new SparseIntArray();
-
-        @Override
-        public void setQueue(@Nullable final List<Media> queue) {
-            synchronized (mLock) {
-                rebuildShuffledPositions(queue == null ? 0 : queue.size());
-            }
-            super.setQueue(queue);
-        }
-
-        @Override
-        protected void play(@Nullable final List<Media> list, final int position) {
-            final int shuffledPosition;
-            synchronized (mLock) {
-                shuffledPosition = mShuffledPositions.get(position);
-            }
-            super.play(list, shuffledPosition);
-        }
-
-        private void rebuildShuffledPositions(final int size) {
-            mShuffledPositions.clear();
-            if (size != 0) {
-                final List<Integer> positions = new ArrayList<>(size);
-                for (int i = 0; i < size; i++) {
-                    positions.add(i);
-                }
-
-                Collections.shuffle(positions, RandomHolder.getInstance().getRandom());
-
-                for (int i = 0; i < size; i++) {
-                    mShuffledPositions.put(i, positions.get(i));
                 }
             }
         }
