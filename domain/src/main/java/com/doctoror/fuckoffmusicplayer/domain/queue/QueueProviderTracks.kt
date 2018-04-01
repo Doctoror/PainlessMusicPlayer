@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue;
+package com.doctoror.fuckoffmusicplayer.domain.queue
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import io.reactivex.Observable
 
-import java.util.List;
+interface QueueProviderTracks {
 
-import io.reactivex.Observable;
+    fun fromTracks(trackIds: LongArray): Observable<List<Media>>
 
-public interface QueueProviderTracks {
-
-    @NonNull
-    Observable<List<Media>> fromTracks(@NonNull long[] trackIds);
-
-    @NonNull
-    Observable<List<Media>> fromTracksSearch(@Nullable String query);
-
+    fun fromTracksSearch(query: String?): Observable<List<Media>>
 }
