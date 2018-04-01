@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue;
+package com.doctoror.fuckoffmusicplayer.domain.queue
 
-import android.net.Uri;
-import android.support.annotation.NonNull;
+import android.net.Uri
 
-import java.util.List;
-
-import io.reactivex.Observable;
+import io.reactivex.Observable
 
 /**
  * "File" playlist provider
  */
-public interface QueueProviderFiles {
+interface QueueProviderFiles {
 
-    @NonNull
-    Observable<List<Media>> fromFile(@NonNull Uri uri);
-
+    fun fromFile(uri: Uri): Observable<List<Media>>
 }
