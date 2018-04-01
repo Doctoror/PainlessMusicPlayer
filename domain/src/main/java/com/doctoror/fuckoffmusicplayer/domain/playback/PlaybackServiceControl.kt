@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,32 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.playback;
-
-import android.support.annotation.NonNull;
+package com.doctoror.fuckoffmusicplayer.domain.playback
 
 /**
  * Playback service control
  */
-public interface PlaybackServiceControl {
+interface PlaybackServiceControl {
 
-    void resendState();
+    fun resendState()
 
-    void playPause();
+    fun playPause()
 
-    void play();
+    fun play()
 
-    void playAnything();
+    fun playAnything()
 
-    void pause();
+    fun pause()
 
-    void stop();
+    fun stop()
 
-    void stopWithError(@NonNull CharSequence errorMessage);
+    fun stopWithError(errorMessage: CharSequence)
 
-    void prev();
+    fun prev()
 
-    void next();
+    fun next()
 
-    void seek(float positionPercent);
+    fun seek(positionPercent: Float)
 }
