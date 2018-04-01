@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.reporter;
+package com.doctoror.fuckoffmusicplayer.domain.reporter
 
-import android.support.annotation.NonNull;
-import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.MediaSessionCompat
 
 /**
- * {@link PlaybackReporter} factory
+ * [PlaybackReporter] factory
  */
-public interface PlaybackReporterFactory {
+interface PlaybackReporterFactory {
 
-    @NonNull
-    PlaybackReporter newUniversalReporter(@NonNull MediaSessionCompat mediaSession);
+    fun newUniversalReporter(mediaSession: MediaSessionCompat): PlaybackReporter
 
-    @NonNull
-    PlaybackReporter newMediaSessionReporter(@NonNull MediaSessionCompat mediaSession);
+    fun newMediaSessionReporter(mediaSession: MediaSessionCompat): PlaybackReporter
 }
