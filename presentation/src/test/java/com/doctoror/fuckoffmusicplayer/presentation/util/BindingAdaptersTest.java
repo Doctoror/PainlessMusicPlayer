@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
 public final class BindingAdaptersTest {
 
     @Test
-    public void testSetActivated() throws Exception {
+    public void testSetActivated() {
         final View view = new View(RuntimeEnvironment.application);
         assertFalse(view.isActivated());
 
@@ -65,7 +65,7 @@ public final class BindingAdaptersTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testSetFormattedDurationNull() throws Exception {
+    public void testSetFormattedDurationNull() {
         //noinspection ConstantConditions
         BindingAdapters.setFormattedDuration(null, 0);
     }
