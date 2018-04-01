@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue.usecase;
+package com.doctoror.fuckoffmusicplayer.domain.queue.usecase
 
-import android.support.annotation.NonNull;
+interface RemoveMediasFromCurrentQueueUseCase {
 
-public interface RemoveMediasFromCurrentQueueUseCase {
-
-    void removeMediasFromCurrentQueue(@NonNull long... mediaIds);
+    fun removeMediasFromCurrentQueue(vararg mediaIds: Long)
 }
