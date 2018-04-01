@@ -22,7 +22,7 @@ import com.doctoror.fuckoffmusicplayer.di.scopes.ServiceScope;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;

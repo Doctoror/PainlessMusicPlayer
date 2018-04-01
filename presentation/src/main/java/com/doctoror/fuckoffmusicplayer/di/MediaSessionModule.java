@@ -22,7 +22,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionCallback;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionFactoryImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionHolderImpl;
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
