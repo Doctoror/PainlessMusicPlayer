@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.media;
+package com.doctoror.fuckoffmusicplayer.domain.media
 
-import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+import android.graphics.Bitmap
 
 /**
  * Holds album art thumb.
  */
-public interface AlbumThumbHolder {
+interface AlbumThumbHolder {
 
-    @Nullable
-    Bitmap getAlbumThumb();
-
-    void setAlbumThumb(@Nullable Bitmap albumThumb);
+    var albumThumb: Bitmap?
 }
