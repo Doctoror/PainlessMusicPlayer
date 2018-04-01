@@ -29,6 +29,7 @@ import android.util.SparseIntArray;
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporterController;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakelockAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
@@ -172,10 +173,11 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void init() {
-        mMediaSessionHolder.openSession();
-
         registerLifecycleObserver(new WakelockAcquirer(mContext));
         registerLifecycleObserver(audioFocusRequester);
+
+        // Ensure the ordering of these two does not change
+        registerLifecycleObserver(new MediaSessionAcquirer(mMediaSessionHolder));
         registerLifecycleObserver(playbackReporterController);
 
         onCreate();
@@ -431,7 +433,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         }
         mAudioEffects.relese();
         mMediaPlayer.release();
-        mMediaSessionHolder.closeSession();
     }
 
     private void setState(@NonNull final PlaybackState state) {
