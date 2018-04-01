@@ -39,9 +39,6 @@ dependencies {
 
     implementation d.kotlin
 
-    implementation d.parceler
-    annotationProcessor d.parcelerProcessor
-
     implementation d.rxJava
 
     implementation d.supportV4

@@ -116,13 +116,10 @@ ext {
     ]
 
     domainDependencies = [
-            kotlin           : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
+            kotlin   : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
 
-            parceler         : "org.parceler:parceler-api:$parcelerVersion",
-            parcelerProcessor: "org.parceler:parceler:$parcelerVersion",
+            rxJava   : "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
 
-            rxJava           : "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
-
-            supportV4        : "com.android.support:support-v4:$supportVersion",
+            supportV4: "com.android.support:support-v4:$supportVersion",
     ]
 }
