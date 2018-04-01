@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
 
@@ -35,6 +36,8 @@ android {
 
 dependencies {
     def d = rootProject.ext.domainDependencies
+
+    implementation d.kotlin
 
     implementation d.parceler
     annotationProcessor d.parcelerProcessor

@@ -70,32 +70,37 @@ public final class QueueProviderFilesMediaStore implements QueueProviderFiles {
         try {
             r.setDataSource(uri.getPath());
 
-            final Media media = new Media();
-            media.setTitle(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-            media.setArtist(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-            media.setAlbum(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-            media.setData(uri);
-
-            final String duration = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            if (!TextUtils.isEmpty(duration)) {
+            final String durationString = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long duration = 0;
+            if (!TextUtils.isEmpty(durationString)) {
                 try {
-                    media.setDuration(Long.parseLong(duration));
+                    duration = Long.parseLong(durationString);
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "mediaFromFile() duration is not a number: " + duration);
                 }
             }
 
-            final String trackNumber = r
+            final String trackNumberString = r
                     .extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
-            if (!TextUtils.isEmpty(trackNumber)) {
+            int trackNumber = 0;
+            if (!TextUtils.isEmpty(trackNumberString)) {
                 try {
-                    media.setTrack(Integer.parseInt(duration));
+                    trackNumber = Integer.parseInt(trackNumberString);
                 } catch (NumberFormatException e) {
                     Log.w(TAG, "mediaFromFile() track number is not a number: " + duration);
                 }
             }
 
-            return media;
+            return new Media(
+                    0,
+                    uri,
+                    r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE),
+                    duration,
+                    r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST),
+                    r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM),
+                    0,
+                    null,
+                    trackNumber);
         } finally {
             r.release();
         }

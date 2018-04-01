@@ -15,17 +15,17 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
-import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
-import com.doctoror.fuckoffmusicplayer.data.playback.nano.PlaybackDataProto;
-import com.doctoror.fuckoffmusicplayer.data.util.StringUtils;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.fuckoffmusicplayer.data.playback.nano.PlaybackDataProto;
+import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.StringUtils;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,20 +44,20 @@ final class PlaybackDataPersister {
     private static final Object LOCK = new Object();
 
     static void persistAsync(@NonNull final Context context,
-            @NonNull final PlaybackData target) {
+                             @NonNull final PlaybackData target) {
         final PlaybackDataProto.PlaybackData data = toProtoPlaybackData(target);
         Handlers.runOnIoThread(() -> persist(context, data));
     }
 
     private static void persist(@NonNull final Context context,
-            @NonNull final PlaybackDataProto.PlaybackData pp) {
+                                @NonNull final PlaybackDataProto.PlaybackData pp) {
         synchronized (LOCK) {
             ProtoUtils.writeToFile(context, FILE_NAME, pp);
         }
     }
 
     static void restoreFromFile(@NonNull final Context context,
-            @NonNull final PlaybackData target) {
+                                @NonNull final PlaybackData target) {
         final PlaybackDataProto.PlaybackData proto;
         synchronized (LOCK) {
             proto = ProtoUtils.readFromFile(context, FILE_NAME,
@@ -78,16 +78,16 @@ final class PlaybackDataPersister {
 
     @NonNull
     private static Media toMedia(@NonNull final PlaybackDataProto.Media pm) {
-        final Media media = new Media();
-        media.setId(pm.id);
-        media.setData(pm.data != null ? Uri.parse(pm.data) : null);
-        media.setTitle(pm.title);
-        media.setDuration(pm.duration);
-        media.setArtist(pm.artist);
-        media.setAlbumId(pm.albumId);
-        media.setAlbum(pm.album);
-        media.setAlbumArt(pm.albumArt);
-        return media;
+        return new Media(
+                pm.id,
+                pm.data != null ? Uri.parse(pm.data) : null,
+                pm.title,
+                pm.duration,
+                pm.artist,
+                pm.album,
+                pm.albumId,
+                pm.albumArt,
+                pm.track);
     }
 
     @NonNull

@@ -112,19 +112,24 @@ public final class MediaStoreMediaProvider implements MediaProvider {
 
     @NonNull
     private static Media mediaFromCursor(@NonNull final Cursor c) {
-        final Media media = new Media();
-        media.setId(c.getLong(MediaQuery.COLUMN_ID));
-        media.setTrack(c.getInt(MediaQuery.COLUMN_TRACK));
-        media.setTitle(c.getString(MediaQuery.COLUMN_TITLE));
-        media.setArtist(c.getString(MediaQuery.COLUMN_ARTIST));
-        media.setAlbum(c.getString(MediaQuery.COLUMN_ALBUM));
-        media.setAlbumId(c.getLong(MediaQuery.COLUMN_ALBUM_ID));
-        media.setAlbumArt(c.getString(MediaQuery.COLUMN_ALBUM_ART));
-        media.setDuration(c.getLong(MediaQuery.COLUMN_DURATION));
         final String path = c.getString(MediaQuery.COLUMN_DATA);
+
+        final Uri data;
         if (!TextUtils.isEmpty(path)) {
-            media.setData(Uri.parse(new File(path).toURI().toString()));
+            data = Uri.parse(new File(path).toURI().toString());
+        } else {
+            data = null;
         }
-        return media;
+
+        return new Media(
+                c.getLong(MediaQuery.COLUMN_ID),
+                data,
+                c.getString(MediaQuery.COLUMN_TITLE),
+                c.getLong(MediaQuery.COLUMN_DURATION),
+                c.getString(MediaQuery.COLUMN_ARTIST),
+                c.getString(MediaQuery.COLUMN_ALBUM),
+                c.getLong(MediaQuery.COLUMN_ALBUM_ID),
+                c.getString(MediaQuery.COLUMN_ALBUM_ART),
+                c.getInt(MediaQuery.COLUMN_TRACK));
     }
 }
