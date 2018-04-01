@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.artists;
+package com.doctoror.fuckoffmusicplayer.domain.artists
 
-import android.database.Cursor;
-import android.support.annotation.Nullable;
+import android.database.Cursor
 
-import io.reactivex.Observable;
+import io.reactivex.Observable
 
 /**
  * "Artists" provider
  */
-public interface ArtistsProvider {
+interface ArtistsProvider {
 
-    int COLUMN_ID = 0;
-    int COLUMN_NUMBER_OF_ALBUMS = 1;
-    int COLUMN_ARTIST = 2;
+    fun load(searchFilter: String?): Observable<Cursor>
 
-    Observable<Cursor> load(@Nullable String searchFilter);
+    companion object {
+
+        const val COLUMN_ID = 0
+        const val COLUMN_NUMBER_OF_ALBUMS = 1
+        const val COLUMN_ARTIST = 2
+    }
 }
