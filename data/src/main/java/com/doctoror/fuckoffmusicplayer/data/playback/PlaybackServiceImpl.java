@@ -15,11 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +27,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporters;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.StopOnAudioNoisyUseCase;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakeLockAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
@@ -100,9 +97,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
-    private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
-            = new AudioBecomingNoisyReceiver();
-
     private final AudioFocusRequester audioFocusRequester;
 
     private final PlaybackReporters playbackReporters;
@@ -168,17 +162,17 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private void init() {
         registerLifecycleObserver(new WakeLockAcquirer(mContext));
         registerLifecycleObserver(audioFocusRequester);
+        registerLifecycleObserver(new StopOnAudioNoisyUseCase(mContext, mStopAction));
 
         // Ensure the ordering of these two does not change
         registerLifecycleObserver(new MediaSessionAcquirer(mMediaSessionHolder));
         registerLifecycleObserver(playbackReporters);
 
+        // Must be called after all lifecycle observers registered
         onCreate();
 
         mDestroying = false;
         mErrorMessage = null;
-
-        mContext.registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
 
         mMediaPlayer = mMediaPlayerFactory.newMediaPlayer();
         mMediaPlayer.setListener(mMediaPlayerListener);
@@ -413,7 +407,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mPlaybackData.persistAsync();
 
         mDestroying = true;
-        mContext.unregisterReceiver(mBecomingNoisyReceiver);
         if (mErrorMessage != null) {
             setState(STATE_ERROR);
         } else {
@@ -542,20 +535,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                         restart();
                     }
                 }
-            }
-        }
-    }
-
-    private final class AudioBecomingNoisyReceiver extends BroadcastReceiver {
-
-        final IntentFilter mIntentFilter = new IntentFilter(
-                AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            final String action = intent.getAction();
-            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(action)) {
-                mStopAction.run();
             }
         }
     }
