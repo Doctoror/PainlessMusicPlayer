@@ -35,6 +35,7 @@ ext {
     parcelerVersion = '1.1.10'
     protobufVersion = '3.1.0'
 
+    robolectricVersion = '3.8'
     rxAndroidVersion = '2.0.2'
     rxCursorLoaderVersion = '2.0.2'
     rxBindingVersion = '2.1.1'
@@ -107,8 +108,11 @@ ext {
     ]
 
     dataTestDependencies = [
-            junit     : "junit:junit:$jUnitVersion",
-            testRunner: "com.android.support.test:runner:$testRunnerVersion"
+            junit      : "junit:junit:$jUnitVersion",
+
+            mockito    : "org.mockito:mockito-core:$mockitoVersion",
+
+            robolectric: "org.robolectric:robolectric:$robolectricVersion"
     ]
 
     domainDependencies = [

@@ -9,48 +9,46 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.test.InstrumentationRegistry;
+
+import org.robolectric.RuntimeEnvironment;
 
 import java.io.File;
 import java.io.IOException;
 
 final class MediaManagerTestFileConfigurator {
 
-    private MediaManagerTestFileConfigurator() {
+    private final ContentResolver contentResolver;
 
+    MediaManagerTestFileConfigurator(@NonNull final ContentResolver contentResolver) {
+        this.contentResolver = contentResolver;
     }
 
-    @NonNull
-    static ContentResolver getContentResolver() {
-        return InstrumentationRegistry.getContext().getContentResolver();
-    }
-
-    static void cleanup(@NonNull final Uri contentUri,
-            @NonNull final File file,
-            final long id) {
+    void cleanup(@NonNull final Uri contentUri,
+                 @NonNull final File file,
+                 final long id) {
         //noinspection ResultOfMethodCallIgnored
         file.delete();
         //noinspection ResultOfMethodCallIgnored
         file.getParentFile().delete();
 
-        getContentResolver().delete(contentUri, BaseColumns._ID + '=' + id, null);
+        contentResolver.delete(contentUri, BaseColumns._ID + '=' + id, null);
     }
 
     @NonNull
-    static File createTestFileMedia() throws Exception {
+    File createTestFileMedia() throws Exception {
         return createTestFile("media.m4a");
     }
 
     @NonNull
-    static File createTestFilePlaylist() throws Exception {
+    File createTestFilePlaylist() throws Exception {
         return createTestFile("playlist.m3u");
     }
 
     @NonNull
-    private static File createTestFile(@NonNull final String name) throws Exception {
+    private File createTestFile(@NonNull final String name) throws Exception {
         final File ext = Environment.getExternalStorageDirectory();
         final File packageDir = new File(ext,
-                "." + InstrumentationRegistry.getContext().getPackageName());
+                "." + RuntimeEnvironment.application.getPackageName());
         if (!packageDir.exists()) {
             if (!packageDir.mkdirs()) {
                 throw new IOException("Failed to create test package dir");
@@ -67,7 +65,7 @@ final class MediaManagerTestFileConfigurator {
         return testFile;
     }
 
-    static long insertToMediaStoreAsMedia(@NonNull final File file) throws Exception {
+    long insertToMediaStoreAsMedia(@NonNull final File file) throws Exception {
         final Long existingId = getExistingId(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 MediaStore.Audio.Media.DATA,
@@ -85,7 +83,7 @@ final class MediaManagerTestFileConfigurator {
         return insertOrThrow(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
     }
 
-    static long insertToMediaStoreAsPlaylist(@NonNull final File file) throws Exception {
+    long insertToMediaStoreAsPlaylist(@NonNull final File file) throws Exception {
         final Long existingId = getExistingId(
                 MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI,
                 MediaStore.Audio.Playlists.DATA,
@@ -102,11 +100,11 @@ final class MediaManagerTestFileConfigurator {
     }
 
     @Nullable
-    private static Long getExistingId(
+    private Long getExistingId(
             @NonNull final Uri contentUri,
             @NonNull final String dataColumn,
             @NonNull final File file) throws IOException {
-        final Cursor c = getContentResolver().query(contentUri,
+        final Cursor c = contentResolver.query(contentUri,
                 new String[]{BaseColumns._ID},
                 dataColumn + "=? OR " + dataColumn + "=?",
                 new String[]{
@@ -126,23 +124,23 @@ final class MediaManagerTestFileConfigurator {
         return null;
     }
 
-    private static long insertOrThrow(
+    private long insertOrThrow(
             @NonNull final Uri contentUri,
             @NonNull final ContentValues values) {
-        final Uri uri = getContentResolver().insert(contentUri, values);
+        final Uri uri = contentResolver.insert(contentUri, values);
         final long result = uri != null ? Long.valueOf(uri.getLastPathSegment()) : -1;
         if (result == -1) {
             throw new RuntimeException("Could not insert test file to MediaStore");
         }
         if (!existsInMediaStore(contentUri, result)) {
-            throw new RuntimeException("Inserted test file does not exist MediaStore");
+            throw new RuntimeException("Inserted test file does not exist in MediaStore");
         }
         return result;
     }
 
-    static boolean existsInMediaStore(@NonNull final Uri contentUri,
-            final long id) {
-        final Cursor c = getContentResolver().query(contentUri,
+    boolean existsInMediaStore(@NonNull final Uri contentUri,
+                               final long id) {
+        final Cursor c = contentResolver.query(contentUri,
                 new String[]{BaseColumns._ID},
                 BaseColumns._ID + '=' + id,
                 null,

@@ -16,9 +16,12 @@
 package com.doctoror.fuckoffmusicplayer.data.util;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +33,8 @@ import static org.junit.Assert.*;
 /**
  * {@link FileUtils} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class FileUtilsTest {
 
     @Test
@@ -39,7 +44,7 @@ public final class FileUtilsTest {
         };
 
         final String fileName = "testFileForRead";
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         context.deleteFile(fileName);
 
         final OutputStream os = context.openFileOutput(fileName, Context.MODE_PRIVATE);
@@ -57,7 +62,7 @@ public final class FileUtilsTest {
         };
 
         final String fileName = "testFileForWrite";
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         context.deleteFile(fileName);
 
         FileUtils.writeOrDeletePrivateFile(context, fileName, data);
@@ -75,7 +80,7 @@ public final class FileUtilsTest {
         };
 
         final String fileName = "testFileForWrite";
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         context.deleteFile(fileName);
 
         // Write file

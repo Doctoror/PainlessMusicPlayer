@@ -15,25 +15,31 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
+import android.content.Context;
+
+import com.doctoror.fuckoffmusicplayer.data.settings.nano.SettingsProto;
 import com.google.protobuf.nano.CodedInputByteBufferNano;
 import com.google.protobuf.nano.MessageNano;
 
-import com.doctoror.fuckoffmusicplayer.data.settings.nano.SettingsProto;
-
 import org.junit.Test;
-
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * {@link ProtoUtils} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class ProtoUtilsTest {
 
     @Test(expected = NullPointerException.class)
@@ -65,10 +71,10 @@ public final class ProtoUtilsTest {
     }
 
     @Test
-    public void testReadFromFileWhenNull() throws Exception {
+    public void testReadFromFileWhenNull() {
         final String fileName = "protoUtilsReadFromFileWhenNull";
 
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         context.deleteFile(fileName);
 
         final SettingsProto.Settings read = ProtoUtils.readFromFile(
@@ -77,10 +83,10 @@ public final class ProtoUtilsTest {
     }
 
     @Test
-    public void testReadFromFileNonNullWhenNull() throws Exception {
+    public void testReadFromFileNonNullWhenNull() {
         final String fileName = "protoUtilsReadFromFileNonNullWhenNull";
 
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         context.deleteFile(fileName);
 
         final SettingsProto.Settings read = ProtoUtils.readFromFileNonNull(
@@ -95,7 +101,7 @@ public final class ProtoUtilsTest {
         message.theme = 666;
 
         final String fileName = "protoUtilsReadFromFile";
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         context.deleteFile(fileName);
 
         final OutputStream os = context.openFileOutput(fileName, Context.MODE_PRIVATE);
@@ -118,7 +124,7 @@ public final class ProtoUtilsTest {
 
         final String fileName = "protoUtilsWriteToFile";
 
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
 
         // Delete old copies
         context.deleteFile(fileName);

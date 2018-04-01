@@ -13,8 +13,6 @@ android {
 
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     lintOptions {
@@ -41,8 +39,9 @@ dependencies {
     def d = rootProject.ext.dataDependencies
     def td = rootProject.ext.dataTestDependencies
 
-    androidTestImplementation td.testRunner
     testImplementation td.junit
+    testImplementation td.mockito
+    testImplementation td.robolectric
 
     implementation d.exoPlayer
 

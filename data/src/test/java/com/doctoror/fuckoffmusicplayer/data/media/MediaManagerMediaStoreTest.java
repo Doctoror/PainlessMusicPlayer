@@ -15,15 +15,20 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media;
 
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
-
-import org.junit.Test;
-
 import android.content.ContentResolver;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
+
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.io.File;
 
@@ -32,17 +37,21 @@ import static org.junit.Assert.assertFalse;
 /**
  * {@link MediaManagerMediaStore} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class MediaManagerMediaStoreTest {
 
+    private final ContentResolver contentResolver =
+            RuntimeEnvironment.application.getContentResolver();
+
+    private final MediaManagerTestFileConfigurator configurator =
+            new MediaManagerTestFileConfigurator(contentResolver);
 
     @NonNull
     private MediaManager getMediaManager() {
-        return new MediaManagerMediaStore(getContentResolver());
-    }
-
-    @NonNull
-    private ContentResolver getContentResolver() {
-        return InstrumentationRegistry.getContext().getContentResolver();
+        return new MediaManagerMediaStore(
+                contentResolver,
+                Mockito.mock(AlbumMediaIdsProvider.class));
     }
 
     @Test
@@ -52,15 +61,14 @@ public final class MediaManagerMediaStoreTest {
             return;
         }
 
-        final File file = MediaManagerTestFileConfigurator.createTestFileMedia();
-        final long id = MediaManagerTestFileConfigurator.insertToMediaStoreAsMedia(file);
+        final File file = configurator.createTestFileMedia();
+        final long id = configurator.insertToMediaStoreAsMedia(file);
         try {
             getMediaManager().deleteMedia(id);
-            assertFalse(MediaManagerTestFileConfigurator.existsInMediaStore(
+            assertFalse(configurator.existsInMediaStore(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id));
         } finally {
-            MediaManagerTestFileConfigurator.cleanup(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    file, id);
+            configurator.cleanup(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, file, id);
         }
     }
 
@@ -71,15 +79,14 @@ public final class MediaManagerMediaStoreTest {
             return;
         }
 
-        final File file = MediaManagerTestFileConfigurator.createTestFilePlaylist();
-        final long id = MediaManagerTestFileConfigurator.insertToMediaStoreAsPlaylist(file);
+        final File file = configurator.createTestFilePlaylist();
+        final long id = configurator.insertToMediaStoreAsPlaylist(file);
         try {
             getMediaManager().deletePlaylist(id);
-            assertFalse(MediaManagerTestFileConfigurator.existsInMediaStore(
+            assertFalse(configurator.existsInMediaStore(
                     MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, id));
         } finally {
-            MediaManagerTestFileConfigurator
-                    .cleanup(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, file, id);
+            configurator.cleanup(MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, file, id);
         }
     }
 
