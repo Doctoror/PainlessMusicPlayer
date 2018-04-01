@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.media;
+package com.doctoror.fuckoffmusicplayer.domain.media
 
-import java.io.IOException;
+import java.io.IOException
 
 /**
  * A media manager
  */
-public interface MediaManager {
+interface MediaManager {
 
-    void deletePlaylist(long id) throws IOException;
-    void deleteMedia(long id) throws IOException;
-    void deleteAlbum(long id) throws IOException;
+    @Throws(IOException::class)
+    fun deletePlaylist(id: Long)
 
+    @Throws(IOException::class)
+    fun deleteMedia(id: Long)
+
+    @Throws(IOException::class)
+    fun deleteAlbum(id: Long)
 }
