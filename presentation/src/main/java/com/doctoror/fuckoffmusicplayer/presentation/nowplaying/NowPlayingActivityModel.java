@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.presentation.nowplaying;
 
 import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.databinding.ObservableLong;
 import android.support.annotation.NonNull;
@@ -38,7 +39,7 @@ public final class NowPlayingActivityModel extends BaseObservable {
     private final ObservableInt mBtnPlayRes = new ObservableInt();
     private final ObservableBoolean mShuffleEnabled = new ObservableBoolean();
 
-    private final ObservableInt mRepeatMode = new ObservableInt();
+    private final ObservableField<RepeatMode> mRepeatMode = new ObservableField<>();
 
     public String getTitle() {
         return mTitle;
@@ -100,11 +101,11 @@ public final class NowPlayingActivityModel extends BaseObservable {
     }
 
     @NonNull
-    public ObservableInt getRepeatMode() {
+    public ObservableField<RepeatMode> getRepeatMode() {
         return mRepeatMode;
     }
 
-    public void setRepeatMode(@RepeatMode final int repeatMode) {
+    public void setRepeatMode(@NonNull final RepeatMode repeatMode) {
         mRepeatMode.set(repeatMode);
     }
 }

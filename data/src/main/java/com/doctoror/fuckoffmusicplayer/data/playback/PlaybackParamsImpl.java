@@ -15,16 +15,16 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
+
 import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.playback.nano.PlaybackParamsProto;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 
 public final class PlaybackParamsImpl implements PlaybackParams {
 
@@ -41,8 +41,8 @@ public final class PlaybackParamsImpl implements PlaybackParams {
 
     private boolean mShuffleEnabled;
 
-    @RepeatMode
-    private int mRepeatMode = RepeatMode.QUEUE;
+    @NonNull
+    private RepeatMode mRepeatMode = RepeatMode.QUEUE;
 
     public PlaybackParamsImpl(@NonNull final Context context) {
         mContext = context;
@@ -51,7 +51,7 @@ public final class PlaybackParamsImpl implements PlaybackParams {
         if (persistent != null) {
             synchronized (mLock) {
                 mShuffleEnabled = persistent.shuffle;
-                mRepeatMode = persistent.repeatMode;
+                mRepeatMode = RepeatMode.Companion.fromIndex(persistent.repeatMode);
             }
         }
     }
@@ -74,7 +74,7 @@ public final class PlaybackParamsImpl implements PlaybackParams {
     }
 
     @Override
-    public void setRepeatMode(@RepeatMode final int repeatMode) {
+    public void setRepeatMode(@NonNull final RepeatMode repeatMode) {
         synchronized (mLock) {
             if (mRepeatMode != repeatMode) {
                 mRepeatMode = repeatMode;
@@ -83,9 +83,9 @@ public final class PlaybackParamsImpl implements PlaybackParams {
         }
     }
 
+    @NonNull
     @Override
-    @RepeatMode
-    public int getRepeatMode() {
+    public RepeatMode getRepeatMode() {
         synchronized (mLock) {
             return mRepeatMode;
         }
@@ -106,7 +106,7 @@ public final class PlaybackParamsImpl implements PlaybackParams {
         final PlaybackParamsProto.PlaybackParams p = new PlaybackParamsProto.PlaybackParams();
         synchronized (mLock) {
             p.shuffle = mShuffleEnabled;
-            p.repeatMode = mRepeatMode;
+            p.repeatMode = mRepeatMode.getIndex();
         }
         synchronized (mLockIO) {
             ProtoUtils.writeToFile(mContext, FILE_NAME, p);

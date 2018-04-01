@@ -26,7 +26,6 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceView;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
@@ -634,17 +633,16 @@ public final class PlaybackServiceImpl implements PlaybackService {
         public void playPrev() {
             synchronized (LOCK) {
                 if (mQueue != null && !mQueue.isEmpty()) {
-                    @RepeatMode final int repeatMode = mPlaybackParams.getRepeatMode();
-                    switch (repeatMode) {
-                        case RepeatMode.NONE:
+                    switch (mPlaybackParams.getRepeatMode()) {
+                        case NONE:
                             onPlay(mQueue, prevPos(mQueue, mPosition));
                             break;
 
-                        case RepeatMode.QUEUE:
+                        case QUEUE:
                             onPlay(mQueue, prevPos(mQueue, mPosition));
                             break;
 
-                        case RepeatMode.TRACK:
+                        case TRACK:
                             onPlay(mQueue, mPosition);
                             break;
                     }
@@ -656,9 +654,8 @@ public final class PlaybackServiceImpl implements PlaybackService {
         public void playNext(final boolean isUserAction) {
             synchronized (LOCK) {
                 if (mQueue != null && !mQueue.isEmpty()) {
-                    final int repeatMode = mPlaybackParams.getRepeatMode();
-                    switch (repeatMode) {
-                        case RepeatMode.NONE:
+                    switch (mPlaybackParams.getRepeatMode()) {
+                        case NONE:
                             if (!isUserAction && mPosition == mQueue.size() - 1) {
                                 mStopAction.run();
                             } else {
@@ -666,11 +663,11 @@ public final class PlaybackServiceImpl implements PlaybackService {
                             }
                             break;
 
-                        case RepeatMode.QUEUE:
+                        case QUEUE:
                             onPlay(mQueue, nextPos(mQueue, mPosition));
                             break;
 
-                        case RepeatMode.TRACK:
+                        case TRACK:
                             if (isUserAction) {
                                 onPlay(mQueue, nextPos(mQueue, mPosition));
                             } else {

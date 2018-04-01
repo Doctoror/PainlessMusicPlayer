@@ -15,9 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
-interface PlaybackParams {
+enum class RepeatMode(val index: Int) {
 
-    var isShuffleEnabled: Boolean
+    NONE(0),
+    QUEUE(1),
+    TRACK(2);
 
-    var repeatMode: RepeatMode
+    companion object {
+
+        fun fromIndex(index: Int) = try {
+            values()[index]
+        } catch (e: IllegalArgumentException) {
+            NONE
+        }
+    }
 }

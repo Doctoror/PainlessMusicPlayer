@@ -497,17 +497,17 @@ public final class NowPlayingActivity extends BaseActivity {
     @SuppressLint("WrongConstant")
     @OnClick(R.id.btnRepeat)
     public void onRepeatClick() {
-        @RepeatMode final int value;
+        final RepeatMode value;
         switch (mPlaybackParams.getRepeatMode()) {
-            case RepeatMode.NONE:
+            case NONE:
                 value = RepeatMode.QUEUE;
                 break;
 
-            case RepeatMode.QUEUE:
+            case QUEUE:
                 value = RepeatMode.TRACK;
                 break;
 
-            case RepeatMode.TRACK:
+            case TRACK:
                 value = RepeatMode.NONE;
                 break;
 
