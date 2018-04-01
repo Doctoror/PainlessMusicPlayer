@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 public final class DrawableUtilsTest {
 
     @Test(expected = NullPointerException.class)
-    public void testGetTintedDrawableFromResNullContext() throws Exception {
+    public void testGetTintedDrawableFromResNullContext() {
         //noinspection ConstantConditions
         DrawableUtils.getTintedDrawable(null, 0, null);
     }
