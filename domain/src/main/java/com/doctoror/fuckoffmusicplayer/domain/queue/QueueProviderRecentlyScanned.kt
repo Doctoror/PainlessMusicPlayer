@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue;
+package com.doctoror.fuckoffmusicplayer.domain.queue
 
-import android.support.annotation.NonNull;
-
-import java.util.List;
-
-import io.reactivex.Observable;
+import io.reactivex.Observable
 
 /**
- * Creates "recently scanned" playlist
+ * Creates "recently scanned" queue
  */
-public interface QueueProviderRecentlyScanned {
+interface QueueProviderRecentlyScanned {
 
-    @NonNull
-    Observable<List<Media>> recentlyScannedQueue();
-
+    fun recentlyScannedQueue(): Observable<List<Media>>
 }
