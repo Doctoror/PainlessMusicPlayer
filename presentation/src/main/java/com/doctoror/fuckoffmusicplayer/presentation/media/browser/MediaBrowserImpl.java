@@ -251,7 +251,8 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemAlbum(@NonNull final Cursor c) {
         final MediaDescriptionCompat.Builder description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MediaBrowserConstants.MEDIA_ID_PREFIX_ALBUM.concat(c.getString(AlbumsProvider.COLUMN_ID)))
+                .setMediaId(MediaBrowserConstants.MEDIA_ID_PREFIX_ALBUM
+                        .concat(c.getString(AlbumsProvider.COLUMN_ID)))
                 .setTitle(c.getString(AlbumsProvider.COLUMN_ALBUM));
         final String art = c.getString(AlbumsProvider.COLUMN_ALBUM_ART);
         if (!TextUtils.isEmpty(art)) {
