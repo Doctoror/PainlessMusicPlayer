@@ -71,13 +71,13 @@ public final class ViewUtilsAndroidTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testChildHeightsNull() throws Exception {
+    public void testChildHeightsNull() {
         //noinspection ConstantConditions
         ViewUtils.childHeights(null);
     }
 
     @Test
-    public void testChildHeightsEmptyViewGroup() throws Exception {
+    public void testChildHeightsEmptyViewGroup() {
         final ViewGroup vg = new FrameLayout(RuntimeEnvironment.application);
         vg.setBottom(666);
 
@@ -85,32 +85,32 @@ public final class ViewUtilsAndroidTest {
     }
 
     @Test
-    public void testChildHeights() throws Exception {
+    public void testChildHeights() {
         final Pair<Integer, ViewGroup> result = prepareViewGroupWithValidChildHeights();
         assertEquals(result.first.intValue(), ViewUtils.childHeights(result.second));
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetOverlayTopNull() throws Exception {
+    public void testGetOverlayTopNull() {
         //noinspection ConstantConditions
         ViewUtils.getOverlayTop(null);
     }
 
     @Test
-    public void testGetOverlayTopOrdinaryView() throws Exception {
+    public void testGetOverlayTopOrdinaryView() {
         final View view = new View(RuntimeEnvironment.application);
         assertEquals(0, ViewUtils.getOverlayTop(view));
     }
 
     @Test
-    public void testGetOverlayTopNoBehavior() throws Exception {
+    public void testGetOverlayTopNoBehavior() {
         final View view = new View(RuntimeEnvironment.application);
         view.setLayoutParams(new CoordinatorLayout.LayoutParams(0, 0));
         assertEquals(0, ViewUtils.getOverlayTop(view));
     }
 
     @Test
-    public void testGetOverlayTopDifferentBehavior() throws Exception {
+    public void testGetOverlayTopDifferentBehavior() {
         final View view = new View(RuntimeEnvironment.application);
 
         final CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(0, 0);
@@ -121,7 +121,7 @@ public final class ViewUtilsAndroidTest {
     }
 
     @Test
-    public void testGetOverlayTop() throws Exception {
+    public void testGetOverlayTop() {
         final View view = new View(RuntimeEnvironment.application);
 
         final CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(0, 0);
@@ -134,8 +134,7 @@ public final class ViewUtilsAndroidTest {
     }
 
     @Test
-    public void testIsScrollableViewLargeEnoughToScrollWhenFalse()
-            throws Exception {
+    public void testIsScrollableViewLargeEnoughToScrollWhenFalse() {
         final Context context = RuntimeEnvironment.application;
         final Pair<Integer, ViewGroup> heightsResult = prepareViewGroupWithValidChildHeights();
 
@@ -155,8 +154,7 @@ public final class ViewUtilsAndroidTest {
     }
 
     @Test
-    public void testIsScrollableViewLargeEnoughToScrollWhenTrue()
-            throws Exception {
+    public void testIsScrollableViewLargeEnoughToScrollWhenTrue() {
         final Context context = RuntimeEnvironment.application;
         final Pair<Integer, ViewGroup> heightsResult = prepareViewGroupWithValidChildHeights();
 
