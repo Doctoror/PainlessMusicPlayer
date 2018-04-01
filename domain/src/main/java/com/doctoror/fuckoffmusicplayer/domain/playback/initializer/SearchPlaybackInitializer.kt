@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.playback.initializer;
+package com.doctoror.fuckoffmusicplayer.domain.playback.initializer
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.Bundle
 
-public interface SearchPlaybackInitializer {
+interface SearchPlaybackInitializer {
 
-    void playFromSearch(@Nullable String query, @Nullable Bundle extras);
+    fun playFromSearch(query: String?, extras: Bundle?)
 }
