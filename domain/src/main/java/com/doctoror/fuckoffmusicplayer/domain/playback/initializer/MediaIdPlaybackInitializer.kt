@@ -13,15 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.playback.initializer;
+package com.doctoror.fuckoffmusicplayer.domain.playback.initializer
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+interface MediaIdPlaybackInitializer {
 
-import android.support.annotation.NonNull;
-
-import java.util.List;
-
-public interface PlaybackInitializer {
-
-    void setQueueAndPlay(@NonNull List<Media> queue, int position);
+    fun playFromMediaId(mediaId: Long)
 }

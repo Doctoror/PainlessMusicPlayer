@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.playback.initializer;
+package com.doctoror.fuckoffmusicplayer.domain.playback.initializer
 
-public interface MediaIdPlaybackInitializer {
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
-    void playFromMediaId(long mediaId);
+interface PlaybackInitializer {
+
+    fun setQueueAndPlay(queue: List<Media>, position: Int)
 }
