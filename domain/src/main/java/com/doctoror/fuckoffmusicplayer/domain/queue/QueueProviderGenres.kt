@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue;
+package com.doctoror.fuckoffmusicplayer.domain.queue
 
-import android.support.annotation.NonNull;
+import io.reactivex.Observable
 
-import java.util.List;
+interface QueueProviderGenres {
 
-import io.reactivex.Observable;
-
-/**
- * Genre playlist provider
- */
-public interface QueueProviderGenres {
-
-    @NonNull
-    Observable<List<Media>> fromGenre(long genreId);
+    fun fromGenre(genreId: Long): Observable<List<Media>>
 }
