@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2018 Yaroslav Mytkalyk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
 import android.content.BroadcastReceiver;
@@ -8,13 +23,13 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.SparseIntArray;
 
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporterController;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakelockAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
@@ -34,7 +49,6 @@ import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 
 import java.util.ArrayList;
@@ -77,8 +91,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final PlaybackParams mPlaybackParams;
 
-    private final PlaybackReporterFactory mPlaybackReporterFactory;
-
     private final PlaybackServiceView mPlaybackServicePresenter;
 
     private final QueueProviderRecentlyScanned queueProviderRecentlyScanned;
@@ -92,13 +104,17 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final AudioFocusRequester audioFocusRequester;
 
+    private final PlaybackReporterController playbackReporterController;
+
+    private final Runnable runnableReportCurrentMedia;
+    private final Runnable runnableReportCurrentPosition;
+    private final Runnable runnableReportCurrentQueue;
+
     private boolean playOnFocusGain;
 
     private PlaybackState mState = STATE_IDLE;
 
     private MediaPlayer mMediaPlayer;
-
-    private PlaybackReporter mPlaybackReporter;
 
     private Media mCurrentTrack;
 
@@ -135,32 +151,37 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mPlaybackData = playbackData;
         mPlaybackInitializer = playbackInitializer;
         mPlaybackParams = playbackParams;
-        mPlaybackReporterFactory = playbackReporterFactory;
         mPlaybackServicePresenter = playbackServicePresenter;
         this.queueProviderRecentlyScanned = queueProviderRecentlyScanned;
         mStopAction = stopAction;
 
         audioFocusRequester = new AudioFocusRequester(context, new AudioFocusListenerImpl());
+
+        playbackReporterController = new PlaybackReporterController(
+                currentMediaProvider,
+                mediaSessionHolder,
+                playbackData,
+                playbackReporterFactory);
+
+        runnableReportCurrentMedia = playbackReporterController::reportCurrentMedia;
+        runnableReportCurrentPosition = () ->
+                playbackReporterController.reportCurrentPlaybackPosition(mMediaPlayer);
+        runnableReportCurrentQueue = playbackReporterController::reportCurrentQueue;
+
         init();
     }
 
     private void init() {
+        mMediaSessionHolder.openSession();
+
         registerLifecycleObserver(new WakelockAcquirer(mContext));
         registerLifecycleObserver(audioFocusRequester);
+        registerLifecycleObserver(playbackReporterController);
 
         onCreate();
 
         mDestroying = false;
         mErrorMessage = null;
-
-        mMediaSessionHolder.openSession();
-
-        final MediaSessionCompat mediaSession = mMediaSessionHolder.getMediaSession();
-        if (mediaSession == null) {
-            throw new IllegalStateException("MediaSession is null");
-        }
-
-        mPlaybackReporter = mPlaybackReporterFactory.newUniversalReporter(mediaSession);
 
         mContext.registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
 
@@ -333,7 +354,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         if (mState == STATE_PAUSED && mCurrentTrack != null
                 && media.getId() == mCurrentTrack.getId()) {
             mMediaPlayer.play();
-            mExecutor.submit(mRunnableReportCurrentMedia);
+            mExecutor.submit(runnableReportCurrentMedia);
         } else {
             mExecutor.submit(() -> {
                 long seekPosition = 0;
@@ -353,8 +374,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                     getPlaybackController().setPositionInQueue(position);
                 }
 
-                reportCurrentMedia();
-                reportCurrentPlaybackPosition();
+                playbackReporterController.reportCurrentMedia();
+                playbackReporterController.reportCurrentPlaybackPosition(mMediaPlayer);
 
                 mMediaPlayer.stop();
 
@@ -393,7 +414,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mMediaPlayer.stop();
 
         mDisposableQueue.dispose();
-        mPlaybackReporter.onDestroy();
 
         mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
         mPlaybackData.persistAsync();
@@ -424,57 +444,16 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void notifyState() {
-        mExecutor.submit(() -> reportPlaybackState(mState, mErrorMessage));
+        mExecutor.submit(() ->
+                playbackReporterController.reportPlaybackState(mState, mErrorMessage));
     }
 
     private void updateMediaPosition() {
         if (mState == STATE_PLAYING) {
             mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
-            mExecutor.submit(mRunnableReportCurrentPosition);
+            mExecutor.submit(runnableReportCurrentPosition);
         }
     }
-
-    @WorkerThread
-    private void reportCurrentMedia() {
-        final int pos = mPlaybackData.getQueuePosition();
-        final Media media = CollectionUtils.getItemSafe(mPlaybackData.getQueue(), pos);
-        if (media != null) {
-            mPlaybackReporter.reportTrackChanged(media, pos);
-        }
-    }
-
-    @WorkerThread
-    private void reportPlaybackState(
-            @NonNull final PlaybackState state,
-            @Nullable final CharSequence errorMessage) {
-        mPlaybackReporter.reportPlaybackStateChanged(state, errorMessage);
-    }
-
-    @WorkerThread
-    private void reportCurrentPlaybackPosition() {
-        final Media media = mCurrentMediaProvider.getCurrentMedia();
-        if (media == null) {
-            mPlaybackReporter.reportPositionChanged(0, 0);
-        } else {
-            final Uri mediaUri = media.getData();
-            if (mediaUri != null && mediaUri.equals(mMediaPlayer.getLoadedMediaUri())) {
-                mPlaybackReporter.reportPositionChanged(
-                        media.getId(), mMediaPlayer.getCurrentPosition());
-            }
-        }
-    }
-
-    @WorkerThread
-    private void reportCurrentQueue() {
-        final List<Media> queue = mPlaybackData.getQueue();
-        if (queue != null) {
-            mPlaybackReporter.reportQueueChanged(queue);
-        }
-    }
-
-    private final Runnable mRunnableReportCurrentMedia = this::reportCurrentMedia;
-    private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
-    private final Runnable mRunnableReportCurrentQueue = this::reportCurrentQueue;
 
     private final class AudioFocusListenerImpl implements AudioFocusListener {
 
@@ -566,7 +545,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                     if (indexOf != -1) {
                         // This track position changed in queue
                         playbackController.setPositionInQueue(indexOf);
-                        mExecutor.submit(mRunnableReportCurrentQueue);
+                        mExecutor.submit(runnableReportCurrentQueue);
                     } else {
                         // This track is not in new queue
                         restart();
