@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
 
@@ -46,6 +47,8 @@ dependencies {
     implementation d.exoPlayer
 
     implementation d.glide
+
+    implementation d.kotlin
 
     implementation d.protobuf
 

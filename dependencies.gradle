@@ -91,13 +91,15 @@ ext {
             mockito      : "org.mockito:mockito-core:$mockitoVersion",
             mockitoKotlin: "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
 
-            robolectric: "org.robolectric:robolectric:$robolectricVersion"
+            robolectric  : "org.robolectric:robolectric:$robolectricVersion"
     ]
 
     dataDependencies = [
             exoPlayer     : "com.google.android.exoplayer:exoplayer:$exoPlayerVersion",
 
             glide         : "com.github.bumptech.glide:glide:$glideVersion",
+
+            kotlin        : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version",
 
             protobuf      : "com.google.protobuf.nano:protobuf-javanano:$protobufVersion",
 

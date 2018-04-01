@@ -1,19 +1,19 @@
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.SparseIntArray;
 
+import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakelockAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder;
@@ -53,7 +53,7 @@ import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STAT
 import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PAUSED;
 import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING;
 
-public final class PlaybackServiceImpl implements PlaybackService {
+public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements PlaybackService {
 
     private static final String TAG = "PlaybackServiceImpl";
 
@@ -105,7 +105,6 @@ public final class PlaybackServiceImpl implements PlaybackService {
     private Disposable mDisposableTimer;
     private Disposable mDisposablePauseTimeout;
 
-    private PowerManager.WakeLock mWakeLock;
     private boolean mDestroying;
 
     private CharSequence mErrorMessage;
@@ -144,7 +143,9 @@ public final class PlaybackServiceImpl implements PlaybackService {
     }
 
     private void init() {
-        acquireWakeLock();
+        registerLifecycleObserver(new WakelockAcquirer(mContext));
+
+        onCreate();
 
         mMediaPlayer = mMediaPlayerFactory.newMediaPlayer();
 
@@ -168,16 +169,6 @@ public final class PlaybackServiceImpl implements PlaybackService {
         mMediaPlayer.init(mContext);
 
         mDisposableQueue = mPlaybackData.queueObservable().subscribe(new QueueConsumer());
-    }
-
-    @SuppressLint("WakelockTimeout") // User may want this to play forever.
-    private void acquireWakeLock() {
-        final PowerManager powerManager = (PowerManager) mContext
-                .getSystemService(Context.POWER_SERVICE);
-        if (powerManager != null) {
-            mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            mWakeLock.acquire();
-        }
     }
 
     @NonNull
@@ -391,6 +382,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
 
     @Override
     public void destroy() {
+        onDestroy();
         mMediaPlayer.stop();
 
         mDisposableQueue.dispose();
@@ -416,9 +408,6 @@ public final class PlaybackServiceImpl implements PlaybackService {
         mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         mAudioFocusRequested = false;
         mMediaSessionHolder.closeSession();
-        if (mWakeLock != null && mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
     }
 
     private void ensureFocusRequested() {
