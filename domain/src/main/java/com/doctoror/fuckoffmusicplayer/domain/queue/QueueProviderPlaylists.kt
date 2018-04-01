@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue;
+package com.doctoror.fuckoffmusicplayer.domain.queue
 
-import android.database.Cursor;
-import android.support.annotation.Nullable;
+import android.database.Cursor
 
-import java.util.List;
-
-import io.reactivex.Observable;
+import io.reactivex.Observable
 
 /**
  * Queue provider for playlists
  */
-public interface QueueProviderPlaylists {
+interface QueueProviderPlaylists {
 
-    int COLUMN_ID = 0;
-    int COLUMN_NAME = 1;
+    fun load(filter: String?): Observable<Cursor>
 
-    Observable<Cursor> load(@Nullable String filter);
+    fun loadQueue(playlistId: Long): Observable<List<Media>>
 
-    Observable<List<Media>> loadQueue(long playlistId);
+    companion object {
 
+        const val COLUMN_ID = 0
+        const val COLUMN_NAME = 1
+    }
 }
