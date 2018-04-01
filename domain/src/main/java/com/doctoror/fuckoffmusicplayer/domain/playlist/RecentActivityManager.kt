@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.playlist;
-
-import android.support.annotation.NonNull;
-
-import java.util.Collection;
+package com.doctoror.fuckoffmusicplayer.domain.playlist
 
 /**
  * Used for managing "recently played albums"
  */
-public interface RecentActivityManager {
+interface RecentActivityManager {
 
-    @NonNull
-    long[] getRecentlyPlayedAlbums();
+    fun getRecentlyPlayedAlbums(): LongArray
 
-    void onAlbumsPlayed(@NonNull Collection<Long> albumIds);
+    fun onAlbumsPlayed(albumIds: Collection<Long>)
 
-    void onAlbumPlayed(long albumId);
+    fun onAlbumPlayed(albumId: Long)
 
-    void clear();
+    fun clear()
 }
