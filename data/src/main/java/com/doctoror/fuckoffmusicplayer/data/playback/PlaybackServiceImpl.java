@@ -30,7 +30,7 @@ import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquirer;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporterController;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporters;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakeLockAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
@@ -105,7 +105,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final AudioFocusRequester audioFocusRequester;
 
-    private final PlaybackReporterController playbackReporterController;
+    private final PlaybackReporters playbackReporters;
 
     private final Runnable runnableReportCurrentMedia;
     private final Runnable runnableReportCurrentPosition;
@@ -158,16 +158,16 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         audioFocusRequester = new AudioFocusRequester(context, new AudioFocusListenerImpl());
 
-        playbackReporterController = new PlaybackReporterController(
+        playbackReporters = new PlaybackReporters(
                 currentMediaProvider,
                 mediaSessionHolder,
                 playbackData,
                 playbackReporterFactory);
 
-        runnableReportCurrentMedia = playbackReporterController::reportCurrentMedia;
+        runnableReportCurrentMedia = playbackReporters::reportCurrentMedia;
         runnableReportCurrentPosition = () ->
-                playbackReporterController.reportCurrentPlaybackPosition(mMediaPlayer);
-        runnableReportCurrentQueue = playbackReporterController::reportCurrentQueue;
+                playbackReporters.reportCurrentPlaybackPosition(mMediaPlayer);
+        runnableReportCurrentQueue = playbackReporters::reportCurrentQueue;
 
         init();
     }
@@ -178,7 +178,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         // Ensure the ordering of these two does not change
         registerLifecycleObserver(new MediaSessionAcquirer(mMediaSessionHolder));
-        registerLifecycleObserver(playbackReporterController);
+        registerLifecycleObserver(playbackReporters);
 
         onCreate();
 
@@ -376,8 +376,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                     getPlaybackController().setPositionInQueue(position);
                 }
 
-                playbackReporterController.reportCurrentMedia();
-                playbackReporterController.reportCurrentPlaybackPosition(mMediaPlayer);
+                playbackReporters.reportCurrentMedia();
+                playbackReporters.reportCurrentPlaybackPosition(mMediaPlayer);
 
                 mMediaPlayer.stop();
 
@@ -446,7 +446,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     @Override
     public void notifyState() {
         mExecutor.submit(() ->
-                playbackReporterController.reportPlaybackState(mState, mErrorMessage));
+                playbackReporters.reportPlaybackState(mState, mErrorMessage));
     }
 
     private void updateMediaPosition() {

@@ -27,7 +27,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory
 
-class PlaybackReporterController(
+class PlaybackReporters(
         private val currentMediaProvider: CurrentMediaProvider,
         private val mediaSessionHolder: MediaSessionHolder,
         private val playbackData: PlaybackData,
