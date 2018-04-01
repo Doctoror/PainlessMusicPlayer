@@ -21,12 +21,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.test.InstrumentationRegistry;
 import android.support.v4.content.ContextCompat;
 
 import com.doctoror.fuckoffmusicplayer.R;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.lang.reflect.Method;
 
@@ -37,6 +40,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link DrawableUtils} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class DrawableUtilsTest {
 
     @Test(expected = NullPointerException.class)
@@ -48,7 +53,7 @@ public final class DrawableUtilsTest {
     @Test
     public void testGetTintedDrawableFromResNullTint() throws Exception {
         final Drawable drawable = DrawableUtils.getTintedDrawable(
-                InstrumentationRegistry.getTargetContext(),
+                RuntimeEnvironment.application,
                 R.drawable.appwidget_preview_single_row, null);
 
         assertHasNoTint(drawable);
@@ -56,7 +61,7 @@ public final class DrawableUtilsTest {
 
     @Test
     public void testGetTintedDrawableFromRes() throws Exception {
-        final Context context = InstrumentationRegistry.getTargetContext();
+        final Context context = RuntimeEnvironment.application;
         final Drawable drawable = DrawableUtils.getTintedDrawable(context,
                 R.drawable.appwidget_preview_single_row,
                 ContextCompat.getColorStateList(context, R.color.colorAccent));
@@ -67,7 +72,7 @@ public final class DrawableUtilsTest {
     @Test
     public void testGetTintedDrawableNullTint() throws Exception {
         final Drawable source = ContextCompat.getDrawable(
-                InstrumentationRegistry.getTargetContext(),
+                RuntimeEnvironment.application,
                 R.drawable.appwidget_preview_single_row);
 
         final Drawable drawable = DrawableUtils.getTintedDrawable(source, null);
@@ -77,7 +82,7 @@ public final class DrawableUtilsTest {
 
     @Test
     public void testGetTintedDrawableRes() throws Exception {
-        final Context context = InstrumentationRegistry.getTargetContext();
+        final Context context = RuntimeEnvironment.application;
 
         final Drawable source = ContextCompat.getDrawable(context,
                 R.drawable.appwidget_preview_single_row);

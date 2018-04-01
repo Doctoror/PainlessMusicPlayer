@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.presentation.mvvm
+package com.doctoror.fuckoffmusicplayer.parcelable.converter
 
-import com.doctoror.fuckoffmusicplayer.parcelable.reCreateFromParcel
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import android.os.Parcel
+import org.parceler.ParcelConverter
 
-class ParcelableObservableIntTest {
-
-    @Test
-    fun validParcelable() {
-        val value = ParcelableObservableInt(2)
-        val restored = reCreateFromParcel(value)
-        assertEquals(value, restored)
+internal fun <T> valueFromParcelConverter(
+        converter: ParcelConverter<T>,
+        parcel: Parcel): T? {
+    parcel.setDataPosition(0)
+    try {
+        return converter.fromParcel(parcel)
+    } finally {
+        parcel.recycle()
     }
 }

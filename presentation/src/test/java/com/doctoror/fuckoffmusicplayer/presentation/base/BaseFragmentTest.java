@@ -18,6 +18,9 @@ package com.doctoror.fuckoffmusicplayer.presentation.base;
 import android.annotation.SuppressLint;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import io.reactivex.disposables.Disposable;
 
@@ -27,6 +30,8 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link BaseFragment} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class BaseFragmentTest {
 
     @Test

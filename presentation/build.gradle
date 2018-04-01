@@ -17,8 +17,6 @@ android {
         versionCode 1
         versionName "1.0.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
         resConfigs "en"
 
         javaCompileOptions {
@@ -42,6 +40,12 @@ android {
 
         release {
             storeFile file("../keystore/doctoror.keystore")
+        }
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
         }
     }
 
@@ -95,11 +99,10 @@ dependencies {
     def d = rootProject.ext.presentationDependencies
     def td = rootProject.ext.presentationTestDependencies
 
-    androidTestImplementation td.testRunner
-
     testImplementation td.junit
     testImplementation td.mockito
     testImplementation td.mockitoKotlin
+    testImplementation td.robolectric
 
     implementation project(':siriwaveview')
     implementation project(':domain')

@@ -16,17 +16,22 @@
 package com.doctoror.fuckoffmusicplayer.presentation.formatter;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 
 import com.doctoror.fuckoffmusicplayer.R;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * {@link ArtistAlbumFormatter} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class ArtistAlbumFormatterTest {
 
     private final ArtistAlbumFormatter underTest = new ArtistAlbumFormatter();
@@ -44,8 +49,8 @@ public final class ArtistAlbumFormatterTest {
     }
 
     @Test
-    public void testFormatArtistAndAlbumNullArtistAndAlbum() throws Exception {
-        final Context context = InstrumentationRegistry.getContext();
+    public void testFormatArtistAndAlbumNullArtistAndAlbum() {
+        final Context context = RuntimeEnvironment.application;
         final String separator = context.getString(R.string.artist_album_separator);
         final String expected = context.getString(R.string.Unknown_artist)
                 + separator + context.getString(R.string.Unknown_album);
@@ -56,8 +61,8 @@ public final class ArtistAlbumFormatterTest {
     }
 
     @Test
-    public void testFormatArtistAndAlbumEmptyAlbum() throws Exception {
-        final Context context = InstrumentationRegistry.getContext();
+    public void testFormatArtistAndAlbumEmptyAlbum() {
+        final Context context = RuntimeEnvironment.application;
         final String separator = context.getString(R.string.artist_album_separator);
         final String artist = "artist";
         final String expected = artist + separator + context.getString(R.string.Unknown_album);
@@ -69,8 +74,8 @@ public final class ArtistAlbumFormatterTest {
     }
 
     @Test
-    public void testFormatArtistAndAlbumEmptyArtist() throws Exception {
-        final Context context = InstrumentationRegistry.getContext();
+    public void testFormatArtistAndAlbumEmptyArtist() {
+        final Context context = RuntimeEnvironment.application;
         final String separator = context.getString(R.string.artist_album_separator);
         final String album = "album";
         final String expected = context.getString(R.string.Unknown_artist) + separator + album;
@@ -83,8 +88,8 @@ public final class ArtistAlbumFormatterTest {
     }
 
     @Test
-    public void testFormatArtistAndAlbum() throws Exception {
-        final Context context = InstrumentationRegistry.getContext();
+    public void testFormatArtistAndAlbum() {
+        final Context context = RuntimeEnvironment.application;
         final String separator = context.getString(R.string.artist_album_separator);
         final String artist = "artist";
         final String album = "album";

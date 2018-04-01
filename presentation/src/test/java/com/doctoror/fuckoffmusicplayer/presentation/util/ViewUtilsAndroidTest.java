@@ -19,8 +19,6 @@ import android.content.Context;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
 import android.util.Pair;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +26,9 @@ import android.widget.FrameLayout;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -36,11 +37,12 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link ViewUtils} test
  */
-@RunWith(AndroidJUnit4.class)
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class ViewUtilsAndroidTest {
 
     private Pair<Integer, ViewGroup> prepareViewGroupWithValidChildHeights() {
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         final int v1h = 101;
         final int v2h = 102;
         final int v3h = 103;
@@ -76,7 +78,7 @@ public final class ViewUtilsAndroidTest {
 
     @Test
     public void testChildHeightsEmptyViewGroup() throws Exception {
-        final ViewGroup vg = new FrameLayout(InstrumentationRegistry.getContext());
+        final ViewGroup vg = new FrameLayout(RuntimeEnvironment.application);
         vg.setBottom(666);
 
         assertEquals(0, ViewUtils.childHeights(vg));
@@ -96,20 +98,20 @@ public final class ViewUtilsAndroidTest {
 
     @Test
     public void testGetOverlayTopOrdinaryView() throws Exception {
-        final View view = new View(InstrumentationRegistry.getContext());
+        final View view = new View(RuntimeEnvironment.application);
         assertEquals(0, ViewUtils.getOverlayTop(view));
     }
 
     @Test
     public void testGetOverlayTopNoBehavior() throws Exception {
-        final View view = new View(InstrumentationRegistry.getContext());
+        final View view = new View(RuntimeEnvironment.application);
         view.setLayoutParams(new CoordinatorLayout.LayoutParams(0, 0));
         assertEquals(0, ViewUtils.getOverlayTop(view));
     }
 
     @Test
     public void testGetOverlayTopDifferentBehavior() throws Exception {
-        final View view = new View(InstrumentationRegistry.getContext());
+        final View view = new View(RuntimeEnvironment.application);
 
         final CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(0, 0);
         p.setBehavior(new FloatingActionButton.Behavior());
@@ -120,7 +122,7 @@ public final class ViewUtilsAndroidTest {
 
     @Test
     public void testGetOverlayTop() throws Exception {
-        final View view = new View(InstrumentationRegistry.getContext());
+        final View view = new View(RuntimeEnvironment.application);
 
         final CoordinatorLayout.LayoutParams p = new CoordinatorLayout.LayoutParams(0, 0);
         final AppBarLayout.ScrollingViewBehavior b = new AppBarLayout.ScrollingViewBehavior();
@@ -134,7 +136,7 @@ public final class ViewUtilsAndroidTest {
     @Test
     public void testIsScrollableViewLargeEnoughToScrollWhenFalse()
             throws Exception {
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         final Pair<Integer, ViewGroup> heightsResult = prepareViewGroupWithValidChildHeights();
 
         final ViewGroup rootView = new FrameLayout(context);
@@ -155,7 +157,7 @@ public final class ViewUtilsAndroidTest {
     @Test
     public void testIsScrollableViewLargeEnoughToScrollWhenTrue()
             throws Exception {
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
         final Pair<Integer, ViewGroup> heightsResult = prepareViewGroupWithValidChildHeights();
 
         final ViewGroup rootView = new FrameLayout(context);

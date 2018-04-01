@@ -91,7 +91,7 @@ ext {
             mockito      : "org.mockito:mockito-core:$mockitoVersion",
             mockitoKotlin: "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
 
-            testRunner   : "com.android.support.test:runner:$testRunnerVersion"
+            robolectric: "org.robolectric:robolectric:$robolectricVersion"
     ]
 
     dataDependencies = [

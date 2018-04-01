@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.presentation.util;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.test.InstrumentationRegistry;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,10 @@ import android.widget.ViewAnimator;
 import com.doctoror.fuckoffmusicplayer.R;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,11 +42,13 @@ import static org.junit.Assert.assertTrue;
 /**
  * {@link BindingAdapters} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class BindingAdaptersTest {
 
     @Test
     public void testSetActivated() throws Exception {
-        final View view = new View(InstrumentationRegistry.getContext());
+        final View view = new View(RuntimeEnvironment.application);
         assertFalse(view.isActivated());
 
         BindingAdapters.setActivated(view, true);
@@ -54,9 +59,9 @@ public final class BindingAdaptersTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetFormattedDurationNegative() throws Exception {
+    public void testSetFormattedDurationNegative() {
         BindingAdapters.setFormattedDuration(
-                new TextView(InstrumentationRegistry.getContext()), -1);
+                new TextView(RuntimeEnvironment.application), -1);
     }
 
     @Test(expected = NullPointerException.class)
@@ -66,8 +71,8 @@ public final class BindingAdaptersTest {
     }
 
     @Test
-    public void testSetFormattedDuration() throws Exception {
-        final TextView textView = new TextView(InstrumentationRegistry.getContext());
+    public void testSetFormattedDuration() {
+        final TextView textView = new TextView(RuntimeEnvironment.application);
         assertEquals("", textView.getText());
 
         BindingAdapters.setFormattedDuration(textView, 0);
@@ -90,8 +95,8 @@ public final class BindingAdaptersTest {
     }
 
     @Test
-    public void testSetRecyclerAdapter() throws Exception {
-        final Context context = InstrumentationRegistry.getContext();
+    public void testSetRecyclerAdapter() {
+        final Context context = RuntimeEnvironment.application;
 
         final RecyclerView recyclerView = new RecyclerView(context);
         assertNull(recyclerView.getAdapter());
@@ -129,7 +134,7 @@ public final class BindingAdaptersTest {
 
     @Test
     public void testSetDisplayedChild() {
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
 
         final ViewAnimator va = new ViewAnimator(context);
         va.addView(new View(context));
@@ -142,7 +147,7 @@ public final class BindingAdaptersTest {
 
     @Test
     public void testSetImageResource() {
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
 
         final ImageView iv = new ImageView(context);
         assertNull(iv.getDrawable());
@@ -154,7 +159,7 @@ public final class BindingAdaptersTest {
 
     @Test
     public void testSetColorFilter() {
-        final Context context = InstrumentationRegistry.getContext();
+        final Context context = RuntimeEnvironment.application;
 
         final ImageView iv = new ImageView(context);
         assertNull(iv.getColorFilter());

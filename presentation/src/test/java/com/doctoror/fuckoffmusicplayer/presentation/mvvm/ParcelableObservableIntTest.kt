@@ -15,23 +15,20 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.mvvm
 
-import android.media.AudioFormat
 import com.doctoror.fuckoffmusicplayer.parcelable.reCreateFromParcel
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-class ParcelableObservableFieldTest {
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner::class)
+class ParcelableObservableIntTest {
 
     @Test
     fun validParcelable() {
-        val value = ParcelableObservableField(AudioFormat.Builder().build())
-        val restored = reCreateFromParcel(value)
-        assertEquals(value, restored)
-    }
-
-    @Test
-    fun validParcelableWithNullValue() {
-        val value = ParcelableObservableField<AudioFormat>()
+        val value = ParcelableObservableInt(2)
         val restored = reCreateFromParcel(value)
         assertEquals(value, restored)
     }

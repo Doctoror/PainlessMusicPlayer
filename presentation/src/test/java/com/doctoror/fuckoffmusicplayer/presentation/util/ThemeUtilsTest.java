@@ -16,15 +16,20 @@
 package com.doctoror.fuckoffmusicplayer.presentation.util;
 
 import android.content.res.ColorStateList;
-import android.support.test.InstrumentationRegistry;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * {@link ThemeUtils} test
  */
+@Config(manifest = Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public final class ThemeUtilsTest {
 
     @Test(expected = NullPointerException.class)
@@ -35,7 +40,7 @@ public final class ThemeUtilsTest {
 
     @Test
     public void testGetColor() throws Exception {
-        ThemeUtils.getColor(InstrumentationRegistry.getTargetContext().getTheme(),
+        ThemeUtils.getColor(RuntimeEnvironment.application.getTheme(),
                 android.R.attr.textColorPrimary);
     }
 
@@ -48,7 +53,7 @@ public final class ThemeUtilsTest {
     @Test
     public void testGetColorStateList() throws Exception {
         final ColorStateList colorStateList = ThemeUtils.getColorStateList(
-                InstrumentationRegistry.getTargetContext().getTheme(),
+                RuntimeEnvironment.application.getTheme(),
                 android.R.attr.textColorPrimary);
 
         assertNotNull(colorStateList);
