@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.genres;
+package com.doctoror.fuckoffmusicplayer.domain.genres
 
-import android.database.Cursor;
-import android.support.annotation.Nullable;
+import android.database.Cursor
 
-import io.reactivex.Observable;
+import io.reactivex.Observable
 
 /**
  * "Genres" provider
  */
-public interface GenresProvider {
+interface GenresProvider {
 
-    int COLUMN_ID = 0;
-    int COLUMN_NAME = 1;
+    fun load(): Observable<Cursor>
+    fun load(searchFilter: String?): Observable<Cursor>
 
-    Observable<Cursor> load();
-    Observable<Cursor> load(@Nullable String searchFilter);
+    companion object {
+
+        const val COLUMN_ID = 0
+        const val COLUMN_NAME = 1
+    }
 }
