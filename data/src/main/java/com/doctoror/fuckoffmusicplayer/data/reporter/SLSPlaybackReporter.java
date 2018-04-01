@@ -57,8 +57,8 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
 
     private Media media;
 
-    @PlaybackState
-    private int state;
+    @NonNull
+    private PlaybackState state;
 
     SLSPlaybackReporter(
             @NonNull final Context context,
@@ -82,8 +82,9 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaybackStateChanged(@PlaybackState final int state,
-                                           @Nullable final CharSequence errorMessage) {
+    public void reportPlaybackStateChanged(
+            @NonNull final PlaybackState state,
+            @Nullable final CharSequence errorMessage) {
         if (this.state != state) {
             report(media, this.state, state);
             this.state = state;
@@ -91,8 +92,8 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     }
 
     private void report(@Nullable final Media media,
-                        @PlaybackState final int prevState,
-                        @PlaybackState final int state) {
+                        @NonNull final PlaybackState prevState,
+                        @NonNull final PlaybackState state) {
         if (settings.isScrobbleEnabled() && media != null) {
             final Intent intent = new Intent(ACTION);
             intent.putExtra(APP_NAME, "Painless Music Player");
@@ -123,28 +124,28 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
         // Don't care
     }
 
-    private static int toSlsState(@PlaybackState final int prevState,
-                                  @PlaybackState final int playbackState) {
+    private static int toSlsState(@NonNull final PlaybackState prevState,
+                                  @NonNull final PlaybackState playbackState) {
         switch (playbackState) {
-            case PlaybackState.STATE_IDLE:
+            case STATE_IDLE:
                 return STATE_PAUSE;
 
-            case PlaybackState.STATE_LOADING:
+            case STATE_LOADING:
                 // Loading after playing means playback completed for prev track
                 return prevState == PlaybackState.STATE_PLAYING
                         ? STATE_COMPLETE
                         : STATE_PAUSE;
 
-            case PlaybackState.STATE_PLAYING:
+            case STATE_PLAYING:
                 // Playing after loading means new track is started
                 return prevState == PlaybackState.STATE_LOADING
                         ? STATE_START
                         : STATE_RESUME;
 
-            case PlaybackState.STATE_PAUSED:
+            case STATE_PAUSED:
                 return STATE_PAUSE;
 
-            case PlaybackState.STATE_ERROR:
+            case STATE_ERROR:
                 return STATE_PAUSE;
 
             default:

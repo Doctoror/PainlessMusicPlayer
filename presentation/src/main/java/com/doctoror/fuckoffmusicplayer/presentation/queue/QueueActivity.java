@@ -382,7 +382,7 @@ public final class QueueActivity extends BaseActivity
     }
 
     @WorkerThread
-    private void onPlaybackStateChanged(@PlaybackState final int state) {
+    private void onPlaybackStateChanged(@NonNull final PlaybackState state) {
         final Media media = state == PlaybackState.STATE_PLAYING
                 ? currentMediaProvider.getCurrentMedia() : null;
         //noinspection WrongThread

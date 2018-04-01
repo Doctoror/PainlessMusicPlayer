@@ -15,17 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media
+/**
+ * Represents a playback state
+ */
+enum class PlaybackState {
 
-import android.app.Notification
-import android.content.Context
-import android.support.v4.media.session.MediaSessionCompat
-
-interface PlaybackNotificationFactory {
-
-    fun create(
-            context: Context,
-            media: Media,
-            state: PlaybackState,
-            mediaSession: MediaSessionCompat): Notification
+    STATE_IDLE,
+    STATE_LOADING,
+    STATE_PLAYING,
+    STATE_PAUSED,
+    STATE_ERROR,
 }

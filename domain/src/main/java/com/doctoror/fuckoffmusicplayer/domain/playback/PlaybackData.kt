@@ -30,8 +30,7 @@ interface PlaybackData {
 
     val mediaPosition: Long
 
-    @PlaybackState
-    var playbackState: Int
+    var playbackState: PlaybackState
 
     fun queueObservable(): Observable<List<Media>>
 
@@ -39,7 +38,7 @@ interface PlaybackData {
 
     fun mediaPositionObservable(): Observable<Long>
 
-    fun playbackStateObservable(): Observable<Int>
+    fun playbackStateObservable(): Observable<PlaybackState>
 
     fun setPlayQueue(queue: List<Media>?)
 

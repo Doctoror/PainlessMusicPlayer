@@ -64,12 +64,22 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
         playbackServiceControl.resendState();
     }
 
+    @NonNull
+    private PlaybackState fromIntentExtra(@NonNull final Intent intent) {
+        final int stateIndex = intent.getIntExtra(
+                AppWidgetPlaybackStateReporter.EXTRA_STATE, PlaybackState.STATE_IDLE.ordinal());
+        try {
+            return PlaybackState.values()[stateIndex];
+        } catch (final IllegalArgumentException e) {
+            return PlaybackState.STATE_IDLE;
+        }
+    }
+
     @Override
     public void onReceive(final Context context, final Intent intent) {
         AndroidInjection.inject(this, context);
         if (AppWidgetPlaybackStateReporter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-            @PlaybackState final int state = intent.getIntExtra(
-                    AppWidgetPlaybackStateReporter.EXTRA_STATE, PlaybackState.STATE_IDLE);
+            final PlaybackState state = fromIntentExtra(intent);
             onStateChanged(context, state);
         } else {
             // Handle AppWidgetProvider broadcast
@@ -90,7 +100,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
         requestServiceStateUpdate();
     }
 
-    private void onStateChanged(@NonNull final Context context, @PlaybackState final int state) {
+    private void onStateChanged(@NonNull final Context context, @NonNull final PlaybackState state) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, SingleRowAppWidgetProvider.class));
@@ -102,7 +112,7 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
             @NonNull final Context context,
             @NonNull final AppWidgetManager appWidgetManager,
             @NonNull final int[] appWidgetIds,
-            @PlaybackState final int state) {
+            @NonNull final PlaybackState state) {
         final RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.appwidget_single_row);
 

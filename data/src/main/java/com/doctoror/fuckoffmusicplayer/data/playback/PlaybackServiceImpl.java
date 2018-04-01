@@ -89,8 +89,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
     private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
             = new AudioBecomingNoisyReceiver();
 
-    @PlaybackState
-    private int mState = STATE_IDLE;
+    private PlaybackState mState = STATE_IDLE;
 
     private MediaPlayer mMediaPlayer;
 
@@ -433,7 +432,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
         }
     }
 
-    private void setState(@PlaybackState final int state) {
+    private void setState(@NonNull final PlaybackState state) {
         if (mState != state) {
             mState = state;
             notifyState();
@@ -464,7 +463,7 @@ public final class PlaybackServiceImpl implements PlaybackService {
 
     @WorkerThread
     private void reportPlaybackState(
-            @PlaybackState final int state,
+            @NonNull final PlaybackState state,
             @Nullable final CharSequence errorMessage) {
         mPlaybackReporter.reportPlaybackStateChanged(state, errorMessage);
     }

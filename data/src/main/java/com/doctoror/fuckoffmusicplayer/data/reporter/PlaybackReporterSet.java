@@ -45,7 +45,7 @@ final class PlaybackReporterSet implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaybackStateChanged(@PlaybackState final int state,
+    public void reportPlaybackStateChanged(@NonNull final PlaybackState state,
             @Nullable final CharSequence errorMessage) {
         //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < mReporters.length; i++) {

@@ -42,10 +42,10 @@ public final class AppWidgetPlaybackStateReporter implements PlaybackReporter {
 
     @Override
     public void reportPlaybackStateChanged(
-            @PlaybackState final int state,
+            @NonNull final PlaybackState state,
             @Nullable final CharSequence errorMessage) {
         final Intent intent = new Intent(ACTION_STATE_CHANGED);
-        intent.putExtra(EXTRA_STATE, state);
+        intent.putExtra(EXTRA_STATE, state.ordinal());
         context.sendBroadcast(intent, permissionReceivePlaybackState);
     }
 

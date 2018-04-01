@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.data.reporter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaMetadataCompat;
@@ -67,10 +68,12 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
 
     @Override
     public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
+        final Uri data = media.getData();
         final MediaMetadataCompat.Builder b = new MediaMetadataCompat.Builder()
                 .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
                         Long.toString(media.getId()))
-                .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, media.getData().toString())
+                .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+                        data != null ? data.toString() : null)
                 .putText(MediaMetadataCompat.METADATA_KEY_TITLE, media.getTitle())
                 .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, media.getDuration())
                 .putText(MediaMetadataCompat.METADATA_KEY_ARTIST, media.getArtist())
@@ -121,7 +124,7 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
 
     @Override
     public void reportPlaybackStateChanged(
-            @PlaybackState final int state,
+            @NonNull final PlaybackState state,
             @Nullable final CharSequence errorMessage) {
         @PlaybackStateCompat.State final int playbackState = toPlaybackStateCompat(state);
         final boolean isPlaying = playbackState == PlaybackStateCompat.STATE_PLAYING;
@@ -159,21 +162,21 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @PlaybackStateCompat.State
-    private static int toPlaybackStateCompat(@PlaybackState final int state) {
+    private static int toPlaybackStateCompat(@NonNull final PlaybackState state) {
         switch (state) {
-            case PlaybackState.STATE_LOADING:
+            case STATE_LOADING:
                 return PlaybackStateCompat.STATE_BUFFERING;
 
-            case PlaybackState.STATE_PLAYING:
+            case STATE_PLAYING:
                 return PlaybackStateCompat.STATE_PLAYING;
 
-            case PlaybackState.STATE_PAUSED:
+            case STATE_PAUSED:
                 return PlaybackStateCompat.STATE_PAUSED;
 
-            case PlaybackState.STATE_ERROR:
+            case STATE_ERROR:
                 return PlaybackStateCompat.STATE_ERROR;
 
-            case PlaybackState.STATE_IDLE:
+            case STATE_IDLE:
             default:
                 return PlaybackStateCompat.STATE_NONE;
         }

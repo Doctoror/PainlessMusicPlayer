@@ -19,7 +19,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 interface PlaybackServiceView {
 
-    fun startForeground(media: Media, @PlaybackState state: Int)
+    fun startForeground(media: Media, state: PlaybackState)
 
     /**
      * Shows a playback error and returns the shown error message.

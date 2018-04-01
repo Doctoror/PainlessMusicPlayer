@@ -32,7 +32,7 @@ public class PlaybackServiceViewImpl implements PlaybackServiceView {
     }
 
     @Override
-    public void startForeground(@NonNull final Media media, @PlaybackState final int state) {
+    public void startForeground(@NonNull final Media media, @NonNull final PlaybackState state) {
         final MediaSessionCompat mediaSession = mediaSessionHolder.getMediaSession();
         if (mediaSession != null) {
             service.startForeground(NOTIFICATION_ID, playbackNotificationFactory.create(

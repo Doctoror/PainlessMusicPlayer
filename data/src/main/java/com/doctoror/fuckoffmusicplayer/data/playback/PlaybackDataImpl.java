@@ -35,8 +35,6 @@ import java.util.Set;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_IDLE;
-
 /**
  * Default {@link PlaybackData} implementation
  */
@@ -45,8 +43,8 @@ public final class PlaybackDataImpl implements PlaybackData {
     private final BehaviorSubject<List<Media>> mQueueSubject = BehaviorSubject.create();
     private final BehaviorSubject<Integer> mQueuePositionSubject = BehaviorSubject.create();
     private final BehaviorSubject<Long> mMediaPositionSubject = BehaviorSubject.create();
-    private final BehaviorSubject<Integer> mPlaybackStateSubject =
-            BehaviorSubject.createDefault(STATE_IDLE);
+    private final BehaviorSubject<PlaybackState> mPlaybackStateSubject =
+            BehaviorSubject.createDefault(PlaybackState.STATE_IDLE);
 
     private final Object mQueueSubjectLock = new Object();
     private final Object mQueuePositionSubjectLock = new Object();
@@ -86,7 +84,7 @@ public final class PlaybackDataImpl implements PlaybackData {
 
     @NonNull
     @Override
-    public Observable<Integer> playbackStateObservable() {
+    public Observable<PlaybackState> playbackStateObservable() {
         return mPlaybackStateSubject.hide();
     }
 
@@ -99,29 +97,27 @@ public final class PlaybackDataImpl implements PlaybackData {
         }
     }
 
-    @NonNull
     @Override
-    public Integer getQueuePosition() {
+    public int getQueuePosition() {
         synchronized (mQueuePositionSubjectLock) {
             final Integer value = mQueuePositionSubject.getValue();
             return value != null ? value : 0;
         }
     }
 
-    @NonNull
     @Override
-    public Long getMediaPosition() {
+    public long getMediaPosition() {
         synchronized (mMediaPositionSubjectLock) {
             final Long value = mMediaPositionSubject.getValue();
             return value != null ? value : 0L;
         }
     }
 
+    @NonNull
     @Override
-    public int getPlaybackState() {
+    public PlaybackState getPlaybackState() {
         synchronized (mPlaybackStateSubjectLock) {
-            final Integer value = mPlaybackStateSubject.getValue();
-            //noinspection WrongConstant
+            final PlaybackState value = mPlaybackStateSubject.getValue();
             return value != null ? value : PlaybackState.STATE_IDLE;
         }
     }
@@ -164,7 +160,7 @@ public final class PlaybackDataImpl implements PlaybackData {
     }
 
     @Override
-    public void setPlaybackState(@PlaybackState final int state) {
+    public void setPlaybackState(@NonNull final PlaybackState state) {
         synchronized (mPlaybackStateSubjectLock) {
             mPlaybackStateSubject.onNext(state);
         }

@@ -135,8 +135,8 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private NowPlayingActivityIntentHandler mIntentHandler;
 
-    @PlaybackState
-    private int mState = PlaybackState.STATE_IDLE;
+    @NonNull
+    private PlaybackState mState = PlaybackState.STATE_IDLE;
 
     private boolean mTransitionPostponed;
     private boolean mTransitionStarted;
@@ -423,24 +423,24 @@ public final class NowPlayingActivity extends BaseActivity {
         }
     }
 
-    private void bindState(final int state) {
+    private void bindState(@NonNull final PlaybackState state) {
         if (!isFinishingAfterTransition()) {
             mState = state;
             final int playBtnRes;
             switch (state) {
-                case PlaybackState.STATE_IDLE:
+                case STATE_IDLE:
                     playBtnRes = R.drawable.ic_play_arrow_white_36dp;
                     break;
 
-                case PlaybackState.STATE_LOADING:
+                case STATE_LOADING:
                     playBtnRes = R.drawable.ic_pause_white_36dp;
                     break;
 
-                case PlaybackState.STATE_PLAYING:
+                case STATE_PLAYING:
                     playBtnRes = R.drawable.ic_pause_white_36dp;
                     break;
 
-                case PlaybackState.STATE_PAUSED:
+                case STATE_PAUSED:
                     playBtnRes = R.drawable.ic_play_arrow_white_36dp;
                     break;
 
@@ -455,23 +455,23 @@ public final class NowPlayingActivity extends BaseActivity {
     @OnClick(R.id.btnPlay)
     public void onPlayClick() {
         switch (mState) {
-            case PlaybackState.STATE_IDLE:
+            case STATE_IDLE:
                 mPlaybackServiceControl.play();
                 break;
 
-            case PlaybackState.STATE_PAUSED:
+            case STATE_PAUSED:
                 mPlaybackServiceControl.playPause();
                 break;
 
-            case PlaybackState.STATE_PLAYING:
+            case STATE_PLAYING:
                 mPlaybackServiceControl.playPause();
                 break;
 
-            case PlaybackState.STATE_ERROR:
+            case STATE_ERROR:
                 mPlaybackServiceControl.play();
                 break;
 
-            case PlaybackState.STATE_LOADING:
+            case STATE_LOADING:
                 // Do nothing
                 break;
         }

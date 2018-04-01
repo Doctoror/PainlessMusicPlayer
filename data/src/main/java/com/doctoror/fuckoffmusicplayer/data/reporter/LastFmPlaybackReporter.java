@@ -32,7 +32,7 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
     private Media media;
     private boolean isPlaying;
 
-    public LastFmPlaybackReporter(
+    LastFmPlaybackReporter(
             @NonNull final Context context,
             @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final PlaybackData playbackData,
@@ -54,8 +54,9 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportPlaybackStateChanged(@PlaybackState final int state,
-                                           @Nullable final CharSequence errorMessage) {
+    public void reportPlaybackStateChanged(
+            @NonNull final PlaybackState state,
+            @Nullable final CharSequence errorMessage) {
         final boolean isPlaying = state == PlaybackState.STATE_PLAYING;
         if (this.isPlaying != isPlaying) {
             this.isPlaying = isPlaying;
