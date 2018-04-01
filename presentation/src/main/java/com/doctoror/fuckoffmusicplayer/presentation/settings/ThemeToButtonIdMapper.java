@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.presentation.settings;
 
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
@@ -30,15 +31,15 @@ final class ThemeToButtonIdMapper {
     }
 
     @IdRes
-    int themeToButtonId(@Theme final int theme) {
+    int themeToButtonId(@NonNull final Theme theme) {
         switch (theme) {
-            case Theme.DAY:
+            case DAY:
                 return R.id.radioDay;
 
-            case Theme.NIGHT:
+            case NIGHT:
                 return R.id.radioNight;
 
-            case Theme.DAYNIGHT:
+            case DAYNIGHT:
                 return R.id.radioDayNight;
 
             default:
@@ -46,8 +47,8 @@ final class ThemeToButtonIdMapper {
         }
     }
 
-    @Theme
-    int buttonIdToTheme(@IdRes final int buttonId) {
+    @NonNull
+    Theme buttonIdToTheme(@IdRes final int buttonId) {
         switch (buttonId) {
             case R.id.radioDay:
                 return Theme.DAY;

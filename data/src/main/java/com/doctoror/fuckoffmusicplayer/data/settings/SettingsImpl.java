@@ -15,15 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.settings;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
+
 import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.settings.nano.SettingsProto;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
 
 /**
  * Application settings
@@ -38,8 +38,8 @@ public final class SettingsImpl implements Settings {
     @NonNull
     private final Context context;
 
-    @Theme
-    private int theme = Theme.NIGHT;
+    @NonNull
+    private Theme theme = Theme.NIGHT;
 
     private boolean scrobbleEnabled = true;
 
@@ -49,7 +49,7 @@ public final class SettingsImpl implements Settings {
                 new SettingsProto.Settings());
         synchronized (lock) {
             if (settings != null) {
-                theme = settings.theme;
+                theme = Theme.Companion.fromIndex(settings.theme);
                 scrobbleEnabled = settings.scrobbleEnabled;
             }
         }
@@ -72,16 +72,16 @@ public final class SettingsImpl implements Settings {
         }
     }
 
+    @NonNull
     @Override
-    @Theme
-    public int getTheme() {
+    public Theme getTheme() {
         synchronized (lock) {
             return theme;
         }
     }
 
     @Override
-    public void setTheme(@Theme final int theme) {
+    public void setTheme(@NonNull final Theme theme) {
         synchronized (lock) {
             if (this.theme != theme) {
                 this.theme = theme;
@@ -98,7 +98,7 @@ public final class SettingsImpl implements Settings {
     private void persist() {
         final SettingsProto.Settings settings = new SettingsProto.Settings();
         synchronized (lock) {
-            settings.theme = theme;
+            settings.theme = theme.getIndex();
             settings.scrobbleEnabled = scrobbleEnabled;
         }
         synchronized (lockIo) {

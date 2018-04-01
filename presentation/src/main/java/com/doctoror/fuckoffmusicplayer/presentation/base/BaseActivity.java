@@ -47,8 +47,7 @@ public abstract class BaseActivity extends BaseInjectionActivity {
 
     private CompositeDisposable onStopDisposable;
 
-    @Theme
-    private int themeUsed;
+    private Theme themeUsed;
 
     private boolean fragmentTransactionsAllowed;
 

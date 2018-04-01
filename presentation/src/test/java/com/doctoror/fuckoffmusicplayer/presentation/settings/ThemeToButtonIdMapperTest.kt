@@ -39,11 +39,6 @@ class ThemeToButtonIdMapperTest {
         assertEquals(R.id.radioDayNight, underTest.themeToButtonId(Theme.DAYNIGHT))
     }
 
-    @Test(expected = IllegalArgumentException::class)
-    fun throwsIllegalArgumentExceptionForInvalidTheme() {
-        underTest.themeToButtonId(666)
-    }
-
     @Test
     fun returnsThemeDayForRadioDay() {
         assertEquals(Theme.DAY, underTest.buttonIdToTheme(R.id.radioDay))

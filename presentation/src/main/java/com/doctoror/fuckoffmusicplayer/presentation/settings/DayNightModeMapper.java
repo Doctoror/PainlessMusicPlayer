@@ -15,15 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.settings;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
 
 import javax.inject.Inject;
-
-import static com.doctoror.fuckoffmusicplayer.domain.settings.Theme.DAY;
-import static com.doctoror.fuckoffmusicplayer.domain.settings.Theme.DAYNIGHT;
-import static com.doctoror.fuckoffmusicplayer.domain.settings.Theme.NIGHT;
 
 public final class DayNightModeMapper {
 
@@ -33,7 +30,7 @@ public final class DayNightModeMapper {
     }
 
     @AppCompatDelegate.NightMode
-    public int toDayNightMode(@Theme final int theme) {
+    public int toDayNightMode(@NonNull final Theme theme) {
         switch (theme) {
             case NIGHT:
                 return AppCompatDelegate.MODE_NIGHT_YES;

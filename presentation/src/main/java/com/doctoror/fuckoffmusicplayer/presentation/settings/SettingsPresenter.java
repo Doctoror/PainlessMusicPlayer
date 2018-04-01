@@ -66,7 +66,7 @@ final class SettingsPresenter extends BasePresenter {
     }
 
     void onThemeClick(@IdRes final int buttonId) {
-        @Theme final int theme = themeToButtonIdMapper.buttonIdToTheme(buttonId);
+        final Theme theme = themeToButtonIdMapper.buttonIdToTheme(buttonId);
         if (settings.getTheme() != theme) {
             settings.setTheme(theme);
             AppCompatDelegate.setDefaultNightMode(dayNightModeMapper.toDayNightMode(theme));

@@ -15,12 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.settings
 
-/**
- * App settings
- */
-interface Settings {
+enum class Theme(val index: Int) {
 
-    var isScrobbleEnabled: Boolean
+    NIGHT(0),
+    DAY(1),
+    DAYNIGHT(2);
 
-    var theme: Theme
+    companion object {
+
+        fun fromIndex(index: Int) = try {
+            values()[index]
+        } catch (e: IllegalArgumentException) {
+            NIGHT
+        }
+    }
 }
