@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.media.session;
+package com.doctoror.fuckoffmusicplayer.domain.media.session
 
-import android.support.annotation.NonNull;
-import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.MediaSessionCompat
 
-public interface MediaSessionFactory {
+interface MediaSessionFactory {
 
-    @NonNull
-    MediaSessionCompat newMediaSession();
+    fun newMediaSession(): MediaSessionCompat
 }
