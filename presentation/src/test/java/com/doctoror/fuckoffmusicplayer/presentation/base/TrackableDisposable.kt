@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.presentation.base;
+package com.doctoror.fuckoffmusicplayer.presentation.base
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposable
 
 /**
- * {@link Disposable} that is marked as disposed on {@link #dispose()}
+ * [Disposable] that is marked as disposed on [.dispose]
  */
-final class TrackableDisposable implements Disposable {
+internal class TrackableDisposable : Disposable {
 
-    private boolean disposed;
+    private var disposed: Boolean = false
 
-    @Override
-    public void dispose() {
-        disposed = true;
+    override fun dispose() {
+        disposed = true
     }
 
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
+    override fun isDisposed() = disposed
 }
