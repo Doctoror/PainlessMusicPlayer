@@ -31,7 +31,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporterController;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakelockAcquirer;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakeLockAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
 import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder;
@@ -173,7 +173,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void init() {
-        registerLifecycleObserver(new WakelockAcquirer(mContext));
+        registerLifecycleObserver(new WakeLockAcquirer(mContext));
         registerLifecycleObserver(audioFocusRequester);
 
         // Ensure the ordering of these two does not change

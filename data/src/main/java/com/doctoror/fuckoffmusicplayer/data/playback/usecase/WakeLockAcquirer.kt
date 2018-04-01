@@ -18,9 +18,10 @@ package com.doctoror.fuckoffmusicplayer.data.playback.usecase
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.PowerManager
+import android.support.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 
-class WakelockAcquirer(private val context: Context) : ServiceLifecycleObserver {
+class WakeLockAcquirer(private val context: Context) : ServiceLifecycleObserver {
 
     private var wakeLock: PowerManager.WakeLock? = null
 
@@ -54,6 +55,7 @@ class WakelockAcquirer(private val context: Context) : ServiceLifecycleObserver 
 
     companion object {
 
-        private const val TAG = "WakelockAcquirer"
+        @VisibleForTesting
+        const val TAG = "WakelockAcquirer"
     }
 }
