@@ -18,36 +18,11 @@ package com.doctoror.fuckoffmusicplayer.data.playback.usecase
 import android.content.Context
 import android.media.AudioManager
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
+import com.doctoror.fuckoffmusicplayer.data.media.compat.*
 
 class AudioFocusRequester(
         private val context: Context,
         private val listener: AudioFocusListener) : ServiceLifecycleObserver {
-
-    private var audioManager: AudioManager? = null
-
-    private var audioFocusRequested = false
-
-    var focusGranted = false
-
-    override fun onCreate() {
-        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
-    }
-
-    override fun onDestroy() {
-        audioManager?.abandonAudioFocus(onAudioFocusChangeListener)
-        audioFocusRequested = false
-    }
-
-    fun ensureFocusRequested() {
-        if (!audioFocusRequested) {
-            audioFocusRequested = true
-            val result = audioManager?.requestAudioFocus(
-                    onAudioFocusChangeListener,
-                    AudioManager.STREAM_MUSIC,
-                    AudioManager.AUDIOFOCUS_GAIN) ?: AudioManager.AUDIOFOCUS_REQUEST_FAILED
-            focusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
-        }
-    }
 
     private val onAudioFocusChangeListener = { focusChange: Int ->
         when (focusChange) {
@@ -62,6 +37,46 @@ class AudioFocusRequester(
                 focusGranted = false
                 listener.onFocusDenied()
             }
+        }
+    }
+
+    private val audioAttributes = AudioAttributesCompat(
+            usage = USAGE_MEDIA,
+            contentType = CONTENT_TYPE_MUSIC,
+            legacyStreamType = AudioManager.STREAM_MUSIC)
+
+    private val audioFocusRequest = AudioFocusRequestCompat(
+            audioAttributes = audioAttributes,
+            acceptsDelayedFocusGain = false,
+            onAudioFocusChangeListener = onAudioFocusChangeListener,
+            willPauseWhenDucked = false)
+
+    private var audioManager: AudioManagerCompat? = null
+
+    private var audioFocusRequested = false
+
+    var focusGranted = false
+
+    override fun onCreate() {
+        val audioManagerSource = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+        this.audioManager = if (audioManagerSource != null) {
+            AudioManagerCompat(audioManagerSource)
+        } else {
+            null
+        }
+    }
+
+    override fun onDestroy() {
+        audioManager?.abandonAudioFocus()
+        audioFocusRequested = false
+    }
+
+    fun ensureFocusRequested() {
+        if (!audioFocusRequested) {
+            audioFocusRequested = true
+            val result = audioManager?.requestAudioFocus(audioFocusRequest)
+                    ?: AudioManager.AUDIOFOCUS_REQUEST_FAILED
+            focusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
         }
     }
 }
