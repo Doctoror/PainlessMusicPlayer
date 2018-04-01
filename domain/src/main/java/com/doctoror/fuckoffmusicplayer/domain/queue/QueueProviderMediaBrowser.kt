@@ -13,20 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.queue;
+package com.doctoror.fuckoffmusicplayer.domain.queue
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import java.util.List;
-
-import io.reactivex.Observable;
+import io.reactivex.Observable
 
 /**
  * Provides Queue from MediaBrowser id
  */
-public interface QueueProviderMediaBrowser {
+interface QueueProviderMediaBrowser {
 
-    @NonNull
-    Observable<List<Media>> fromMediaBrowserId(@Nullable String mediaId);
+    fun fromMediaBrowserId(mediaId: String?): Observable<List<Media>>
 }
