@@ -118,8 +118,10 @@ class AudioManagerCompat(private val audioManager: AudioManager) {
                 return returnValue
             }
 
-            private class AudioFocusChangeListenerLegacyWrapper(
-                    private val wrapped: (Int) -> Unit) : AudioManager.OnAudioFocusChangeListener {
+            @VisibleForTesting
+            class AudioFocusChangeListenerLegacyWrapper(
+                    @VisibleForTesting val wrapped: (Int) -> Unit) :
+                    AudioManager.OnAudioFocusChangeListener {
 
                 override fun onAudioFocusChange(focusChange: Int) {
                     wrapped.invoke(focusChange)

@@ -110,14 +110,15 @@ ext {
     ]
 
     dataTestDependencies = [
-            junit        : "junit:junit:$jUnitVersion",
+            junit         : "junit:junit:$jUnitVersion",
 
-            mockito      : "org.mockito:mockito-core:$mockitoVersion",
-            mockitoAndroid      : "org.mockito:mockito-android:$mockitoVersion",
+            mockito       : "org.mockito:mockito-core:$mockitoVersion",
+            mockitoAndroid: "org.mockito:mockito-android:$mockitoVersion",
+            mockitoKotlin : "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
 
-            robolectric  : "org.robolectric:robolectric:$robolectricVersion",
+            robolectric   : "org.robolectric:robolectric:$robolectricVersion",
 
-            testRunner   : "com.android.support.test:runner:$testRunnerVersion"
+            testRunner    : "com.android.support.test:runner:$testRunnerVersion"
     ]
 
     domainDependencies = [
