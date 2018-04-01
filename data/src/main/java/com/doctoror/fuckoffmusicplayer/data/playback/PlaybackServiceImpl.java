@@ -13,6 +13,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.util.SparseIntArray;
 
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakelockAcquirer;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.Log;
@@ -88,17 +90,15 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final AudioBecomingNoisyReceiver mBecomingNoisyReceiver
             = new AudioBecomingNoisyReceiver();
 
+    private final AudioFocusRequester audioFocusRequester;
+
+    private boolean playOnFocusGain;
+
     private PlaybackState mState = STATE_IDLE;
 
     private MediaPlayer mMediaPlayer;
 
-    private AudioManager mAudioManager;
-
     private PlaybackReporter mPlaybackReporter;
-
-    private boolean mAudioFocusRequested;
-    private boolean mFocusGranted;
-    private boolean mPlayOnFocusGain;
 
     private Media mCurrentTrack;
 
@@ -139,20 +139,19 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mPlaybackServicePresenter = playbackServicePresenter;
         this.queueProviderRecentlyScanned = queueProviderRecentlyScanned;
         mStopAction = stopAction;
+
+        audioFocusRequester = new AudioFocusRequester(context, new AudioFocusListenerImpl());
         init();
     }
 
     private void init() {
         registerLifecycleObserver(new WakelockAcquirer(mContext));
+        registerLifecycleObserver(audioFocusRequester);
 
         onCreate();
 
-        mMediaPlayer = mMediaPlayerFactory.newMediaPlayer();
-
         mDestroying = false;
         mErrorMessage = null;
-
-        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         mMediaSessionHolder.openSession();
 
@@ -165,6 +164,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         mContext.registerReceiver(mBecomingNoisyReceiver, mBecomingNoisyReceiver.mIntentFilter);
 
+        mMediaPlayer = mMediaPlayerFactory.newMediaPlayer();
         mMediaPlayer.setListener(mMediaPlayerListener);
         mMediaPlayer.init(mContext);
 
@@ -226,7 +226,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             mDisposablePauseTimeout.dispose();
             mDisposablePauseTimeout = null;
         }
-        mPlayOnFocusGain = true;
+        playOnFocusGain = true;
         playCurrent(true);
     }
 
@@ -237,7 +237,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void pause() {
-        mPlayOnFocusGain = false;
+        playOnFocusGain = false;
         pauseInner();
         mDisposablePauseTimeout = Observable.timer(8, TimeUnit.SECONDS)
                 .subscribe(o -> stop());
@@ -246,13 +246,13 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void stop() {
-        mPlayOnFocusGain = false;
+        playOnFocusGain = false;
         mStopAction.run();
     }
 
     @Override
     public void stopWithError(@Nullable final CharSequence errorMessage) {
-        mPlayOnFocusGain = false;
+        playOnFocusGain = false;
         mErrorMessage = errorMessage;
         mStopAction.run();
     }
@@ -319,8 +319,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             throw new IllegalArgumentException("Play queue is null");
         }
 
-        ensureFocusRequested();
-        if (!mFocusGranted) {
+        playOnFocusGain = true;
+        audioFocusRequester.ensureFocusRequested();
+        if (!audioFocusRequester.getFocusGranted()) {
             return;
         }
 
@@ -383,6 +384,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     @Override
     public void destroy() {
         onDestroy();
+        playOnFocusGain = false;
+
         mMediaPlayer.stop();
 
         mDisposableQueue.dispose();
@@ -392,7 +395,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mPlaybackData.persistAsync();
 
         mDestroying = true;
-        mPlayOnFocusGain = false;
         mContext.unregisterReceiver(mBecomingNoisyReceiver);
         if (mErrorMessage != null) {
             setState(STATE_ERROR);
@@ -405,19 +407,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         }
         mAudioEffects.relese();
         mMediaPlayer.release();
-        mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
-        mAudioFocusRequested = false;
         mMediaSessionHolder.closeSession();
-    }
-
-    private void ensureFocusRequested() {
-        if (!mAudioFocusRequested) {
-            mAudioFocusRequested = true;
-            final int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
-                    AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-            mPlayOnFocusGain = true;
-            mFocusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
-        }
     }
 
     private void setState(@NonNull final PlaybackState state) {
@@ -482,6 +472,22 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final Runnable mRunnableReportCurrentPosition = this::reportCurrentPlaybackPosition;
     private final Runnable mRunnableReportCurrentQueue = this::reportCurrentQueue;
 
+    private final class AudioFocusListenerImpl implements AudioFocusListener {
+
+        @Override
+        public void onFocusGranted() {
+            if (playOnFocusGain) {
+                playCurrent(true);
+            }
+        }
+
+        @Override
+        public void onFocusDenied() {
+            playOnFocusGain = mState == STATE_PLAYING;
+            pauseInner();
+        }
+    };
+
     private final MediaPlayerListener mMediaPlayerListener = new MediaPlayerListener() {
 
         @Override
@@ -534,26 +540,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             mErrorMessage = mPlaybackServicePresenter.showPlaybackFailedError(error);
             setState(STATE_ERROR);
             mStopAction.run();
-        }
-    };
-
-    private final AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener
-            = focusChange -> {
-        switch (focusChange) {
-            case AudioManager.AUDIOFOCUS_GAIN:
-            case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-            case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-                mFocusGranted = true;
-                if (mPlayOnFocusGain) {
-                    playCurrent(true);
-                }
-                break;
-
-            default:
-                mFocusGranted = false;
-                mPlayOnFocusGain = mState == STATE_PLAYING;
-                pauseInner();
-                break;
         }
     };
 
