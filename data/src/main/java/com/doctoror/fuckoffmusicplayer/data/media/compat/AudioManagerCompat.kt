@@ -20,6 +20,7 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
+import android.support.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.media.compat.AudioManagerCompat.Impl.ImplLegacy
 import com.doctoror.fuckoffmusicplayer.data.media.compat.AudioManagerCompat.Impl.ImplOreo
 
@@ -40,7 +41,8 @@ class AudioManagerCompat(private val audioManager: AudioManager) {
 
     fun abandonAudioFocus() = impl.abandonAudioFocus(audioManager)
 
-    private sealed class Impl {
+    @VisibleForTesting
+    sealed class Impl {
 
         abstract fun requestAudioFocus(
                 audioManager: AudioManager,
