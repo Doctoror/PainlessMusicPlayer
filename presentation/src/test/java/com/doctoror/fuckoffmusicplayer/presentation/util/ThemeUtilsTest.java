@@ -33,25 +33,25 @@ import static org.junit.Assert.assertNotNull;
 public final class ThemeUtilsTest {
 
     @Test(expected = NullPointerException.class)
-    public void testGetColorNullTheme() throws Exception {
+    public void testGetColorNullTheme() {
         //noinspection ConstantConditions
         ThemeUtils.getColor(null, android.R.attr.textColorPrimary);
     }
 
     @Test
-    public void testGetColor() throws Exception {
+    public void testGetColor() {
         ThemeUtils.getColor(RuntimeEnvironment.application.getTheme(),
                 android.R.attr.textColorPrimary);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGetColorStateListNullTheme() throws Exception {
+    public void testGetColorStateListNullTheme() {
         //noinspection ConstantConditions
         ThemeUtils.getColorStateList(null, android.R.attr.textColorPrimary);
     }
 
     @Test
-    public void testGetColorStateList() throws Exception {
+    public void testGetColorStateList() {
         final ColorStateList colorStateList = ThemeUtils.getColorStateList(
                 RuntimeEnvironment.application.getTheme(),
                 android.R.attr.textColorPrimary);
