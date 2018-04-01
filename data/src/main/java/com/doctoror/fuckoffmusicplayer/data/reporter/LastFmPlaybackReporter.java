@@ -13,8 +13,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 
-import java.util.List;
-
 public final class LastFmPlaybackReporter implements PlaybackReporter {
 
     private static final String ACTION_META_CHANGED = "fm.last.android.metachanged";
@@ -44,7 +42,7 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
+    public void reportTrackChanged(@NonNull final Media media) {
         if (Objects.notEqual(this.media, media)) {
             this.media = media;
             if (isPlaying) {
@@ -75,16 +73,6 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
             intent.putExtra(PLAYING, isPlaying);
             context.sendBroadcast(intent);
         }
-    }
-
-    @Override
-    public void reportPositionChanged(final long mediaId, final long position) {
-        // Not supported
-    }
-
-    @Override
-    public void reportQueueChanged(@Nullable final List<Media> queue) {
-        // Not supported
     }
 
     @Override

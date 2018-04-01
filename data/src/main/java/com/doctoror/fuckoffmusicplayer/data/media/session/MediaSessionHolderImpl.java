@@ -15,25 +15,26 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media.session;
 
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
-import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
-import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
+import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 
 /**
  * {@link MediaSessionCompat} holder
  */
 public final class MediaSessionHolderImpl implements MediaSessionHolder {
 
+    private final CurrentMediaProvider currentMediaProvider;
     private final MediaSessionFactory mediaSessionFactory;
     private final PlaybackData playbackData;
     private final PlaybackReporterFactory playbackReporterFactory;
@@ -43,9 +44,11 @@ public final class MediaSessionHolderImpl implements MediaSessionHolder {
     private MediaSessionCompat mediaSession;
 
     public MediaSessionHolderImpl(
+            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaSessionFactory mediaSessionFactory,
             @NonNull final PlaybackData playbackData,
             @NonNull final PlaybackReporterFactory playbackReporterFactory) {
+        this.currentMediaProvider = currentMediaProvider;
         this.mediaSessionFactory = mediaSessionFactory;
         this.playbackData = playbackData;
         this.playbackReporterFactory = playbackReporterFactory;
@@ -92,10 +95,9 @@ public final class MediaSessionHolderImpl implements MediaSessionHolder {
         final PlaybackReporter playbackReporter = playbackReporterFactory
                 .newMediaSessionReporter(mediaSession);
 
-        final int position = playbackData.getQueuePosition();
-        final Media current = CollectionUtils.getItemSafe(playbackData.getQueue(), position);
+        final Media current = currentMediaProvider.getCurrentMedia();
         if (current != null) {
-            playbackReporter.reportTrackChanged(current, position);
+            playbackReporter.reportTrackChanged(current);
         }
         playbackReporter.reportPlaybackStateChanged(playbackData.getPlaybackState(), null);
     }

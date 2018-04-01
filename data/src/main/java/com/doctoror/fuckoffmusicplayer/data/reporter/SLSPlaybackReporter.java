@@ -28,8 +28,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 
-import java.util.List;
-
 /**
  * Simple Last.fm Scrobbler playback reporter
  * https://github.com/tgwizard/sls/blob/master/Developer's%20API.md
@@ -72,7 +70,7 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
+    public void reportTrackChanged(@NonNull final Media media) {
         if (Objects.notEqual(this.media, media)) {
             this.media = media;
             if (state != PlaybackState.STATE_IDLE) {
@@ -107,16 +105,6 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
             intent.putExtra(STATE, toSlsState(prevState, state));
             context.sendBroadcast(intent);
         }
-    }
-
-    @Override
-    public void reportPositionChanged(final long mediaId, final long position) {
-        // Not supported
-    }
-
-    @Override
-    public void reportQueueChanged(@Nullable final List<Media> queue) {
-        // Not supported
     }
 
     @Override

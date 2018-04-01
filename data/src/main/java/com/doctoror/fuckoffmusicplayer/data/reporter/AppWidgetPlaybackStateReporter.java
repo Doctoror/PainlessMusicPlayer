@@ -9,8 +9,6 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 
-import java.util.List;
-
 public final class AppWidgetPlaybackStateReporter implements PlaybackReporter {
 
     public static final String ACTION_STATE_CHANGED
@@ -32,12 +30,12 @@ public final class AppWidgetPlaybackStateReporter implements PlaybackReporter {
 
     @Override
     public void onDestroy() {
-
+        // Do nothing
     }
 
     @Override
-    public void reportTrackChanged(@NonNull Media media, int positionInQueue) {
-
+    public void reportTrackChanged(@NonNull final Media media) {
+        // Not supported
     }
 
     @Override
@@ -47,15 +45,5 @@ public final class AppWidgetPlaybackStateReporter implements PlaybackReporter {
         final Intent intent = new Intent(ACTION_STATE_CHANGED);
         intent.putExtra(EXTRA_STATE, state.ordinal());
         context.sendBroadcast(intent, permissionReceivePlaybackState);
-    }
-
-    @Override
-    public void reportPositionChanged(long mediaId, long position) {
-
-    }
-
-    @Override
-    public void reportQueueChanged(@Nullable List<Media> queue) {
-
     }
 }

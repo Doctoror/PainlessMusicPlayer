@@ -15,14 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.reporter;
 
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
-
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.List;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 
 /**
  * Reports to multiple {@link PlaybackReporter}s
@@ -37,35 +35,19 @@ final class PlaybackReporterSet implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
+    public void reportTrackChanged(@NonNull final Media media) {
         //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < mReporters.length; i++) {
-            mReporters[i].reportTrackChanged(media, positionInQueue);
+            mReporters[i].reportTrackChanged(media);
         }
     }
 
     @Override
     public void reportPlaybackStateChanged(@NonNull final PlaybackState state,
-            @Nullable final CharSequence errorMessage) {
+                                           @Nullable final CharSequence errorMessage) {
         //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < mReporters.length; i++) {
             mReporters[i].reportPlaybackStateChanged(state, errorMessage);
-        }
-    }
-
-    @Override
-    public void reportPositionChanged(final long mediaId, final long position) {
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < mReporters.length; i++) {
-            mReporters[i].reportPositionChanged(mediaId, position);
-        }
-    }
-
-    @Override
-    public void reportQueueChanged(@Nullable final List<Media> queue) {
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < mReporters.length; i++) {
-            mReporters[i].reportQueueChanged(queue);
         }
     }
 

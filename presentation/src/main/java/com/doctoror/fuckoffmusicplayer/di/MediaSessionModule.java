@@ -22,8 +22,9 @@ import android.support.v4.media.session.MediaSessionCompat;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionCallback;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionFactoryImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionHolderImpl;
-import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
+import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
@@ -66,10 +67,11 @@ final class MediaSessionModule {
     @Provides
     @Singleton
     MediaSessionHolder provideMediaSesionHolder(
+            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaSessionFactory mediaSessionFactory,
             @NonNull final PlaybackData playbackData,
             @NonNull final PlaybackReporterFactory playbackReporterFactory) {
         return new MediaSessionHolderImpl(
-                mediaSessionFactory, playbackData, playbackReporterFactory);
+                currentMediaProvider, mediaSessionFactory, playbackData, playbackReporterFactory);
     }
 }

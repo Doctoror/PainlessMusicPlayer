@@ -37,7 +37,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -67,7 +66,7 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     }
 
     @Override
-    public void reportTrackChanged(@NonNull final Media media, final int positionInQueue) {
+    public void reportTrackChanged(@NonNull final Media media) {
         final Uri data = media.getData();
         final MediaMetadataCompat.Builder b = new MediaMetadataCompat.Builder()
                 .putText(MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
@@ -144,16 +143,6 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
         }
 
         mMediaSession.setPlaybackState(builder.build());
-    }
-
-    @Override
-    public void reportPositionChanged(final long mediaId, final long position) {
-        // Not supported
-    }
-
-    @Override
-    public void reportQueueChanged(@Nullable final List<Media> queue) {
-        // Not supported
     }
 
     @Override

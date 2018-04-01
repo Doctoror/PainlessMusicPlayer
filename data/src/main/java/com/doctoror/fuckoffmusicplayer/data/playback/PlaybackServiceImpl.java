@@ -108,8 +108,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final PlaybackReporters playbackReporters;
 
     private final Runnable runnableReportCurrentMedia;
-    private final Runnable runnableReportCurrentPosition;
-    private final Runnable runnableReportCurrentQueue;
 
     private boolean playOnFocusGain;
 
@@ -161,14 +159,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         playbackReporters = new PlaybackReporters(
                 currentMediaProvider,
                 mediaSessionHolder,
-                playbackData,
                 playbackReporterFactory);
 
         runnableReportCurrentMedia = playbackReporters::reportCurrentMedia;
-        runnableReportCurrentPosition = () ->
-                playbackReporters.reportCurrentPlaybackPosition(mMediaPlayer);
-        runnableReportCurrentQueue = playbackReporters::reportCurrentQueue;
-
         init();
     }
 
@@ -377,7 +370,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 }
 
                 playbackReporters.reportCurrentMedia();
-                playbackReporters.reportCurrentPlaybackPosition(mMediaPlayer);
 
                 mMediaPlayer.stop();
 
@@ -452,7 +444,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private void updateMediaPosition() {
         if (mState == STATE_PLAYING) {
             mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
-            mExecutor.submit(runnableReportCurrentPosition);
         }
     }
 
@@ -546,7 +537,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                     if (indexOf != -1) {
                         // This track position changed in queue
                         playbackController.setPositionInQueue(indexOf);
-                        mExecutor.submit(runnableReportCurrentQueue);
                     } else {
                         // This track is not in new queue
                         restart();

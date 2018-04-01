@@ -17,20 +17,15 @@ package com.doctoror.fuckoffmusicplayer.data.playback.usecase
 
 import android.support.annotation.WorkerThread
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
-import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState
-import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory
 
 class PlaybackReporters(
         private val currentMediaProvider: CurrentMediaProvider,
         private val mediaSessionHolder: MediaSessionHolder,
-        private val playbackData: PlaybackData,
         private val playbackReporterFactory: PlaybackReporterFactory) : ServiceLifecycleObserver {
 
     private var playbackReporter: PlaybackReporter? = null
@@ -44,10 +39,9 @@ class PlaybackReporters(
 
     @WorkerThread
     fun reportCurrentMedia() {
-        val pos = playbackData.queuePosition
-        val media = CollectionUtils.getItemSafe<Media>(playbackData.queue, pos)
+        val media = currentMediaProvider.currentMedia
         if (media != null) {
-            playbackReporter?.reportTrackChanged(media, pos)
+            playbackReporter?.reportTrackChanged(media)
         }
     }
 
@@ -56,28 +50,6 @@ class PlaybackReporters(
             state: PlaybackState,
             errorMessage: CharSequence?) {
         playbackReporter?.reportPlaybackStateChanged(state, errorMessage)
-    }
-
-    @WorkerThread
-    fun reportCurrentPlaybackPosition(mediaPlayer: MediaPlayer?) {
-        val media = currentMediaProvider.currentMedia
-        if (media == null) {
-            playbackReporter?.reportPositionChanged(0, 0)
-        } else {
-            val mediaUri = media.data
-            if (mediaUri != null && mediaUri == mediaPlayer?.getLoadedMediaUri()) {
-                playbackReporter?.reportPositionChanged(
-                        media.id, mediaPlayer.getCurrentPosition())
-            }
-        }
-    }
-
-    @WorkerThread
-    fun reportCurrentQueue() {
-        val queue = playbackData.queue
-        if (queue != null) {
-            playbackReporter?.reportQueueChanged(queue)
-        }
     }
 
     override fun onDestroy() {

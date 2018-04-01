@@ -25,18 +25,12 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 interface PlaybackReporter {
 
     @WorkerThread
-    fun reportTrackChanged(media: Media, positionInQueue: Int)
+    fun reportTrackChanged(media: Media)
 
     @WorkerThread
     fun reportPlaybackStateChanged(
             state: PlaybackState,
             errorMessage: CharSequence?)
-
-    @WorkerThread
-    fun reportPositionChanged(mediaId: Long, position: Long)
-
-    @WorkerThread
-    fun reportQueueChanged(queue: List<Media>?)
 
     fun onDestroy()
 }
