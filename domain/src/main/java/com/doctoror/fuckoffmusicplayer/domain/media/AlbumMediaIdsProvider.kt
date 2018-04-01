@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.domain.media;
+package com.doctoror.fuckoffmusicplayer.domain.media
 
-import java.io.IOException;
+import java.io.IOException
 
-public interface AlbumMediaIdsProvider {
+interface AlbumMediaIdsProvider {
 
     /**
      * Retrieves list if media ids that belong to the specified album
@@ -25,5 +25,6 @@ public interface AlbumMediaIdsProvider {
      * @param ambumId the id of the album to get media ids for
      * @return ist if media ids that belong to the specified album
      */
-    long[] getAlbumMediaIds(long ambumId) throws IOException;
+    @Throws(IOException::class)
+    fun getAlbumMediaIds(ambumId: Long): LongArray
 }
