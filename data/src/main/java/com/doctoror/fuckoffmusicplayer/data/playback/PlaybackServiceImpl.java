@@ -357,11 +357,15 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 reportCurrentPlaybackPosition();
 
                 mMediaPlayer.stop();
-                mMediaPlayer.load(finalMedia.getData());
-                if (seekPosition != 0) {
-                    mMediaPlayer.seekTo(seekPosition);
+
+                final Uri uri = finalMedia.getData();
+                if (uri != null) {
+                    mMediaPlayer.load(uri);
+                    if (seekPosition != 0) {
+                        mMediaPlayer.seekTo(seekPosition);
+                    }
+                    mMediaPlayer.play();
                 }
-                mMediaPlayer.play();
             });
         }
     }
@@ -486,7 +490,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             playOnFocusGain = mState == STATE_PLAYING;
             pauseInner();
         }
-    };
+    }
 
     private final MediaPlayerListener mMediaPlayerListener = new MediaPlayerListener() {
 
@@ -535,7 +539,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         }
 
         @Override
-        public void onPlayerError(final Exception error) {
+        public void onPlayerError(@NonNull final Exception error) {
             mCurrentTrack = null;
             mErrorMessage = mPlaybackServicePresenter.showPlaybackFailedError(error);
             setState(STATE_ERROR);
@@ -546,7 +550,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final class QueueConsumer implements Consumer<List<Media>> {
 
         @Override
-        public void accept(@NonNull final List<Media> q) throws Exception {
+        public void accept(@NonNull final List<Media> q) {
             if (q.isEmpty()) {
                 mCurrentTrack = null;
                 mAlbumThumbHolder.setAlbumThumb(null);
