@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquire
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayCurrentOrNewQueueUseCase;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayMediaFromQueueUseCase;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporters;
+import com.doctoror.fuckoffmusicplayer.data.playback.usecase.QueueMonitor;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.StopOnAudioNoisyUseCase;
 import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakeLockAcquirer;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
@@ -49,7 +50,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +57,6 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_ERROR;
@@ -69,8 +68,6 @@ import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STAT
 public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements PlaybackService {
 
     private final Context mContext;
-
-    private final AlbumThumbHolder mAlbumThumbHolder;
 
     private final AudioEffects mAudioEffects;
 
@@ -96,13 +93,13 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final PlaybackReporters playbackReporters;
 
+    private final QueueMonitor queueMonitor;
+
     private boolean playOnFocusGain;
 
     private PlaybackState mState = STATE_IDLE;
 
     private final MediaPlayer mMediaPlayer;
-
-    private Media mCurrentTrack;
 
     private Disposable mDisposableTimer;
     private Disposable mDisposablePauseTimeout;
@@ -112,7 +109,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private CharSequence mErrorMessage;
 
     private PlaybackController mPlaybackController;
-    private Disposable mDisposableQueue;
 
     public PlaybackServiceImpl(
             @NonNull final Context context,
@@ -129,7 +125,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,
             @NonNull final Runnable stopAction) {
         mContext = context;
-        mAlbumThumbHolder = albumThumbHolder;
         mAudioEffects = audioEffects;
         mCurrentMediaProvider = currentMediaProvider;
         mMediaSessionHolder = mediaSessionHolder;
@@ -162,6 +157,14 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 playMediaFromQueueUseCase,
                 queueProviderRecentlyScanned);
 
+        queueMonitor = new QueueMonitor(
+                albumThumbHolder,
+                currentMediaProvider,
+                this::getPlaybackController,
+                playbackData,
+                this::restart,
+                stopAction);
+
         init();
     }
 
@@ -169,6 +172,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         registerLifecycleObserver(new WakeLockAcquirer(mContext));
         registerLifecycleObserver(audioFocusRequester);
         registerLifecycleObserver(new StopOnAudioNoisyUseCase(mContext, mStopAction));
+        registerLifecycleObserver(queueMonitor);
 
         // Ensure the ordering of these two does not change
         registerLifecycleObserver(new MediaSessionAcquirer(mMediaSessionHolder));
@@ -181,7 +185,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mErrorMessage = null;
 
         mMediaPlayer.init(mContext);
-        mDisposableQueue = mPlaybackData.queueObservable().subscribe(new QueueConsumer());
     }
 
     @NonNull
@@ -334,7 +337,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void restart() {
-        mCurrentTrack = null;
         if (mState == STATE_PLAYING) {
             mMediaPlayer.stop();
         }
@@ -362,8 +364,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         playOnFocusGain = false;
 
         mMediaPlayer.stop();
-
-        mDisposableQueue.dispose();
 
         mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
         mPlaybackData.persistAsync();
@@ -448,7 +448,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         @Override
         public void onPlaybackFinished() {
             mErrorMessage = null;
-            mCurrentTrack = null;
             if (!mDestroying) {
                 playNextInner(false);
             }
@@ -466,38 +465,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         @Override
         public void onPlayerError(@NonNull final Exception error) {
-            mCurrentTrack = null;
             mErrorMessage = mPlaybackServicePresenter.showPlaybackFailedError(error);
             setState(STATE_ERROR);
             mStopAction.run();
-        }
-    }
-
-    private final class QueueConsumer implements Consumer<List<Media>> {
-
-        @Override
-        public void accept(@NonNull final List<Media> q) {
-            if (q.isEmpty()) {
-                mCurrentTrack = null;
-                mAlbumThumbHolder.setAlbumThumb(null);
-                mStopAction.run();
-            } else {
-                final PlaybackController playbackController = getPlaybackController();
-                playbackController.setQueue(q);
-
-                final Media current = mCurrentTrack;
-                // Playing some track
-                if (current != null) {
-                    final int indexOf = q.indexOf(current);
-                    if (indexOf != -1) {
-                        // This track position changed in queue
-                        playbackController.setPositionInQueue(indexOf);
-                    } else {
-                        // This track is not in new queue
-                        restart();
-                    }
-                }
-            }
         }
     }
 }
