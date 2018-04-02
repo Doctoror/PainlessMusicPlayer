@@ -21,6 +21,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackServiceImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioFocus;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioNoisyManagement;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitMediaPositionUpdater;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitMediaSession;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayCurrentOrNewQueue;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue;
@@ -87,6 +88,14 @@ public final class PlaybackServiceModule {
             @NonNull final PlaybackAndroidService service,
             @NonNull final Runnable stopAction) {
         return new PlaybackServiceUnitAudioNoisyManagement(service, stopAction);
+    }
+
+    @Provides
+    @ServiceScope
+    PlaybackServiceUnitMediaPositionUpdater providePlaybackServiceUnitMediaPositionUpdater(
+            @NonNull final MediaPlayer mediaPlayer,
+            @NonNull final PlaybackData playbackData) {
+        return new PlaybackServiceUnitMediaPositionUpdater(mediaPlayer, playbackData);
     }
 
     @Provides
@@ -183,6 +192,7 @@ public final class PlaybackServiceModule {
             @NonNull final PlaybackData playbackData,
             @NonNull final PlaybackServiceUnitAudioFocus unitAudioFocus,
             @NonNull final PlaybackServiceUnitAudioNoisyManagement unitAudioNoisyManagement,
+            @NonNull final PlaybackServiceUnitMediaPositionUpdater unitMediaPositionUpdater,
             @NonNull final PlaybackServiceUnitMediaSession unitMediaSession,
             @NonNull final PlaybackServiceUnitPlayCurrentOrNewQueue unitPlayCurrentOrNewQueue,
             @NonNull final PlaybackServiceUnitPlayMediaFromQueue unitPlayMediaFromQueue,
@@ -202,6 +212,7 @@ public final class PlaybackServiceModule {
                 playbackData,
                 unitAudioFocus,
                 unitAudioNoisyManagement,
+                unitMediaPositionUpdater,
                 unitMediaSession,
                 unitPlayCurrentOrNewQueue,
                 unitPlayMediaFromQueue,
