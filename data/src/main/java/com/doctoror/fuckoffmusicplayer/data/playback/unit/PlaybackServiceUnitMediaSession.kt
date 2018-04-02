@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder
@@ -21,7 +21,7 @@ import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder
 /**
  * Creates MediaSession [onCreate], and closes MediaSession [onDestroy]
  */
-class MediaSessionAcquirer(
+class PlaybackServiceUnitMediaSession(
         private val mediaSessionHolder: MediaSessionHolder) : ServiceLifecycleObserver {
 
     override fun onCreate() {

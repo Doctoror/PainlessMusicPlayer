@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import android.content.Context
 import android.media.AudioManager

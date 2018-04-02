@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
@@ -24,12 +24,12 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PAUSE
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
-class PlayMediaFromQueueUseCase(
+class PlaybackServiceUnitPlayMediaFromQueue(
         private val currentMediaProvider: CurrentMediaProvider,
         private val audioFocusRequester: AudioFocusRequester,
         private val mediaPlayer: MediaPlayer,
         private val playbackData: PlaybackData,
-        private val playbackReporters: PlaybackReporters) {
+        private val playbackReporters: PlaybackServiceUnitReporter) {
 
     /**
      * Plays media from queue based on position.

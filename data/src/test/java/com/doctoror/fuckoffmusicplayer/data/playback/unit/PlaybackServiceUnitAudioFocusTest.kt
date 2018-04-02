@@ -22,8 +22,8 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
 import android.os.Build
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusListener
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusRequester
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -36,7 +36,7 @@ import org.robolectric.annotation.Config
 
 @Config(manifest = Config.NONE, sdk = [Build.VERSION_CODES.O_MR1])
 @RunWith(RobolectricTestRunner::class)
-class AudioFocusRequesterTest {
+class PlaybackServiceUnitAudioFocusTest {
 
     private val audioManager: AudioManager = mock()
 

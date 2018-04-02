@@ -15,16 +15,16 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media.playback.usecase
 
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquirer
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitMediaSession
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import org.junit.Test
 
-class MediaSessionAcquirerTest {
+class PlaybackServiceUnitMediaSessionTest {
 
     private val mediaSessionHolder: MediaSessionHolder = mock()
-    private val underTest = MediaSessionAcquirer(mediaSessionHolder)
+    private val underTest = PlaybackServiceUnitMediaSession(mediaSessionHolder)
 
     @Test
     fun opensMediaSessionOnCreate() {

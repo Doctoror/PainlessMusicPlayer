@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController
 import com.doctoror.fuckoffmusicplayer.data.util.Log
@@ -22,11 +22,11 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
 import io.reactivex.schedulers.Schedulers
 
-class PlayCurrentOrNewQueueUseCase(
+class PlaybackServiceUnitPlayCurrentOrNewQueue(
         private val playbackControllerSource: () -> PlaybackController,
         private val playbackData: PlaybackData,
         private val playbackInitializer: PlaybackInitializer,
-        private val playMedaFromQueueUseCase: PlayMediaFromQueueUseCase,
+        private val playMedaFromQueueUseCase: PlaybackServiceUnitPlayMediaFromQueue,
         private val queueProviderRecentlyScanned: QueueProviderRecentlyScanned) {
 
     fun playCurrentOrNewQueue() {

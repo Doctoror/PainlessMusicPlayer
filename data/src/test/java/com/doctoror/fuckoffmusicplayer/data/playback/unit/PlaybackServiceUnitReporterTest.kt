@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.data.playback.usecase
 
 import android.support.v4.media.session.MediaSessionCompat
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitReporter
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_ERROR
@@ -26,7 +27,7 @@ import com.nhaarman.mockito_kotlin.*
 import org.junit.Before
 import org.junit.Test
 
-class PlaybackReportersTest {
+class PlaybackServiceUnitReporterTest {
 
     private val mediaSession: MediaSessionCompat = mock()
     private val playbackReporter: PlaybackReporter = mock()
@@ -35,7 +36,7 @@ class PlaybackReportersTest {
     private val mediaSessionHolder: MediaSessionHolder = mock()
     private val playbackReporterFactory: PlaybackReporterFactory = mock()
 
-    private val underTest = PlaybackReporters(
+    private val underTest = PlaybackServiceUnitReporter(
             currentMediaProvider, mediaSessionHolder, playbackReporterFactory)
 
     @Before

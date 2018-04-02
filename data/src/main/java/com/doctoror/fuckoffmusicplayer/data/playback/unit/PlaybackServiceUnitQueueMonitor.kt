@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController
@@ -27,7 +27,7 @@ import io.reactivex.disposables.CompositeDisposable
 /**
  * Monitors position in queue and handles it's changes.
  */
-class QueueMonitor(
+class PlaybackServiceUnitQueueMonitor(
         private val albumThumbHolder: AlbumThumbHolder,
         private val currentMediaProvider: CurrentMediaProvider,
         private val playbackControllerProvider: () -> PlaybackController,

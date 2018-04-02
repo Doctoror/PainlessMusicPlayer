@@ -15,14 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.controller
 
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayMediaFromQueueUseCase
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 open class PlaybackControllerNormal(
         private val playbackParams: PlaybackParams,
-        private val playMediaFromQueueUseCase: PlayMediaFromQueueUseCase,
+        private val playMediaFromQueueUseCase: PlaybackServiceUnitPlayMediaFromQueue,
         private val stopAction: Runnable) : PlaybackController {
 
     protected val lock = Any()

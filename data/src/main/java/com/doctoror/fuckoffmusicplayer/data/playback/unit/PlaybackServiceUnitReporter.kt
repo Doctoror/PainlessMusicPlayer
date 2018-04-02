@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import android.support.annotation.WorkerThread
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory
 
-class PlaybackReporters(
+class PlaybackServiceUnitReporter(
         private val currentMediaProvider: CurrentMediaProvider,
         private val mediaSessionHolder: MediaSessionHolder,
         private val playbackReporterFactory: PlaybackReporterFactory) : ServiceLifecycleObserver {

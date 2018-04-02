@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.data.playback.controller
 
 import android.util.SparseIntArray
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayMediaFromQueueUseCase
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue
 import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
@@ -24,7 +24,7 @@ import java.util.*
 
 class PlaybackControllerShuffle(
         playbackParams: PlaybackParams,
-        playMediaFromQueueUseCase: PlayMediaFromQueueUseCase,
+        playMediaFromQueueUseCase: PlaybackServiceUnitPlayMediaFromQueue,
         stopAction: Runnable) : PlaybackControllerNormal(
         playbackParams, playMediaFromQueueUseCase, stopAction) {
 

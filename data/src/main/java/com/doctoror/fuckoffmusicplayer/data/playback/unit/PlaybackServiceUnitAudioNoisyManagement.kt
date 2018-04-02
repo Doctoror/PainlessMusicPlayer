@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -23,7 +23,7 @@ import android.media.AudioManager
 import android.support.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 
-class StopOnAudioNoisyUseCase(
+class PlaybackServiceUnitAudioNoisyManagement(
         private val context: Context,
         stopAction: Runnable) : ServiceLifecycleObserver {
 

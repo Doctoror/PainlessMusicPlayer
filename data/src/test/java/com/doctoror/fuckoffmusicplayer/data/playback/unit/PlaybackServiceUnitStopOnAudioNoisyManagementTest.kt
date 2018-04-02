@@ -18,18 +18,19 @@ package com.doctoror.fuckoffmusicplayer.data.playback.usecase
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioNoisyManagement
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 
-class StopOnAudioNoisyUseCaseTest {
+class PlaybackServiceUnitStopOnAudioNoisyManagementTest {
 
     private val context: Context = mock()
     private val stopAction: Runnable = mock()
 
-    private val underTest = StopOnAudioNoisyUseCase(context, stopAction)
+    private val underTest = PlaybackServiceUnitAudioNoisyManagement(context, stopAction)
 
     private fun mockIntentWithAction(action: String?): Intent {
         val intent: Intent = mock()

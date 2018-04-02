@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -21,7 +21,7 @@ import android.os.PowerManager
 import android.support.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 
-class WakeLockAcquirer(private val context: Context) : ServiceLifecycleObserver {
+class PlaybackServiceUnitWakeLock(private val context: Context) : ServiceLifecycleObserver {
 
     private var wakeLock: PowerManager.WakeLock? = null
 

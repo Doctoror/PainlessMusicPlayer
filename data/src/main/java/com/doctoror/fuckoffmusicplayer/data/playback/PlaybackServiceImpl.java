@@ -24,15 +24,15 @@ import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController;
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerNormal;
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerShuffle;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusListener;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.AudioFocusRequester;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.MediaSessionAcquirer;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayCurrentOrNewQueueUseCase;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlayMediaFromQueueUseCase;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.PlaybackReporters;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.QueueMonitor;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.StopOnAudioNoisyUseCase;
-import com.doctoror.fuckoffmusicplayer.data.playback.usecase.WakeLockAcquirer;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusListener;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusRequester;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitMediaSession;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayCurrentOrNewQueue;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitReporter;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitQueueMonitor;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioNoisyManagement;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
@@ -87,13 +87,13 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final AudioFocusRequester audioFocusRequester;
 
-    private final PlayMediaFromQueueUseCase playMediaFromQueueUseCase;
+    private final PlaybackServiceUnitPlayMediaFromQueue playbackServiceUnitPlayMediaFromQueue;
 
-    private final PlayCurrentOrNewQueueUseCase playCurrentOrNewQueueUseCase;
+    private final PlaybackServiceUnitPlayCurrentOrNewQueue playbackServiceUnitPlayCurrentOrNewQueue;
 
-    private final PlaybackReporters playbackReporters;
+    private final PlaybackServiceUnitReporter playbackServiceUnitReporter;
 
-    private final QueueMonitor queueMonitor;
+    private final PlaybackServiceUnitQueueMonitor playbackServiceUnitQueueMonitor;
 
     private boolean playOnFocusGain;
 
@@ -135,7 +135,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         audioFocusRequester = new AudioFocusRequester(context, new AudioFocusListenerImpl());
 
-        playbackReporters = new PlaybackReporters(
+        playbackServiceUnitReporter = new PlaybackServiceUnitReporter(
                 currentMediaProvider,
                 mediaSessionHolder,
                 playbackReporterFactory);
@@ -143,21 +143,21 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mMediaPlayer = mediaPlayerFactory.newMediaPlayer();
         mMediaPlayer.setListener(new MediaPlayerListenerImpl());
 
-        playMediaFromQueueUseCase = new PlayMediaFromQueueUseCase(
+        playbackServiceUnitPlayMediaFromQueue = new PlaybackServiceUnitPlayMediaFromQueue(
                 currentMediaProvider,
                 audioFocusRequester,
                 mMediaPlayer,
                 playbackData,
-                playbackReporters);
+                playbackServiceUnitReporter);
 
-        playCurrentOrNewQueueUseCase = new PlayCurrentOrNewQueueUseCase(
+        playbackServiceUnitPlayCurrentOrNewQueue = new PlaybackServiceUnitPlayCurrentOrNewQueue(
                 this::getPlaybackController,
                 playbackData,
                 playbackInitializer,
-                playMediaFromQueueUseCase,
+                playbackServiceUnitPlayMediaFromQueue,
                 queueProviderRecentlyScanned);
 
-        queueMonitor = new QueueMonitor(
+        playbackServiceUnitQueueMonitor = new PlaybackServiceUnitQueueMonitor(
                 albumThumbHolder,
                 currentMediaProvider,
                 this::getPlaybackController,
@@ -169,14 +169,14 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void init() {
-        registerLifecycleObserver(new WakeLockAcquirer(mContext));
+        registerLifecycleObserver(new PlaybackServiceUnitWakeLock(mContext));
         registerLifecycleObserver(audioFocusRequester);
-        registerLifecycleObserver(new StopOnAudioNoisyUseCase(mContext, mStopAction));
-        registerLifecycleObserver(queueMonitor);
+        registerLifecycleObserver(new PlaybackServiceUnitAudioNoisyManagement(mContext, mStopAction));
+        registerLifecycleObserver(playbackServiceUnitQueueMonitor);
 
         // Ensure the ordering of these two does not change
-        registerLifecycleObserver(new MediaSessionAcquirer(mMediaSessionHolder));
-        registerLifecycleObserver(playbackReporters);
+        registerLifecycleObserver(new PlaybackServiceUnitMediaSession(mMediaSessionHolder));
+        registerLifecycleObserver(playbackServiceUnitReporter);
 
         // Must be called after all lifecycle observers registered
         onCreate();
@@ -217,7 +217,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private PlaybackController newPlaybackControllerNormal() {
         return new PlaybackControllerNormal(
                 mPlaybackParams,
-                playMediaFromQueueUseCase,
+                playbackServiceUnitPlayMediaFromQueue,
                 mStopAction);
     }
 
@@ -225,7 +225,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private PlaybackController newPlaybackControllerShuffle() {
         return new PlaybackControllerShuffle(
                 mPlaybackParams,
-                playMediaFromQueueUseCase,
+                playbackServiceUnitPlayMediaFromQueue,
                 mStopAction);
     }
 
@@ -253,7 +253,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void playCurrentOrNewQueue() {
-        Completable.fromAction(playCurrentOrNewQueueUseCase::playCurrentOrNewQueue)
+        Completable.fromAction(playbackServiceUnitPlayCurrentOrNewQueue::playCurrentOrNewQueue)
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
@@ -316,7 +316,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void playCurrent(final boolean mayContinueWhereStopped) {
-        Completable.fromAction(() -> playMediaFromQueueUseCase.play(
+        Completable.fromAction(() -> playbackServiceUnitPlayMediaFromQueue.play(
                 mPlaybackData.getQueue(),
                 mPlaybackData.getQueuePosition(),
                 mayContinueWhereStopped))
@@ -393,7 +393,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     @Override
     public void notifyState() {
         mExecutor.submit(() ->
-                playbackReporters.reportPlaybackState(mState, mErrorMessage));
+                playbackServiceUnitReporter.reportPlaybackState(mState, mErrorMessage));
     }
 
     private void updateMediaPosition() {
