@@ -26,7 +26,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 class PlaybackServiceUnitPlayMediaFromQueue(
         private val currentMediaProvider: CurrentMediaProvider,
-        private val audioFocusRequester: AudioFocusRequester,
+        private val audioFocusRequester: PlaybackServiceUnitAudioFocus,
         private val mediaPlayer: MediaPlayer,
         private val playbackData: PlaybackData,
         private val playbackReporters: PlaybackServiceUnitReporter) {

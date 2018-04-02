@@ -18,6 +18,11 @@ package com.doctoror.fuckoffmusicplayer.di;
 import android.support.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackServiceImpl;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioFocus;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioNoisyManagement;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitMediaSession;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitReporter;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock;
 import com.doctoror.fuckoffmusicplayer.di.scopes.ServiceScope;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
@@ -43,6 +48,62 @@ public final class PlaybackServiceModule {
 
     @Provides
     @ServiceScope
+    PlaybackServiceUnitAudioFocus providePlaybackServiceUnitAudioFocus(
+            @NonNull final PlaybackAndroidService service) {
+        return new PlaybackServiceUnitAudioFocus(service);
+    }
+
+    @Provides
+    @ServiceScope
+    PlaybackServiceUnitAudioNoisyManagement providePlaybackServiceUnitAudioNoisyManagement(
+            @NonNull final PlaybackAndroidService service) {
+        return new PlaybackServiceUnitAudioNoisyManagement(service, service::stopSelf);
+    }
+
+    @Provides
+    @ServiceScope
+    PlaybackServiceUnitMediaSession providePlaybackServiceUnitMediaSession(
+            @NonNull final MediaSessionHolder mediaSessionHolder) {
+        return new PlaybackServiceUnitMediaSession(mediaSessionHolder);
+    }
+
+//    @Provides
+//    @ServiceScope
+//    PlaybackServiceUnitPlayCurrentOrNewQueue providePlaybackServiceUnitPlayCurrentOrNewQueue() {
+//        throw new UnsupportedOperationException(); // TODO
+//    }
+//
+//    @Provides
+//    @ServiceScope
+//    PlaybackServiceUnitPlayMediaFromQueue providePlaybackServiceUnitPlayMediaFromQueue() {
+//        throw new UnsupportedOperationException(); // TODO
+//    }
+//
+//    @Provides
+//    @ServiceScope
+//    PlaybackServiceUnitQueueMonitor providePlaybackServiceUnitQueueMonitor() {
+//        throw new UnsupportedOperationException(); // TODO
+//    }
+
+    @Provides
+    @ServiceScope
+    PlaybackServiceUnitReporter providePlaybackServiceUnitReporter(
+            @NonNull final CurrentMediaProvider currentMediaProvider,
+            @NonNull final MediaSessionHolder mediaSessionHolder,
+            @NonNull final PlaybackReporterFactory playbackReporterFactory) {
+        return new PlaybackServiceUnitReporter(
+                currentMediaProvider, mediaSessionHolder, playbackReporterFactory);
+    }
+
+    @Provides
+    @ServiceScope
+    PlaybackServiceUnitWakeLock providePlaybackServiceUnitWakeLock(
+            @NonNull final PlaybackAndroidService service) {
+        return new PlaybackServiceUnitWakeLock(service);
+    }
+
+    @Provides
+    @ServiceScope
     PlaybackService providePlaybackService(
             @NonNull final PlaybackAndroidService service,
             @NonNull final AlbumThumbHolder albumThumbHolder,
@@ -53,8 +114,12 @@ public final class PlaybackServiceModule {
             @NonNull final PlaybackData playbackData,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackParams playbackParams,
-            @NonNull final PlaybackReporterFactory playbackReporterFactory,
-            @NonNull final PlaybackServiceView playbackServicePresenter,
+            @NonNull final PlaybackServiceUnitAudioFocus unitAudioFocus,
+            @NonNull final PlaybackServiceUnitAudioNoisyManagement unitAudioNoisyManagement,
+            @NonNull final PlaybackServiceUnitMediaSession unitMediaSession,
+            @NonNull final PlaybackServiceUnitReporter unitReporter,
+            @NonNull final PlaybackServiceUnitWakeLock unitWakeLock,
+            @NonNull final PlaybackServiceView playbackServiceView,
             @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned) {
         return new PlaybackServiceImpl(
                 service,
@@ -66,8 +131,12 @@ public final class PlaybackServiceModule {
                 playbackData,
                 playbackInitializer,
                 playbackParams,
-                playbackReporterFactory,
-                playbackServicePresenter,
+                unitAudioFocus,
+                unitAudioNoisyManagement,
+                unitMediaSession,
+                unitReporter,
+                unitWakeLock,
+                playbackServiceView,
                 queueProviderRecentlyScanned,
                 service::stopSelf);
     }

@@ -23,7 +23,7 @@ import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
 import android.os.Build
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusListener
-import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusRequester
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioFocus
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -43,7 +43,7 @@ class PlaybackServiceUnitAudioFocusTest {
     private val context: Context = mock()
     private val listener: AudioFocusListener = mock()
 
-    private val underTest = AudioFocusRequester(context, listener)
+    private val underTest = PlaybackServiceUnitAudioFocus(context, listener)
 
     @Before
     fun setup() {

@@ -20,9 +20,9 @@ import android.media.AudioManager
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.data.media.compat.*
 
-class AudioFocusRequester(
-        private val context: Context,
-        private val listener: AudioFocusListener) : ServiceLifecycleObserver {
+class PlaybackServiceUnitAudioFocus(private val context: Context) : ServiceLifecycleObserver {
+
+    var listener: AudioFocusListener? = null
 
     private val onAudioFocusChangeListener = { focusChange: Int ->
         when (focusChange) {
@@ -30,14 +30,15 @@ class AudioFocusRequester(
             AudioManager.AUDIOFOCUS_GAIN_TRANSIENT,
             AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK -> {
                 focusGranted = true
-                listener.onFocusGranted()
+                listener?.onFocusGranted()
             }
 
             else -> {
                 focusGranted = false
-                listener.onFocusDenied()
+                listener?.onFocusDenied()
             }
         }
+        Unit
     }
 
     private val audioAttributes = AudioAttributesCompat(
