@@ -213,7 +213,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void playPrev() {
-        playPrevInner();
+        Completable.fromAction(() -> playbackControllerProvider.obtain().playPrev())
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     @Override
@@ -240,12 +242,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 playbackData.getQueue(),
                 playbackData.getQueuePosition(),
                 mayContinueWhereStopped))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
-    }
-
-    private void playPrevInner() {
-        Completable.fromAction(() -> playbackControllerProvider.obtain().playPrev())
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
