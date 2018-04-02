@@ -59,23 +59,15 @@ import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STAT
 
 public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements PlaybackService {
 
-    private final Context mContext;
-
-    private final AudioEffects mAudioEffects;
-
-    private final CurrentMediaProvider mCurrentMediaProvider;
-
-    private final MediaSessionHolder mMediaSessionHolder;
-
+    private final AudioEffects audioEffects;
+    private final Context context;
+    private final CurrentMediaProvider currentMediaProvider;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final MediaPlayer mediaPlayer;
+    private final MediaSessionHolder mediaSessionHolder;
     private final PlaybackControllerProvider playbackControllerProvider;
-
-    private final PlaybackData mPlaybackData;
-
-    private final PlaybackServiceView mPlaybackServicePresenter;
-
-    private final Runnable mStopAction;
-
-    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+    private final PlaybackData playbackData;
+    private final PlaybackServiceView playbackServicePresenter;
 
     private final PlaybackServiceUnitAudioFocus unitAudioFocus;
     private final PlaybackServiceUnitAudioNoisyManagement unitAudioNoisyManagement;
@@ -86,18 +78,16 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final PlaybackServiceUnitReporter unitReporter;
     private final PlaybackServiceUnitWakeLock unitWakeLock;
 
+    private final Runnable stopAction;
+
+    private CharSequence errorMessage;
+    private PlaybackState state = STATE_IDLE;
+
+    private Disposable disposableTimer;
+    private Disposable disposablePauseTimeout;
+
+    private boolean isDestroying;
     private boolean playOnFocusGain;
-
-    private PlaybackState mState = STATE_IDLE;
-
-    private final MediaPlayer mediaPlayer;
-
-    private Disposable mDisposableTimer;
-    private Disposable mDisposablePauseTimeout;
-
-    private boolean mDestroying;
-
-    private CharSequence mErrorMessage;
 
     public PlaybackServiceImpl(
             @NonNull final Context context,
@@ -117,15 +107,15 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             @NonNull final PlaybackServiceUnitWakeLock unitWakeLock,
             @NonNull final PlaybackServiceView playbackServicePresenter,
             @NonNull final Runnable stopAction) {
-        mContext = context;
-        mAudioEffects = audioEffects;
-        mCurrentMediaProvider = currentMediaProvider;
+        this.context = context;
+        this.audioEffects = audioEffects;
+        this.currentMediaProvider = currentMediaProvider;
         this.mediaPlayer = mediaPlayer;
-        mMediaSessionHolder = mediaSessionHolder;
+        this.mediaSessionHolder = mediaSessionHolder;
         this.playbackControllerProvider = playbackControllerProvider;
-        mPlaybackData = playbackData;
-        mPlaybackServicePresenter = playbackServicePresenter;
-        mStopAction = stopAction;
+        this.playbackData = playbackData;
+        this.playbackServicePresenter = playbackServicePresenter;
+        this.stopAction = stopAction;
 
         this.unitAudioFocus = unitAudioFocus;
         this.unitMediaSession = unitMediaSession;
@@ -153,16 +143,16 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         // Must be called after all lifecycle observers registered
         onCreate();
 
-        mDestroying = false;
-        mErrorMessage = null;
+        isDestroying = false;
+        errorMessage = null;
 
         mediaPlayer.setListener(new MediaPlayerListenerImpl());
-        mediaPlayer.init(mContext);
+        mediaPlayer.init(context);
     }
 
     @Override
     public void playPause() {
-        switch (mState) {
+        switch (state) {
             case STATE_PLAYING:
                 pause();
                 break;
@@ -191,9 +181,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void play() {
-        if (mDisposablePauseTimeout != null) {
-            mDisposablePauseTimeout.dispose();
-            mDisposablePauseTimeout = null;
+        if (disposablePauseTimeout != null) {
+            disposablePauseTimeout.dispose();
+            disposablePauseTimeout = null;
         }
         playOnFocusGain = true;
         playCurrent(true);
@@ -208,7 +198,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     public void pause() {
         playOnFocusGain = false;
         pauseInner();
-        mDisposablePauseTimeout = Observable.timer(8, TimeUnit.SECONDS)
+        disposablePauseTimeout = Observable.timer(8, TimeUnit.SECONDS)
                 .subscribe(o -> stop());
         showNotification();
     }
@@ -216,14 +206,14 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     @Override
     public void stop() {
         playOnFocusGain = false;
-        mStopAction.run();
+        stopAction.run();
     }
 
     @Override
     public void stopWithError(@Nullable final CharSequence errorMessage) {
         playOnFocusGain = false;
-        mErrorMessage = errorMessage;
-        mStopAction.run();
+        this.errorMessage = errorMessage;
+        stopAction.run();
     }
 
     @Override
@@ -248,8 +238,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private void playCurrent(final boolean mayContinueWhereStopped) {
         Completable.fromAction(() -> unitPlayMediaFromQueue.play(
-                mPlaybackData.getQueue(),
-                mPlaybackData.getQueuePosition(),
+                playbackData.getQueue(),
+                playbackData.getQueuePosition(),
                 mayContinueWhereStopped))
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
@@ -269,7 +259,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void restart() {
-        if (mState == STATE_PLAYING) {
+        if (state == STATE_PLAYING) {
             mediaPlayer.stop();
         }
         playCurrent(false);
@@ -277,15 +267,15 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Nullable
     private MediaSessionCompat getMediaSession() {
-        return mMediaSessionHolder != null ? mMediaSessionHolder.getMediaSession() : null;
+        return mediaSessionHolder != null ? mediaSessionHolder.getMediaSession() : null;
     }
 
     private void showNotification() {
-        final Media media = mCurrentMediaProvider.getCurrentMedia();
+        final Media media = currentMediaProvider.getCurrentMedia();
         if (media != null) {
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
-                mExecutor.submit(() -> mPlaybackServicePresenter.startForeground(media, mState));
+                executor.submit(() -> playbackServicePresenter.startForeground(media, state));
             }
         }
     }
@@ -297,39 +287,39 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         mediaPlayer.stop();
 
-        mPlaybackData.setMediaPosition(mediaPlayer.getCurrentPosition());
-        mPlaybackData.persistAsync();
+        playbackData.setMediaPosition(mediaPlayer.getCurrentPosition());
+        playbackData.persistAsync();
 
-        mDestroying = true;
-        if (mErrorMessage != null) {
+        isDestroying = true;
+        if (errorMessage != null) {
             setState(STATE_ERROR);
         } else {
             setState(STATE_IDLE);
         }
-        if (mDisposableTimer != null) {
-            mDisposableTimer.dispose();
-            mDisposableTimer = null;
+        if (disposableTimer != null) {
+            disposableTimer.dispose();
+            disposableTimer = null;
         }
-        mAudioEffects.relese();
+        audioEffects.relese();
         mediaPlayer.release();
     }
 
     private void setState(@NonNull final PlaybackState state) {
-        if (mState != state) {
-            mState = state;
+        if (this.state != state) {
+            this.state = state;
             notifyState();
-            mPlaybackData.setPlaybackState(state);
+            playbackData.setPlaybackState(state);
         }
     }
 
     @Override
     public void notifyState() {
-        mExecutor.submit(() -> unitReporter.reportPlaybackState(mState, mErrorMessage));
+        executor.submit(() -> unitReporter.reportPlaybackState(state, errorMessage));
     }
 
     private void updateMediaPosition() {
-        if (mState == STATE_PLAYING) {
-            mPlaybackData.setMediaPosition(mediaPlayer.getCurrentPosition());
+        if (state == STATE_PLAYING) {
+            playbackData.setMediaPosition(mediaPlayer.getCurrentPosition());
         }
     }
 
@@ -344,7 +334,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         @Override
         public void onFocusDenied() {
-            playOnFocusGain = mState == STATE_PLAYING;
+            playOnFocusGain = state == STATE_PLAYING;
             pauseInner();
         }
     }
@@ -353,52 +343,52 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         @Override
         public void onAudioSessionId(final int audioSessionId) {
-            mErrorMessage = null;
+            errorMessage = null;
             if (audioSessionId == MediaPlayer.SESSION_ID_NOT_SET) {
-                mAudioEffects.relese();
+                audioEffects.relese();
             } else {
-                mAudioEffects.create(audioSessionId);
+                audioEffects.create(audioSessionId);
             }
         }
 
         @Override
         public void onLoading() {
-            mErrorMessage = null;
+            errorMessage = null;
             setState(STATE_LOADING);
         }
 
         @Override
         public void onPlaybackStarted() {
-            mErrorMessage = null;
+            errorMessage = null;
             setState(STATE_PLAYING);
             showNotification();
-            mDisposableTimer = Observable.interval(1L, TimeUnit.SECONDS)
+            disposableTimer = Observable.interval(1L, TimeUnit.SECONDS)
                     .subscribe(o -> updateMediaPosition());
         }
 
         @Override
         public void onPlaybackFinished() {
-            mErrorMessage = null;
-            if (!mDestroying) {
+            errorMessage = null;
+            if (!isDestroying) {
                 playNextInner(false);
             }
         }
 
         @Override
         public void onPlaybackPaused() {
-            mErrorMessage = null;
+            errorMessage = null;
             setState(STATE_PAUSED);
-            if (mDisposableTimer != null) {
-                mDisposableTimer.dispose();
-                mDisposableTimer = null;
+            if (disposableTimer != null) {
+                disposableTimer.dispose();
+                disposableTimer = null;
             }
         }
 
         @Override
         public void onPlayerError(@NonNull final Exception error) {
-            mErrorMessage = mPlaybackServicePresenter.showPlaybackFailedError(error);
+            errorMessage = playbackServicePresenter.showPlaybackFailedError(error);
             setState(STATE_ERROR);
-            mStopAction.run();
+            stopAction.run();
         }
     }
 }
