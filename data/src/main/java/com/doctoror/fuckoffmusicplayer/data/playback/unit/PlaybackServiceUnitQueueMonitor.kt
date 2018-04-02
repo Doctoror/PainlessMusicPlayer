@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
-import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController
+import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
@@ -30,7 +30,7 @@ import io.reactivex.disposables.CompositeDisposable
 class PlaybackServiceUnitQueueMonitor(
         private val albumThumbHolder: AlbumThumbHolder,
         private val currentMediaProvider: CurrentMediaProvider,
-        private val playbackControllerProvider: () -> PlaybackController,
+        private val playbackControllerProvider: PlaybackControllerProvider,
         private val playbackData: PlaybackData,
         private val restartAction: Runnable,
         private val stopAction: Runnable) : ServiceLifecycleObserver {
@@ -55,7 +55,7 @@ class PlaybackServiceUnitQueueMonitor(
             albumThumbHolder.albumThumb = null
             stopAction.run()
         } else {
-            val playbackController = playbackControllerProvider.invoke()
+            val playbackController = playbackControllerProvider.obtain()
             playbackController.setQueue(q)
 
             // If playing some media and it's position in queue changed

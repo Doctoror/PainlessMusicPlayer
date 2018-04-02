@@ -26,10 +26,10 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 class PlaybackServiceUnitPlayMediaFromQueue(
         private val currentMediaProvider: CurrentMediaProvider,
-        private val audioFocusRequester: PlaybackServiceUnitAudioFocus,
         private val mediaPlayer: MediaPlayer,
         private val playbackData: PlaybackData,
-        private val playbackReporters: PlaybackServiceUnitReporter) {
+        private val unitAudioFocus: PlaybackServiceUnitAudioFocus,
+        private val unitReporter: PlaybackServiceUnitReporter) {
 
     /**
      * Plays media from queue based on position.
@@ -47,8 +47,8 @@ class PlaybackServiceUnitPlayMediaFromQueue(
             throw IllegalArgumentException("Play queue is null or empty")
         }
 
-        audioFocusRequester.requestAudioFocus()
-        if (!audioFocusRequester.focusGranted) {
+        unitAudioFocus.requestAudioFocus()
+        if (!unitAudioFocus.focusGranted) {
             return -1
         }
 
@@ -87,7 +87,7 @@ class PlaybackServiceUnitPlayMediaFromQueue(
 
         playbackData.setMediaPosition(seekPosition)
 
-        playbackReporters.reportCurrentMedia()
+        unitReporter.reportCurrentMedia()
 
         val uri = targetMedia.data
         if (uri != null) {
@@ -139,6 +139,6 @@ class PlaybackServiceUnitPlayMediaFromQueue(
 
     private fun playAndReportCurrentState() {
         mediaPlayer.play()
-        playbackReporters.reportCurrentMedia()
+        unitReporter.reportCurrentMedia()
     }
 }

@@ -83,6 +83,10 @@ public final class PlaybackAndroidService extends Service {
         service.destroy();
     }
 
+    public void restart() {
+        service.restart();
+    }
+
     @Nullable
     @Override
     public IBinder onBind(final Intent intent) {

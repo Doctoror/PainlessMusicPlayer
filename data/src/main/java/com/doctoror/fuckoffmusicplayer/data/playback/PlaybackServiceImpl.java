@@ -21,9 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
 
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
-import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController;
-import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerNormal;
-import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerShuffle;
+import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusListener;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioFocus;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitMediaSession;
@@ -34,21 +32,15 @@ import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitQue
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioNoisyManagement;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceView;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
-import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned;
-import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,9 +67,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final MediaSessionHolder mMediaSessionHolder;
 
-    private final PlaybackData mPlaybackData;
+    private final PlaybackControllerProvider playbackControllerProvider;
 
-    private final PlaybackParams mPlaybackParams;
+    private final PlaybackData mPlaybackData;
 
     private final PlaybackServiceView mPlaybackServicePresenter;
 
@@ -85,15 +77,12 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
-    private final PlaybackServiceUnitPlayMediaFromQueue playbackServiceUnitPlayMediaFromQueue;
-
-    private final PlaybackServiceUnitPlayCurrentOrNewQueue playbackServiceUnitPlayCurrentOrNewQueue;
-
-    private final PlaybackServiceUnitQueueMonitor playbackServiceUnitQueueMonitor;
-
     private final PlaybackServiceUnitAudioFocus unitAudioFocus;
     private final PlaybackServiceUnitAudioNoisyManagement unitAudioNoisyManagement;
     private final PlaybackServiceUnitMediaSession unitMediaSession;
+    private final PlaybackServiceUnitPlayCurrentOrNewQueue unitPlayCurrentOrNewQueue;
+    private final PlaybackServiceUnitPlayMediaFromQueue unitPlayMediaFromQueue;
+    private final PlaybackServiceUnitQueueMonitor unitQueueMonitor;
     private final PlaybackServiceUnitReporter unitReporter;
     private final PlaybackServiceUnitWakeLock unitWakeLock;
 
@@ -101,7 +90,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private PlaybackState mState = STATE_IDLE;
 
-    private final MediaPlayer mMediaPlayer;
+    private final MediaPlayer mediaPlayer;
 
     private Disposable mDisposableTimer;
     private Disposable mDisposablePauseTimeout;
@@ -110,65 +99,42 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private CharSequence mErrorMessage;
 
-    private PlaybackController mPlaybackController;
-
     public PlaybackServiceImpl(
             @NonNull final Context context,
-            @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final AudioEffects audioEffects,
             @NonNull final CurrentMediaProvider currentMediaProvider,
-            @NonNull final MediaPlayerFactory mediaPlayerFactory,
+            @NonNull final MediaPlayer mediaPlayer,
             @NonNull final MediaSessionHolder mediaSessionHolder,
+            @NonNull final PlaybackControllerProvider playbackControllerProvider,
             @NonNull final PlaybackData playbackData,
-            @NonNull final PlaybackInitializer playbackInitializer,
-            @NonNull final PlaybackParams playbackParams,
             @NonNull final PlaybackServiceUnitAudioFocus unitAudioFocus,
             @NonNull final PlaybackServiceUnitAudioNoisyManagement unitAudioNoisyManagement,
             @NonNull final PlaybackServiceUnitMediaSession unitMediaSession,
+            @NonNull final PlaybackServiceUnitPlayCurrentOrNewQueue unitPlayCurrentOrNewQueue,
+            @NonNull final PlaybackServiceUnitPlayMediaFromQueue unitPlayMediaFromQueue,
+            @NonNull final PlaybackServiceUnitQueueMonitor unitQueueMonitor,
             @NonNull final PlaybackServiceUnitReporter unitReporter,
             @NonNull final PlaybackServiceUnitWakeLock unitWakeLock,
             @NonNull final PlaybackServiceView playbackServicePresenter,
-            @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,
             @NonNull final Runnable stopAction) {
         mContext = context;
         mAudioEffects = audioEffects;
         mCurrentMediaProvider = currentMediaProvider;
+        this.mediaPlayer = mediaPlayer;
         mMediaSessionHolder = mediaSessionHolder;
+        this.playbackControllerProvider = playbackControllerProvider;
         mPlaybackData = playbackData;
-        mPlaybackParams = playbackParams;
         mPlaybackServicePresenter = playbackServicePresenter;
         mStopAction = stopAction;
 
         this.unitAudioFocus = unitAudioFocus;
         this.unitMediaSession = unitMediaSession;
         this.unitAudioNoisyManagement = unitAudioNoisyManagement;
+        this.unitPlayCurrentOrNewQueue = unitPlayCurrentOrNewQueue;
+        this.unitPlayMediaFromQueue = unitPlayMediaFromQueue;
+        this.unitQueueMonitor = unitQueueMonitor;
         this.unitReporter = unitReporter;
         this.unitWakeLock = unitWakeLock;
-
-        mMediaPlayer = mediaPlayerFactory.newMediaPlayer();
-        mMediaPlayer.setListener(new MediaPlayerListenerImpl());
-
-        playbackServiceUnitPlayMediaFromQueue = new PlaybackServiceUnitPlayMediaFromQueue(
-                currentMediaProvider,
-                unitAudioFocus,
-                mMediaPlayer,
-                playbackData,
-                unitReporter);
-
-        playbackServiceUnitPlayCurrentOrNewQueue = new PlaybackServiceUnitPlayCurrentOrNewQueue(
-                this::getPlaybackController,
-                playbackData,
-                playbackInitializer,
-                playbackServiceUnitPlayMediaFromQueue,
-                queueProviderRecentlyScanned);
-
-        playbackServiceUnitQueueMonitor = new PlaybackServiceUnitQueueMonitor(
-                albumThumbHolder,
-                currentMediaProvider,
-                this::getPlaybackController,
-                playbackData,
-                this::restart,
-                stopAction);
 
         unitAudioFocus.setListener(new AudioFocusListenerImpl());
         init();
@@ -178,7 +144,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         registerLifecycleObserver(unitWakeLock);
         registerLifecycleObserver(unitAudioFocus);
         registerLifecycleObserver(unitAudioNoisyManagement);
-        registerLifecycleObserver(playbackServiceUnitQueueMonitor);
+        registerLifecycleObserver(unitQueueMonitor);
 
         // Ensure the ordering of these two does not change
         registerLifecycleObserver(unitMediaSession);
@@ -190,49 +156,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mDestroying = false;
         mErrorMessage = null;
 
-        mMediaPlayer.init(mContext);
-    }
-
-    @NonNull
-    private PlaybackController getPlaybackController() {
-        boolean created = false;
-        if (mPlaybackController == null) {
-            mPlaybackController = mPlaybackParams.isShuffleEnabled()
-                    ? newPlaybackControllerShuffle()
-                    : newPlaybackControllerNormal();
-            created = true;
-        } else if (mPlaybackParams.isShuffleEnabled()) {
-            if (!PlaybackControllerShuffle.class.equals(mPlaybackController.getClass())) {
-                mPlaybackController = newPlaybackControllerShuffle();
-                created = true;
-            }
-        } else {
-            if (!PlaybackControllerNormal.class.equals(mPlaybackController.getClass())) {
-                mPlaybackController = newPlaybackControllerNormal();
-                created = true;
-            }
-        }
-        if (created) {
-            mPlaybackController.setQueue(mPlaybackData.getQueue());
-            mPlaybackController.setPositionInQueue(mPlaybackData.getQueuePosition());
-        }
-        return mPlaybackController;
-    }
-
-    @NonNull
-    private PlaybackController newPlaybackControllerNormal() {
-        return new PlaybackControllerNormal(
-                mPlaybackParams,
-                playbackServiceUnitPlayMediaFromQueue,
-                mStopAction);
-    }
-
-    @NonNull
-    private PlaybackController newPlaybackControllerShuffle() {
-        return new PlaybackControllerShuffle(
-                mPlaybackParams,
-                playbackServiceUnitPlayMediaFromQueue,
-                mStopAction);
+        mediaPlayer.setListener(new MediaPlayerListenerImpl());
+        mediaPlayer.init(mContext);
     }
 
     @Override
@@ -259,7 +184,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void playCurrentOrNewQueue() {
-        Completable.fromAction(playbackServiceUnitPlayCurrentOrNewQueue::playCurrentOrNewQueue)
+        Completable.fromAction(unitPlayCurrentOrNewQueue::playCurrentOrNewQueue)
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
@@ -313,16 +238,16 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void seek(final long position) {
-        mMediaPlayer.seekTo(position);
+        mediaPlayer.seekTo(position);
     }
 
     private void pauseInner() {
-        mMediaPlayer.pause();
+        mediaPlayer.pause();
         setState(STATE_PAUSED);
     }
 
     private void playCurrent(final boolean mayContinueWhereStopped) {
-        Completable.fromAction(() -> playbackServiceUnitPlayMediaFromQueue.play(
+        Completable.fromAction(() -> unitPlayMediaFromQueue.play(
                 mPlaybackData.getQueue(),
                 mPlaybackData.getQueuePosition(),
                 mayContinueWhereStopped))
@@ -331,20 +256,21 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void playPrevInner() {
-        Completable.fromAction(() -> getPlaybackController().playPrev())
+        Completable.fromAction(() -> playbackControllerProvider.obtain().playPrev())
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
 
     private void playNextInner(final boolean isUserAction) {
-        Completable.fromAction(() -> getPlaybackController().playNext(isUserAction))
+        Completable.fromAction(() -> playbackControllerProvider.obtain().playNext(isUserAction))
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
 
-    private void restart() {
+    @Override
+    public void restart() {
         if (mState == STATE_PLAYING) {
-            mMediaPlayer.stop();
+            mediaPlayer.stop();
         }
         playCurrent(false);
     }
@@ -369,9 +295,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         onDestroy();
         playOnFocusGain = false;
 
-        mMediaPlayer.stop();
+        mediaPlayer.stop();
 
-        mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
+        mPlaybackData.setMediaPosition(mediaPlayer.getCurrentPosition());
         mPlaybackData.persistAsync();
 
         mDestroying = true;
@@ -385,7 +311,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             mDisposableTimer = null;
         }
         mAudioEffects.relese();
-        mMediaPlayer.release();
+        mediaPlayer.release();
     }
 
     private void setState(@NonNull final PlaybackState state) {
@@ -403,7 +329,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private void updateMediaPosition() {
         if (mState == STATE_PLAYING) {
-            mPlaybackData.setMediaPosition(mMediaPlayer.getCurrentPosition());
+            mPlaybackData.setMediaPosition(mediaPlayer.getCurrentPosition());
         }
     }
 

@@ -37,5 +37,7 @@ interface PlaybackService {
 
     fun notifyState()
 
+    fun restart()
+
     fun destroy()
 }

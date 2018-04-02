@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
-import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController
+import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider
 import com.doctoror.fuckoffmusicplayer.data.util.Log
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer
@@ -23,20 +23,20 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
 import io.reactivex.schedulers.Schedulers
 
 class PlaybackServiceUnitPlayCurrentOrNewQueue(
-        private val playbackControllerSource: () -> PlaybackController,
+        private val playbackControllerProvider: PlaybackControllerProvider,
         private val playbackData: PlaybackData,
         private val playbackInitializer: PlaybackInitializer,
-        private val playMedaFromQueueUseCase: PlaybackServiceUnitPlayMediaFromQueue,
+        private val psUnitPlayMediaFromQueue: PlaybackServiceUnitPlayMediaFromQueue,
         private val queueProviderRecentlyScanned: QueueProviderRecentlyScanned) {
 
     fun playCurrentOrNewQueue() {
         val queue = playbackData.queue
         if (queue != null && !queue.isEmpty()) {
-            val position = playMedaFromQueueUseCase.play(
+            val position = psUnitPlayMediaFromQueue.play(
                     queue,
                     playbackData.queuePosition,
                     true)
-            playbackControllerSource().setPositionInQueue(position)
+            playbackControllerProvider.obtain().setPositionInQueue(position)
         } else {
             queueProviderRecentlyScanned.recentlyScannedQueue()
                     .subscribeOn(Schedulers.io())
