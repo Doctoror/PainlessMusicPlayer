@@ -85,7 +85,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private PlaybackState state = STATE_IDLE;
 
     private boolean isDestroying;
-    private boolean playOnFocusGain;
 
     public PlaybackServiceImpl(
             @NonNull final Context context,
@@ -186,7 +185,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     @Override
     public void play() {
         unitStopTimeout.abortStopTimer();
-        playOnFocusGain = true;
         playCurrent(true);
     }
 
@@ -197,21 +195,18 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void pause() {
-        playOnFocusGain = false;
-        pauseInner();
+        pauseTemporary();
+        unitAudioFocus.abandonAudioFocus();
         unitStopTimeout.initializeStopTimer();
-        showNotification();
     }
 
     @Override
     public void stop() {
-        playOnFocusGain = false;
         stopAction.run();
     }
 
     @Override
     public void stopWithError(@Nullable final CharSequence errorMessage) {
-        playOnFocusGain = false;
         this.errorMessage = errorMessage;
         stopAction.run();
     }
@@ -231,9 +226,13 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         mediaPlayer.seekTo(position);
     }
 
-    private void pauseInner() {
+    /**
+     * Pauses, but does not abandon audio focus and does not schedule the stop timer.
+     */
+    private void pauseTemporary() {
         mediaPlayer.pause();
         setState(STATE_PAUSED);
+        showNotification();
     }
 
     private void playCurrent(final boolean mayContinueWhereStopped) {
@@ -283,7 +282,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     @Override
     public void destroy() {
         onDestroy();
-        playOnFocusGain = false;
 
         mediaPlayer.stop();
 
@@ -313,25 +311,16 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         executor.submit(() -> unitReporter.reportPlaybackState(state, errorMessage));
     }
 
-    private void updateMediaPosition() {
-        if (state == STATE_PLAYING) {
-            playbackData.setMediaPosition(mediaPlayer.getCurrentPosition());
-        }
-    }
-
     private final class AudioFocusListenerImpl implements AudioFocusListener {
 
         @Override
         public void onFocusGranted() {
-            if (playOnFocusGain) {
-                playCurrent(true);
-            }
+            playCurrent(true);
         }
 
         @Override
         public void onFocusDenied() {
-            playOnFocusGain = state == STATE_PLAYING;
-            pauseInner();
+            pauseTemporary();
         }
     }
 
