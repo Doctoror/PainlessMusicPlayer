@@ -26,6 +26,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPla
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitQueueMonitor;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitReporter;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitStopTimeout;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock;
 import com.doctoror.fuckoffmusicplayer.di.scopes.ServiceScope;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
@@ -155,6 +156,14 @@ public final class PlaybackServiceModule {
                 currentMediaProvider, mediaSessionHolder, playbackReporterFactory);
     }
 
+
+    @Provides
+    @ServiceScope
+    PlaybackServiceUnitStopTimeout providePlaybackServiceUnitStopTimeout(
+            @NonNull final Runnable stopAction) {
+        return new PlaybackServiceUnitStopTimeout(stopAction);
+    }
+
     @Provides
     @ServiceScope
     PlaybackServiceUnitWakeLock providePlaybackServiceUnitWakeLock(
@@ -179,6 +188,7 @@ public final class PlaybackServiceModule {
             @NonNull final PlaybackServiceUnitPlayMediaFromQueue unitPlayMediaFromQueue,
             @NonNull final PlaybackServiceUnitQueueMonitor unitQueueMonitor,
             @NonNull final PlaybackServiceUnitReporter unitReporter,
+            @NonNull final PlaybackServiceUnitStopTimeout unitStopTimeout,
             @NonNull final PlaybackServiceUnitWakeLock unitWakeLock,
             @NonNull final PlaybackServiceView playbackServiceView,
             @NonNull final Runnable stopAction) {
@@ -197,6 +207,7 @@ public final class PlaybackServiceModule {
                 unitPlayMediaFromQueue,
                 unitQueueMonitor,
                 unitReporter,
+                unitStopTimeout,
                 unitWakeLock,
                 playbackServiceView,
                 stopAction);

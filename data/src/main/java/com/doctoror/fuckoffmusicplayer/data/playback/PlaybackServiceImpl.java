@@ -30,6 +30,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPla
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitReporter;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitQueueMonitor;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioNoisyManagement;
+import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitStopTimeout;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
@@ -76,6 +77,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final PlaybackServiceUnitPlayMediaFromQueue unitPlayMediaFromQueue;
     private final PlaybackServiceUnitQueueMonitor unitQueueMonitor;
     private final PlaybackServiceUnitReporter unitReporter;
+    private final PlaybackServiceUnitStopTimeout unitStopTimeout;
     private final PlaybackServiceUnitWakeLock unitWakeLock;
 
     private final Runnable stopAction;
@@ -84,7 +86,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private PlaybackState state = STATE_IDLE;
 
     private Disposable disposableTimer;
-    private Disposable disposablePauseTimeout;
 
     private boolean isDestroying;
     private boolean playOnFocusGain;
@@ -104,6 +105,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             @NonNull final PlaybackServiceUnitPlayMediaFromQueue unitPlayMediaFromQueue,
             @NonNull final PlaybackServiceUnitQueueMonitor unitQueueMonitor,
             @NonNull final PlaybackServiceUnitReporter unitReporter,
+            @NonNull final PlaybackServiceUnitStopTimeout unitStopTimeout,
             @NonNull final PlaybackServiceUnitWakeLock unitWakeLock,
             @NonNull final PlaybackServiceView playbackServicePresenter,
             @NonNull final Runnable stopAction) {
@@ -124,6 +126,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         this.unitPlayMediaFromQueue = unitPlayMediaFromQueue;
         this.unitQueueMonitor = unitQueueMonitor;
         this.unitReporter = unitReporter;
+        this.unitStopTimeout = unitStopTimeout;
         this.unitWakeLock = unitWakeLock;
 
         unitAudioFocus.setListener(new AudioFocusListenerImpl());
@@ -181,10 +184,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void play() {
-        if (disposablePauseTimeout != null) {
-            disposablePauseTimeout.dispose();
-            disposablePauseTimeout = null;
-        }
+        unitStopTimeout.abortStopTimer();
         playOnFocusGain = true;
         playCurrent(true);
     }
@@ -198,8 +198,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     public void pause() {
         playOnFocusGain = false;
         pauseInner();
-        disposablePauseTimeout = Observable.timer(8, TimeUnit.SECONDS)
-                .subscribe(o -> stop());
+        unitStopTimeout.initializeStopTimer();
         showNotification();
     }
 
