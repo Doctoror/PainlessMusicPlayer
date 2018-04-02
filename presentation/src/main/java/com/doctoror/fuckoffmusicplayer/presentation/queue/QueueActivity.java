@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
@@ -41,6 +42,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -376,6 +378,23 @@ public final class QueueActivity extends BaseActivity
         ActivityCompat.finishAfterTransition(this);
     }
 
+    /**
+     * This is used to avoid
+     * <pre>
+     *   android.content.res.Resources$NotFoundException: Unable to find resource ID #0x0
+     *     at android.content.res.ResourcesImpl.getResourceName(ResourcesImpl.java:253)
+     *     at android.content.res.Resources.getResourceName(Resources.java:1933)
+     *     at android.support.design.widget.CoordinatorLayout$LayoutParams.resolveAnchorView(CoordinatorLayout.java:3072)
+     * </pre>
+     */
+    private void prepareFabForExitTransition() {
+        final ViewGroup.LayoutParams params = fab.getLayoutParams();
+        if (params instanceof CoordinatorLayout.LayoutParams) {
+            ((CoordinatorLayout.LayoutParams) params).setAnchorId(View.NO_ID);
+            fab.setLayoutParams(params);
+        }
+    }
+
     @OnClick(R.id.fab)
     public void onFabClick(@NonNull final View view) {
         onPlayClick(view, 0);
@@ -417,8 +436,8 @@ public final class QueueActivity extends BaseActivity
             // NowPlayingActivity causes memory leak in ExitTransitionCoordinator. Thus null views
             // are passed here to avoid this.
             // https://code.google.com/p/android/issues/detail?id=170469
+            prepareFabForExitTransition();
             NowPlayingActivity.start(this, null, null);
-            ActivityCompat.finishAfterTransition(this);
         } else {
             NowPlayingActivity.start(this, albumArt, listItemView);
         }
