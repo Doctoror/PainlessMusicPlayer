@@ -32,10 +32,7 @@ class PlaybackServiceUnitPlayCurrentOrNewQueue(
     fun playCurrentOrNewQueue() {
         val queue = playbackData.queue
         if (queue != null && !queue.isEmpty()) {
-            val position = psUnitPlayMediaFromQueue.play(
-                    queue,
-                    playbackData.queuePosition,
-                    true)
+            val position = psUnitPlayMediaFromQueue.play(queue, playbackData.queuePosition)
             playbackControllerProvider.obtain().setPositionInQueue(position)
         } else {
             queueProviderRecentlyScanned.recentlyScannedQueue()

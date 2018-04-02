@@ -72,7 +72,7 @@ open class PlaybackControllerNormal(
     }
 
     protected open fun play(list: List<Media>?, position: Int) {
-        this.position = playMediaFromQueueUseCase.play(list, position, false)
+        this.position = playMediaFromQueueUseCase.play(list, position)
     }
 
     override fun setQueue(queue: List<Media>?) {

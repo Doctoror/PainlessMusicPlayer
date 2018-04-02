@@ -41,8 +41,7 @@ class PlaybackServiceUnitPlayMediaFromQueue(
      */
     fun play(
             queue: List<Media>?,
-            position: Int,
-            mayContinueWhereStopped: Boolean): Int {
+            position: Int): Int {
         if (queue == null || queue.isEmpty()) {
             throw IllegalArgumentException("Play queue is null or empty")
         }
@@ -64,7 +63,6 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         return changeMediaAndPlay(
                 currentState,
                 position,
-                mayContinueWhereStopped,
                 currentMedia,
                 targetMedia)
     }
@@ -72,7 +70,6 @@ class PlaybackServiceUnitPlayMediaFromQueue(
     private fun changeMediaAndPlay(
             currentState: PlaybackState,
             position: Int,
-            mayContinueWhereStopped: Boolean,
             currentMedia: Media?,
             targetMedia: Media): Int {
 
@@ -80,7 +77,6 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         playbackData.setPlayQueuePosition(position)
 
         val seekPosition = resolveSeekPosition(
-                mayContinueWhereStopped = mayContinueWhereStopped,
                 currentState = currentState,
                 currentMedia = currentMedia,
                 targetMedia = targetMedia)
@@ -120,15 +116,12 @@ class PlaybackServiceUnitPlayMediaFromQueue(
                     && targetMedia.id == currentMedia.id
 
     private fun resolveSeekPosition(
-            mayContinueWhereStopped: Boolean,
             currentState: PlaybackState,
             currentMedia: Media?,
             targetMedia: Media): Long {
         var seekPosition: Long = 0
         // If restoring from stopped state, set seek position to what it was
-        if (mayContinueWhereStopped
-                && currentState == STATE_IDLE
-                && targetMedia == currentMedia) {
+        if (currentState == STATE_IDLE && targetMedia == currentMedia) {
             seekPosition = playbackData.mediaPosition
             if (seekPosition >= targetMedia.duration - 100) {
                 seekPosition = 0

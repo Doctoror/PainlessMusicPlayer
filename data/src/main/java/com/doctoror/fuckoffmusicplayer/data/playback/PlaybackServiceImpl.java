@@ -185,7 +185,11 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     @Override
     public void play() {
         unitStopTimeout.abortStopTimer();
-        playCurrent(true);
+        Completable.fromAction(() -> unitPlayMediaFromQueue.play(
+                playbackData.getQueue(),
+                playbackData.getQueuePosition()))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
     }
 
     @Override
@@ -237,15 +241,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         showNotification();
     }
 
-    private void playCurrent(final boolean mayContinueWhereStopped) {
-        Completable.fromAction(() -> unitPlayMediaFromQueue.play(
-                playbackData.getQueue(),
-                playbackData.getQueuePosition(),
-                mayContinueWhereStopped))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
-    }
-
     private void playNextInner(final boolean isUserAction) {
         Completable.fromAction(() -> playbackControllerProvider.obtain().playNext(isUserAction))
                 .subscribeOn(Schedulers.computation())
@@ -257,7 +252,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         if (state == STATE_PLAYING) {
             mediaPlayer.stop();
         }
-        playCurrent(false);
+        playbackData.setMediaPosition(0);
+        play();
     }
 
     @Nullable
@@ -311,7 +307,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         @Override
         public void onFocusGranted() {
-            playCurrent(true);
+            play();
         }
 
         @Override
