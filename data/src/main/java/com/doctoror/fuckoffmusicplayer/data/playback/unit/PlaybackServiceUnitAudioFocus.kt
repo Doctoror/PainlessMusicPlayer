@@ -80,6 +80,11 @@ class PlaybackServiceUnitAudioFocus(private val context: Context) : ServiceLifec
             focusGranted = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
         }
     }
+
+    fun abandonAudioFocus() {
+        audioFocusRequested = false
+        audioManager?.abandonAudioFocus()
+    }
 }
 
 interface AudioFocusListener {

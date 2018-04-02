@@ -22,7 +22,6 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
 import android.os.Build
-import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusListener
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioFocus
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.assertEquals
@@ -39,11 +38,9 @@ import org.robolectric.annotation.Config
 class PlaybackServiceUnitAudioFocusTest {
 
     private val audioManager: AudioManager = mock()
-
     private val context: Context = mock()
-    private val listener: AudioFocusListener = mock()
 
-    private val underTest = PlaybackServiceUnitAudioFocus(context, listener)
+    private val underTest = PlaybackServiceUnitAudioFocus(context)
 
     @Before
     fun setup() {
@@ -52,8 +49,10 @@ class PlaybackServiceUnitAudioFocusTest {
 
     @Test
     fun requestsFocusWithCorrectParams() {
-        // When
+        // Given
         underTest.onCreate()
+
+        // When
         underTest.requestAudioFocus()
 
         // Then
@@ -70,8 +69,10 @@ class PlaybackServiceUnitAudioFocusTest {
 
     @Test
     fun requestsFocusOnce() {
-        // When
+        // Given
         underTest.onCreate()
+
+        // When
         underTest.requestAudioFocus()
         underTest.requestAudioFocus()
 
@@ -81,9 +82,11 @@ class PlaybackServiceUnitAudioFocusTest {
 
     @Test
     fun abandonsFocusOnDestroy() {
-        // When
+        // Given
         underTest.onCreate()
         underTest.requestAudioFocus()
+
+        // When
         underTest.onDestroy()
 
         // Then
@@ -97,5 +100,18 @@ class PlaybackServiceUnitAudioFocusTest {
 
         // Then
         verify(audioManager, never()).abandonAudioFocusRequest(any())
+    }
+
+    @Test
+    fun abandonsFocusManually() {
+        // Given
+        underTest.onCreate()
+        underTest.requestAudioFocus()
+
+        // When
+        underTest.abandonAudioFocus()
+
+        // Then
+        verify(audioManager).abandonAudioFocusRequest(any())
     }
 }
