@@ -15,7 +15,32 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.queue.usecase
 
-interface RemoveMediasFromCurrentQueueUseCase {
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
-    fun removeMediasFromCurrentQueue(vararg mediaIds: Long)
+class RemoveMediasFromCurrentQueueUseCase(private val playbackData: PlaybackData) {
+
+    fun removeMediasFromCurrentQueue(vararg mediaIds: Long) {
+        val queue = playbackData.queue?.toMutableList()
+        var modified = false
+        if (queue != null) {
+            for (id in mediaIds) {
+                modified = modified or removeFromQueue(queue, id)
+            }
+        }
+        if (modified) {
+            playbackData.setPlayQueue(queue)
+        }
+    }
+
+    private fun removeFromQueue(queue: MutableList<Media>, id: Long): Boolean {
+        val i = queue.iterator()
+        while (i.hasNext()) {
+            if (i.next().id == id) {
+                i.remove()
+                return true
+            }
+        }
+        return false
+    }
 }

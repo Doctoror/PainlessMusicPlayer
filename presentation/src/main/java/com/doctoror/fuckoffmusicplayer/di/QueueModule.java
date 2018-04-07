@@ -17,8 +17,6 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import android.support.annotation.NonNull;
 
-import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveAlbumFromQueueUseCaseImpl;
-import com.doctoror.fuckoffmusicplayer.data.queue.usecase.RemoveMediasFromCurrentQueueUseCaseImpl;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.usecase.RemoveAlbumFromQueueUseCase;
@@ -34,12 +32,12 @@ final class QueueModule {
     RemoveAlbumFromQueueUseCase provideRemoveAlbumFromQueueUseCase(
             @NonNull final AlbumMediaIdsProvider albumMediaIdsProvider,
             @NonNull final RemoveMediasFromCurrentQueueUseCase useCase) {
-        return new RemoveAlbumFromQueueUseCaseImpl(albumMediaIdsProvider, useCase);
+        return new RemoveAlbumFromQueueUseCase(albumMediaIdsProvider, useCase);
     }
 
     @Provides
     RemoveMediasFromCurrentQueueUseCase provideRemoveMediasFromCurrentQueueUseCase(
             @NonNull final PlaybackData playbackData) {
-        return new RemoveMediasFromCurrentQueueUseCaseImpl(playbackData);
+        return new RemoveMediasFromCurrentQueueUseCase(playbackData);
     }
 }

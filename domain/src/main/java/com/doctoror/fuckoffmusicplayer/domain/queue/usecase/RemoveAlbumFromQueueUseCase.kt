@@ -15,7 +15,23 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.queue.usecase
 
-interface RemoveAlbumFromQueueUseCase {
+import android.util.Log
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider
+import java.io.IOException
 
-    fun removeAlbumFromCurrentQueue(albumId: Long)
+class RemoveAlbumFromQueueUseCase(
+        private val albumMediaIdsProvider: AlbumMediaIdsProvider,
+        private val removeMediasFromCurrentQueueUseCase: RemoveMediasFromCurrentQueueUseCase) {
+
+    fun removeAlbumFromCurrentQueue(albumId: Long) {
+        val ids: LongArray
+        try {
+            ids = albumMediaIdsProvider.getAlbumMediaIds(albumId)
+        } catch (e: IOException) {
+            Log.w("RemoveAlbumFromQueue", "Will not remove album from current queue", e)
+            return
+        }
+
+        removeMediasFromCurrentQueueUseCase.removeMediasFromCurrentQueue(*ids)
+    }
 }
