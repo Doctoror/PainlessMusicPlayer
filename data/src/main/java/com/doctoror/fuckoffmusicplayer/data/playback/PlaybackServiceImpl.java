@@ -236,9 +236,11 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
      * Pauses, but does not abandon audio focus and does not schedule the stop timer.
      */
     private void pauseTemporary() {
-        mediaPlayer.pause();
-        setState(STATE_PAUSED);
-        showNotification();
+        if (state == STATE_PLAYING) {
+            mediaPlayer.pause();
+            setState(STATE_PAUSED);
+            showNotification();
+        }
     }
 
     private void playNextInner(final boolean isUserAction) {
