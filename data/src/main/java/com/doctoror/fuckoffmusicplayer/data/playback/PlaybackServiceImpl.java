@@ -47,8 +47,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
@@ -64,7 +62,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final AudioEffects audioEffects;
     private final Context context;
     private final CurrentMediaProvider currentMediaProvider;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final MediaPlayer mediaPlayer;
     private final MediaSessionHolder mediaSessionHolder;
     private final PlaybackControllerProvider playbackControllerProvider;
@@ -277,7 +274,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         if (media != null) {
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
-                executor.submit(() -> playbackServicePresenter.startForeground(media, state));
+                Schedulers.io().scheduleDirect(
+                        () -> playbackServicePresenter.startForeground(media, state));
             }
         }
     }
@@ -311,7 +309,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void notifyState() {
-        executor.submit(() -> unitReporter.reportPlaybackState(state, errorMessage));
+        Schedulers.io().scheduleDirect(() -> unitReporter.reportPlaybackState(state, errorMessage));
     }
 
     private final class AudioFocusListenerImpl implements AudioFocusListener {
