@@ -19,8 +19,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.presentation.util.CollectionUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +49,7 @@ public final class PlaybackServiceIntentFactory {
 
         intent.putParcelableArrayListExtra(
                 PlaybackAndroidService.EXTRA_QUEUE,
-                CollectionUtils.toArrayList(queue));
+                CollectionUtils.INSTANCE.toArrayList(queue));
 
         intent.putExtra(PlaybackAndroidService.EXTRA_POSITION, position);
         return intent;

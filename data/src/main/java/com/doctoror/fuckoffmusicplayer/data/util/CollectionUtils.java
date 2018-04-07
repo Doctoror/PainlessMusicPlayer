@@ -18,7 +18,6 @@ package com.doctoror.fuckoffmusicplayer.data.util;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,13 +61,5 @@ public final class CollectionUtils {
             i--;
         }
         return longs;
-    }
-
-    @Nullable
-    public static <T> ArrayList<T> toArrayList(@Nullable final List<T> source) {
-        if (source instanceof ArrayList) {
-            return (ArrayList<T>) source;
-        }
-        return source != null ? new ArrayList<>(source) : null;
     }
 }
