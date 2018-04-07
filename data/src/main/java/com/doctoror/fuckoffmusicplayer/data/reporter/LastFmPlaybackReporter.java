@@ -74,9 +74,4 @@ public final class LastFmPlaybackReporter implements PlaybackReporter {
             context.sendBroadcast(intent);
         }
     }
-
-    @Override
-    public void onDestroy() {
-        // Don't care
-    }
 }

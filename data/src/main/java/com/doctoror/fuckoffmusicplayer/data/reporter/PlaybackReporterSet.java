@@ -50,12 +50,4 @@ final class PlaybackReporterSet implements PlaybackReporter {
             mReporters[i].reportPlaybackStateChanged(state, errorMessage);
         }
     }
-
-    @Override
-    public void onDestroy() {
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < mReporters.length; i++) {
-            mReporters[i].onDestroy();
-        }
-    }
 }

@@ -31,6 +31,4 @@ interface PlaybackReporter {
     fun reportPlaybackStateChanged(
             state: PlaybackState,
             errorMessage: CharSequence?)
-
-    fun onDestroy()
 }

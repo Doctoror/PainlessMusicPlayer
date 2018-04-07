@@ -107,11 +107,6 @@ public final class SLSPlaybackReporter implements PlaybackReporter {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        // Don't care
-    }
-
     private static int toSlsState(@NonNull final PlaybackState prevState,
                                   @NonNull final PlaybackState playbackState) {
         switch (playbackState) {

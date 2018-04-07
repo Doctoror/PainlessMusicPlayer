@@ -145,11 +145,6 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
         mMediaSession.setPlaybackState(builder.build());
     }
 
-    @Override
-    public void onDestroy() {
-        // Don't care
-    }
-
     @PlaybackStateCompat.State
     private static int toPlaybackStateCompat(@NonNull final PlaybackState state) {
         switch (state) {

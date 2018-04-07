@@ -29,11 +29,6 @@ public final class AppWidgetPlaybackStateReporter implements PlaybackReporter {
     }
 
     @Override
-    public void onDestroy() {
-        // Do nothing
-    }
-
-    @Override
     public void reportTrackChanged(@NonNull final Media media) {
         // Not supported
     }
