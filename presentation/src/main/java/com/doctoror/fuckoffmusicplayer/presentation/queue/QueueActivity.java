@@ -257,8 +257,13 @@ public final class QueueActivity extends BaseActivity
                 setAppBarCollapsibleIfNeeded();
             }
         });
-        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelperImpl(
-                (QueueRecyclerAdapter) mModel.getRecyclerAdapter().get()));
+        final QueueRecyclerAdapter adapter = (QueueRecyclerAdapter) mModel
+                .getRecyclerAdapter().get();
+        if (adapter == null) {
+            throw new IllegalStateException("Adapter in Model must be set");
+        }
+        final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelperImpl(adapter));
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
