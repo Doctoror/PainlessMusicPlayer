@@ -16,6 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -49,8 +51,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
@@ -315,7 +317,16 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         if (!TransitionUtils.supportsActivityTransitions() || fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
-            albumArtDim.animate().alpha(0f).setDuration(mAnimTime).start();
+            albumArtDim
+                    .animate()
+                    .alpha(0f)
+                    .setDuration(mAnimTime)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(final Animator animation) {
+                            exitAction.run();
+                        }
+                    });
         }
     }
 
