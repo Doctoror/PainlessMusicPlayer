@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.data.util;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public final class CollectionUtils {
 
     @Nullable
     public static <T> T getItemSafe(@Nullable final List<T> list,
-            final int position) {
+                                    final int position) {
         if (list != null && position < list.size()) {
             return list.get(position);
         }
@@ -61,5 +62,13 @@ public final class CollectionUtils {
             i--;
         }
         return longs;
+    }
+
+    @Nullable
+    public static <T> ArrayList<T> toArrayList(@Nullable final List<T> source) {
+        if (source instanceof ArrayList) {
+            return (ArrayList<T>) source;
+        }
+        return source != null ? new ArrayList<>(source) : null;
     }
 }

@@ -15,6 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media
+import java.util.*
+
 /**
  * Playback service control
  */
@@ -24,7 +27,7 @@ interface PlaybackServiceControl {
 
     fun playPause()
 
-    fun play()
+    fun play(queue: List<Media>, position: Int)
 
     fun playAnything()
 

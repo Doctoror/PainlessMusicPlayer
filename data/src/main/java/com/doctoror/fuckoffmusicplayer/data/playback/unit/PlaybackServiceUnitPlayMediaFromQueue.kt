@@ -55,12 +55,14 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         val currentMedia = currentMediaProvider.currentMedia
         val targetMedia = resolveTargetMedia(queue, position)
 
-        if (isTheSameMediaPaused(currentState, currentMedia, targetMedia)) {
+        if (queue == playbackData.queue &&
+                isTheSameMediaPaused(currentState, currentMedia, targetMedia)) {
             playAndReportCurrentState()
             return position
         }
 
         return changeMediaAndPlay(
+                queue,
                 currentState,
                 position,
                 currentMedia,
@@ -68,12 +70,14 @@ class PlaybackServiceUnitPlayMediaFromQueue(
     }
 
     private fun changeMediaAndPlay(
+            queue: List<Media>,
             currentState: PlaybackState,
             position: Int,
             currentMedia: Media?,
             targetMedia: Media): Int {
 
         mediaPlayer.stop()
+        playbackData.setPlayQueue(queue)
         playbackData.setPlayQueuePosition(position)
 
         val seekPosition = resolveSeekPosition(
@@ -82,6 +86,7 @@ class PlaybackServiceUnitPlayMediaFromQueue(
                 targetMedia = targetMedia)
 
         playbackData.setMediaPosition(seekPosition)
+        playbackData.persistAsync()
 
         unitReporter.reportCurrentMedia()
 

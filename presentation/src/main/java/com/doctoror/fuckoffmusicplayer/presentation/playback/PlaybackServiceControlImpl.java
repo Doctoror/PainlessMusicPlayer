@@ -4,6 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Playback service control implementation
@@ -27,8 +32,8 @@ public final class PlaybackServiceControlImpl implements PlaybackServiceControl 
     }
 
     @Override
-    public void play() {
-        context.startService(PlaybackServiceIntentFactory.intentPlay(context));
+    public void play(@NotNull final List<Media> queue, final int position) {
+        context.startService(PlaybackServiceIntentFactory.intentPlay(context, queue, position));
     }
 
     @Override

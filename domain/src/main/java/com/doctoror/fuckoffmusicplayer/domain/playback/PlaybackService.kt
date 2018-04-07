@@ -15,11 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media
+
 interface PlaybackService {
 
     fun playPause()
 
-    fun play()
+    fun play(queue: List<Media>, position: Int)
 
     fun playAnything()
 

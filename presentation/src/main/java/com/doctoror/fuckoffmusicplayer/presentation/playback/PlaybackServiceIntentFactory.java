@@ -19,6 +19,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
 /**
  * Intent facory for playback service
  */
@@ -34,8 +41,18 @@ public final class PlaybackServiceIntentFactory {
     }
 
     @NonNull
-    static Intent intentPlay(@NonNull final Context context) {
-        return intentAction(context, PlaybackAndroidService.ACTION_PLAY);
+    static Intent intentPlay(
+            @NonNull final Context context,
+            @NotNull final List<Media> queue,
+            final int position) {
+        final Intent intent = intentAction(context, PlaybackAndroidService.ACTION_PLAY);
+
+        intent.putParcelableArrayListExtra(
+                PlaybackAndroidService.EXTRA_QUEUE,
+                CollectionUtils.toArrayList(queue));
+
+        intent.putExtra(PlaybackAndroidService.EXTRA_POSITION, position);
+        return intent;
     }
 
     @NonNull

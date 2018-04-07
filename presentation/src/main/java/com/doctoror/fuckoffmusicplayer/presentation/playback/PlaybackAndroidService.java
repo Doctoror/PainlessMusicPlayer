@@ -33,6 +33,8 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
@@ -56,6 +58,9 @@ public final class PlaybackAndroidService extends Service {
     static final String ACTION_SEEK = "ACTION_SEEK";
     static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";
     static final String EXTRA_POSITION_PERCENT = "EXTRA_POSITION_PERCENT";
+
+    static final String EXTRA_QUEUE = "EXTRA_QUEUE";
+    static final String EXTRA_POSITION = "EXTRA_POSITION";
 
     private final ResendStateReceiver resendStateReceiver = new ResendStateReceiver();
 
@@ -118,7 +123,7 @@ public final class PlaybackAndroidService extends Service {
                 break;
 
             case ACTION_PLAY:
-                onActionPlay();
+                onActionPlay(intent);
                 break;
 
             case ACTION_PLAY_ANYTHING:
@@ -165,7 +170,7 @@ public final class PlaybackAndroidService extends Service {
         if (keyEvent != null && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyEvent.getKeyCode()) {
                 case KeyEvent.KEYCODE_MEDIA_PLAY:
-                    onActionPlay();
+                    onActionPlayPause();
                     break;
 
                 case KeyEvent.KEYCODE_MEDIA_PAUSE:
@@ -191,8 +196,10 @@ public final class PlaybackAndroidService extends Service {
         }
     }
 
-    private void onActionPlay() {
-        service.play();
+    private void onActionPlay(@NonNull final Intent intent) {
+        final List<Media> queue = intent.getParcelableArrayListExtra(EXTRA_QUEUE);
+        final int position = intent.getIntExtra(EXTRA_POSITION, 0);
+        service.play(queue, position);
     }
 
     private void onActionPlayAnything() {

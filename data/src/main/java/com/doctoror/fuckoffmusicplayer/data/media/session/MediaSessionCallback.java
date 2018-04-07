@@ -60,7 +60,7 @@ public final class MediaSessionCallback extends MediaSessionCompat.Callback {
 
     @Override
     public void onPlay() {
-        playbackServiceControl.play();
+        playbackServiceControl.playAnything();
     }
 
     @Override

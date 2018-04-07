@@ -75,9 +75,8 @@ final class PlaybackModule {
 
     @Provides
     PlaybackInitializer providePlaybackInitializer(
-            @NonNull final PlaybackServiceControl control,
-            @NonNull final PlaybackData playbackData) {
-        return new PlaybackInitializerImpl(control, playbackData);
+            @NonNull final PlaybackServiceControl control) {
+        return new PlaybackInitializerImpl(control);
     }
 
     @Provides

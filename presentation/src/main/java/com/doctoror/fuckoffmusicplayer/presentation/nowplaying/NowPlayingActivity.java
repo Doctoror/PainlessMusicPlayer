@@ -456,7 +456,7 @@ public final class NowPlayingActivity extends BaseActivity {
     public void onPlayClick() {
         switch (mState) {
             case STATE_IDLE:
-                mPlaybackServiceControl.play();
+                mPlaybackServiceControl.playPause();
                 break;
 
             case STATE_PAUSED:
@@ -468,7 +468,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 break;
 
             case STATE_ERROR:
-                mPlaybackServiceControl.play();
+                mPlaybackServiceControl.playPause();
                 break;
 
             case STATE_LOADING:

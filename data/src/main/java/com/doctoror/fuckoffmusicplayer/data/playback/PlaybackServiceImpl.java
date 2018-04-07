@@ -44,6 +44,9 @@ import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -161,7 +164,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 break;
 
             case STATE_PAUSED:
-                play();
+                playCurrent();
                 break;
 
             case STATE_IDLE:
@@ -182,12 +185,18 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
                 .subscribe();
     }
 
-    @Override
-    public void play() {
+    private void playCurrent() {
         unitStopTimeout.abortStopTimer();
         Completable.fromAction(() -> unitPlayMediaFromQueue.play(
-                playbackData.getQueue(),
-                playbackData.getQueuePosition()))
+                playbackData.getQueue(), playbackData.getQueuePosition()))
+                .subscribeOn(Schedulers.computation())
+                .subscribe();
+    }
+
+    @Override
+    public void play(@NotNull final List<Media> queue, final int position) {
+        unitStopTimeout.abortStopTimer();
+        Completable.fromAction(() -> unitPlayMediaFromQueue.play(queue, position))
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
     }
@@ -255,7 +264,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             mediaPlayer.stop();
         }
         playbackData.setMediaPosition(0);
-        play();
+        playCurrent();
     }
 
     @Nullable
@@ -309,7 +318,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         @Override
         public void onFocusGranted() {
-            play();
+            playCurrent();
         }
 
         @Override

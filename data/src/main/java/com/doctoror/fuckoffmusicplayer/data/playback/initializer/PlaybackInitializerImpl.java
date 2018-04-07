@@ -15,34 +15,24 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.initializer;
 
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
+import android.support.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-
-import android.support.annotation.NonNull;
 
 import java.util.List;
 
 public final class PlaybackInitializerImpl implements PlaybackInitializer {
 
     private final PlaybackServiceControl control;
-    private final PlaybackData playbackData;
 
-    public PlaybackInitializerImpl(
-            @NonNull final PlaybackServiceControl control,
-            @NonNull final PlaybackData playbackData) {
+    public PlaybackInitializerImpl(@NonNull final PlaybackServiceControl control) {
         this.control = control;
-        this.playbackData = playbackData;
     }
 
     @Override
     public void setQueueAndPlay(@NonNull final List<Media> queue, final int position) {
-        playbackData.setMediaPosition(0);
-        playbackData.setPlayQueuePosition(position);
-        playbackData.setPlayQueue(queue);
-        playbackData.persistAsync();
-
-        control.play();
+        control.play(queue, position);
     }
 }
