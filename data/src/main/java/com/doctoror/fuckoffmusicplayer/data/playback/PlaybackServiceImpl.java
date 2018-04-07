@@ -66,7 +66,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     private final MediaSessionHolder mediaSessionHolder;
     private final PlaybackControllerProvider playbackControllerProvider;
     private final PlaybackData playbackData;
-    private final PlaybackServiceView playbackServicePresenter;
+    private final PlaybackServiceView playbackServiceView;
 
     private final PlaybackServiceUnitAudioFocus unitAudioFocus;
     private final PlaybackServiceUnitAudioNoisyManagement unitAudioNoisyManagement;
@@ -104,7 +104,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             @NonNull final PlaybackServiceUnitReporter unitReporter,
             @NonNull final PlaybackServiceUnitStopTimeout unitStopTimeout,
             @NonNull final PlaybackServiceUnitWakeLock unitWakeLock,
-            @NonNull final PlaybackServiceView playbackServicePresenter,
+            @NonNull final PlaybackServiceView playbackServiceView,
             @NonNull final Runnable stopAction) {
         this.context = context;
         this.audioEffects = audioEffects;
@@ -113,7 +113,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         this.mediaSessionHolder = mediaSessionHolder;
         this.playbackControllerProvider = playbackControllerProvider;
         this.playbackData = playbackData;
-        this.playbackServicePresenter = playbackServicePresenter;
+        this.playbackServiceView = playbackServiceView;
         this.stopAction = stopAction;
 
         this.unitAudioFocus = unitAudioFocus;
@@ -275,7 +275,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
                 Schedulers.io().scheduleDirect(
-                        () -> playbackServicePresenter.startForeground(media, state));
+                        () -> playbackServiceView.startForeground(media, state));
             }
         }
     }
@@ -368,7 +368,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         @Override
         public void onPlayerError(@NonNull final Exception error) {
-            errorMessage = playbackServicePresenter.showPlaybackFailedError(error);
+            errorMessage = playbackServiceView.showPlaybackFailedError(error);
             setState(STATE_ERROR);
             stopAction.run();
         }
