@@ -78,7 +78,7 @@ final class ExoMediaPlayer implements MediaPlayer {
         exoPlayer.addAudioDebugListener(mAudioRendererEventListener);
 
         dataSourceFactory = new DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, "Fuck Off Music Player"));
+                Util.getUserAgent(context, "Painless Music Player"));
     }
 
     @Override
