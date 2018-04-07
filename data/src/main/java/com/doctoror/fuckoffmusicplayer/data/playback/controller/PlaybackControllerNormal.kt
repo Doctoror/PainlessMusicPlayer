@@ -16,11 +16,13 @@
 package com.doctoror.fuckoffmusicplayer.data.playback.controller
 
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 open class PlaybackControllerNormal(
+        private val playbackData: PlaybackData,
         private val playbackParams: PlaybackParams,
         private val playMediaFromQueueUseCase: PlaybackServiceUnitPlayMediaFromQueue,
         private val stopAction: Runnable) : PlaybackController {
@@ -28,16 +30,16 @@ open class PlaybackControllerNormal(
     protected val lock = Any()
 
     private var queue: List<Media>? = null
-    private var position: Int = 0
 
     override fun playPrev() {
         synchronized(lock) {
             val localQueue = queue
             if (localQueue != null && !localQueue.isEmpty()) {
+                val position = playbackData.queuePosition
                 when (playbackParams.repeatMode) {
-                    RepeatMode.NONE -> onPlay(localQueue, prevPos(localQueue, position))
-                    RepeatMode.QUEUE -> onPlay(localQueue, prevPos(localQueue, position))
-                    RepeatMode.TRACK -> onPlay(localQueue, position)
+                    RepeatMode.NONE -> dispatchPlay(localQueue, prevPos(localQueue, position))
+                    RepeatMode.QUEUE -> dispatchPlay(localQueue, prevPos(localQueue, position))
+                    RepeatMode.TRACK -> dispatchPlay(localQueue, position)
                 }
             }
         }
@@ -47,43 +49,37 @@ open class PlaybackControllerNormal(
         synchronized(lock) {
             val localQueue = queue
             if (localQueue != null && !localQueue.isEmpty()) {
+                val position = playbackData.queuePosition
                 when (playbackParams.repeatMode) {
                     RepeatMode.NONE -> if (!isUserAction && position == localQueue.size - 1) {
                         stopAction.run()
                     } else {
-                        onPlay(localQueue, nextPos(localQueue, position))
+                        dispatchPlay(localQueue, nextPos(localQueue, position))
                     }
 
-                    RepeatMode.QUEUE -> onPlay(localQueue, nextPos(localQueue, position))
+                    RepeatMode.QUEUE -> dispatchPlay(localQueue, nextPos(localQueue, position))
 
                     RepeatMode.TRACK -> if (isUserAction) {
-                        onPlay(localQueue, nextPos(localQueue, position))
+                        dispatchPlay(localQueue, nextPos(localQueue, position))
                     } else {
-                        onPlay(localQueue, position)
+                        dispatchPlay(localQueue, position)
                     }
                 }
             }
         }
     }
 
-    private fun onPlay(list: List<Media>?, position: Int) {
-        this.position = position
+    private fun dispatchPlay(list: List<Media>?, position: Int) {
         play(list, position)
     }
 
     protected open fun play(list: List<Media>?, position: Int) {
-        this.position = playMediaFromQueueUseCase.play(list, position)
+        playMediaFromQueueUseCase.play(list, position)
     }
 
     override fun setQueue(queue: List<Media>?) {
         synchronized(lock) {
             this.queue = queue
-        }
-    }
-
-    override fun setPositionInQueue(position: Int) {
-        synchronized(lock) {
-            this.position = position
         }
     }
 

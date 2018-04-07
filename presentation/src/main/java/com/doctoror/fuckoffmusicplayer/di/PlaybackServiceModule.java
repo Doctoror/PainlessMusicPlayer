@@ -108,13 +108,11 @@ public final class PlaybackServiceModule {
     @Provides
     @ServiceScope
     PlaybackServiceUnitPlayCurrentOrNewQueue providePlaybackServiceUnitPlayCurrentOrNewQueue(
-            @NonNull final PlaybackControllerProvider playbackControllerProvider,
             @NonNull final PlaybackData playbackData,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceUnitPlayMediaFromQueue psUnitPlayMediaFromQueue,
             @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned) {
         return new PlaybackServiceUnitPlayCurrentOrNewQueue(
-                playbackControllerProvider,
                 playbackData,
                 playbackInitializer,
                 psUnitPlayMediaFromQueue,

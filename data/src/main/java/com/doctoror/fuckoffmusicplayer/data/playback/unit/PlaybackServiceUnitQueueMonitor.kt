@@ -63,10 +63,7 @@ class PlaybackServiceUnitQueueMonitor(
                 val current = lastCurrentMedia
                 if (current != null) {
                     val indexOf = q.indexOf(current)
-                    if (indexOf != -1) {
-                        // This track position changed in queue
-                        playbackController.setPositionInQueue(indexOf)
-                    } else {
+                    if (indexOf == -1) {
                         // This track is not in new queue
                         restartAction.run()
                     }

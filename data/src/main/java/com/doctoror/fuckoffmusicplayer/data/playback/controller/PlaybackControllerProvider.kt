@@ -57,7 +57,6 @@ class PlaybackControllerProvider(
         }
         if (created) {
             returnValue.setQueue(playbackData.queue)
-            returnValue.setPositionInQueue(playbackData.queuePosition)
         }
 
         playbackController = returnValue
@@ -65,11 +64,13 @@ class PlaybackControllerProvider(
     }
 
     private fun newPlaybackControllerNormal(): PlaybackController = PlaybackControllerNormal(
+            playbackData,
             playbackParams,
             psUnitPlayMediaFromQueue,
             stopAction)
 
     private fun newPlaybackControllerShuffle(): PlaybackController = PlaybackControllerShuffle(
+            playbackData,
             playbackParams,
             psUnitPlayMediaFromQueue,
             stopAction)

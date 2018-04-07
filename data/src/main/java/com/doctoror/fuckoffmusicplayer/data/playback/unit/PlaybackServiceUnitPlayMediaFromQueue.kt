@@ -36,12 +36,10 @@ class PlaybackServiceUnitPlayMediaFromQueue(
      *
      * If queue position points to the same media, will continue playback.
      * If queue position points to different media, will replace current media and start playback of new media
-     *
-     * @return new media position in queue, or -1, if playback postponed or discarded
      */
     fun play(
             queue: List<Media>?,
-            position: Int): Int {
+            position: Int) {
         if (queue == null || queue.isEmpty()) {
             throw IllegalArgumentException("Play queue is null or empty")
         }
@@ -53,10 +51,10 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         if (queue == playbackData.queue &&
                 isTheSameMediaPaused(currentState, currentMedia, targetMedia)) {
             playAndReportCurrentState()
-            return position
+            return
         }
 
-        return changeMediaAndPlay(
+        changeMediaAndPlay(
                 queue,
                 currentState,
                 position,
@@ -69,7 +67,7 @@ class PlaybackServiceUnitPlayMediaFromQueue(
             currentState: PlaybackState,
             position: Int,
             currentMedia: Media?,
-            targetMedia: Media): Int {
+            targetMedia: Media) {
 
         mediaPlayer.stop()
         playbackData.setPlayQueue(queue)
@@ -95,7 +93,6 @@ class PlaybackServiceUnitPlayMediaFromQueue(
             }
 
         }
-        return position
     }
 
     private fun resolveTargetMedia(

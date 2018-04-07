@@ -24,6 +24,4 @@ interface PlaybackController {
     fun playPrev()
 
     fun setQueue(queue: List<Media>?)
-
-    fun setPositionInQueue(position: Int)
 }
