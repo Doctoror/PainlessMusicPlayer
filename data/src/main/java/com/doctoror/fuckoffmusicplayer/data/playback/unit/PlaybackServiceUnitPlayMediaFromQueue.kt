@@ -46,11 +46,6 @@ class PlaybackServiceUnitPlayMediaFromQueue(
             throw IllegalArgumentException("Play queue is null or empty")
         }
 
-        unitAudioFocus.requestAudioFocus()
-        if (!unitAudioFocus.focusGranted) {
-            return -1
-        }
-
         val currentState = playbackData.playbackState
         val currentMedia = currentMediaProvider.currentMedia
         val targetMedia = resolveTargetMedia(queue, position)
@@ -88,17 +83,18 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         playbackData.setMediaPosition(seekPosition)
         playbackData.persistAsync()
 
-        unitReporter.reportCurrentMedia()
-
-        val uri = targetMedia.data
-        if (uri != null) {
-            mediaPlayer.load(uri)
-            if (seekPosition != 0L) {
-                mediaPlayer.seekTo(seekPosition)
+        unitAudioFocus.requestAudioFocus()
+        if (unitAudioFocus.focusGranted) {
+            val uri = targetMedia.data
+            if (uri != null) {
+                mediaPlayer.load(uri)
+                if (seekPosition != 0L) {
+                    mediaPlayer.seekTo(seekPosition)
+                }
+                playAndReportCurrentState()
             }
-            playAndReportCurrentState()
-        }
 
+        }
         return position
     }
 
@@ -136,7 +132,10 @@ class PlaybackServiceUnitPlayMediaFromQueue(
     }
 
     private fun playAndReportCurrentState() {
-        mediaPlayer.play()
-        unitReporter.reportCurrentMedia()
+        unitAudioFocus.requestAudioFocus()
+        if (unitAudioFocus.focusGranted) {
+            mediaPlayer.play()
+            unitReporter.reportCurrentMedia()
+        }
     }
 }
