@@ -144,7 +144,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         registerLifecycleObserver(unitReporter);
 
         // Must be called after all lifecycle observers registered
-        onCreate();
+        notifyLifecycleStateOnCreate();
 
         isDestroying = false;
         errorMessage = null;
@@ -282,19 +282,20 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void destroy() {
-        onDestroy();
+        isDestroying = true;
+        notifyLifecycleStateOnDestroy();
 
         mediaPlayer.stop();
 
         playbackData.setMediaPosition(mediaPlayer.getCurrentPosition());
         playbackData.persistAsync();
 
-        isDestroying = true;
         if (errorMessage != null) {
             setState(STATE_ERROR);
         } else {
             setState(STATE_IDLE);
         }
+
         audioEffects.relese();
         mediaPlayer.release();
     }

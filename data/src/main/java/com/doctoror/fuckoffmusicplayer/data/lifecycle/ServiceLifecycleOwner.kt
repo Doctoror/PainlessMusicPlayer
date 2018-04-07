@@ -23,11 +23,11 @@ abstract class ServiceLifecycleOwner {
         lifecycleObservers.add(observer)
     }
 
-    fun onCreate() {
+    fun notifyLifecycleStateOnCreate() {
         lifecycleObservers.forEach { it.onCreate() }
     }
 
-    fun onDestroy() {
+    fun notifyLifecycleStateOnDestroy() {
         lifecycleObservers.forEach { it.onDestroy() }
         lifecycleObservers.clear()
     }
