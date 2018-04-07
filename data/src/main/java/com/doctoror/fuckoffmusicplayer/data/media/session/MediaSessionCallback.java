@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media.session;
 
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;

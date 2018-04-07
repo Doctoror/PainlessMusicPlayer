@@ -34,7 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
 import com.doctoror.fuckoffmusicplayer.presentation.util.SearchViewUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager;

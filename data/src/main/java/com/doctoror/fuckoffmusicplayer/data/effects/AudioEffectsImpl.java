@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.data.effects;
 
 import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.effects.nano.EffectsProto;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 

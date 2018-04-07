@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.util;
+package com.doctoror.commons.util;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

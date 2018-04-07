@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.data.media;
 
 import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 
 import android.content.Context;

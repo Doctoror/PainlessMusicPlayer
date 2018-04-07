@@ -20,7 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 
 public enum NavigationItem {
 

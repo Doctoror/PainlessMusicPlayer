@@ -46,6 +46,10 @@ ext {
 
     testRunnerVersion = '1.0.1'
 
+    commonsDependencies = [
+            supportAnnotations: "com.android.support:support-annotations:$supportVersion"
+    ]
+
     presentationDependencies = [
             aspectRatioLayout     : "com.github.doctoror.aspectratiolayout:library:$aspectRatioLayoutVersion",
 

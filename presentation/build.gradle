@@ -104,9 +104,10 @@ dependencies {
     testImplementation td.mockitoKotlin
     testImplementation td.robolectric
 
-    implementation project(':siriwaveview')
+    implementation project(':commons')
     implementation project(':domain')
     implementation project(':data')
+    implementation project(':siriwaveview')
 
     implementation d.aspectRatioLayout
 

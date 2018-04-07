@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.queue.usecase
 
-import android.util.Log
+import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider
 import java.io.IOException
 

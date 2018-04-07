@@ -31,7 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;

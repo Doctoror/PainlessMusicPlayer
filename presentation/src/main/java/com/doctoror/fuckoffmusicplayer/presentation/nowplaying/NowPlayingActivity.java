@@ -54,7 +54,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.data.util.Objects;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityNowplayingBinding;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;

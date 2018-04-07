@@ -50,7 +50,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;

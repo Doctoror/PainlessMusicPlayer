@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider
-import com.doctoror.fuckoffmusicplayer.data.util.Log
+import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned

@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

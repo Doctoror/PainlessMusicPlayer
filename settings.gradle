@@ -1,1 +1,1 @@
-include ':presentation', ':siriwaveview', ':domain', ':data'
+include ':presentation', ':siriwaveview', ':domain', ':data', ':commons'

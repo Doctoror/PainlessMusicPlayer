@@ -20,7 +20,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.doctoror.fuckoffmusicplayer.data.util.Log;
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
 import com.google.android.exoplayer2.DefaultLoadControl;

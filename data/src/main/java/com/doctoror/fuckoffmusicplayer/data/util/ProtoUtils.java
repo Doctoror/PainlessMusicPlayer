@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
+import com.doctoror.commons.util.Log;
 import com.google.protobuf.nano.CodedOutputByteBufferNano;
 import com.google.protobuf.nano.MessageNano;
 
