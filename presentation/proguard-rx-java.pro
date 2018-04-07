@@ -1,4 +1,5 @@
 -dontwarn sun.misc.**
+-dontwarn io.reactivex.internal.**
 
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
    long producerIndex;
