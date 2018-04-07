@@ -54,6 +54,5 @@ class PlaybackServiceUnitReporter(
 
     override fun onDestroy() {
         playbackReporter?.onDestroy()
-        playbackReporter = null
     }
 }
