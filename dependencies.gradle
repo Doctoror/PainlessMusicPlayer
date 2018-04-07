@@ -37,7 +37,7 @@ ext {
 
     robolectricVersion = '3.8'
     rxAndroidVersion = '2.0.2'
-    rxCursorLoaderVersion = '2.0.2'
+    rxCursorLoaderVersion = '2.1.0'
     rxBindingVersion = '2.1.1'
     rxJavaVersion = '2.1.10'
     rxPermissionsVersion = '0.9.5@aar'
