@@ -31,6 +31,11 @@ abstract class LibraryPermissionsPresenter(
 
     private var permissionRequested = RuntimePermissions.arePermissionsRequested()
 
+    @OnLifecycleEvent(ON_START)
+    fun onStart() {
+        requestPermissionIfNeeded()
+    }
+
     fun restoreInstanceState(savedInstanceState: Bundle) {
         val state = savedInstanceState.getParcelable<InstanceState>(KEY_INSTANCE_STATE)
         if (state != null) {
@@ -42,19 +47,6 @@ abstract class LibraryPermissionsPresenter(
     fun onSaveInstanceState(outState: Bundle) {
         val state = InstanceState(permissionRequested)
         outState.putParcelable(KEY_INSTANCE_STATE, state)
-    }
-
-    private fun requestPermissionIfNeeded() {
-        val hasPermissions = libraryPermissionProvider.permissionsGranted()
-        if (hasPermissions) {
-            onPermissionGranted()
-        } else if (permissionRequested) {
-            onPermissionDenied()
-        } else {
-            disposeOnStop(Completable
-                    .timer(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                    .subscribe { requestPermission() })
-        }
     }
 
     fun requestPermission() {
@@ -73,9 +65,14 @@ abstract class LibraryPermissionsPresenter(
 
     protected abstract fun onPermissionGranted()
 
-    @OnLifecycleEvent(ON_START)
-    fun onStart() {
-        requestPermissionIfNeeded()
+    private fun requestPermissionIfNeeded() {
+        when {
+            libraryPermissionProvider.permissionsGranted() -> onPermissionGranted()
+            permissionRequested -> onPermissionDenied()
+            else -> disposeOnStop(Completable
+                    .timer(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                    .subscribe { requestPermission() })
+        }
     }
 
     @Parcelize
@@ -83,6 +80,6 @@ abstract class LibraryPermissionsPresenter(
 
     private companion object {
 
-        private const val KEY_INSTANCE_STATE = "LibraryPermissionsFragment.INSTANCE_STATE"
+        private const val KEY_INSTANCE_STATE = "LibraryPermissionsPresenter.INSTANCE_STATE"
     }
 }
