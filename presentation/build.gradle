@@ -122,6 +122,7 @@ dependencies {
 
     implementation d.dagger
     implementation d.daggerAndroid
+    implementation d.daggerAndroidSupport
     kapt d.daggerCompiler
     kapt d.daggerAndroidProcessor
 
