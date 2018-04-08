@@ -34,6 +34,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 
 /**
  * MediaStore {@link AlbumsProvider}
@@ -55,8 +56,10 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     }
 
     @Override
-    public Observable<Cursor> load(@Nullable final String searchFilter) {
-        return RxCursorLoader.create(mContentResolver, newParams(searchFilter));
+    public Observable<Cursor> load(
+            @Nullable final String searchFilter,
+            @NonNull final Scheduler scheduler) {
+        return RxCursorLoader.observable(mContentResolver, newParams(searchFilter), scheduler);
     }
 
     @Override

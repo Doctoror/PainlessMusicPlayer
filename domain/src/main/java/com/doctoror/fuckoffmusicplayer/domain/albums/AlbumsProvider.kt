@@ -18,13 +18,14 @@ package com.doctoror.fuckoffmusicplayer.domain.albums
 import android.database.Cursor
 
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 
 /**
  * "Albums" provider
  */
 interface AlbumsProvider {
 
-    fun load(searchFilter: String?): Observable<Cursor>
+    fun load(searchFilter: String?, scheduler: Scheduler): Observable<Cursor>
 
     fun loadForArtist(artistId: Long): Observable<Cursor>
     fun loadForGenre(genreId: Long): Observable<Cursor>

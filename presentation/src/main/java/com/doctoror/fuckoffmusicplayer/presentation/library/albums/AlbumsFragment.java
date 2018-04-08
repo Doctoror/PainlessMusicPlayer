@@ -34,6 +34,7 @@ import javax.inject.Inject;
 
 import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 public final class AlbumsFragment extends LibraryListFragment {
 
@@ -92,7 +93,7 @@ public final class AlbumsFragment extends LibraryListFragment {
 
     @Override
     protected Observable<Cursor> load(@Nullable final String filter) {
-        return mAlbumsProvider.load(filter);
+        return mAlbumsProvider.load(filter, Schedulers.io());
     }
 
     @Override
