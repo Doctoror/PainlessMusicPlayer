@@ -40,7 +40,7 @@ import javax.inject.Inject
 /**
  * Fragment used for library list
  */
-abstract class LibraryListFragment : BaseFragment() {
+abstract class LibraryListFragment2 : BaseFragment() {
 
     private val searchProcessor = BehaviorProcessor.create<String>()
     private val model = LibraryListModel()

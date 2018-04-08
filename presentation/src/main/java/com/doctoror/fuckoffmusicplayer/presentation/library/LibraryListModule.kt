@@ -43,5 +43,5 @@ class LibraryListModule {
 
     @Provides
     @FragmentScope
-    fun provideSearchQuerySource(fragment: LibraryListFragment) = fragment.searchQuerySource
+    fun provideSearchQuerySource(fragment: LibraryListFragment2) = fragment.searchQuerySource
 }

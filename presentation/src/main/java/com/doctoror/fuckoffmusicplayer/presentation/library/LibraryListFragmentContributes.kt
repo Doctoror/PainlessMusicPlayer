@@ -24,5 +24,5 @@ interface LibraryListFragmentContributes {
 
     @FragmentScope
     @ContributesAndroidInjector(modules = [LibraryListModule::class])
-    fun libraryListFragment(): LibraryListFragment
+    fun libraryListFragment(): LibraryListFragment2
 }
