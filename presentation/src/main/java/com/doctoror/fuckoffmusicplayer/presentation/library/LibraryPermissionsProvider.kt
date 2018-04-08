@@ -18,20 +18,24 @@ package com.doctoror.fuckoffmusicplayer.presentation.library
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.support.annotation.MainThread
 import android.support.v4.content.ContextCompat
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
-import com.tbruyelle.rxpermissions2.RxPermissions
+import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
 import io.reactivex.Observable
 
 class LibraryPermissionsProvider(
         private val context: Context,
-        private val rxPermissions: RxPermissions) {
+        private val rxPermissionsProvider: RxPermissionsProvider) {
 
     fun permissionsGranted() = ContextCompat.checkSelfPermission(context,
             Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
 
+    @MainThread
     fun requestPermission(): Observable<Boolean> {
         RuntimePermissions.setPermissionsRequested()
-        return rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE)
+        return rxPermissionsProvider
+                .provideRxPermissions()
+                .request(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 }
