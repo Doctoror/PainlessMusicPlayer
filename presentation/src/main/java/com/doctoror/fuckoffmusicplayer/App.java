@@ -26,7 +26,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.settings.DayNightModeMapper;
 import javax.inject.Inject;
 
 import dagger.android.AndroidInjector;
-import dagger.android.DaggerApplication;
+import dagger.android.support.DaggerApplication;
 
 /**
  * Application
