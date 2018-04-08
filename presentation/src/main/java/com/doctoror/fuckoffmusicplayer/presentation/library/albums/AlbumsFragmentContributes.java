@@ -16,14 +16,21 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums;
 
 import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope;
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment2;
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListModule;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
 @Module
 public interface AlbumsFragmentContributes {
 
+    @Binds
     @FragmentScope
-    @ContributesAndroidInjector
+    LibraryListFragment2 bindsLibraryListFragment(AlbumsFragment fragment);
+
+    @FragmentScope
+    @ContributesAndroidInjector(modules = LibraryListModule.class)
     AlbumsFragment albumsFragment();
 }

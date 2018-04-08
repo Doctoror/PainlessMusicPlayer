@@ -17,7 +17,6 @@ package com.doctoror.fuckoffmusicplayer.di.contributes;
 
 import com.doctoror.fuckoffmusicplayer.presentation.effects.EffectsFragmentContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeFragmentsContributes;
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragmentContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumsFragmentContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional.ConditionalAlbumListFragmentContributes;
 import com.doctoror.fuckoffmusicplayer.presentation.library.artistalbums.ArtistAlbumsFragmentContributes;
@@ -39,7 +38,6 @@ import dagger.Module;
         GenreAlbumsFragmentContributes.class,
         GenresFragmentContributes.class,
         HomeFragmentsContributes.class,
-        LibraryListFragmentContributes.class,
         PlaylistsFragmentContributes.class,
         RecentAlbumsFragmentContributes.class,
         TracksFragmentContributes.class

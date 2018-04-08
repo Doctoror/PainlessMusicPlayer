@@ -15,33 +15,52 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
-import android.app.Fragment
 import android.content.Context
 import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope
-import com.tbruyelle.rxpermissions2.RxPermissions
+import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
 import dagger.Module
 import dagger.Provides
+import io.reactivex.Observable
 
 @Module
 class LibraryListModule {
 
     @Provides
     @FragmentScope
-    fun provideRxPermissions(fragment: Fragment) = RxPermissions(fragment.activity)
+    fun provideRxPermissionsProvider(fragment: LibraryListFragment2) =
+            RxPermissionsProvider(fragment.activity)
 
     @Provides
     @FragmentScope
     fun providePermissionsProvider(
             context: Context,
-            rxPermissions: RxPermissions) = LibraryPermissionsProvider(context, rxPermissions)
+            rxPermissionsProvider: RxPermissionsProvider) =
+            LibraryPermissionsProvider(context, rxPermissionsProvider)
 
     @Provides
     @FragmentScope
-    fun provideOptionsMenuInvalidator(fragment: Fragment): OptionsMenuInvalidator = {
+    fun provideOptionsMenuInvalidator(fragment: LibraryListFragment2): OptionsMenuInvalidator = {
         fragment.activity?.invalidateOptionsMenu()
     }
 
     @Provides
     @FragmentScope
     fun provideSearchQuerySource(fragment: LibraryListFragment2) = fragment.searchQuerySource
+
+    @Provides
+    @FragmentScope
+    fun provideLibraryListModel() = LibraryListModel()
+
+    @Provides
+    @FragmentScope
+    fun provideLibraryListPresenter(
+            libraryPermissionProvider: LibraryPermissionsProvider,
+            optionsMenuInvalidator: OptionsMenuInvalidator,
+            searchQuerySource: Observable<String>,
+            viewModel: LibraryListModel
+    ) = LibraryListPresenter(
+            libraryPermissionProvider,
+            optionsMenuInvalidator,
+            searchQuerySource,
+            viewModel)
 }
