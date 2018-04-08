@@ -31,6 +31,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
+import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.processors.BehaviorProcessor
 import kotlinx.android.parcel.Parcelize
@@ -60,6 +61,8 @@ abstract class LibraryListFragment2 : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidInjection.inject(this)
+
         setHasOptionsMenu(true)
         configure()
 
@@ -71,7 +74,7 @@ abstract class LibraryListFragment2 : BaseFragment() {
     private fun configure() {
         val config = obtainConfig()
 
-        model.setRecyclerAdapter(config.adapter)
+        model.setRecyclerAdapter(config.recyclerAdapter)
         presenter.canShowEmptyView = config.canShowEmptyView
         presenter.setDataSource(config.dataSource)
         model.setEmptyMessage(config.emptyMessage)
@@ -165,9 +168,9 @@ abstract class LibraryListFragment2 : BaseFragment() {
 
     data class Config(
             val canShowEmptyView: Boolean,
-            val adapter: RecyclerView.Adapter<*>,
+            val dataSource: LibraryDataSource,
             val emptyMessage: CharSequence,
-            val dataSource: LibraryDataSource)
+            val recyclerAdapter: RecyclerView.Adapter<*>)
 
     @Parcelize
     data class InstanceState(
