@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
 
@@ -117,27 +118,29 @@ dependencies {
     implementation d.aspectRatioLayout
 
     implementation d.butterKnife
-    annotationProcessor d.butterKnifeCompiler
+    kapt d.butterKnifeCompiler
 
     implementation d.dagger
     implementation d.daggerAndroid
-    annotationProcessor d.daggerCompiler
-    annotationProcessor d.daggerAndroidProcessor
+    kapt d.daggerCompiler
+    kapt d.daggerAndroidProcessor
 
     implementation d.dart
-    annotationProcessor d.dartProcessor
+    kapt d.dartProcessor
+
+    kapt d.dataBindingCompiler
 
     implementation d.fastScroll
 
     implementation d.glide
 
     implementation d.henson
-    annotationProcessor d.hensonProcessor
+    kapt d.hensonProcessor
 
     implementation d.kotlin
 
     implementation d.parceler
-    annotationProcessor d.parcelerProcessor
+    kapt d.parcelerProcessor
 
     implementation d.rxAndroid
     implementation d.rxBinding
