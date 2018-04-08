@@ -31,7 +31,7 @@ class LibraryListPresenter(
         private val libraryPermissionProvider: LibraryPermissionsProvider,
         private val optionsMenuInvalidator: OptionsMenuInvalidator,
         private val searchQuerySource: Observable<String>,
-        private val viewModel: LibraryListModel) :
+        private val viewModel: LibraryListViewModel) :
         LibraryPermissionsPresenter(libraryPermissionProvider) {
 
     private val tag = "LibraryListPresenter"

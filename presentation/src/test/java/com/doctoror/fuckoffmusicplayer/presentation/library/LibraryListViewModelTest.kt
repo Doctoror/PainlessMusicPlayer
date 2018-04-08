@@ -3,9 +3,9 @@ package com.doctoror.fuckoffmusicplayer.presentation.library
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class LibraryListModelTest {
+class LibraryListViewModelTest {
 
-    private val underTest = LibraryListModel()
+    private val underTest = LibraryListViewModel()
 
     @Test
     fun showsViewProgress() {
@@ -16,7 +16,7 @@ class LibraryListModelTest {
         underTest.showViewProgress()
 
         // Then
-        assertEquals(LibraryListModel.ANIMATOR_CHILD_PROGRESS, underTest.displayedChild.get())
+        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_PROGRESS, underTest.displayedChild.get())
     }
 
     @Test
@@ -29,7 +29,7 @@ class LibraryListModelTest {
 
         // Then
         assertEquals(
-                LibraryListModel.ANIMATOR_CHILD_PERMISSION_DENIED,
+                LibraryListViewModel.ANIMATOR_CHILD_PERMISSION_DENIED,
                 underTest.displayedChild.get())
     }
 
@@ -42,7 +42,7 @@ class LibraryListModelTest {
         underTest.showViewEmpty()
 
         // Then
-        assertEquals(LibraryListModel.ANIMATOR_CHILD_EMPTY, underTest.displayedChild.get())
+        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_EMPTY, underTest.displayedChild.get())
     }
 
     @Test
@@ -54,7 +54,7 @@ class LibraryListModelTest {
         underTest.showViewError()
 
         // Then
-        assertEquals(LibraryListModel.ANIMATOR_CHILD_ERROR, underTest.displayedChild.get())
+        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_ERROR, underTest.displayedChild.get())
     }
 
     @Test
@@ -66,6 +66,6 @@ class LibraryListModelTest {
         underTest.showViewContent()
 
         // Then
-        assertEquals(LibraryListModel.ANIMATOR_CHILD_CONTENT, underTest.displayedChild.get())
+        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_CONTENT, underTest.displayedChild.get())
     }
 }

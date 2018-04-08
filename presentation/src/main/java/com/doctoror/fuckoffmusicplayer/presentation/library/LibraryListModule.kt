@@ -49,7 +49,7 @@ class LibraryListModule {
 
     @Provides
     @FragmentScope
-    fun provideLibraryListModel() = LibraryListModel()
+    fun provideLibraryListViewModel() = LibraryListViewModel()
 
     @Provides
     @FragmentScope
@@ -57,7 +57,7 @@ class LibraryListModule {
             libraryPermissionProvider: LibraryPermissionsProvider,
             optionsMenuInvalidator: OptionsMenuInvalidator,
             searchQuerySource: Observable<String>,
-            viewModel: LibraryListModel
+            viewModel: LibraryListViewModel
     ) = LibraryListPresenter(
             libraryPermissionProvider,
             optionsMenuInvalidator,

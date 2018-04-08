@@ -56,7 +56,7 @@ abstract class LibraryListFragment2 : BaseFragment() {
     lateinit var presenter: LibraryListPresenter
 
     @Inject
-    lateinit var viewModel: LibraryListModel
+    lateinit var viewModel: LibraryListViewModel
 
     val searchQuerySource: Observable<String>
         get() = searchProcessor.toObservable()

@@ -64,7 +64,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     private static final String KEY_INSTANCE_STATE = "LibraryListFragment.INSTANCE_STATE";
 
     private final BehaviorProcessor<String> mSearchProcessor = BehaviorProcessor.create();
-    private final LibraryListModel mModel = new LibraryListModel();
+    private final LibraryListViewModel mModel = new LibraryListViewModel();
 
     private Disposable mDisposableOld;
     private Disposable mDisposable;

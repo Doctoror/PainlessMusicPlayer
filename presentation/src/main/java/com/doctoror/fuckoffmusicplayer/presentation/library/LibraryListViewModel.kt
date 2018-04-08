@@ -23,7 +23,7 @@ import android.support.v7.widget.RecyclerView
 /**
  * Data binding model for [LibraryListFragment2]
  */
-class LibraryListModel {
+class LibraryListViewModel {
 
     val displayedChild = ObservableInt()
     val emptyMessage = ObservableField<CharSequence>()

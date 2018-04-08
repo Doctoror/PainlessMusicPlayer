@@ -22,7 +22,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListViewModel"/>
     </data>
 
     <ViewAnimator
