@@ -63,14 +63,8 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
 
     private static final String KEY_INSTANCE_STATE = "LibraryListFragment.INSTANCE_STATE";
 
-    private static final int ANIMATOR_CHILD_PROGRESS = 0;
-    private static final int ANIMATOR_CHILD_PERMISSION_DENIED = 1;
-    private static final int ANIMATOR_CHILD_EMPTY = 2;
-    private static final int ANIMATOR_CHILD_ERROR = 3;
-    private static final int ANIMATOR_CHILD_CONTENT = 4;
-
     private final BehaviorProcessor<String> mSearchProcessor = BehaviorProcessor.create();
-    private final LibraryListFragmentModel mModel = new LibraryListFragmentModel();
+    private final LibraryListModel mModel = new LibraryListModel();
 
     private Disposable mDisposableOld;
     private Disposable mDisposable;
@@ -138,14 +132,14 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
 
     @Override
     protected void onPermissionGranted() {
-        mModel.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
+        mModel.showViewProgress();
         disposeOnStop(mSearchProcessor.hide().subscribe(mSearchQueryConsumer));
         getActivity().invalidateOptionsMenu();
     }
 
     @Override
     protected void onPermissionDenied() {
-        mModel.setDisplayedChild(ANIMATOR_CHILD_PERMISSION_DENIED);
+        mModel.showViewPermissionDenied();
     }
 
     @Nullable
@@ -227,8 +221,12 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
             mDisposableOld.dispose();
             mDisposableOld = null;
         }
-        mModel.setDisplayedChild(cursor.getCount() == 0 && mCanShowEmptyView
-                ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
+
+        if (cursor.getCount() == 0 && mCanShowEmptyView) {
+            mModel.showViewEmpty();
+        } else {
+            mModel.showViewContent();
+        }
     }
 
     private void onSearchResultLoadFailed(@NonNull final Throwable t) {
@@ -239,7 +237,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         }
         onDataReset();
         if (isAdded()) {
-            mModel.setDisplayedChild(ANIMATOR_CHILD_ERROR);
+            mModel.showViewError();
         }
     }
 
