@@ -44,17 +44,19 @@ import javax.inject.Inject
 abstract class LibraryListFragment2 : BaseFragment() {
 
     private val searchProcessor = BehaviorProcessor.create<String>()
-    private val model = LibraryListModel()
 
     private var searchIconified = true
 
     private lateinit var binding: FragmentLibraryListBinding
 
     @Inject
+    lateinit var libraryPermissionsProvider: LibraryPermissionsProvider
+
+    @Inject
     lateinit var presenter: LibraryListPresenter
 
     @Inject
-    lateinit var libraryPermissionsProvider: LibraryPermissionsProvider
+    lateinit var viewModel: LibraryListModel
 
     val searchQuerySource: Observable<String>
         get() = searchProcessor.toObservable()
@@ -69,15 +71,18 @@ abstract class LibraryListFragment2 : BaseFragment() {
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState)
         }
+
+        lifecycle.addObserver(presenter)
     }
 
     private fun configure() {
         val config = obtainConfig()
 
-        model.setRecyclerAdapter(config.recyclerAdapter)
         presenter.canShowEmptyView = config.canShowEmptyView
         presenter.setDataSource(config.dataSource)
-        model.setEmptyMessage(config.emptyMessage)
+
+        viewModel.emptyMessage.set(config.emptyMessage)
+        viewModel.setRecyclerAdapter(config.recyclerAdapter)
     }
 
     private fun restoreInstanceState(savedInstanceState: Bundle) {
@@ -111,7 +116,7 @@ abstract class LibraryListFragment2 : BaseFragment() {
                 searchIconified = true
                 false
             }
-            searchView.setOnSearchClickListener { v -> searchIconified = false }
+            searchView.setOnSearchClickListener { _ -> searchIconified = false }
             searchView.isIconified = searchIconified
 
             RxSearchView
@@ -128,15 +133,15 @@ abstract class LibraryListFragment2 : BaseFragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate<FragmentLibraryListBinding>(inflater,
+        binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_library_list, container, false)
 
         setupRecyclerView(binding.recyclerView)
         initSwipeDirection(binding)
 
-        binding.model = model
+        binding.model = viewModel
         binding.root.findViewById<View>(R.id.btnRequest)
-                .setOnClickListener { v -> presenter.requestPermission() }
+                .setOnClickListener { _ -> presenter.requestPermission() }
 
         return binding.root
     }
@@ -162,6 +167,11 @@ abstract class LibraryListFragment2 : BaseFragment() {
     override fun onStop() {
         super.onStop()
         SoftInputManager.hideSoftInput(activity)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        lifecycle.removeObserver(presenter)
     }
 
     protected abstract fun obtainConfig(): Config
