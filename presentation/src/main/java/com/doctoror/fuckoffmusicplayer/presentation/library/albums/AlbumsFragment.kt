@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums
 
+import android.content.Context
 import android.content.res.Configuration
-import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -39,8 +39,8 @@ class AlbumsFragment : LibraryListFragment2() {
     @Inject
     lateinit var queueProvider: QueueProviderAlbums
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
         AndroidInjection.inject(this)
     }
 
