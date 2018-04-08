@@ -47,7 +47,7 @@ abstract class LibraryListFragment : BaseFragment() {
 
     private var searchIconified = true
 
-    private var recyclerView: RecyclerView? = null
+    private lateinit var binding: FragmentLibraryListBinding
 
     @Inject
     lateinit var presenter: LibraryListPresenter
@@ -125,7 +125,7 @@ abstract class LibraryListFragment : BaseFragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        val binding = DataBindingUtil.inflate<FragmentLibraryListBinding>(inflater,
+        binding = DataBindingUtil.inflate<FragmentLibraryListBinding>(inflater,
                 R.layout.fragment_library_list, container, false)
 
         setupRecyclerView(binding.recyclerView)
@@ -135,7 +135,6 @@ abstract class LibraryListFragment : BaseFragment() {
         binding.root.findViewById<View>(R.id.btnRequest)
                 .setOnClickListener { v -> presenter.requestPermission() }
 
-        recyclerView = binding.recyclerView
         return binding.root
     }
 
@@ -150,7 +149,7 @@ abstract class LibraryListFragment : BaseFragment() {
     }
 
     protected fun getItemView(position: Int): View? {
-        return ViewUtils.getItemView(recyclerView, position)
+        return ViewUtils.getItemView(binding.recyclerView, position)
     }
 
     protected open fun setupRecyclerView(recyclerView: RecyclerView) {
