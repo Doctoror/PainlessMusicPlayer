@@ -31,7 +31,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -195,15 +194,6 @@ public final class BindingAdapters {
         };
 
         return new ColorStateList(states, colors);
-    }
-
-    @BindingAdapter("displayedChild")
-    public static void setDisplayedChild(
-            @NonNull final ViewAnimator viewAnimator,
-            final int child) {
-        if (viewAnimator.getDisplayedChild() != child) {
-            viewAnimator.setDisplayedChild(child);
-        }
     }
 
     @BindingAdapter("srcRes")
