@@ -10,7 +10,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional.C
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 
 /**
@@ -37,8 +37,12 @@ public final class GenreAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        genreId = getArguments().getLong(EXTRA_GENRE_ID);
-        AndroidInjection.inject(this);
+        final Bundle args = getArguments();
+        if (args == null) {
+            throw new IllegalStateException("Arguments must not be null");
+        }
+        genreId = args.getLong(EXTRA_GENRE_ID);
+        AndroidSupportInjection.inject(this);
     }
 
     @Override

@@ -24,7 +24,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional.C
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 
 /**
@@ -38,7 +38,7 @@ public final class RecentAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
     }
 
     @Override

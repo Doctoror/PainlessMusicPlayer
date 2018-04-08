@@ -25,7 +25,7 @@ import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment2
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SpacesItemDecoration
-import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -41,7 +41,7 @@ class AlbumsFragment : LibraryListFragment2() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        AndroidInjection.inject(this)
+        AndroidSupportInjection.inject(this)
     }
 
     override fun setupRecyclerView(recyclerView: RecyclerView) {
@@ -62,7 +62,10 @@ class AlbumsFragment : LibraryListFragment2() {
     }
 
     private fun onAlbumDeleteClick(albumId: Long, name: String?) {
-        DeleteAlbumDialogFragment.show(activity, fragmentManager, albumId, name)
+        val context = activity ?: throw IllegalStateException("Activity is null")
+        val fragmentManager = fragmentManager
+                ?: throw IllegalStateException("FragmentManager is null")
+        DeleteAlbumDialogFragment.show(context, fragmentManager, albumId, name)
     }
 
     private fun onAlbumClick(position: Int, albumId: Long,
@@ -75,7 +78,8 @@ class AlbumsFragment : LibraryListFragment2() {
     }
 
     private fun obtainRecyclerAdapter(): AlbumsRecyclerAdapter {
-        val adapter = AlbumsRecyclerAdapter(activity, Glide.with(this))
+        val context = activity ?: throw IllegalStateException("Activity is null")
+        val adapter = AlbumsRecyclerAdapter(context, Glide.with(this))
         adapter.setOnAlbumClickListener(object : AlbumsRecyclerAdapter.OnAlbumClickListener {
 
             override fun onAlbumClick(position: Int, id: Long, album: String) {

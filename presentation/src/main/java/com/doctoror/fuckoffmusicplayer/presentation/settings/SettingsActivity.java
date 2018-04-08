@@ -159,7 +159,8 @@ public final class SettingsActivity extends BaseActivity {
                 @NonNull final ObservableBoolean sender, final int propertyId) {
             if (sender.get()) {
                 sender.set(false);
-                new DaynightAccuracyDialog().show(getFragmentManager(), TAG_DIALOG_DAYNIGHT_ACCURACY);
+                new DaynightAccuracyDialog().show(
+                        getSupportFragmentManager(), TAG_DIALOG_DAYNIGHT_ACCURACY);
             }
         }
     }

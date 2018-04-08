@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.genres;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.genrealbums.GenreAlb
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 
 /**
@@ -47,9 +48,14 @@ public final class GenresFragment extends LibraryListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
 
-        mAdapter = new GenresRecyclerAdapter(getActivity());
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
+
+        mAdapter = new GenresRecyclerAdapter(activity);
         mAdapter.setOnGenreClickListener(this::onGenreClick);
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_genres_found));
@@ -72,18 +78,21 @@ public final class GenresFragment extends LibraryListFragment {
 
     private void onGenreClick(final int position, final long genreId,
                               @Nullable final String genre) {
-        final Intent intent = Henson.with(getActivity()).gotoGenreAlbumsActivity()
-                .genre(genre)
-                .genreId(genreId)
-                .build();
+        final Activity activity = getActivity();
+        if (activity != null) {
+            final Intent intent = Henson.with(activity).gotoGenreAlbumsActivity()
+                    .genre(genre)
+                    .genreId(genreId)
+                    .build();
 
-        Bundle options = null;
-        final View itemView = getItemView(position);
-        if (itemView != null) {
-            options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), itemView,
-                    GenreAlbumsActivity.TRANSITION_NAME_ROOT).toBundle();
+            Bundle options = null;
+            final View itemView = getItemView(position);
+            if (itemView != null) {
+                options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
+                        GenreAlbumsActivity.TRANSITION_NAME_ROOT).toBundle();
+            }
+
+            startActivity(intent, options);
         }
-
-        startActivity(intent, options);
     }
 }

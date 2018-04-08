@@ -16,6 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -30,8 +31,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
@@ -47,7 +48,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiFunction;
@@ -82,11 +83,15 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
 
         setHasOptionsMenu(true);
 
-        adapter = new RecentActivityRecyclerAdapter(getActivity());
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
+        adapter = new RecentActivityRecyclerAdapter(activity);
         adapter.setOnAlbumClickListener(new OnAlbumClickListener());
 
         model.setRecyclerAdapter(adapter);
@@ -103,10 +108,12 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         model.setDisplayedChild(ANIMATOR_CHILD_PERMISSION_DENIED);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState) {
         final FragmentRecentActivityBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_recent_activity, container, false);
         setupRecyclerView(binding.recyclerView);
@@ -143,7 +150,11 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
     }
 
     private void load() {
-        if (ContextCompat.checkSelfPermission(getActivity(),
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
+        if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
 
             final Observable<Cursor> recentlyPlayed =

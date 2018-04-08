@@ -42,7 +42,7 @@ public final class RecentAlbumsActivity extends BaseActivity {
         supportPostponeEnterTransition();
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().add(android.R.id.content,
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content,
                     new RecentAlbumsFragment()).commit();
         }
     }

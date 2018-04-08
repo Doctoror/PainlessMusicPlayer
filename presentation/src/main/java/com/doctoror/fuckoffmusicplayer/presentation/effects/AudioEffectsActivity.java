@@ -30,7 +30,7 @@ public final class AudioEffectsActivity extends BaseActivity {
         Dart.inject(this);
         initActionBar();
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().add(android.R.id.content,
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content,
                     new EffectsFragment()).commit();
         }
     }

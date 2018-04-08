@@ -50,7 +50,7 @@ public final class ArtistAlbumsActivity extends BaseActivity {
         setTitle(artist);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().add(android.R.id.content,
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content,
                     ArtistAlbumsFragment.instantiate(artistId)).commit();
         }
     }

@@ -15,9 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
@@ -26,6 +23,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarDrawerToggle;
 
 import com.doctoror.fuckoffmusicplayer.R;
@@ -215,7 +215,7 @@ public final class HomeActivity extends BaseActivity {
     }
 
     private void setMainFragment(@NonNull final String name) {
-        final FragmentManager fm = getFragmentManager();
+        final FragmentManager fm = getSupportFragmentManager();
         final Fragment fragment = fm.findFragmentById(R.id.content);
         FragmentTransaction ft = null;
         if (fragment == null) {

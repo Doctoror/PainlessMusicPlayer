@@ -16,10 +16,10 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library.playlists;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 
 import com.doctoror.fuckoffmusicplayer.presentation.library.DeleteItemDialogFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.media.MediaManagerService;

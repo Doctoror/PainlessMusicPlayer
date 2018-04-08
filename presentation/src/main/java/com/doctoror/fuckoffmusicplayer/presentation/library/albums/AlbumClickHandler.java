@@ -16,13 +16,13 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Toast;
 
@@ -58,7 +58,8 @@ public final class AlbumClickHandler {
         View provideItemView();
     }
 
-    public static void onAlbumClick(@NonNull final BaseFragment host,
+    public static void onAlbumClick(
+            @NonNull final BaseFragment host,
             @NonNull final QueueProviderAlbums queueProvider,
             final long albumId,
             @Nullable final String albumName,
@@ -84,24 +85,26 @@ public final class AlbumClickHandler {
             onAlbumQueueEmpty(host);
         } else {
             final Activity activity = host.getActivity();
-            final Intent intent = Henson.with(activity).gotoQueueActivity()
-                    .hasCoverTransition(true)
-                    .hasItemViewTransition(false)
-                    .isNowPlayingQueue(false)
-                    .queue(queue)
-                    .title(albumName)
-                    .build();
+            if (activity != null) {
+                final Intent intent = Henson.with(activity).gotoQueueActivity()
+                        .hasCoverTransition(true)
+                        .hasItemViewTransition(false)
+                        .isNowPlayingQueue(false)
+                        .queue(queue)
+                        .title(albumName)
+                        .build();
 
-            Bundle options = null;
-            if (itemViewProvider != null) {
-                final View itemView = itemViewProvider.provideItemView();
-                if (itemView != null) {
-                    options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
-                            QueueActivity.TRANSITION_NAME_ALBUM_ART).toBundle();
+                Bundle options = null;
+                if (itemViewProvider != null) {
+                    final View itemView = itemViewProvider.provideItemView();
+                    if (itemView != null) {
+                        options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
+                                QueueActivity.TRANSITION_NAME_ALBUM_ART).toBundle();
+                    }
                 }
-            }
 
-            host.startActivity(intent, options);
+                host.startActivity(intent, options);
+            }
         }
     }
 

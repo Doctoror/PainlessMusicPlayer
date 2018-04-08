@@ -32,7 +32,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.artistalbums.ArtistA
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 
 /**
@@ -48,9 +48,14 @@ public final class ArtistsFragment extends LibraryListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
 
-        mAdapter = new ArtistsRecyclerAdapter(getActivity());
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
+
+        mAdapter = new ArtistsRecyclerAdapter(activity);
         mAdapter.setOnArtistClickListener(this::onArtistClick);
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_artists_found));
@@ -71,21 +76,26 @@ public final class ArtistsFragment extends LibraryListFragment {
         mAdapter.changeCursor(null);
     }
 
-    private void onArtistClick(final int position, final long artistId,
-                               @Nullable final String artist) {
+    private void onArtistClick(
+            final int position,
+            final long artistId,
+            @Nullable final String artist) {
         final Activity activity = getActivity();
-        final Intent intent = Henson.with(activity).gotoArtistAlbumsActivity()
-                .artist(artist)
-                .artistId(artistId)
-                .build();
+        if (activity != null) {
 
-        Bundle options = null;
-        final View itemView = getItemView(position);
-        if (itemView != null) {
-            options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
-                    ArtistAlbumsActivity.TRANSITION_NAME_ROOT).toBundle();
+            final Intent intent = Henson.with(activity).gotoArtistAlbumsActivity()
+                    .artist(artist)
+                    .artistId(artistId)
+                    .build();
+
+            Bundle options = null;
+            final View itemView = getItemView(position);
+            if (itemView != null) {
+                options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
+                        ArtistAlbumsActivity.TRANSITION_NAME_ROOT).toBundle();
+            }
+
+            startActivity(intent, options);
         }
-
-        startActivity(intent, options);
     }
 }

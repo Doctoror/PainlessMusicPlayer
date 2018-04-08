@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.tracks;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -34,7 +35,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -61,9 +62,14 @@ public final class TracksFragment extends LibraryListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
 
-        mAdapter = new TracksRecyclerAdapter(getActivity());
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
+
+        mAdapter = new TracksRecyclerAdapter(activity);
         mAdapter.setOnTrackClickListener((startPosition, trackId) -> onTrackClick(startPosition));
         setRecyclerAdapter(mAdapter);
         setEmptyMessage(getText(R.string.No_tracks_found));
@@ -140,7 +146,10 @@ public final class TracksFragment extends LibraryListFragment {
                 onQueueEmpty();
             } else {
                 mPlaybackInitializer.setQueueAndPlay(queue, 0);
-                NowPlayingActivity.start(getActivity(), null, getItemView(startPosition));
+                final Activity activity = getActivity();
+                if (activity != null) {
+                    NowPlayingActivity.start(activity, null, getItemView(startPosition));
+                }
             }
         }
     }

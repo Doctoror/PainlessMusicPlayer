@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -85,10 +86,15 @@ public final class PlaylistsFragment extends LibraryListFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
         setCanShowEmptyView(false);
 
-        mAdapter = new PlaylistsRecyclerAdapter(getActivity(),
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
+
+        mAdapter = new PlaylistsRecyclerAdapter(activity,
                 generateLivePlaylists(getResources()));
         mAdapter.setOnPlaylistClickListener(new OnPlaylistClickListener());
 
@@ -266,21 +272,24 @@ public final class PlaylistsFragment extends LibraryListFragment {
                                @Nullable final String name,
                                @Nullable final List<Media> queue) {
         if (queue != null && !queue.isEmpty()) {
-            final Intent intent = Henson.with(getActivity()).gotoQueueActivity()
-                    .hasCoverTransition(false)
-                    .hasItemViewTransition(true)
-                    .isNowPlayingQueue(false)
-                    .queue(queue)
-                    .title(name)
-                    .build();
+            final Activity activity = getActivity();
+            if (activity != null) {
+                final Intent intent = Henson.with(activity).gotoQueueActivity()
+                        .hasCoverTransition(false)
+                        .hasItemViewTransition(true)
+                        .isNowPlayingQueue(false)
+                        .queue(queue)
+                        .title(name)
+                        .build();
 
-            Bundle options = null;
-            if (itemView != null) {
-                options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        itemView, QueueActivity.TRANSITION_NAME_ROOT).toBundle();
+                Bundle options = null;
+                if (itemView != null) {
+                    options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+                            itemView, QueueActivity.TRANSITION_NAME_ROOT).toBundle();
 
+                }
+                startActivity(intent, options);
             }
-            startActivity(intent, options);
         } else {
             showNoTracksToast();
             clearLoadingFlag();
@@ -309,10 +318,14 @@ public final class PlaylistsFragment extends LibraryListFragment {
 
         @Override
         public void onPlaylistDeleteClick(final long id, @Nullable final String name) {
-            DeletePlaylistDialogFragment.show(getActivity(),
-                    getFragmentManager(),
-                    id,
-                    name);
+            final Activity activity = getActivity();
+            final FragmentManager fragmentManager = getFragmentManager();
+            if (activity != null && fragmentManager != null) {
+                DeletePlaylistDialogFragment.show(activity,
+                        fragmentManager,
+                        id,
+                        name);
+            }
         }
     }
 }

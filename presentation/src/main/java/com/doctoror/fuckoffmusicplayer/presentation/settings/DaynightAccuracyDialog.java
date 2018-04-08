@@ -17,8 +17,9 @@ package com.doctoror.fuckoffmusicplayer.presentation.settings;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import com.doctoror.fuckoffmusicplayer.R;
@@ -29,6 +30,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
  */
 public final class DaynightAccuracyDialog extends DialogFragment {
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())

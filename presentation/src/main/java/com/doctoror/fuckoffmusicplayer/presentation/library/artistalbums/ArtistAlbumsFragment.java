@@ -29,7 +29,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 
 /**
@@ -59,8 +59,12 @@ public final class ArtistAlbumsFragment extends ConditionalAlbumListFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        artistId = getArguments().getLong(EXTRA_ARTIST_ID);
-        AndroidInjection.inject(this);
+        final Bundle args = getArguments();
+        if (args == null) {
+            throw new IllegalStateException("Arguments must not be null");
+        }
+        artistId = args.getLong(EXTRA_ARTIST_ID);
+        AndroidSupportInjection.inject(this);
     }
 
     @NonNull

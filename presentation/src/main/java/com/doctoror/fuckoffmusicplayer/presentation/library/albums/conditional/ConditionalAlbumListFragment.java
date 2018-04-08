@@ -78,7 +78,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -157,19 +157,26 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
 
         mRequestManager = Glide.with(this);
 
-        mAdapter = new ConditionalAlbumsRecyclerAdapter(getActivity(), mRequestManager);
+        final Activity activity = getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
+
+        mAdapter = new ConditionalAlbumsRecyclerAdapter(activity, mRequestManager);
         mAdapter.setOnAlbumClickListener(this::onListItemClick);
         mModel.setRecyclerAdpter(mAdapter);
     }
 
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState) {
         final FragmentConditionalAlbumListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_conditional_album_list, container, false);
         binding.setModel(mModel);
@@ -180,13 +187,16 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity == null) {
+            throw new IllegalStateException("Activity is null");
+        }
         activity.setSupportActionBar(toolbar);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity) {
             @Override
             public void onLayoutChildren(final RecyclerView.Recycler recycler,
                                          final RecyclerView.State state) {
@@ -196,7 +206,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         });
 
         if (TransitionUtils.supportsActivityTransitions()) {
-            LollipopUtils.applyTransitions((BaseActivity) getActivity(), cardView != null);
+            LollipopUtils.applyTransitions((BaseActivity) activity, cardView != null);
         }
     }
 
@@ -268,25 +278,27 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private void onQueueLoaded(@NonNull final List<Media> queue,
                                @Nullable final View itemView,
                                @Nullable final String queueName) {
-        final Activity activity = getActivity();
         if (queue.isEmpty()) {
             onQueueEmpty();
         } else {
-            final Intent intent = Henson.with(activity).gotoQueueActivity()
-                    .hasCoverTransition(false)
-                    .hasItemViewTransition(false)
-                    .isNowPlayingQueue(false)
-                    .queue(queue)
-                    .title(queueName)
-                    .build();
+            final Activity activity = getActivity();
+            if (activity != null) {
+                final Intent intent = Henson.with(activity).gotoQueueActivity()
+                        .hasCoverTransition(false)
+                        .hasItemViewTransition(false)
+                        .isNowPlayingQueue(false)
+                        .queue(queue)
+                        .title(queueName)
+                        .build();
 
-            Bundle options = null;
-            if (itemView != null) {
-                options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
-                        QueueActivity.TRANSITION_NAME_ROOT).toBundle();
+                Bundle options = null;
+                if (itemView != null) {
+                    options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, itemView,
+                            QueueActivity.TRANSITION_NAME_ROOT).toBundle();
+                }
+
+                startActivity(intent, options);
             }
-
-            startActivity(intent, options);
         }
     }
 

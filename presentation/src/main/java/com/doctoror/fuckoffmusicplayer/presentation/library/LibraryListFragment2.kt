@@ -31,7 +31,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
-import dagger.android.AndroidInjection
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Observable
 import io.reactivex.processors.BehaviorProcessor
 import kotlinx.android.parcel.Parcelize
@@ -63,7 +63,7 @@ abstract class LibraryListFragment2 : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidInjection.inject(this)
+        AndroidSupportInjection.inject(this)
 
         setHasOptionsMenu(true)
         configure()
@@ -151,7 +151,9 @@ abstract class LibraryListFragment2 : BaseFragment() {
         binding.recyclerView.setOnTouchListener(object : SwipeDirectionTouchListener() {
 
             override fun onSwipedDown() {
-                SoftInputManager.hideSoftInput(activity)
+                activity?.let {
+                    SoftInputManager.hideSoftInput(it)
+                }
             }
         })
     }
@@ -166,7 +168,9 @@ abstract class LibraryListFragment2 : BaseFragment() {
 
     override fun onStop() {
         super.onStop()
-        SoftInputManager.hideSoftInput(activity)
+        activity?.let {
+            SoftInputManager.hideSoftInput(it)
+        }
     }
 
     override fun onDestroy() {

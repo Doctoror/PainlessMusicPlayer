@@ -50,7 +50,7 @@ public final class GenreAlbumsActivity extends BaseActivity {
         setTitle(genre);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().add(android.R.id.content,
+            getSupportFragmentManager().beginTransaction().add(android.R.id.content,
                     GenreAlbumsFragment.instantiate(genreId)).commit();
         }
     }

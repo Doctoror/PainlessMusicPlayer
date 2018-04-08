@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.effects;
 
-import android.app.Fragment;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +32,7 @@ import java.util.Observer;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
@@ -48,14 +48,16 @@ public final class EffectsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
         audioEffects.addObserver(mAudioEffectsObserver);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
-                             @Nullable final Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState) {
         final FragmentEffectsBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_effects, container, false);
         binding.setModel(model);
@@ -66,7 +68,7 @@ public final class EffectsFragment extends Fragment {
             private boolean mFirst = true;
 
             @Override
-            public void accept(@NonNull final Integer progress) throws Exception {
+            public void accept(@NonNull final Integer progress) {
                 if (mFirst) {
                     mFirst = false;
                 } else {

@@ -552,7 +552,7 @@ public final class QueueActivity extends BaseActivity
 
         @Override
         public void onTrackDeleteClick(@NonNull final Media item) {
-            DeleteMediaDialogFragment.show(QueueActivity.this, getFragmentManager(),
+            DeleteMediaDialogFragment.show(QueueActivity.this, getSupportFragmentManager(),
                     item.getId(), item.getTitle());
         }
 

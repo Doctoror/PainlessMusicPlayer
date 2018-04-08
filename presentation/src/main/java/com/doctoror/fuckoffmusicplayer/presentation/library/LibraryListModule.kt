@@ -28,7 +28,7 @@ class LibraryListModule {
     @Provides
     @FragmentScope
     fun provideRxPermissionsProvider(fragment: LibraryListFragment2) =
-            RxPermissionsProvider(fragment.activity)
+            RxPermissionsProvider(fragment.activity!!)
 
     @Provides
     @FragmentScope

@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
+import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -38,7 +39,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 
 /**
  * Playback status bar fragment
@@ -56,12 +57,14 @@ public final class PlaybackStatusFragment extends BaseFragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AndroidInjection.inject(this);
+        AndroidSupportInjection.inject(this);
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             final Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
+            @Nullable final Bundle savedInstanceState) {
         final PlaybackStatusBarBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.playback_status_bar, container, false,
                 BindingAdapters.glideBindingComponent(Glide.with(this)));
@@ -106,6 +109,9 @@ public final class PlaybackStatusFragment extends BaseFragment {
     }
 
     private void onRootClick(@NonNull final View view) {
-        NowPlayingActivity.start(getActivity(), null, view);
+        final Activity activity = getActivity();
+        if (activity != null) {
+            NowPlayingActivity.start(activity, null, view);
+        }
     }
 }
