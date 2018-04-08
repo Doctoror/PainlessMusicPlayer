@@ -15,15 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -34,8 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.util.SearchViewUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager;
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils;
@@ -47,44 +44,59 @@ import org.parceler.Parcels;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.processors.BehaviorProcessor;
-import io.reactivex.schedulers.Schedulers;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Fragment used for library list
  */
-public abstract class LibraryListFragment extends LibraryPermissionsFragment {
-
-    private static final String TAG = "LibraryListFragment";
+public abstract class LibraryListFragment extends BaseFragment {
 
     private static final String KEY_INSTANCE_STATE = "LibraryListFragment.INSTANCE_STATE";
 
     private final BehaviorProcessor<String> mSearchProcessor = BehaviorProcessor.create();
     private final LibraryListModel mModel = new LibraryListModel();
 
-    private Disposable mDisposableOld;
-    private Disposable mDisposable;
-
-    private boolean mCanShowEmptyView = true;
     private boolean mSearchIconified = true;
 
     private RecyclerView mRecyclerView;
+
+    @Inject
+    LibraryListPresenter presenter;
+
+    @Inject
+    LibraryPermissionsProvider libraryPermissionsProvider;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        configure();
 
         if (savedInstanceState != null) {
             restoreInstanceState(savedInstanceState);
         }
     }
 
+    private void configure() {
+        final Config config = obtainConfig();
+        //noinspection ConstantConditions
+        if (config == null) {
+            throw new NullPointerException("Config must not be null");
+        }
+
+        mModel.setRecyclerAdapter(config.adapter);
+        presenter.setCanShowEmptyView(config.canShowEmptyView);
+        presenter.setDataSource(config.dataSource);
+        mModel.setEmptyMessage(config.emptyMessage);
+    }
+
     private void restoreInstanceState(@NonNull final Bundle savedInstanceState) {
+        presenter.restoreInstanceState(savedInstanceState);
+
         final InstanceState state = Parcels.unwrap(savedInstanceState
                 .getParcelable(KEY_INSTANCE_STATE));
         if (state != null) {
@@ -96,6 +108,8 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     @Override
     public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
+        presenter.onSaveInstanceState(outState);
+
         final InstanceState state = new InstanceState();
         state.searchIconified = mSearchIconified;
         state.searchQuery = mSearchProcessor.getValue();
@@ -106,7 +120,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_library_list, menu);
-        if (hasPermissions()) {
+        if (libraryPermissionsProvider.permissionsGranted()) {
             final SearchView searchView = (SearchView) menu.findItem(R.id.actionFilter)
                     .getActionView();
             SearchViewUtils.setSearchIcon(searchView, R.drawable.ic_filter_list_white_24dp);
@@ -130,21 +144,11 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         }
     }
 
-    @Override
-    protected void onPermissionGranted() {
-        mModel.showViewProgress();
-        disposeOnStop(mSearchProcessor.hide().subscribe(mSearchQueryConsumer));
-        getActivity().invalidateOptionsMenu();
-    }
-
-    @Override
-    protected void onPermissionDenied() {
-        mModel.showViewPermissionDenied();
-    }
-
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container,
+    public View onCreateView(
+            @NonNull final LayoutInflater inflater,
+            @Nullable final ViewGroup container,
             @Nullable final Bundle savedInstanceState) {
         final FragmentLibraryListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_library_list, container, false);
@@ -152,7 +156,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
         initSwipeDirection(binding);
         binding.setModel(mModel);
         binding.getRoot().findViewById(R.id.btnRequest)
-                .setOnClickListener(v -> requestPermission());
+                .setOnClickListener(v -> presenter.requestPermission());
         mRecyclerView = binding.recyclerView;
         return binding.getRoot();
     }
@@ -181,67 +185,23 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     public void onStop() {
         super.onStop();
         SoftInputManager.hideSoftInput(getActivity());
-        onDataReset();
     }
 
-    private void restartLoader(@Nullable final String searchFilter) {
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            mDisposableOld = mDisposable;
-            mDisposable = disposeOnStop(load(searchFilter)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::onNextSearchResult, this::onSearchResultLoadFailed));
-        } else {
-            Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
-        }
+    @NonNull
+    public Observable<String> getSearchQuerySource() {
+        return mSearchProcessor.toObservable();
     }
 
-    protected abstract Observable<Cursor> load(@Nullable final String filter);
+    @NonNull
+    protected abstract Config obtainConfig();
 
-    protected abstract void onDataLoaded(@NonNull Cursor data);
+    static final class Config {
 
-    protected abstract void onDataReset();
-
-    protected final void setCanShowEmptyView(final boolean canShowEmptyView) {
-        mCanShowEmptyView = canShowEmptyView;
+        boolean canShowEmptyView = true;
+        RecyclerView.Adapter<?> adapter;
+        CharSequence emptyMessage;
+        Function1<? super String, ? extends Observable<Cursor>> dataSource;
     }
-
-    protected final void setRecyclerAdapter(@Nullable final RecyclerView.Adapter<?> adapter) {
-        mModel.setRecyclerAdapter(adapter);
-    }
-
-    protected final void setEmptyMessage(@Nullable final CharSequence emptyMessage) {
-        mModel.setEmptyMessage(emptyMessage);
-    }
-
-    private void onNextSearchResult(@NonNull final Cursor cursor) {
-        onDataLoaded(cursor);
-        if (mDisposableOld != null) {
-            mDisposableOld.dispose();
-            mDisposableOld = null;
-        }
-
-        if (cursor.getCount() == 0 && mCanShowEmptyView) {
-            mModel.showViewEmpty();
-        } else {
-            mModel.showViewContent();
-        }
-    }
-
-    private void onSearchResultLoadFailed(@NonNull final Throwable t) {
-        Log.w(TAG, "onSearchResultLoadFailed()", t);
-        if (mDisposableOld != null) {
-            mDisposableOld.dispose();
-            mDisposableOld = null;
-        }
-        onDataReset();
-        if (isAdded()) {
-            mModel.showViewError();
-        }
-    }
-
-    private final Consumer<String> mSearchQueryConsumer = this::restartLoader;
 
     @Parcel
     static final class InstanceState {

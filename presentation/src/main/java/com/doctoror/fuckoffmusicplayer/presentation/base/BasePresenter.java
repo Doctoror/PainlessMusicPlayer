@@ -47,13 +47,15 @@ public abstract class BasePresenter implements LifecycleObserver {
      *
      * @param disposable the {@link Disposable} to register
      */
+    @NonNull
     @MainThread
-    protected void disposeOnStop(@NonNull final Disposable disposable) {
+    protected Disposable disposeOnStop(@NonNull final Disposable disposable) {
         //noinspection ConstantConditions
         if (disposable == null) {
             throw new NullPointerException("disposable must not be null");
         }
         getOnStopDisposable().add(disposable);
+        return disposable;
     }
 
     @NonNull
