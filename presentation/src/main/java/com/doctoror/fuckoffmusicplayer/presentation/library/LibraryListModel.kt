@@ -29,10 +29,6 @@ class LibraryListModel {
     val emptyMessage = ObservableField<CharSequence>()
     val recyclerAdapter = ObservableField<RecyclerView.Adapter<RecyclerView.ViewHolder>>()
 
-    fun setEmptyMessage(emptyMessage: CharSequence?) {
-        this.emptyMessage.set(emptyMessage)
-    }
-
     fun setRecyclerAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>?) {
         @Suppress("UNCHECKED_CAST")
         recyclerAdapter.set(adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>)

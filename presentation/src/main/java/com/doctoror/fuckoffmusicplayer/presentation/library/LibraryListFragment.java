@@ -212,7 +212,7 @@ public abstract class LibraryListFragment extends LibraryPermissionsFragment {
     }
 
     protected final void setEmptyMessage(@Nullable final CharSequence emptyMessage) {
-        mModel.setEmptyMessage(emptyMessage);
+        mModel.getEmptyMessage().set(emptyMessage);
     }
 
     private void onNextSearchResult(@NonNull final Cursor cursor) {
