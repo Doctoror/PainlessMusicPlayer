@@ -84,6 +84,7 @@ class LibraryListPresenter(
     private fun onNextSearchResult(cursor: Cursor) {
         onDataLoaded(cursor)
         disposablePrevious?.dispose()
+        disposablePrevious = null
 
         if (cursor.count == 0 && canShowEmptyView) {
             viewModel.showViewEmpty()
