@@ -28,6 +28,7 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
@@ -41,7 +42,7 @@ import dagger.android.AndroidInjection;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-public abstract class BaseActivity extends BaseInjectionActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private final Object onStopDisposableLock = new Object();
 
