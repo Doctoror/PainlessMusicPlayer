@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
+import android.database.Cursor
 import android.support.v7.widget.RecyclerView
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter
 import com.doctoror.fuckoffmusicplayer.reactivex.TestSchedulersProvider
@@ -25,7 +26,6 @@ import org.junit.Assert.*
 import org.junit.Test
 import java.io.IOException
 
-// TODO not everything tested
 class LibraryListPresenterTest {
 
     private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
@@ -54,6 +54,19 @@ class LibraryListPresenterTest {
 
         whenever(libraryPermissionProvider.requestPermission())
                 .thenReturn(Observable.just(true))
+    }
+
+    private fun givenDataSourceReturns(toReturn: Observable<Cursor>): LibraryDataSource {
+        val dataSource: LibraryDataSource = mock {
+            on(it.invoke(any())).doReturn(toReturn)
+        }
+
+        underTest.setDataSource(dataSource)
+        return dataSource
+    }
+
+    private fun givenRecyclerAdapterMocked() {
+        viewModel.recyclerAdapter.set(mock<CursorRecyclerViewAdapter<RecyclerView.ViewHolder>>())
     }
 
     @Test
@@ -141,14 +154,10 @@ class LibraryListPresenterTest {
     fun loadsFromDataSourceOnQuery() {
         // Given
         givenPermissionGranted()
+        val dataSource = givenDataSourceReturns(Observable.empty())
 
-        val query = "query"
-        val dataSource: LibraryDataSource = mock {
-            on(it.invoke(any())).doReturn(Observable.empty())
-        }
-
-        underTest.setDataSource(dataSource)
         underTest.onStart()
+        val query = "query"
 
         // When
         searchQuerySource.onNext(query)
@@ -161,26 +170,97 @@ class LibraryListPresenterTest {
     fun showsViewErrorAndResetsCursorOnQueryError() {
         // Given
         givenPermissionGranted()
+        givenDataSourceReturns(Observable.error(IOException()))
+        givenRecyclerAdapterMocked()
 
-        val query = "query"
-        val dataSource: LibraryDataSource = mock {
-            on(it.invoke(any())).doReturn(Observable.error(IOException()))
-        }
-
-        val adapter: CursorRecyclerViewAdapter<RecyclerView.ViewHolder> = mock()
-        viewModel.recyclerAdapter.set(adapter)
-        underTest.setDataSource(dataSource)
         underTest.onStart()
 
         // When
-        searchQuerySource.onNext(query)
+        searchQuerySource.onNext("")
 
         // Then
         assertEquals(
                 LibraryListViewModel.ANIMATOR_CHILD_ERROR,
                 viewModel.displayedChild.get())
 
-        verify(adapter).changeCursor(null)
+        verify(viewModel.recyclerAdapter.get() as CursorRecyclerViewAdapter).changeCursor(null)
+    }
+
+    @Test
+    fun setsLoadedCursorToAdapter() {
+        // Given
+        givenPermissionGranted()
+        givenRecyclerAdapterMocked()
+
+        val cursor: Cursor = mock()
+        givenDataSourceReturns(Observable.just(cursor))
+
+        underTest.onStart()
+
+        // When
+        searchQuerySource.onNext("")
+
+        // Then
+        verify(viewModel.recyclerAdapter.get() as CursorRecyclerViewAdapter).changeCursor(cursor)
+    }
+
+    @Test
+    fun showsEmptyViewForEmptyCursor() {
+        // Given
+        givenPermissionGranted()
+        givenRecyclerAdapterMocked()
+        givenDataSourceReturns(Observable.just(mock()))
+
+        underTest.onStart()
+
+        // When
+        searchQuerySource.onNext("")
+
+        // Then
+        assertEquals(
+                LibraryListViewModel.ANIMATOR_CHILD_EMPTY,
+                viewModel.displayedChild.get())
+    }
+
+    @Test
+    fun showsViewContentForEmptyCursorIfCannotShowEmptyView() {
+        // Given
+        underTest.canShowEmptyView = false
+
+        givenPermissionGranted()
+        givenRecyclerAdapterMocked()
+        givenDataSourceReturns(Observable.just(mock()))
+
+        underTest.onStart()
+
+        // When
+        searchQuerySource.onNext("")
+
+        // Then
+        assertEquals(
+                LibraryListViewModel.ANIMATOR_CHILD_CONTENT,
+                viewModel.displayedChild.get())
+    }
+
+    @Test
+    fun showsViewContentForNonEmptyCursor() {
+        // Given
+        givenPermissionGranted()
+        givenRecyclerAdapterMocked()
+
+        val cursor: Cursor = mock()
+        whenever(cursor.count).thenReturn(1)
+        givenDataSourceReturns(Observable.just(cursor))
+
+        underTest.onStart()
+
+        // When
+        searchQuerySource.onNext("")
+
+        // Then
+        assertEquals(
+                LibraryListViewModel.ANIMATOR_CHILD_CONTENT,
+                viewModel.displayedChild.get())
     }
 
     @Test(expected = IllegalStateException::class)
