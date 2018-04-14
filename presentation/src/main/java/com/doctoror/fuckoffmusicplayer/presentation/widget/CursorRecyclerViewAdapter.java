@@ -41,7 +41,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     }
 
     @Nullable
-    protected Cursor getCursor() {
+    public Cursor getCursor() {
         return mCursor;
     }
 
