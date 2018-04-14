@@ -35,6 +35,24 @@ class ArtistsFragment : LibraryListFragment2() {
         AndroidSupportInjection.inject(this)
     }
 
+    override fun obtainConfig() = Config(
+            canShowEmptyView = true,
+            dataSource = { artistsProvider.load(it) },
+            emptyMessage = getText(R.string.No_artists_found),
+            recyclerAdapter = createRecyclerAdapter()
+    )
+
+    private fun createRecyclerAdapter(): ArtistsRecyclerAdapter {
+        val activity = activity ?: throw IllegalStateException("Activity is null")
+
+        val adapter = ArtistsRecyclerAdapter(activity)
+        adapter.setOnArtistClickListener { position, artistId, artist ->
+            this.onArtistClick(position, artistId, artist)
+        }
+
+        return adapter
+    }
+
     private fun onArtistClick(
             position: Int,
             artistId: Long,
@@ -56,22 +74,4 @@ class ArtistsFragment : LibraryListFragment2() {
             startActivity(intent, options)
         }
     }
-
-    private fun obtainRecyclerAdapter(): ArtistsRecyclerAdapter {
-        val activity = activity ?: throw IllegalStateException("Activity is null")
-
-        val adapter = ArtistsRecyclerAdapter(activity)
-        adapter.setOnArtistClickListener { position, artistId, artist ->
-            this.onArtistClick(position, artistId, artist)
-        }
-
-        return adapter
-    }
-
-    override fun obtainConfig() = Config(
-            canShowEmptyView = true,
-            dataSource = { artistsProvider.load(it) },
-            emptyMessage = getText(R.string.No_artists_found),
-            recyclerAdapter = obtainRecyclerAdapter()
-    )
 }
