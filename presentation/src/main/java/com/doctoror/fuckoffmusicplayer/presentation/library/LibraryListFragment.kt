@@ -31,6 +31,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.util.SearchViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener
+import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProviderImpl
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
 import io.reactivex.processors.BehaviorProcessor
 import kotlinx.android.parcel.Parcelize
@@ -69,12 +70,14 @@ abstract class LibraryListFragment : BaseFragment() {
 
     private fun createDependencies() {
         val activity = activity ?: throw IllegalStateException("Activity is null")
+
         libraryPermissionsProvider = LibraryPermissionsProvider(activity,
                 RxPermissionsProvider(activity))
 
         presenter = LibraryListPresenter(
                 libraryPermissionsProvider,
                 { activity.invalidateOptionsMenu() },
+                SchedulersProviderImpl(),
                 searchProcessor.toObservable(),
                 viewModel)
     }

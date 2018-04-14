@@ -21,13 +21,14 @@ import android.os.Bundle
 import android.os.Parcelable
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.base.BasePresenter
+import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProvider
 import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.parcel.Parcelize
 import java.util.concurrent.TimeUnit
 
 abstract class LibraryPermissionsPresenter(
-        private val libraryPermissionProvider: LibraryPermissionsProvider) : BasePresenter() {
+        private val libraryPermissionProvider: LibraryPermissionsProvider,
+        private val schedulersProvider: SchedulersProvider) : BasePresenter() {
 
     private var permissionRequested = RuntimePermissions.arePermissionsRequested()
 
@@ -70,7 +71,10 @@ abstract class LibraryPermissionsPresenter(
             libraryPermissionProvider.permissionsGranted() -> onPermissionGranted()
             permissionRequested -> onPermissionDenied()
             else -> disposeOnStop(Completable
-                    .timer(500, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                    .timer(
+                            PERMISSION_REQUEST_DELAY,
+                            TimeUnit.MILLISECONDS,
+                            schedulersProvider.mainThread())
                     .subscribe { requestPermission() })
         }
     }
@@ -80,6 +84,7 @@ abstract class LibraryPermissionsPresenter(
 
     private companion object {
 
+        private const val PERMISSION_REQUEST_DELAY = 500L
         private const val KEY_INSTANCE_STATE = "LibraryPermissionsPresenter.INSTANCE_STATE"
     }
 }

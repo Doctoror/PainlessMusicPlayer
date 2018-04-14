@@ -19,10 +19,9 @@ import android.database.Cursor
 import android.support.v7.widget.RecyclerView
 import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter
+import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProvider
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 
 typealias OptionsMenuInvalidator = () -> Unit
 typealias LibraryDataSource = (String?) -> Observable<Cursor>
@@ -30,9 +29,10 @@ typealias LibraryDataSource = (String?) -> Observable<Cursor>
 class LibraryListPresenter(
         private val libraryPermissionProvider: LibraryPermissionsProvider,
         private val optionsMenuInvalidator: OptionsMenuInvalidator,
+        private val schedulersProvider: SchedulersProvider,
         private val searchQuerySource: Observable<String>,
         private val viewModel: LibraryListViewModel) :
-        LibraryPermissionsPresenter(libraryPermissionProvider) {
+        LibraryPermissionsPresenter(libraryPermissionProvider, schedulersProvider) {
 
     private val tag = "LibraryListPresenter"
 
@@ -73,8 +73,8 @@ class LibraryListPresenter(
                     ?: throw IllegalStateException("LibraryDataSource not set")
             disposablePrevious = disposable
             disposable = disposeOnStop(dataSource.invoke(searchFilter)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(schedulersProvider.io())
+                    .observeOn(schedulersProvider.mainThread())
                     .subscribe(this::onNextSearchResult, this::onSearchResultLoadFailed))
         } else {
             Log.w(tag, "restartLoader is called, but READ_EXTERNAL_STORAGE is not granted")
