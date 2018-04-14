@@ -20,12 +20,12 @@ import android.support.v4.app.ActivityOptionsCompat
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider
 import com.doctoror.fuckoffmusicplayer.presentation.Henson
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment2
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment
 import com.doctoror.fuckoffmusicplayer.presentation.library.genrealbums.GenreAlbumsActivity
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-class GenresFragment : LibraryListFragment2() {
+class GenresFragment : LibraryListFragment() {
 
     @Inject
     lateinit var genresProvider: GenresProvider

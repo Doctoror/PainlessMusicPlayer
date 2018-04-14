@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks
 import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment2
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Observable
@@ -34,7 +34,7 @@ import javax.inject.Inject
 /**
  * "Tracks" list fragment.
  */
-class TracksFragment : LibraryListFragment2() {
+class TracksFragment : LibraryListFragment() {
 
     @Inject
     lateinit var playbackInitializer: PlaybackInitializer

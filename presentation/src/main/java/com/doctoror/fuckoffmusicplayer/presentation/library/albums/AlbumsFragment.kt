@@ -23,13 +23,13 @@ import com.bumptech.glide.Glide
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment2
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SpacesItemDecoration
 import dagger.android.support.AndroidSupportInjection
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class AlbumsFragment : LibraryListFragment2() {
+class AlbumsFragment : LibraryListFragment() {
 
     @Inject
     lateinit var albumsProvider: AlbumsProvider

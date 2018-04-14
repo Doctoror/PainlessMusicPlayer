@@ -30,7 +30,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderPlaylists
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRandom
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
 import com.doctoror.fuckoffmusicplayer.presentation.Henson
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment2
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment
 import com.doctoror.fuckoffmusicplayer.presentation.library.recentalbums.RecentAlbumsActivity
 import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivity
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
@@ -44,7 +44,7 @@ import javax.inject.Inject
 /**
  * "Playlsits" fragment
  */
-class PlaylistsFragment : LibraryListFragment2() {
+class PlaylistsFragment : LibraryListFragment() {
 
     @Inject
     lateinit var recentActivityManager: RecentActivityManager

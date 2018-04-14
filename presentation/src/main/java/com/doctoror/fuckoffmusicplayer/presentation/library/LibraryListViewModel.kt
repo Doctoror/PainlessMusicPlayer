@@ -20,9 +20,6 @@ import android.databinding.ObservableInt
 import android.support.annotation.VisibleForTesting
 import android.support.v7.widget.RecyclerView
 
-/**
- * Data binding model for [LibraryListFragment2]
- */
 class LibraryListViewModel {
 
     val displayedChild = ObservableInt()

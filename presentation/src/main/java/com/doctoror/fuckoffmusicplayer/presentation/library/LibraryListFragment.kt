@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Fragment used for library list
  */
-abstract class LibraryListFragment2 : BaseFragment() {
+abstract class LibraryListFragment : BaseFragment() {
 
     private val searchProcessor = BehaviorProcessor.create<String>()
 
