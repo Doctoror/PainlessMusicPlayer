@@ -26,17 +26,15 @@ import android.view.*
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment
+import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
 import com.doctoror.fuckoffmusicplayer.presentation.util.SearchViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
-import dagger.android.support.AndroidSupportInjection
-import io.reactivex.Observable
 import io.reactivex.processors.BehaviorProcessor
 import kotlinx.android.parcel.Parcelize
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 /**
  * Fragment used for library list
@@ -49,21 +47,15 @@ abstract class LibraryListFragment2 : BaseFragment() {
 
     private lateinit var binding: FragmentLibraryListBinding
 
-    @Inject
-    lateinit var libraryPermissionsProvider: LibraryPermissionsProvider
+    private lateinit var libraryPermissionsProvider: LibraryPermissionsProvider
 
-    @Inject
-    lateinit var presenter: LibraryListPresenter
+    private lateinit var presenter: LibraryListPresenter
 
-    @Inject
-    lateinit var viewModel: LibraryListViewModel
-
-    val searchQuerySource: Observable<String>
-        get() = searchProcessor.toObservable()
+    private val viewModel = LibraryListViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidSupportInjection.inject(this)
+        createDependencies()
 
         setHasOptionsMenu(true)
         configure()
@@ -73,6 +65,18 @@ abstract class LibraryListFragment2 : BaseFragment() {
         }
 
         lifecycle.addObserver(presenter)
+    }
+
+    private fun createDependencies() {
+        val activity = activity ?: throw IllegalStateException("Activity is null")
+        libraryPermissionsProvider = LibraryPermissionsProvider(activity,
+                RxPermissionsProvider(activity))
+
+        presenter = LibraryListPresenter(
+                libraryPermissionsProvider,
+                { activity.invalidateOptionsMenu() },
+                searchProcessor.toObservable(),
+                viewModel)
     }
 
     private fun configure() {
