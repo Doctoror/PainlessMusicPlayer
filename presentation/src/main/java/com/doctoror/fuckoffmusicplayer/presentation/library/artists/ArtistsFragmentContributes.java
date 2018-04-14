@@ -24,6 +24,6 @@ import dagger.android.ContributesAndroidInjector;
 public interface ArtistsFragmentContributes {
 
     @FragmentScope
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector
     ArtistsFragment artistsFragment();
 }
