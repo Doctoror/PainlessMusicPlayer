@@ -25,7 +25,7 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test
 
-class PlaybackServiceUnitStopOnAudioNoisyManagementTest {
+class PlaybackServiceUnitAudioNoisyManagementTest {
 
     private val context: Context = mock()
     private val stopAction: Runnable = mock()
