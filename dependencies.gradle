@@ -95,6 +95,8 @@ ext {
     presentationTestDependencies = [
             junit        : "junit:junit:$jUnitVersion",
 
+            kotlinReflect: "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
+
             mockito      : "org.mockito:mockito-core:$mockitoVersion",
             mockitoKotlin: "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
 

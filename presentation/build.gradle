@@ -106,6 +106,7 @@ dependencies {
     def td = rootProject.ext.presentationTestDependencies
 
     testImplementation td.junit
+    testImplementation td.kotlinReflect
     testImplementation td.mockito
     testImplementation td.mockitoKotlin
     testImplementation td.robolectric
