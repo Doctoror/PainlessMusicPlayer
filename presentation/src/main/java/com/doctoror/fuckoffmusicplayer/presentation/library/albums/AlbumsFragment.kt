@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums
 
-import android.content.Context
 import android.content.res.Configuration
+import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -31,24 +31,47 @@ import javax.inject.Inject
 
 class AlbumsFragment : LibraryListFragment2() {
 
-    private var recyclerView: RecyclerView? = null
-
     @Inject
     lateinit var albumsProvider: AlbumsProvider
 
     @Inject
     lateinit var queueProvider: QueueProviderAlbums
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    private var recyclerView: RecyclerView? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         AndroidSupportInjection.inject(this)
     }
+
+    override fun obtainConfig() = Config(
+            canShowEmptyView = true,
+            dataSource = { albumsProvider.load(it, Schedulers.io()) },
+            emptyMessage = getText(R.string.No_albums_found),
+            recyclerAdapter = createRecyclerAdapter()
+    )
 
     override fun setupRecyclerView(recyclerView: RecyclerView) {
         this.recyclerView = recyclerView
         applyLayoutManager(recyclerView)
         recyclerView.addItemDecoration(SpacesItemDecoration(
                 resources.getDimensionPixelSize(R.dimen.album_grid_spacing)))
+    }
+
+    private fun createRecyclerAdapter(): AlbumsRecyclerAdapter {
+        val context = activity ?: throw IllegalStateException("Activity is null")
+        val adapter = AlbumsRecyclerAdapter(context, Glide.with(this))
+        adapter.setOnAlbumClickListener(object : AlbumsRecyclerAdapter.OnAlbumClickListener {
+
+            override fun onAlbumClick(position: Int, id: Long, album: String) {
+                this@AlbumsFragment.onAlbumClick(position, id, album)
+            }
+
+            override fun onAlbumDeleteClick(id: Long, name: String?) {
+                this@AlbumsFragment.onAlbumDeleteClick(id, name)
+            }
+        })
+        return adapter
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -71,32 +94,6 @@ class AlbumsFragment : LibraryListFragment2() {
     private fun onAlbumClick(position: Int, albumId: Long,
                              albumName: String?) {
         AlbumClickHandler.onAlbumClick(this,
-                queueProvider,
-                albumId,
-                albumName
-        ) { getItemView(position) }
+                queueProvider, albumId, albumName) { getItemView(position) }
     }
-
-    private fun obtainRecyclerAdapter(): AlbumsRecyclerAdapter {
-        val context = activity ?: throw IllegalStateException("Activity is null")
-        val adapter = AlbumsRecyclerAdapter(context, Glide.with(this))
-        adapter.setOnAlbumClickListener(object : AlbumsRecyclerAdapter.OnAlbumClickListener {
-
-            override fun onAlbumClick(position: Int, id: Long, album: String) {
-                this@AlbumsFragment.onAlbumClick(position, id, album)
-            }
-
-            override fun onAlbumDeleteClick(id: Long, name: String?) {
-                this@AlbumsFragment.onAlbumDeleteClick(id, name)
-            }
-        })
-        return adapter
-    }
-
-    override fun obtainConfig() = Config(
-            canShowEmptyView = true,
-            dataSource = { albumsProvider.load(it, Schedulers.io()) },
-            emptyMessage = getText(R.string.No_albums_found),
-            recyclerAdapter = obtainRecyclerAdapter()
-    )
 }
