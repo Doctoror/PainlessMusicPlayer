@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.presentation.settings
 
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ThemeToButtonIdMapperTest {

@@ -21,7 +21,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import junit.framework.Assert.*
+import org.junit.Assert.*
 import org.junit.Test
 
 class SettingsPresenterTest {

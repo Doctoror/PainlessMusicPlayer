@@ -18,8 +18,8 @@ package com.doctoror.fuckoffmusicplayer.parcelable.converter
 import android.databinding.ObservableField
 import android.os.Parcel
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationItem
-import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNull
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

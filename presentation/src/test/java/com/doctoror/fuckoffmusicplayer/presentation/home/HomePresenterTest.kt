@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationViewMod
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HomePresenterTest {
