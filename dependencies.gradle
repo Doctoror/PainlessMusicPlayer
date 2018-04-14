@@ -21,7 +21,7 @@ ext {
     daggerVersion = '2.14.1'
     dartVersion = '2.0.3'
 
-    exoPlayerVersion = '2.6.1'
+    exoPlayerVersion = '2.7.3'
 
     fastScrollVersion = '1.0.4'
 

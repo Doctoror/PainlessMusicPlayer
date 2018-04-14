@@ -195,6 +195,13 @@ final class ExoMediaPlayer implements MediaPlayer {
     private final Player.EventListener mEventListener = new Player.EventListener() {
 
         @Override
+        public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+            if (Log.logDEnabled()) {
+                Log.d(TAG, "onTimelineChanged()");
+            }
+        }
+
+        @Override
         public void onTracksChanged(final TrackGroupArray trackGroups,
                                     final TrackSelectionArray trackSelections) {
             if (Log.logDEnabled()) {
@@ -229,13 +236,6 @@ final class ExoMediaPlayer implements MediaPlayer {
                         mediaPlayerListener.onPlaybackFinished();
                         break;
                 }
-            }
-        }
-
-        @Override
-        public void onTimelineChanged(final Timeline timeline, final Object manifest) {
-            if (Log.logDEnabled()) {
-                Log.d(TAG, "onTimelineChanged: " + timeline);
             }
         }
 
