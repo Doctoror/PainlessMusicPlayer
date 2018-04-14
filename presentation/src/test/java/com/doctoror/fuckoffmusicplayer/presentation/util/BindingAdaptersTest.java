@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.doctoror.fuckoffmusicplayer.R;
 
@@ -130,19 +129,6 @@ public final class BindingAdaptersTest {
 
         BindingAdapters.setRecyclerAdapter(recyclerView, null);
         assertNull(recyclerView.getAdapter());
-    }
-
-    @Test
-    public void testSetDisplayedChild() {
-        final Context context = RuntimeEnvironment.application;
-
-        final ViewAnimator va = new ViewAnimator(context);
-        va.addView(new View(context));
-        va.addView(new View(context));
-        va.addView(new View(context));
-
-        BindingAdapters.setDisplayedChild(va, 1);
-        assertEquals(1, va.getDisplayedChild());
     }
 
     @Test
