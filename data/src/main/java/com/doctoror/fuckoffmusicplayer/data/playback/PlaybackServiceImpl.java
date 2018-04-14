@@ -368,7 +368,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         }
 
         @Override
-        public void onPlayerError(@NonNull final Exception error) {
+        public void onPlayerError(@Nullable final Exception error) {
             errorMessage = playbackServiceView.showPlaybackFailedError(error);
             setState(STATE_ERROR);
             stopAction.run();

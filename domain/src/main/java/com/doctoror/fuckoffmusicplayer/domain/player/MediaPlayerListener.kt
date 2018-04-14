@@ -22,5 +22,5 @@ interface MediaPlayerListener {
     fun onPlaybackStarted()
     fun onPlaybackFinished()
     fun onPlaybackPaused()
-    fun onPlayerError(error: Exception)
+    fun onPlayerError(error: Exception?)
 }
