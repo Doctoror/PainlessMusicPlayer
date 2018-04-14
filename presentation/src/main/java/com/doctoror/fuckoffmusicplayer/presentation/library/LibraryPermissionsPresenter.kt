@@ -19,6 +19,7 @@ import android.arch.lifecycle.Lifecycle.Event.ON_START
 import android.arch.lifecycle.OnLifecycleEvent
 import android.os.Bundle
 import android.os.Parcelable
+import android.support.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.base.BasePresenter
 import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProvider
@@ -30,7 +31,8 @@ abstract class LibraryPermissionsPresenter(
         private val libraryPermissionProvider: LibraryPermissionsProvider,
         private val schedulersProvider: SchedulersProvider) : BasePresenter() {
 
-    private var permissionRequested = RuntimePermissions.arePermissionsRequested()
+    @VisibleForTesting
+    internal var permissionRequested = RuntimePermissions.arePermissionsRequested()
 
     @OnLifecycleEvent(ON_START)
     fun onStart() {
