@@ -20,6 +20,7 @@ import io.reactivex.schedulers.Schedulers
 
 class TestSchedulersProvider : SchedulersProvider {
 
+    override fun computation() = Schedulers.trampoline()
     override fun io() = Schedulers.trampoline()
     override fun mainThread() = Schedulers.trampoline()
 }
