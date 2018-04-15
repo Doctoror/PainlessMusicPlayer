@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import com.doctoror.commons.reactivex.SchedulersProvider
-import com.doctoror.fuckoffmusicplayer.reactivex.TestSchedulersProvider
+import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify

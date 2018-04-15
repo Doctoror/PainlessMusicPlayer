@@ -23,6 +23,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.*
+import com.doctoror.commons.reactivex.SchedulersProviderImpl
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment
@@ -31,7 +32,6 @@ import com.doctoror.fuckoffmusicplayer.presentation.util.SearchViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener
-import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProviderImpl
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
 import io.reactivex.processors.BehaviorProcessor
 import kotlinx.android.parcel.Parcelize

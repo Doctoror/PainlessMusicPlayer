@@ -17,8 +17,8 @@ package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.database.Cursor
 import android.support.v7.widget.RecyclerView
+import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter
-import com.doctoror.fuckoffmusicplayer.reactivex.TestSchedulersProvider
 import com.nhaarman.mockito_kotlin.*
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject

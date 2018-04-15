@@ -16,8 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.os.Bundle
+import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.parcelable.reCreateFromParcel
-import com.doctoror.fuckoffmusicplayer.reactivex.TestSchedulersProvider
 import com.nhaarman.mockito_kotlin.mock
 import org.junit.Assert.assertTrue
 import org.junit.Test
