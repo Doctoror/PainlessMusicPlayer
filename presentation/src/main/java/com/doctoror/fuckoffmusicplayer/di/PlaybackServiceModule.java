@@ -171,8 +171,9 @@ public final class PlaybackServiceModule {
     @Provides
     @ServiceScope
     PlaybackServiceUnitStopTimeout providePlaybackServiceUnitStopTimeout(
-            @NonNull final Runnable stopAction) {
-        return new PlaybackServiceUnitStopTimeout(stopAction);
+            @NonNull final Runnable stopAction,
+            @NonNull final SchedulersProvider schedulersProvider) {
+        return new PlaybackServiceUnitStopTimeout(stopAction, schedulersProvider);
     }
 
     @Provides

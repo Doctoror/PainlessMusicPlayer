@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import com.doctoror.commons.reactivex.SchedulersProvider
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
@@ -22,7 +23,9 @@ import java.util.concurrent.TimeUnit
 /**
  * Used for delayed stop action invocation.
  */
-class PlaybackServiceUnitStopTimeout(private val stopAction: Runnable) {
+class PlaybackServiceUnitStopTimeout(
+        private val stopAction: Runnable,
+        private val schedulersProvider: SchedulersProvider) {
 
     /**
      * The timeout after which [stopAction] should be performed, in seconds.
@@ -39,7 +42,7 @@ class PlaybackServiceUnitStopTimeout(private val stopAction: Runnable) {
      */
     fun initializeStopTimer() {
         disposable = Observable
-                .timer(timeout, TimeUnit.SECONDS)
+                .timer(timeout, TimeUnit.SECONDS, schedulersProvider.computation())
                 .subscribe { stopAction.run() }
     }
 
