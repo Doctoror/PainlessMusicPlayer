@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import android.support.annotation.VisibleForTesting
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
@@ -29,7 +30,8 @@ class PlaybackServiceUnitMediaPositionUpdater(
         private val playbackData: PlaybackData,
         private val schedulers: SchedulersProvider) : ServiceLifecycleObserver {
 
-    private var positionUpdater: Disposable? = null
+    @VisibleForTesting
+    var positionUpdater: Disposable? = null
 
     override fun onCreate() {
         // Not handled
@@ -51,7 +53,8 @@ class PlaybackServiceUnitMediaPositionUpdater(
         positionUpdater = null
     }
 
-    private fun updateMediaPosition() {
+    @VisibleForTesting
+    fun updateMediaPosition() {
         if (playbackData.playbackState == STATE_PLAYING) {
             playbackData.setMediaPosition(mediaPlayer.getCurrentPosition())
         }
