@@ -25,6 +25,11 @@ import java.util.concurrent.TimeUnit
 class PlaybackServiceUnitStopTimeout(private val stopAction: Runnable) {
 
     /**
+     * The timeout after which [stopAction] should be performed, in seconds.
+     */
+    private val timeout = 8L
+
+    /**
      * The [stopAction] timer [Disposable].
      */
     private var disposable: Disposable? = null
@@ -34,7 +39,7 @@ class PlaybackServiceUnitStopTimeout(private val stopAction: Runnable) {
      */
     fun initializeStopTimer() {
         disposable = Observable
-                .timer(TIMEOUT, TimeUnit.SECONDS)
+                .timer(timeout, TimeUnit.SECONDS)
                 .subscribe { stopAction.run() }
     }
 
@@ -44,13 +49,5 @@ class PlaybackServiceUnitStopTimeout(private val stopAction: Runnable) {
     fun abortStopTimer() {
         disposable?.dispose()
         disposable = null
-    }
-
-    companion object {
-
-        /**
-         * The timeout after which [stopAction] should be performed, in seconds.
-         */
-        private const val TIMEOUT = 8L
     }
 }
