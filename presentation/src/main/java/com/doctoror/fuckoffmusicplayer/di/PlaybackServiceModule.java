@@ -113,12 +113,14 @@ public final class PlaybackServiceModule {
             @NonNull final PlaybackData playbackData,
             @NonNull final PlaybackInitializer playbackInitializer,
             @NonNull final PlaybackServiceUnitPlayMediaFromQueue psUnitPlayMediaFromQueue,
-            @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned) {
+            @NonNull final QueueProviderRecentlyScanned queueProviderRecentlyScanned,
+            @NonNull final SchedulersProvider schedulersProvider) {
         return new PlaybackServiceUnitPlayCurrentOrNewQueue(
                 playbackData,
                 playbackInitializer,
                 psUnitPlayMediaFromQueue,
-                queueProviderRecentlyScanned);
+                queueProviderRecentlyScanned,
+                schedulersProvider);
     }
 
     @Provides

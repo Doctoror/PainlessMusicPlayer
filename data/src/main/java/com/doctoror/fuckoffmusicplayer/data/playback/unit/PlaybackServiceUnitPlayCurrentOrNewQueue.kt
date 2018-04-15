@@ -15,17 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
-import io.reactivex.schedulers.Schedulers
 
 class PlaybackServiceUnitPlayCurrentOrNewQueue(
         private val playbackData: PlaybackData,
         private val playbackInitializer: PlaybackInitializer,
         private val psUnitPlayMediaFromQueue: PlaybackServiceUnitPlayMediaFromQueue,
-        private val queueProviderRecentlyScanned: QueueProviderRecentlyScanned) {
+        private val queueProviderRecentlyScanned: QueueProviderRecentlyScanned,
+        private val schedulersProvider: SchedulersProvider) {
 
     private val tag = "PlayCurrentOrNewQueueUseCase"
 
@@ -35,7 +36,7 @@ class PlaybackServiceUnitPlayCurrentOrNewQueue(
             psUnitPlayMediaFromQueue.play(queue, playbackData.queuePosition)
         } else {
             queueProviderRecentlyScanned.recentlyScannedQueue()
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(schedulersProvider.io())
                     .subscribe(
                             { q -> playbackInitializer.setQueueAndPlay(q, 0) },
                             { t -> Log.w(tag, "Failed to load recently scanned", t) })
