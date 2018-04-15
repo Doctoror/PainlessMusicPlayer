@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import android.support.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
@@ -30,6 +31,9 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         private val playbackData: PlaybackData,
         private val unitAudioFocus: PlaybackServiceUnitAudioFocus,
         private val unitReporter: PlaybackServiceUnitReporter) {
+
+    @VisibleForTesting
+    val remainingDurationForPlayWhereStopped = 100
 
     /**
      * Plays media from queue based on position.
@@ -50,7 +54,7 @@ class PlaybackServiceUnitPlayMediaFromQueue(
 
         if (queue == playbackData.queue &&
                 isTheSameMediaPaused(currentState, currentMedia, targetMedia)) {
-            playAndReportCurrentState()
+            requestFocusAndPlay()
             return
         }
 
@@ -91,7 +95,6 @@ class PlaybackServiceUnitPlayMediaFromQueue(
                 }
                 playAndReportCurrentState()
             }
-
         }
     }
 
@@ -121,18 +124,22 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         // If restoring from stopped state, set seek position to what it was
         if (currentState == STATE_IDLE && targetMedia == currentMedia) {
             seekPosition = playbackData.mediaPosition
-            if (seekPosition >= targetMedia.duration - 100) {
+            if (seekPosition > targetMedia.duration - remainingDurationForPlayWhereStopped) {
                 seekPosition = 0
             }
         }
         return seekPosition
     }
 
-    private fun playAndReportCurrentState() {
+    private fun requestFocusAndPlay() {
         unitAudioFocus.requestAudioFocus()
         if (unitAudioFocus.focusGranted) {
-            mediaPlayer.play()
-            unitReporter.reportCurrentMedia()
+            playAndReportCurrentState()
         }
+    }
+
+    private fun playAndReportCurrentState() {
+        mediaPlayer.play()
+        unitReporter.reportCurrentMedia()
     }
 }
