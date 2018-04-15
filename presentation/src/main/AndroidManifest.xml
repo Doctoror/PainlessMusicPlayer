@@ -140,7 +140,12 @@
 
         <receiver android:name=".presentation.appwidget.SingleRowAppWidgetProvider">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action
+                    android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+
+                <action
+                    android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_MEDIA_CHANGED"/>
+
                 <action
                     android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED"/>
             </intent-filter>

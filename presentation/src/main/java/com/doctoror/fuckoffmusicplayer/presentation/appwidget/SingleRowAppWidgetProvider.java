@@ -25,6 +25,7 @@ import android.widget.RemoteViews;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;
+import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 
@@ -38,6 +39,9 @@ import dagger.android.AndroidInjection;
 public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     @Inject
+    PlaybackData playbackData;
+
+    @Inject
     PlaybackServiceControl playbackServiceControl;
 
     @Inject
@@ -49,27 +53,25 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
     @Inject
     SingleRowAppWidgetViewModel viewModel;
 
-    private void requestServiceStateUpdate() {
-        playbackServiceControl.resendState();
-    }
-
-    @NonNull
-    private PlaybackState fromIntentExtra(@NonNull final Intent intent) {
-        final int stateIndex = intent.getIntExtra(
-                AppWidgetPlaybackStateReporter.EXTRA_STATE, PlaybackState.STATE_IDLE.ordinal());
-        try {
-            return PlaybackState.values()[stateIndex];
-        } catch (final IllegalArgumentException e) {
-            return PlaybackState.STATE_IDLE;
-        }
-    }
-
     @Override
     public void onReceive(final Context context, final Intent intent) {
         AndroidInjection.inject(this, context);
-        if (AppWidgetPlaybackStateReporter.ACTION_STATE_CHANGED.equals(intent.getAction())) {
-            final PlaybackState state = fromIntentExtra(intent);
-            onStateChanged(context, state);
+        final String action = intent.getAction();
+        if (action != null) {
+            switch (action) {
+                case AppWidgetPlaybackStateReporter.ACTION_MEDIA_CHANGED:
+                    onStateChanged(context, playbackData.getPlaybackState());
+                    break;
+
+                case AppWidgetPlaybackStateReporter.ACTION_STATE_CHANGED:
+                    onStateChanged(context, fromIntentExtra(intent));
+                    break;
+
+                default:
+                    // Handle AppWidgetProvider broadcast
+                    super.onReceive(context, intent);
+                    break;
+            }
         } else {
             // Handle AppWidgetProvider broadcast
             super.onReceive(context, intent);
@@ -81,22 +83,17 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
             @NonNull final Context context,
             @NonNull final AppWidgetManager appWidgetManager,
             @NonNull final int[] appWidgetIds) {
-        bindViews(
-                context,
-                appWidgetManager,
-                appWidgetIds,
-                PlaybackState.STATE_IDLE);
-        requestServiceStateUpdate();
+        bindViews(context, appWidgetManager, appWidgetIds, playbackData.getPlaybackState());
     }
 
     private void onStateChanged(
             @NonNull final Context context,
-            @NonNull final PlaybackState state) {
+            @NonNull final PlaybackState playbackState) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, SingleRowAppWidgetProvider.class));
 
-        bindViews(context, appWidgetManager, appWidgetIds, state);
+        bindViews(context, appWidgetManager, appWidgetIds, playbackState);
     }
 
     private void bindViews(
@@ -112,5 +109,16 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
         viewBinder.bind(view, viewModel);
 
         appWidgetManager.updateAppWidget(appWidgetIds, view);
+    }
+
+    @NonNull
+    private PlaybackState fromIntentExtra(@NonNull final Intent intent) {
+        final int stateIndex = intent.getIntExtra(
+                AppWidgetPlaybackStateReporter.EXTRA_STATE, PlaybackState.STATE_IDLE.ordinal());
+        try {
+            return PlaybackState.values()[stateIndex];
+        } catch (final IllegalArgumentException e) {
+            return PlaybackState.STATE_IDLE;
+        }
     }
 }

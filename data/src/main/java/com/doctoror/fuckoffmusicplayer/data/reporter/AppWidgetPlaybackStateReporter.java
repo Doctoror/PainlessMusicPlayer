@@ -14,6 +14,9 @@ public final class AppWidgetPlaybackStateReporter implements PlaybackReporter {
     public static final String ACTION_STATE_CHANGED
             = "com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED";
 
+    public static final String ACTION_MEDIA_CHANGED
+            = "com.doctoror.fuckoffmusicplayer.playback.ACTION_MEDIA_CHANGED";
+
     public static final String EXTRA_STATE = "EXTRA_STATE";
 
     private static final String SUFFIX_PERMISSION_RECEIVE_PLAYBACK_STATE
@@ -30,7 +33,7 @@ public final class AppWidgetPlaybackStateReporter implements PlaybackReporter {
 
     @Override
     public void reportTrackChanged(@NonNull final Media media) {
-        // Not supported
+        context.sendBroadcast(new Intent(ACTION_MEDIA_CHANGED), permissionReceivePlaybackState);
     }
 
     @Override

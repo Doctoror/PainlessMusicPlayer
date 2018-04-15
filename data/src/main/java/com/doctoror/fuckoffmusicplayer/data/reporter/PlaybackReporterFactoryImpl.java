@@ -55,8 +55,8 @@ public final class PlaybackReporterFactoryImpl implements PlaybackReporterFactor
     public PlaybackReporter newUniversalReporter(
             @NonNull final MediaSessionCompat mediaSession) {
         return new PlaybackReporterSet(
-                new AppWidgetPlaybackStateReporter(context),
                 new MediaSessionPlaybackReporter(context, albumThumbHolder, mediaSession),
+                new AppWidgetPlaybackStateReporter(context),
                 new SLSPlaybackReporter(context, currentMediaProvider, playbackData, settings),
                 new LastFmPlaybackReporter(context, currentMediaProvider, playbackData, settings));
     }
