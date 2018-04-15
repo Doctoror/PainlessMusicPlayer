@@ -30,6 +30,11 @@ class PlaybackServiceUnitMediaPositionUpdater(
         private val playbackData: PlaybackData,
         private val schedulers: SchedulersProvider) : ServiceLifecycleObserver {
 
+    /**
+     * The interval for updating media position, in seconds.
+     */
+    private val positionUpdateInterval = 1L
+
     @VisibleForTesting
     var positionUpdater: Disposable? = null
 
@@ -44,7 +49,7 @@ class PlaybackServiceUnitMediaPositionUpdater(
     fun initializeMediaPositionUpdater() {
         positionUpdater?.dispose()
         positionUpdater = Observable
-                .interval(POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS, schedulers.computation())
+                .interval(positionUpdateInterval, TimeUnit.SECONDS, schedulers.computation())
                 .subscribe { _ -> updateMediaPosition() }
     }
 
@@ -58,13 +63,5 @@ class PlaybackServiceUnitMediaPositionUpdater(
         if (playbackData.playbackState == STATE_PLAYING) {
             playbackData.setMediaPosition(mediaPlayer.getCurrentPosition())
         }
-    }
-
-    private companion object {
-
-        /**
-         * The interval for updating media position, in seconds.
-         */
-        private const val POSITION_UPDATE_INTERVAL = 1L
     }
 }
