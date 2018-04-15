@@ -36,9 +36,16 @@ class PlaybackServiceUnitPlayCurrentOrNewQueue(
             psUnitPlayMediaFromQueue.play(queue, playbackData.queuePosition)
         } else {
             queueProviderRecentlyScanned.recentlyScannedQueue()
+                    .take(1)
                     .subscribeOn(schedulersProvider.io())
                     .subscribe(
-                            { q -> playbackInitializer.setQueueAndPlay(q, 0) },
+                            { q ->
+                                if (q.isEmpty()) {
+                                    Log.w(tag, "Recently scanned queue is empty")
+                                } else {
+                                    playbackInitializer.setQueueAndPlay(q, 0)
+                                }
+                            },
                             { t -> Log.w(tag, "Failed to load recently scanned", t) })
         }
     }
