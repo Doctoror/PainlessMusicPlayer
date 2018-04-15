@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
 
+import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.AudioFocusListener;
@@ -44,8 +45,6 @@ import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 import io.reactivex.Completable;
@@ -58,6 +57,8 @@ import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STAT
 import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING;
 
 public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements PlaybackService {
+
+    private static final String TAG = "PlaybackServiceImpl";
 
     private final AudioEffects audioEffects;
     private final Context context;
@@ -183,15 +184,20 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void playCurrent() {
-        unitStopTimeout.abortStopTimer();
-        Completable.fromAction(() -> unitPlayMediaFromQueue.play(
-                playbackData.getQueue(), playbackData.getQueuePosition()))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+        final List<Media> queue = playbackData.getQueue();
+        if (queue == null) {
+            Log.w(TAG, "Play requested for null queue");
+            return;
+        }
+        play(queue, playbackData.getQueuePosition());
     }
 
     @Override
-    public void play(@NotNull final List<Media> queue, final int position) {
+    public void play(@NonNull final List<Media> queue, final int position) {
+        if (queue.isEmpty()) {
+            Log.w(TAG, "Play requested for empty queue");
+            return;
+        }
         unitStopTimeout.abortStopTimer();
         Completable.fromAction(() -> unitPlayMediaFromQueue.play(queue, position))
                 .subscribeOn(Schedulers.computation())
