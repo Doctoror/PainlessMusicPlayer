@@ -20,9 +20,9 @@ import android.arch.lifecycle.OnLifecycleEvent
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.annotation.VisibleForTesting
+import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.base.BasePresenter
-import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProvider
 import io.reactivex.Completable
 import kotlinx.android.parcel.Parcelize
 import java.util.concurrent.TimeUnit

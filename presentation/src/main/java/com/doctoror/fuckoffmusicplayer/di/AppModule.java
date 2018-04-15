@@ -20,9 +20,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.settings.SettingsImpl;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
-import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.reactivex.SchedulersProviderImpl;
 
 import javax.inject.Singleton;

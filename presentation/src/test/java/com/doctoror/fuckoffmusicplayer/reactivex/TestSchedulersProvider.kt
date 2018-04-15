@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.reactivex
 
+import com.doctoror.commons.reactivex.SchedulersProvider
 import io.reactivex.schedulers.Schedulers
 
 class TestSchedulersProvider : SchedulersProvider {
