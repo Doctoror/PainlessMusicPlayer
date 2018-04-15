@@ -24,8 +24,8 @@ import android.content.res.XmlResourceParser;
 import android.os.Process;
 import android.util.Base64;
 
-import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.R;
 
 import org.xmlpull.v1.XmlPullParserException;
 

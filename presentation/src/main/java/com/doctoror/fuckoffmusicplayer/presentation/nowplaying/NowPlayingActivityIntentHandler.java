@@ -25,8 +25,8 @@ import android.support.annotation.NonNull;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
