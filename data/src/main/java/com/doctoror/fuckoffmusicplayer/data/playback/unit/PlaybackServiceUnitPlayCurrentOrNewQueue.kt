@@ -15,7 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
-import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider
 import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer
@@ -28,6 +27,8 @@ class PlaybackServiceUnitPlayCurrentOrNewQueue(
         private val psUnitPlayMediaFromQueue: PlaybackServiceUnitPlayMediaFromQueue,
         private val queueProviderRecentlyScanned: QueueProviderRecentlyScanned) {
 
+    private val tag = "PlayCurrentOrNewQueueUseCase"
+
     fun playCurrentOrNewQueue() {
         val queue = playbackData.queue
         if (queue != null && !queue.isEmpty()) {
@@ -37,11 +38,7 @@ class PlaybackServiceUnitPlayCurrentOrNewQueue(
                     .subscribeOn(Schedulers.io())
                     .subscribe(
                             { q -> playbackInitializer.setQueueAndPlay(q, 0) },
-                            { t -> Log.w(TAG, "Failed to load recently scanned", t) })
+                            { t -> Log.w(tag, "Failed to load recently scanned", t) })
         }
-    }
-
-    companion object {
-        private const val TAG = "PlayCurrentOrNewQueueUseCase"
     }
 }
