@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import android.support.annotation.NonNull;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackServiceImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitAudioFocus;
@@ -94,8 +95,9 @@ public final class PlaybackServiceModule {
     @ServiceScope
     PlaybackServiceUnitMediaPositionUpdater providePlaybackServiceUnitMediaPositionUpdater(
             @NonNull final MediaPlayer mediaPlayer,
-            @NonNull final PlaybackData playbackData) {
-        return new PlaybackServiceUnitMediaPositionUpdater(mediaPlayer, playbackData);
+            @NonNull final PlaybackData playbackData,
+            @NonNull final SchedulersProvider schedulers) {
+        return new PlaybackServiceUnitMediaPositionUpdater(mediaPlayer, playbackData, schedulers);
     }
 
     @Provides

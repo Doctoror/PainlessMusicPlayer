@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING
@@ -25,7 +26,8 @@ import java.util.concurrent.TimeUnit
 
 class PlaybackServiceUnitMediaPositionUpdater(
         private val mediaPlayer: MediaPlayer,
-        private val playbackData: PlaybackData) : ServiceLifecycleObserver {
+        private val playbackData: PlaybackData,
+        private val schedulers: SchedulersProvider) : ServiceLifecycleObserver {
 
     private var positionUpdater: Disposable? = null
 
@@ -40,7 +42,7 @@ class PlaybackServiceUnitMediaPositionUpdater(
     fun initializeMediaPositionUpdater() {
         positionUpdater?.dispose()
         positionUpdater = Observable
-                .interval(POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS)
+                .interval(POSITION_UPDATE_INTERVAL, TimeUnit.SECONDS, schedulers.computation())
                 .subscribe { _ -> updateMediaPosition() }
     }
 
