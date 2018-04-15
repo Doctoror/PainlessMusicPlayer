@@ -15,29 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.appwidget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
-import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.presentation.Henson;
-import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
-import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackServiceIntentFactory;
 
 import javax.inject.Inject;
 
@@ -49,16 +38,16 @@ import dagger.android.AndroidInjection;
 public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
 
     @Inject
-    AlbumThumbHolder albumThumbHolder;
-
-    @Inject
-    CurrentMediaProvider currentMediaProvider;
-
-    @Inject
-    PlaybackData playbackData;
-
-    @Inject
     PlaybackServiceControl playbackServiceControl;
+
+    @Inject
+    SingleRowAppWidgetPresenter presenter;
+
+    @Inject
+    SingleRowAppWidgetViewBinder viewBinder;
+
+    @Inject
+    SingleRowAppWidgetViewModel viewModel;
 
     private void requestServiceStateUpdate() {
         playbackServiceControl.resendState();
@@ -100,7 +89,9 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
         requestServiceStateUpdate();
     }
 
-    private void onStateChanged(@NonNull final Context context, @NonNull final PlaybackState state) {
+    private void onStateChanged(
+            @NonNull final Context context,
+            @NonNull final PlaybackState state) {
         final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         final int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, SingleRowAppWidgetProvider.class));
@@ -113,115 +104,13 @@ public final class SingleRowAppWidgetProvider extends AppWidgetProvider {
             @NonNull final AppWidgetManager appWidgetManager,
             @NonNull final int[] appWidgetIds,
             @NonNull final PlaybackState state) {
-        final RemoteViews views = new RemoteViews(context.getPackageName(),
+
+        final RemoteViews view = new RemoteViews(context.getPackageName(),
                 R.layout.appwidget_single_row);
 
-        final Media media = currentMediaProvider.getCurrentMedia();
-        final boolean hasMedia = media != null;
+        presenter.bindState(context, state);
+        viewBinder.bind(view, viewModel);
 
-        views.setImageViewResource(R.id.appwidget_btn_play_pause,
-                state == PlaybackState.STATE_PLAYING
-                        ? R.drawable.ic_pause_white_24dp
-                        : R.drawable.ic_play_arrow_white_24dp);
-
-        if (hasMedia) {
-            setPlayPauseButtonAction(context, views);
-            setPrevButtonAction(context, views);
-            setNextButtonAction(context, views);
-        } else {
-            final PendingIntent playAnything = generatePlayAnythingIntent(context);
-            setButtonAction(views, R.id.appwidget_btn_play_pause, playAnything);
-            setButtonAction(views, R.id.appwidget_btn_prev, playAnything);
-            setButtonAction(views, R.id.appwidget_btn_next, playAnything);
-        }
-
-        setCoverClickAction(context, views, hasMedia);
-
-        CharSequence artist = media != null ? media.getArtist() : null;
-        CharSequence title = media != null ? media.getTitle() : null;
-
-        if (TextUtils.isEmpty(artist)) {
-            artist = context.getText(R.string.Unknown_artist);
-        }
-        if (TextUtils.isEmpty(title)) {
-            title = context.getText(R.string.Untitled);
-        }
-
-        views.setTextViewText(R.id.appwidget_text_artist, artist);
-        views.setTextViewText(R.id.appwidget_text_title, title);
-
-        final Bitmap thumb = albumThumbHolder.getAlbumThumb();
-        if (thumb != null) {
-            views.setImageViewBitmap(R.id.appwidget_img_albumart, thumb);
-        } else {
-            views.setImageViewResource(R.id.appwidget_img_albumart,
-                    R.drawable.album_art_placeholder);
-        }
-
-        appWidgetManager.updateAppWidget(appWidgetIds, views);
-    }
-
-    @NonNull
-    private static PendingIntent generatePlayAnythingIntent(@NonNull final Context context) {
-        final Intent intent = PlaybackServiceIntentFactory.intentPlayAnything(context);
-        return serviceIntent(context, intent);
-    }
-
-    @NonNull
-    private static PendingIntent generatePlayPauseIntent(@NonNull final Context context) {
-        final Intent intent = PlaybackServiceIntentFactory.intentPlayPause(context);
-        return serviceIntent(context, intent);
-    }
-
-    @NonNull
-    private static PendingIntent generatePrevIntent(@NonNull final Context context) {
-        final Intent intent = PlaybackServiceIntentFactory.intentPrev(context);
-        return serviceIntent(context, intent);
-    }
-
-    @NonNull
-    private static PendingIntent generateNextIntent(@NonNull final Context context) {
-        final Intent intent = PlaybackServiceIntentFactory.intentNext(context);
-        return serviceIntent(context, intent);
-    }
-
-    @NonNull
-    private static PendingIntent serviceIntent(@NonNull final Context context,
-                                               @NonNull final Intent intent) {
-        return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
-    private static void setPlayPauseButtonAction(final Context context, final RemoteViews views) {
-        setButtonAction(views, R.id.appwidget_btn_play_pause, generatePlayPauseIntent(context));
-    }
-
-    private static void setPrevButtonAction(final Context context, final RemoteViews views) {
-        setButtonAction(views, R.id.appwidget_btn_prev, generatePrevIntent(context));
-    }
-
-    private static void setNextButtonAction(final Context context, final RemoteViews views) {
-        setButtonAction(views, R.id.appwidget_btn_next, generateNextIntent(context));
-    }
-
-    private static void setButtonAction(@NonNull final RemoteViews views,
-                                        @IdRes final int buttonId,
-                                        @NonNull final PendingIntent action) {
-        views.setOnClickPendingIntent(buttonId, action);
-    }
-
-    private static void setCoverClickAction(final Context context, final RemoteViews views,
-                                            final boolean hasMedia) {
-        final Intent coverIntent;
-        if (hasMedia) {
-            coverIntent = Henson.with(context)
-                    .gotoNowPlayingActivity()
-                    .hasCoverTransition(true)
-                    .hasListViewTransition(false)
-                    .build();
-        } else {
-            coverIntent = new Intent(context, HomeActivity.class);
-        }
-        views.setOnClickPendingIntent(R.id.appwidget_img_albumart, PendingIntent.getActivity(
-                context, 0, coverIntent, PendingIntent.FLAG_UPDATE_CURRENT));
+        appWidgetManager.updateAppWidget(appWidgetIds, view);
     }
 }

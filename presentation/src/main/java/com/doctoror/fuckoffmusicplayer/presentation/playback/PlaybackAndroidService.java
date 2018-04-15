@@ -25,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 
@@ -45,15 +46,23 @@ import dagger.android.AndroidInjection;
 public final class PlaybackAndroidService extends Service {
 
     static final String ACTION_RESEND_STATE = "ACTION_RESEND_STATE";
-    static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
-    static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static final String ACTION_PLAY_PAUSE = "ACTION_PLAY_PAUSE";
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static final String ACTION_PLAY_ANYTHING = "ACTION_PLAY_ANYTHING";
+
     static final String ACTION_PLAY = "ACTION_PLAY";
     static final String ACTION_PAUSE = "ACTION_PAUSE";
     static final String ACTION_STOP = "ACTION_STOP";
     static final String ACTION_STOP_WITH_ERROR = "ACTION_STOP_WITH_ERROR";
 
-    static final String ACTION_PREV = "ACTION_PREV";
-    static final String ACTION_NEXT = "ACTION_NEXT";
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static final String ACTION_PREV = "ACTION_PREV";
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static final String ACTION_NEXT = "ACTION_NEXT";
 
     static final String ACTION_SEEK = "ACTION_SEEK";
     static final String EXTRA_ERROR_MESSAGE = "EXTRA_ERROR_MESSAGE";

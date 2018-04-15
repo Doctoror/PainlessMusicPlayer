@@ -24,6 +24,6 @@ import dagger.android.ContributesAndroidInjector;
 public interface SingleRowAppWidgetProviderContributes {
 
     @BroadcastReceiverScope
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = SingleRowAppWidgetModule.class)
     SingleRowAppWidgetProvider singleRowAppWidgetProvider();
 }
