@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import android.support.annotation.VisibleForTesting
 import com.doctoror.commons.reactivex.SchedulersProvider
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -30,12 +31,14 @@ class PlaybackServiceUnitStopTimeout(
     /**
      * The timeout after which [stopAction] should be performed, in seconds.
      */
-    private val timeout = 8L
+    @VisibleForTesting
+    var timeout = 8L
 
     /**
      * The [stopAction] timer [Disposable].
      */
-    private var disposable: Disposable? = null
+    @VisibleForTesting
+    var disposable: Disposable? = null
 
     /**
      * Start a timer after which the [stopAction] will be performed.
