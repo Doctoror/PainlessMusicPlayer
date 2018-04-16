@@ -282,6 +282,7 @@ public final class QueueActivity extends BaseActivity
         mCoverUri = pic;
 
         if (TextUtils.isEmpty(pic)) {
+            mRequestManager.clear(albumArt);
             showPlaceholderArt();
             onImageSet();
         } else {
@@ -305,7 +306,6 @@ public final class QueueActivity extends BaseActivity
     }
 
     private void showPlaceholderArt() {
-        mRequestManager.clear(albumArt);
         albumArt.setImageResource(R.drawable.album_art_placeholder);
         albumArt.setAlpha(1f);
     }
