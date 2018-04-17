@@ -24,6 +24,7 @@ import com.doctoror.fuckoffmusicplayer.data.settings.nano.SettingsProto;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
+import com.doctoror.fuckoffmusicplayer.domain.settings.ThemeKt;
 
 /**
  * Application settings
@@ -49,7 +50,7 @@ public final class SettingsImpl implements Settings {
                 new SettingsProto.Settings());
         synchronized (lock) {
             if (settings != null) {
-                theme = Theme.Companion.fromIndex(settings.theme);
+                theme = ThemeKt.themeFromIndex(settings.theme);
                 scrobbleEnabled = settings.scrobbleEnabled;
             }
         }

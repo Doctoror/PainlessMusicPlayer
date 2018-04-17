@@ -15,18 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.settings
 
+fun themeFromIndex(index: Int) = try {
+    Theme.values()[index]
+} catch (e: IllegalArgumentException) {
+    Theme.NIGHT
+}
+
 enum class Theme(val index: Int) {
 
     NIGHT(0),
     DAY(1),
-    DAYNIGHT(2);
-
-    companion object {
-
-        fun fromIndex(index: Int) = try {
-            values()[index]
-        } catch (e: IllegalArgumentException) {
-            NIGHT
-        }
-    }
+    DAYNIGHT(2)
 }
