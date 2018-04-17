@@ -16,7 +16,7 @@ class LibraryListViewModelTest {
         underTest.showViewProgress()
 
         // Then
-        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_PROGRESS, underTest.displayedChild.get())
+        assertEquals(underTest.animatorChildProgress, underTest.displayedChild.get())
     }
 
     @Test
@@ -29,7 +29,7 @@ class LibraryListViewModelTest {
 
         // Then
         assertEquals(
-                LibraryListViewModel.ANIMATOR_CHILD_PERMISSION_DENIED,
+                underTest.animatorChildPermissionDenied,
                 underTest.displayedChild.get())
     }
 
@@ -42,7 +42,7 @@ class LibraryListViewModelTest {
         underTest.showViewEmpty()
 
         // Then
-        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_EMPTY, underTest.displayedChild.get())
+        assertEquals(underTest.animatorChildEmpty, underTest.displayedChild.get())
     }
 
     @Test
@@ -54,7 +54,7 @@ class LibraryListViewModelTest {
         underTest.showViewError()
 
         // Then
-        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_ERROR, underTest.displayedChild.get())
+        assertEquals(underTest.animatorChildError, underTest.displayedChild.get())
     }
 
     @Test
@@ -66,6 +66,6 @@ class LibraryListViewModelTest {
         underTest.showViewContent()
 
         // Then
-        assertEquals(LibraryListViewModel.ANIMATOR_CHILD_CONTENT, underTest.displayedChild.get())
+        assertEquals(underTest.animatorChildContent, underTest.displayedChild.get())
     }
 }

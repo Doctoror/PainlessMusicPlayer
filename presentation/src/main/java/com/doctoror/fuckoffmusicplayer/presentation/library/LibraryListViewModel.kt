@@ -22,6 +22,21 @@ import android.support.v7.widget.RecyclerView
 
 class LibraryListViewModel {
 
+    @VisibleForTesting
+    internal val animatorChildProgress = 0
+
+    @VisibleForTesting
+    internal val animatorChildPermissionDenied = 1
+
+    @VisibleForTesting
+    internal val animatorChildEmpty = 2
+
+    @VisibleForTesting
+    internal val animatorChildError = 3
+
+    @VisibleForTesting
+    internal val animatorChildContent = 4
+
     val displayedChild = ObservableInt()
     val emptyMessage = ObservableField<CharSequence>()
     val recyclerAdapter = ObservableField<RecyclerView.Adapter<RecyclerView.ViewHolder>>()
@@ -32,40 +47,22 @@ class LibraryListViewModel {
     }
 
     fun showViewProgress() {
-        displayedChild.set(ANIMATOR_CHILD_PROGRESS)
+        displayedChild.set(animatorChildProgress)
     }
 
     fun showViewPermissionDenied() {
-        displayedChild.set(ANIMATOR_CHILD_PERMISSION_DENIED)
+        displayedChild.set(animatorChildPermissionDenied)
     }
 
     fun showViewEmpty() {
-        displayedChild.set(ANIMATOR_CHILD_EMPTY)
+        displayedChild.set(animatorChildEmpty)
     }
 
     fun showViewError() {
-        displayedChild.set(ANIMATOR_CHILD_ERROR)
+        displayedChild.set(animatorChildError)
     }
 
     fun showViewContent() {
-        displayedChild.set(ANIMATOR_CHILD_CONTENT)
-    }
-
-    companion object {
-
-        @VisibleForTesting
-        internal const val ANIMATOR_CHILD_PROGRESS = 0
-
-        @VisibleForTesting
-        internal const val ANIMATOR_CHILD_PERMISSION_DENIED = 1
-
-        @VisibleForTesting
-        internal const val ANIMATOR_CHILD_EMPTY = 2
-
-        @VisibleForTesting
-        internal const val ANIMATOR_CHILD_ERROR = 3
-
-        @VisibleForTesting
-        internal const val ANIMATOR_CHILD_CONTENT = 4
+        displayedChild.set(animatorChildContent)
     }
 }

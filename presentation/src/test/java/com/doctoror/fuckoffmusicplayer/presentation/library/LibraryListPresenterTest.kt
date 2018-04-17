@@ -91,7 +91,7 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                LibraryListViewModel.ANIMATOR_CHILD_PERMISSION_DENIED,
+                viewModel.animatorChildPermissionDenied,
                 viewModel.displayedChild.get())
     }
 
@@ -105,7 +105,7 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                LibraryListViewModel.ANIMATOR_CHILD_PROGRESS,
+                viewModel.animatorChildProgress,
                 viewModel.displayedChild.get())
     }
 
@@ -180,7 +180,7 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                LibraryListViewModel.ANIMATOR_CHILD_ERROR,
+                viewModel.animatorChildError,
                 viewModel.displayedChild.get())
 
         verify(viewModel.recyclerAdapter.get() as CursorRecyclerViewAdapter).changeCursor(null)
@@ -218,7 +218,7 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                LibraryListViewModel.ANIMATOR_CHILD_EMPTY,
+                viewModel.animatorChildEmpty,
                 viewModel.displayedChild.get())
     }
 
@@ -238,7 +238,7 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                LibraryListViewModel.ANIMATOR_CHILD_CONTENT,
+                viewModel.animatorChildContent,
                 viewModel.displayedChild.get())
     }
 
@@ -259,7 +259,7 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                LibraryListViewModel.ANIMATOR_CHILD_CONTENT,
+                viewModel.animatorChildContent,
                 viewModel.displayedChild.get())
     }
 
