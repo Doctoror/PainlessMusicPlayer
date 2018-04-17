@@ -21,6 +21,9 @@ import android.os.PowerManager
 import android.support.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 
+@VisibleForTesting
+const val WAKE_LOCK_TAG = "WakelockAcquirer"
+
 class PlaybackServiceUnitWakeLock(private val context: Context) : ServiceLifecycleObserver {
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -37,7 +40,7 @@ class PlaybackServiceUnitWakeLock(private val context: Context) : ServiceLifecyc
     private fun acquireWakeLock() {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
         if (powerManager != null) {
-            val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG)
+            val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG)
             wakeLock.acquire()
 
             this.wakeLock = wakeLock
@@ -51,11 +54,5 @@ class PlaybackServiceUnitWakeLock(private val context: Context) : ServiceLifecyc
             }
         }
         wakeLock = null
-    }
-
-    companion object {
-
-        @VisibleForTesting
-        const val TAG = "WakelockAcquirer"
     }
 }

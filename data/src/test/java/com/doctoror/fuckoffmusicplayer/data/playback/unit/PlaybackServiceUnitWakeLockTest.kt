@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.data.media.playback.usecase
+package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import android.content.Context
 import android.os.PowerManager
 import android.os.PowerManager.WakeLock
-import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
@@ -36,7 +35,7 @@ class PlaybackServiceUnitWakeLockTest {
 
     @Before
     fun setup() {
-        whenever(powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, PlaybackServiceUnitWakeLock.TAG))
+        whenever(powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKE_LOCK_TAG))
                 .thenReturn(wakeLock)
 
         whenever(context.getSystemService(Context.POWER_SERVICE))
