@@ -19,6 +19,9 @@ import android.database.Cursor
 
 import io.reactivex.Observable
 
+const val COLUMN_ID = 0
+const val COLUMN_NAME = 1
+
 /**
  * "Genres" provider
  */
@@ -26,10 +29,4 @@ interface GenresProvider {
 
     fun load(): Observable<Cursor>
     fun load(searchFilter: String?): Observable<Cursor>
-
-    companion object {
-
-        const val COLUMN_ID = 0
-        const val COLUMN_NAME = 1
-    }
 }

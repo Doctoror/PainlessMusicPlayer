@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProviderKt;
 import com.doctoror.fuckoffmusicplayer.presentation.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
@@ -63,8 +63,8 @@ final class GenresRecyclerAdapter
         if (item != null && item.moveToPosition(position)) {
             onGenreClick(
                     position,
-                    item.getLong(GenresProvider.COLUMN_ID),
-                    item.getString(GenresProvider.COLUMN_NAME));
+                    item.getLong(GenresProviderKt.COLUMN_ID),
+                    item.getString(GenresProviderKt.COLUMN_NAME));
         }
     }
 
@@ -79,7 +79,7 @@ final class GenresRecyclerAdapter
     public void onBindViewHolder(
             @NonNull final SingleLineItemIconViewHolder viewHolder,
             @NonNull final Cursor cursor) {
-        viewHolder.text.setText(cursor.getString(GenresProvider.COLUMN_NAME));
+        viewHolder.text.setText(cursor.getString(GenresProviderKt.COLUMN_NAME));
     }
 
     @NonNull
@@ -98,7 +98,7 @@ final class GenresRecyclerAdapter
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            final String genre = c.getString(GenresProvider.COLUMN_NAME);
+            final String genre = c.getString(GenresProviderKt.COLUMN_NAME);
             if (!TextUtils.isEmpty(genre)) {
                 return String.valueOf(genre.charAt(0));
             }

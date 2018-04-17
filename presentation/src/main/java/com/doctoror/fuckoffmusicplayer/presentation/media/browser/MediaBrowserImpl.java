@@ -34,6 +34,7 @@ import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
 import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProviderKt;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
@@ -243,8 +244,9 @@ public final class MediaBrowserImpl {
     @NonNull
     private MediaItem createMediaItemGenre(@NonNull final Cursor c) {
         final MediaDescriptionCompat description = new MediaDescriptionCompat.Builder()
-                .setMediaId(MediaBrowserConstants.MEDIA_ID_PREFIX_GENRE.concat(c.getString(GenresProvider.COLUMN_ID)))
-                .setTitle(c.getString(GenresProvider.COLUMN_NAME))
+                .setMediaId(MediaBrowserConstants.MEDIA_ID_PREFIX_GENRE.concat(
+                        c.getString(GenresProviderKt.COLUMN_ID)))
+                .setTitle(c.getString(GenresProviderKt.COLUMN_NAME))
                 .build();
         return new MediaItem(description, MediaItem.FLAG_PLAYABLE);
     }
