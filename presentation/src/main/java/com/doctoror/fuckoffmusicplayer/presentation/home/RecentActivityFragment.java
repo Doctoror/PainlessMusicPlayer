@@ -94,18 +94,18 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         adapter = new RecentActivityRecyclerAdapter(activity);
         adapter.setOnAlbumClickListener(new OnAlbumClickListener());
 
-        model.setRecyclerAdapter(adapter);
+        model.getRecyclerAdapter().set(adapter);
     }
 
     @Override
     protected void onPermissionGranted() {
-        model.setDisplayedChild(ANIMATOR_CHILD_PROGRESS);
+        model.getDisplayedChild().set(ANIMATOR_CHILD_PROGRESS);
         load();
     }
 
     @Override
     protected void onPermissionDenied() {
-        model.setDisplayedChild(ANIMATOR_CHILD_PERMISSION_DENIED);
+        model.getDisplayedChild().set(ANIMATOR_CHILD_PERMISSION_DENIED);
     }
 
     @NonNull
@@ -176,14 +176,14 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     private void onError() {
         if (isAdded()) {
-            model.setDisplayedChild(ANIMATOR_CHILD_ERROR);
+            model.getDisplayedChild().set(ANIMATOR_CHILD_ERROR);
         }
     }
 
     private void onRecentActivityLoaded(@NonNull final List<Object> data) {
         if (isAdded()) {
             adapter.setItems(data);
-            model.setDisplayedChild(data.isEmpty() || dataIsOnlyHeaders(data)
+            model.getDisplayedChild().set(data.isEmpty() || dataIsOnlyHeaders(data)
                     ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
         }
     }
