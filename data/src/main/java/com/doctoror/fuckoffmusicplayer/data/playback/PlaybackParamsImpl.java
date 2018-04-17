@@ -25,6 +25,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.nano.PlaybackParamsProto;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
+import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatModeKt;
 
 public final class PlaybackParamsImpl implements PlaybackParams {
 
@@ -51,7 +52,7 @@ public final class PlaybackParamsImpl implements PlaybackParams {
         if (persistent != null) {
             synchronized (mLock) {
                 mShuffleEnabled = persistent.shuffle;
-                mRepeatMode = RepeatMode.Companion.fromIndex(persistent.repeatMode);
+                mRepeatMode = RepeatModeKt.repeatModeFromIndex(persistent.repeatMode);
             }
         }
     }

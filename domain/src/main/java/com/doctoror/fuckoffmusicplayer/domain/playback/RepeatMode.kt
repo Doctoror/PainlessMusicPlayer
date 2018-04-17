@@ -15,18 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
+fun repeatModeFromIndex(index: Int) = try {
+    RepeatMode.values()[index]
+} catch (e: IllegalArgumentException) {
+    RepeatMode.NONE
+}
+
 enum class RepeatMode(val index: Int) {
 
     NONE(0),
     QUEUE(1),
-    TRACK(2);
-
-    companion object {
-
-        fun fromIndex(index: Int) = try {
-            values()[index]
-        } catch (e: IllegalArgumentException) {
-            NONE
-        }
-    }
+    TRACK(2)
 }
