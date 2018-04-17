@@ -19,6 +19,9 @@ import android.database.Cursor
 
 import io.reactivex.Observable
 
+const val COLUMN_ID = 0
+const val COLUMN_NAME = 1
+
 /**
  * Queue provider for playlists
  */
@@ -27,10 +30,4 @@ interface QueueProviderPlaylists {
     fun load(filter: String?): Observable<Cursor>
 
     fun loadQueue(playlistId: Long): Observable<List<Media>>
-
-    companion object {
-
-        const val COLUMN_ID = 0
-        const val COLUMN_NAME = 1
-    }
 }
