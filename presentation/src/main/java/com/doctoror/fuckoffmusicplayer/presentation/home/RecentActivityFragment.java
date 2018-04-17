@@ -15,91 +15,57 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsFragment;
-import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler;
+import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SpacesItemDecoration;
-
-import org.parceler.Parcel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.android.support.AndroidSupportInjection;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.schedulers.Schedulers;
 
-/**
- * "Recent Activity" fragment
- */
-public final class RecentActivityFragment extends LibraryPermissionsFragment {
-
-    private static final String TAG = "HomeFragment";
-
-    private static final int MAX_HISTORY_SECTION_LENGTH = 6;
-
-    private final RecentActivityViewModel model = new RecentActivityViewModel();
-
-    private RecyclerView recyclerView;
-    private RecentActivityRecyclerAdapter adapter;
+public final class RecentActivityFragment extends BaseFragment {
 
     @Inject
-    AlbumsProvider albumsProvider;
+    RecentActivityPresenter presenter;
 
     @Inject
-    QueueProviderAlbums queueProvider;
+    RecentActivityViewModel viewModel;
 
     @Override
-    public void onCreate(final Bundle savedInstanceState) {
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidSupportInjection.inject(this);
-
         setHasOptionsMenu(true);
 
-        final Activity activity = getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Activity is null");
+        if (savedInstanceState != null) {
+            presenter.restoreInstanceState(savedInstanceState);
         }
-        adapter = new RecentActivityRecyclerAdapter(activity);
-        adapter.setOnAlbumClickListener(new OnAlbumClickListener());
 
-        model.getRecyclerAdapter().set(adapter);
+        getLifecycle().addObserver(presenter);
     }
 
     @Override
-    protected void onPermissionGranted() {
-        model.showViewProgress();
-        load();
+    public void onSaveInstanceState(@NonNull final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        presenter.onSaveInstanceState(outState);
     }
 
     @Override
-    protected void onPermissionDenied() {
-        model.showViewPermissionDenied();
+    public void onDestroy() {
+        super.onDestroy();
+        getLifecycle().removeObserver(presenter);
     }
 
     @NonNull
@@ -111,10 +77,20 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         final FragmentRecentActivityBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_recent_activity, container, false);
         setupRecyclerView(binding.recyclerView);
-        binding.setModel(model);
+        binding.setModel(viewModel);
         binding.getRoot().findViewById(R.id.btnRequest)
-                .setOnClickListener(v -> requestPermission());
-        recyclerView = binding.recyclerView;
+                .setOnClickListener(v -> presenter.requestPermission());
+
+        final RecentActivityRecyclerAdapter adapter =
+                new RecentActivityRecyclerAdapter(requireContext());
+
+        adapter.setOnAlbumClickListener((position, id, album) ->
+                presenter.onAlbumClick(id, album,
+                        () -> ViewUtils.getItemView(binding.recyclerView, position))
+        );
+
+        viewModel.getRecyclerAdapter().set(adapter);
+
         return binding.getRoot();
     }
 
@@ -142,105 +118,4 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
         recyclerView.addItemDecoration(new SpacesItemDecoration(
                 (int) getResources().getDimension(R.dimen.recent_activity_grid_spacing)));
     }
-
-    private void load() {
-        final Activity activity = getActivity();
-        if (activity == null) {
-            throw new IllegalStateException("Activity is null");
-        }
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-
-            final Observable<Cursor> recentlyPlayed =
-                    albumsProvider.loadRecentlyPlayedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
-
-            final Observable<Cursor> recentlyScanned =
-                    albumsProvider.loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1);
-
-            disposeOnStop(Observable.combineLatest(recentlyPlayed,
-                    recentlyScanned,
-                    new RecyclerAdapterDataFunc(getResources()))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::onRecentActivityLoaded, (t) -> onError()));
-        } else {
-            Log.w(TAG, "load() is called, READ_EXTERNAL_STORAGE is not granted");
-        }
-    }
-
-    private void onError() {
-        if (isAdded()) {
-            model.showViewError();
-        }
-    }
-
-    private void onRecentActivityLoaded(@NonNull final List<Object> data) {
-        if (isAdded()) {
-            adapter.setItems(data);
-            if (data.isEmpty() || dataIsOnlyHeaders(data)) {
-                model.showViewEmpty();
-            } else {
-                model.showViewContent();
-            }
-        }
-    }
-
-    private boolean dataIsOnlyHeaders(@NonNull final List<Object> data) {
-        for (final Object item : data) {
-            if (!(item instanceof RecentActivityHeader)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private final class OnAlbumClickListener
-            implements RecentActivityRecyclerAdapter.OnAlbumClickListener {
-
-        @Override
-        public void onAlbumClick(final int position, final long id, @Nullable final String album) {
-            AlbumClickHandler.onAlbumClick(RecentActivityFragment.this,
-                    queueProvider,
-                    id,
-                    album,
-                    () -> ViewUtils.getItemView(recyclerView, position));
-        }
-    }
-
-    private static final class RecyclerAdapterDataFunc
-            implements BiFunction<Cursor, Cursor, List<Object>> {
-
-        @NonNull
-        private final Resources res;
-
-        RecyclerAdapterDataFunc(@NonNull final Resources res) {
-            this.res = res;
-        }
-
-        @Override
-        public List<Object> apply(final Cursor rPlayed, final Cursor rAdded) {
-            final List<Object> data = new ArrayList<>(MAX_HISTORY_SECTION_LENGTH + 2);
-            try {
-                final List<AlbumItem> rPlayedList = AlbumItemsFactory.itemsFromCursor(rPlayed);
-                if (!rPlayedList.isEmpty()) {
-                    data.add(new RecentActivityHeader(res.getText(R.string.Recently_played_albums)));
-                    data.addAll(rPlayedList);
-                }
-
-                data.add(new RecentActivityHeader(res.getText(R.string.Recently_added)));
-                data.addAll(AlbumItemsFactory.itemsFromCursor(rAdded));
-            } finally {
-                rPlayed.close();
-                rAdded.close();
-            }
-            return data;
-        }
-    }
-
-    @Parcel
-    static final class InstanceState {
-
-        boolean permissionsRequested;
-    }
-
 }

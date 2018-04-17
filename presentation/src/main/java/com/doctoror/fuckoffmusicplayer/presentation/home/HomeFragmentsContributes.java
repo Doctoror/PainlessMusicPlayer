@@ -24,10 +24,10 @@ import dagger.android.ContributesAndroidInjector;
 public interface HomeFragmentsContributes {
 
     @FragmentScope
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector
     PlaybackStatusFragment playbackStatusFragment();
 
     @FragmentScope
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector(modules = RecentActivityFragmentModule.class)
     RecentActivityFragment recentActivityFragment();
 }
