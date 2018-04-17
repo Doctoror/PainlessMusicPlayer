@@ -18,6 +18,8 @@ package com.doctoror.fuckoffmusicplayer.domain.player
 import android.content.Context
 import android.net.Uri
 
+const val SESSION_ID_NOT_SET = 0
+
 interface MediaPlayer {
 
     fun getLoadedMediaUri(): Uri?
@@ -31,9 +33,4 @@ interface MediaPlayer {
     fun stop()
     fun release()
     fun setListener(listener: MediaPlayerListener?)
-
-    companion object {
-
-        const val SESSION_ID_NOT_SET = 0
-    }
 }

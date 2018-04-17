@@ -46,6 +46,8 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.Locale;
 
+import static com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerKt.SESSION_ID_NOT_SET;
+
 final class ExoMediaPlayer implements MediaPlayer {
 
     private static final String TAG = "ExoMediaPlayer";

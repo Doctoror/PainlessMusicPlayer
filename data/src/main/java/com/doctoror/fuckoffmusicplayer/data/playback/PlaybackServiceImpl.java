@@ -42,6 +42,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceView;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
+import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerKt;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
@@ -337,7 +338,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         @Override
         public void onAudioSessionId(final int audioSessionId) {
             errorMessage = null;
-            if (audioSessionId == MediaPlayer.SESSION_ID_NOT_SET) {
+            if (audioSessionId == MediaPlayerKt.SESSION_ID_NOT_SET) {
                 audioEffects.relese();
             } else {
                 audioEffects.create(audioSessionId);
