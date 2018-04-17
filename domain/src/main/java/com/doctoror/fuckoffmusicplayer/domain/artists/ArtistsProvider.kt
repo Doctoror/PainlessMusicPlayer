@@ -19,17 +19,14 @@ import android.database.Cursor
 
 import io.reactivex.Observable
 
+const val COLUMN_ID = 0
+const val COLUMN_NUMBER_OF_ALBUMS = 1
+const val COLUMN_ARTIST = 2
+
 /**
  * "Artists" provider
  */
 interface ArtistsProvider {
 
     fun load(searchFilter: String?): Observable<Cursor>
-
-    companion object {
-
-        const val COLUMN_ID = 0
-        const val COLUMN_NUMBER_OF_ALBUMS = 1
-        const val COLUMN_ARTIST = 2
-    }
 }

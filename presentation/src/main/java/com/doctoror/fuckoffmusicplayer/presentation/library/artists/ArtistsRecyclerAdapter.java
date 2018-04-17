@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProviderKt;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.TwoLineItemViewHolder;
 import com.l4digital.fastscroll.FastScroller;
@@ -62,8 +62,8 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
         final Cursor item = getCursor();
         if (item != null && item.moveToPosition(position)) {
             onArtistClick(position,
-                    item.getLong(ArtistsProvider.COLUMN_ID),
-                    item.getString(ArtistsProvider.COLUMN_ARTIST));
+                    item.getLong(ArtistsProviderKt.COLUMN_ID),
+                    item.getString(ArtistsProviderKt.COLUMN_ARTIST));
         }
     }
 
@@ -77,8 +77,8 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
     public void onBindViewHolder(
             @NonNull final TwoLineItemViewHolder viewHolder,
             @NonNull final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(ArtistsProvider.COLUMN_ARTIST));
-        final int albumsCount = cursor.getInt(ArtistsProvider.COLUMN_NUMBER_OF_ALBUMS);
+        viewHolder.text1.setText(cursor.getString(ArtistsProviderKt.COLUMN_ARTIST));
+        final int albumsCount = cursor.getInt(ArtistsProviderKt.COLUMN_NUMBER_OF_ALBUMS);
         viewHolder.text2.setText(mResources.getQuantityString(R.plurals.d_albums,
                 albumsCount, albumsCount));
     }
@@ -97,7 +97,7 @@ final class ArtistsRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItem
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            final String artist = c.getString(ArtistsProvider.COLUMN_ARTIST);
+            final String artist = c.getString(ArtistsProviderKt.COLUMN_ARTIST);
             if (!TextUtils.isEmpty(artist)) {
                 return String.valueOf(artist.charAt(0));
             }
