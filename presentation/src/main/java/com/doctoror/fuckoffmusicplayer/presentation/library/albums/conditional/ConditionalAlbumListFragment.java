@@ -54,7 +54,7 @@ import com.bumptech.glide.request.target.Target;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
@@ -432,7 +432,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             final long[] ids = new long[mData.getCount()];
             int i = 0;
             for (mData.moveToFirst(); !mData.isAfterLast(); mData.moveToNext(), i++) {
-                ids[i] = mData.getLong(AlbumsProvider.COLUMN_ID);
+                ids[i] = mData.getLong(AlbumsProviderKt.COLUMN_ID);
             }
             onPlayClick(ids);
         }
@@ -464,7 +464,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     @Nullable
     private String findAlbumArt(@NonNull final Cursor cursor) {
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            final String art = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
+            final String art = cursor.getString(AlbumsProviderKt.COLUMN_ALBUM_ART);
             if (!TextUtils.isEmpty(art)) {
                 return art;
             }

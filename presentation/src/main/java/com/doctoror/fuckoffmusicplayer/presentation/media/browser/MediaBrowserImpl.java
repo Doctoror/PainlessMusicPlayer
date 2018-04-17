@@ -32,6 +32,7 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.media.browser.MediaBrowserConstants;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
 import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
@@ -88,7 +89,7 @@ public final class MediaBrowserImpl {
     }
 
     void onLoadChildren(@NonNull final String parentId,
-            @NonNull final Result<List<MediaItem>> result) {
+                        @NonNull final Result<List<MediaItem>> result) {
         switch (parentId) {
             case MEDIA_ID_ROOT: {
                 final List<MediaItem> mediaItems = new ArrayList<>(5);
@@ -252,9 +253,9 @@ public final class MediaBrowserImpl {
     private MediaItem createMediaItemAlbum(@NonNull final Cursor c) {
         final MediaDescriptionCompat.Builder description = new MediaDescriptionCompat.Builder()
                 .setMediaId(MediaBrowserConstants.MEDIA_ID_PREFIX_ALBUM
-                        .concat(c.getString(AlbumsProvider.COLUMN_ID)))
-                .setTitle(c.getString(AlbumsProvider.COLUMN_ALBUM));
-        final String art = c.getString(AlbumsProvider.COLUMN_ALBUM_ART);
+                        .concat(c.getString(AlbumsProviderKt.COLUMN_ID)))
+                .setTitle(c.getString(AlbumsProviderKt.COLUMN_ALBUM));
+        final String art = c.getString(AlbumsProviderKt.COLUMN_ALBUM_ART);
         if (!TextUtils.isEmpty(art)) {
             final Uri uri = FileProvider.getUriForFile(mContext,
                     mContext.getPackageName().concat(".provider.album_thumbs"), new File(art));

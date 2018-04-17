@@ -27,7 +27,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 
 /**
@@ -66,8 +66,8 @@ final class ConditionalAlbumsRecyclerAdapter
         final Cursor item = getCursor();
         if (item != null && item.moveToPosition(position)) {
             onAlbumClick(position,
-                    item.getLong(AlbumsProvider.COLUMN_ID),
-                    item.getString(AlbumsProvider.COLUMN_ALBUM));
+                    item.getLong(AlbumsProviderKt.COLUMN_ID),
+                    item.getString(AlbumsProviderKt.COLUMN_ALBUM));
         }
     }
 
@@ -83,9 +83,9 @@ final class ConditionalAlbumsRecyclerAdapter
     public void onBindViewHolder(
             @NonNull final AlbumListViewHolder viewHolder,
             @NonNull final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
-        viewHolder.text2.setText(cursor.getString(AlbumsProvider.COLUMN_FIRST_YEAR));
-        final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
+        viewHolder.text1.setText(cursor.getString(AlbumsProviderKt.COLUMN_ALBUM));
+        viewHolder.text2.setText(cursor.getString(AlbumsProviderKt.COLUMN_FIRST_YEAR));
+        final String artLocation = cursor.getString(AlbumsProviderKt.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {
             mRequestManager.clear(viewHolder.image);
             viewHolder.image.setImageResource(R.drawable.album_art_placeholder);

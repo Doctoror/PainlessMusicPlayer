@@ -33,7 +33,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
 import com.doctoror.fuckoffmusicplayer.presentation.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.AlbumWithMenuViewHolder;
@@ -77,8 +77,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
         final Cursor item = getCursor();
         if (item != null && item.moveToPosition(position)) {
             onAlbumClick(position,
-                    item.getLong(AlbumsProvider.COLUMN_ID),
-                    item.getString(AlbumsProvider.COLUMN_ALBUM));
+                    item.getLong(AlbumsProviderKt.COLUMN_ID),
+                    item.getString(AlbumsProviderKt.COLUMN_ALBUM));
         }
     }
 
@@ -99,7 +99,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
         final Cursor item = getCursor();
 
         if (item != null && item.moveToPosition(position)) {
-            final String albumName = item.getString(AlbumsProvider.COLUMN_ALBUM);
+            final String albumName = item.getString(AlbumsProviderKt.COLUMN_ALBUM);
             popup.setOnMenuItemClickListener(menuItem -> onMenuItemClick(menuItem, id, albumName));
             popup.show();
         }
@@ -125,8 +125,8 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
     public void onBindViewHolder(
             @NonNull final AlbumWithMenuViewHolder viewHolder,
             @NonNull final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(AlbumsProvider.COLUMN_ALBUM));
-        final String artLocation = cursor.getString(AlbumsProvider.COLUMN_ALBUM_ART);
+        viewHolder.text1.setText(cursor.getString(AlbumsProviderKt.COLUMN_ALBUM));
+        final String artLocation = cursor.getString(AlbumsProviderKt.COLUMN_ALBUM_ART);
         if (TextUtils.isEmpty(artLocation)) {
             mRequestManager.clear(viewHolder.image);
             viewHolder.image.setImageResource(R.drawable.album_art_placeholder);
@@ -159,7 +159,7 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            final String album = c.getString(AlbumsProvider.COLUMN_ALBUM);
+            final String album = c.getString(AlbumsProviderKt.COLUMN_ALBUM);
             if (!TextUtils.isEmpty(album)) {
                 return String.valueOf(album.charAt(0));
             }

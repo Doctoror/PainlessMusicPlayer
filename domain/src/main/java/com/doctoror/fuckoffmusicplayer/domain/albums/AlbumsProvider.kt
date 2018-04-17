@@ -20,9 +20,11 @@ import android.database.Cursor
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 
-/**
- * "Albums" provider
- */
+const val COLUMN_ID = 0
+const val COLUMN_ALBUM = 1
+const val COLUMN_ALBUM_ART = 2
+const val COLUMN_FIRST_YEAR = 3
+
 interface AlbumsProvider {
 
     fun load(searchFilter: String?, scheduler: Scheduler): Observable<Cursor>
@@ -34,12 +36,4 @@ interface AlbumsProvider {
     fun loadRecentlyPlayedAlbums(limit: Int?): Observable<Cursor>
 
     fun loadRecentlyScannedAlbums(limit: Int?): Observable<Cursor>
-
-    companion object {
-
-        const val COLUMN_ID = 0
-        const val COLUMN_ALBUM = 1
-        const val COLUMN_ALBUM_ART = 2
-        const val COLUMN_FIRST_YEAR = 3
-    }
 }

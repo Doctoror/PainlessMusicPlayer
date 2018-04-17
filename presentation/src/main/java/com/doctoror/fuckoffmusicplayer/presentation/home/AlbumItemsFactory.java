@@ -18,7 +18,7 @@ package com.doctoror.fuckoffmusicplayer.presentation.home;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 
-import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +40,9 @@ final class AlbumItemsFactory {
     @NonNull
     private static AlbumItem itemFromCursor(@NonNull final Cursor c) {
         final AlbumItem item = new AlbumItem();
-        item.id = c.getLong(AlbumsProvider.COLUMN_ID);
-        item.title = c.getString(AlbumsProvider.COLUMN_ALBUM);
-        item.albumArt = c.getString(AlbumsProvider.COLUMN_ALBUM_ART);
+        item.id = c.getLong(AlbumsProviderKt.COLUMN_ID);
+        item.title = c.getString(AlbumsProviderKt.COLUMN_ALBUM);
+        item.albumArt = c.getString(AlbumsProviderKt.COLUMN_ALBUM_ART);
         return item;
     }
 }
