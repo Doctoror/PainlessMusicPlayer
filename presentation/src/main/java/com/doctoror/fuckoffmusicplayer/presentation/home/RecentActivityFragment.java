@@ -69,7 +69,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
     private static final int ANIMATOR_CHILD_ERROR = 3;
     private static final int ANIMATOR_CHILD_CONTENT = 4;
 
-    private final RecentActivityFragmentModel model = new RecentActivityFragmentModel();
+    private final RecentActivityModel model = new RecentActivityModel();
 
     private RecyclerView recyclerView;
     private RecentActivityRecyclerAdapter adapter;

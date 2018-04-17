@@ -24,7 +24,7 @@ import android.support.v7.widget.RecyclerView;
 /**
  * Data binding model for {@link RecentActivityFragment}
  */
-public final class RecentActivityFragmentModel {
+public final class RecentActivityModel {
 
     private final ObservableInt displayedChild = new ObservableInt();
     private final ObservableField<RecyclerView.Adapter> recyclerAdapter = new ObservableField<>();
