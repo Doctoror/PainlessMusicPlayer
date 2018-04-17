@@ -63,12 +63,6 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     private static final int MAX_HISTORY_SECTION_LENGTH = 6;
 
-    private static final int ANIMATOR_CHILD_PROGRESS = 0;
-    private static final int ANIMATOR_CHILD_PERMISSION_DENIED = 1;
-    private static final int ANIMATOR_CHILD_EMPTY = 2;
-    private static final int ANIMATOR_CHILD_ERROR = 3;
-    private static final int ANIMATOR_CHILD_CONTENT = 4;
-
     private final RecentActivityModel model = new RecentActivityModel();
 
     private RecyclerView recyclerView;
@@ -99,13 +93,13 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     @Override
     protected void onPermissionGranted() {
-        model.getDisplayedChild().set(ANIMATOR_CHILD_PROGRESS);
+        model.showViewProgress();
         load();
     }
 
     @Override
     protected void onPermissionDenied() {
-        model.getDisplayedChild().set(ANIMATOR_CHILD_PERMISSION_DENIED);
+        model.showViewPermissionDenied();
     }
 
     @NonNull
@@ -176,15 +170,18 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     private void onError() {
         if (isAdded()) {
-            model.getDisplayedChild().set(ANIMATOR_CHILD_ERROR);
+            model.showViewError();
         }
     }
 
     private void onRecentActivityLoaded(@NonNull final List<Object> data) {
         if (isAdded()) {
             adapter.setItems(data);
-            model.getDisplayedChild().set(data.isEmpty() || dataIsOnlyHeaders(data)
-                    ? ANIMATOR_CHILD_EMPTY : ANIMATOR_CHILD_CONTENT);
+            if (data.isEmpty() || dataIsOnlyHeaders(data)) {
+                model.showViewEmpty();
+            } else {
+                model.showViewContent();
+            }
         }
     }
 

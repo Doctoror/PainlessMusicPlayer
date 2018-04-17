@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.presentation.home
 
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
+import android.support.annotation.VisibleForTesting
 import android.support.v7.widget.RecyclerView
 
 /**
@@ -24,6 +25,41 @@ import android.support.v7.widget.RecyclerView
  */
 class RecentActivityModel {
 
+    @VisibleForTesting
+    val animatorChildProgress = 0
+
+    @VisibleForTesting
+    val animatorChildPermissionDenied = 1
+
+    @VisibleForTesting
+    val animatorChildEmpty = 2
+
+    @VisibleForTesting
+    val animatorChildError = 3
+
+    @VisibleForTesting
+    val animatorChildContent = 4
+
     val displayedChild = ObservableInt()
     val recyclerAdapter = ObservableField<RecyclerView.Adapter<RecyclerView.ViewHolder>>()
+
+    fun showViewProgress() {
+        displayedChild.set(animatorChildProgress)
+    }
+
+    fun showViewPermissionDenied() {
+        displayedChild.set(animatorChildPermissionDenied)
+    }
+
+    fun showViewEmpty() {
+        displayedChild.set(animatorChildEmpty)
+    }
+
+    fun showViewError() {
+        displayedChild.set(animatorChildError)
+    }
+
+    fun showViewContent() {
+        displayedChild.set(animatorChildContent)
+    }
 }
