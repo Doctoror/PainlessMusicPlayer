@@ -20,6 +20,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -314,12 +316,13 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void onQueueLoaded(@NonNull final List<Media> queue) {
-        if (isAdded()) {
+        final Activity activity = getActivity();
+        if (activity != null && isAdded()) {
             if (queue.isEmpty()) {
                 onQueueEmpty();
             } else {
                 mPlaybackInitializer.setQueueAndPlay(queue, 0);
-                prepareViewsAndExit(() -> NowPlayingActivity.start(getActivity(),
+                prepareViewsAndExit(() -> NowPlayingActivity.start(activity,
                         albumArt, null));
             }
         }
@@ -343,15 +346,18 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void restartLoader() {
-        if (ContextCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            mDisposableDataOld = mDisposableData;
-            mDisposableData = disposeOnStop(load()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(this::onDataLoaded, (t) -> onDataLoadFailed()));
-        } else {
-            Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
+        final Context context = getContext();
+        if (context != null) {
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                mDisposableDataOld = mDisposableData;
+                mDisposableData = disposeOnStop(load()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(this::onDataLoaded, (t) -> onDataLoadFailed()));
+            } else {
+                Log.w(TAG, "restartLoader is called, READ_EXTERNAL_STORAGE is not granted");
+            }
         }
     }
 
@@ -442,6 +448,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         if (albumArt != null) {
             final String pic = findAlbumArt(cursor);
             if (TextUtils.isEmpty(pic)) {
+                mRequestManager.clear(albumArt);
                 showPlaceholderAlbumArt();
             } else {
                 mRequestManager
@@ -455,10 +462,13 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void showPlaceholderAlbumArt() {
-        mRequestManager.clear(albumArt);
         albumArt.setImageResource(R.drawable.album_art_placeholder);
         albumArt.setAlpha(1f);
-        ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+
+        final FragmentActivity activity = getActivity();
+        if (activity != null) {
+            activity.supportStartPostponedEnterTransition();
+        }
     }
 
     @Nullable
@@ -491,7 +501,10 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                 @NonNull final Target<Drawable> target,
                 @NonNull final DataSource dataSource,
                 final boolean isFirstResource) {
-            ((AppCompatActivity) getActivity()).supportStartPostponedEnterTransition();
+            final FragmentActivity activity = getActivity();
+            if (activity != null) {
+                activity.supportStartPostponedEnterTransition();
+            }
             return false;
         }
     }
