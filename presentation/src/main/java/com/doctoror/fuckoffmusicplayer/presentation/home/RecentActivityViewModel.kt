@@ -20,10 +20,7 @@ import android.databinding.ObservableInt
 import android.support.annotation.VisibleForTesting
 import android.support.v7.widget.RecyclerView
 
-/**
- * Data binding model for [RecentActivityFragment]
- */
-class RecentActivityModel {
+class RecentActivityViewModel {
 
     @VisibleForTesting
     val animatorChildProgress = 0

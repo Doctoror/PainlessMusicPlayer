@@ -63,7 +63,7 @@ public final class RecentActivityFragment extends LibraryPermissionsFragment {
 
     private static final int MAX_HISTORY_SECTION_LENGTH = 6;
 
-    private final RecentActivityModel model = new RecentActivityModel();
+    private final RecentActivityViewModel model = new RecentActivityViewModel();
 
     private RecyclerView recyclerView;
     private RecentActivityRecyclerAdapter adapter;

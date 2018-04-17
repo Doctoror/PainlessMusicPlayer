@@ -18,9 +18,9 @@ package com.doctoror.fuckoffmusicplayer.presentation.home
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class RecentActivityModelTest {
+class RecentActivityViewModelTest {
 
-    private val underTest = RecentActivityModel()
+    private val underTest = RecentActivityViewModel()
 
     @Test
     fun showsViewProgress() {
