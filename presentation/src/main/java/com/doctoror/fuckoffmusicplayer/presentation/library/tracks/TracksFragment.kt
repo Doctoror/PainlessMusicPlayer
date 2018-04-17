@@ -22,6 +22,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackIniti
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks
+import com.doctoror.fuckoffmusicplayer.domain.tracks.COLUMN_ID
 import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryListFragment
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity
@@ -81,7 +82,7 @@ class TracksFragment : LibraryListFragment() {
             var i = startPosition
             while (i < startPosition + limit) {
                 if (data.moveToPosition(i)) {
-                    tracks[trackIndex] = data.getLong(TracksProvider.COLUMN_ID)
+                    tracks[trackIndex] = data.getLong(COLUMN_ID)
                 } else {
                     throw RuntimeException("Could not move Cursor to position $i")
                 }

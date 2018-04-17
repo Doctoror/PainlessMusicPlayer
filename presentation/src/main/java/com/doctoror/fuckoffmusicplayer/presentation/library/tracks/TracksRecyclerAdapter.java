@@ -24,7 +24,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProviderKt;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.TwoLineItemViewHolder;
 import com.l4digital.fastscroll.FastScroller;
@@ -55,7 +55,7 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
     private void onItemClick(final int position) {
         final Cursor item = getCursor();
         if (item != null && item.moveToPosition(position)) {
-            onTrackClick(position, item.getLong(TracksProvider.COLUMN_ID));
+            onTrackClick(position, item.getLong(TracksProviderKt.COLUMN_ID));
         }
     }
 
@@ -69,8 +69,8 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
     public void onBindViewHolder(
             @NonNull final TwoLineItemViewHolder viewHolder,
             @NonNull final Cursor cursor) {
-        viewHolder.text1.setText(cursor.getString(TracksProvider.COLUMN_TITLE));
-        viewHolder.text2.setText(cursor.getString(TracksProvider.COLUMN_ARTIST));
+        viewHolder.text1.setText(cursor.getString(TracksProviderKt.COLUMN_TITLE));
+        viewHolder.text2.setText(cursor.getString(TracksProviderKt.COLUMN_ARTIST));
     }
 
     @NonNull
@@ -87,7 +87,7 @@ final class TracksRecyclerAdapter extends CursorRecyclerViewAdapter<TwoLineItemV
     public String getSectionText(final int position) {
         final Cursor c = getCursor();
         if (c != null && c.moveToPosition(position)) {
-            final String title = c.getString(TracksProvider.COLUMN_TITLE);
+            final String title = c.getString(TracksProviderKt.COLUMN_TITLE);
             if (!TextUtils.isEmpty(title)) {
                 return String.valueOf(title.charAt(0));
             }
