@@ -42,6 +42,9 @@ import java.util.concurrent.TimeUnit
  */
 abstract class LibraryListFragment : BaseFragment() {
 
+    private val searchQueryDropTimeoutMs = 400L
+    private val keyInstanceState = "LibraryListFragment.INSTANCE_STATE"
+
     private val searchProcessor = BehaviorProcessor.create<String>()
 
     private var searchIconified = true
@@ -95,7 +98,7 @@ abstract class LibraryListFragment : BaseFragment() {
     private fun restoreInstanceState(savedInstanceState: Bundle) {
         presenter.restoreInstanceState(savedInstanceState)
 
-        val state = savedInstanceState.getParcelable<InstanceState>(KEY_INSTANCE_STATE)
+        val state = savedInstanceState.getParcelable<InstanceState>(keyInstanceState)
         if (state != null) {
             searchIconified = state.searchIconified
             searchProcessor.onNext(state.searchQuery ?: "")
@@ -107,7 +110,7 @@ abstract class LibraryListFragment : BaseFragment() {
         presenter.onSaveInstanceState(outState)
 
         val state = InstanceState(searchIconified, searchProcessor.value)
-        outState.putParcelable(KEY_INSTANCE_STATE, state)
+        outState.putParcelable(keyInstanceState, state)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -128,7 +131,7 @@ abstract class LibraryListFragment : BaseFragment() {
 
             RxSearchView
                     .queryTextChanges(searchView)
-                    .debounce(SEARCH_QUERY_DROP_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                    .debounce(searchQueryDropTimeoutMs, TimeUnit.MILLISECONDS)
                     .subscribe { t -> searchProcessor.onNext(t.toString()) }
 
         } else {
@@ -197,10 +200,4 @@ abstract class LibraryListFragment : BaseFragment() {
     data class InstanceState(
             val searchIconified: Boolean,
             val searchQuery: String?) : Parcelable
-
-    private companion object {
-
-        private const val SEARCH_QUERY_DROP_TIMEOUT_MS = 400L
-        private const val KEY_INSTANCE_STATE = "LibraryListFragment.INSTANCE_STATE"
-    }
 }
