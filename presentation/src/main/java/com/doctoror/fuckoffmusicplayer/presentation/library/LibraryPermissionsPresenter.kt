@@ -31,6 +31,9 @@ abstract class LibraryPermissionsPresenter(
         private val libraryPermissionProvider: LibraryPermissionsProvider,
         private val schedulersProvider: SchedulersProvider) : BasePresenter() {
 
+    private val permissionRequestDelay = 500L
+    private val keyInstanceState = "LibraryPermissionsPresenter.INSTANCE_STATE"
+
     @VisibleForTesting
     internal var permissionRequested = RuntimePermissions.arePermissionsRequested()
 
@@ -40,7 +43,7 @@ abstract class LibraryPermissionsPresenter(
     }
 
     fun restoreInstanceState(savedInstanceState: Bundle) {
-        val state = savedInstanceState.getParcelable<InstanceState>(KEY_INSTANCE_STATE)
+        val state = savedInstanceState.getParcelable<InstanceState>(keyInstanceState)
         if (state != null) {
             permissionRequested = state.permissionsRequested
                     || RuntimePermissions.arePermissionsRequested()
@@ -49,7 +52,7 @@ abstract class LibraryPermissionsPresenter(
 
     fun onSaveInstanceState(outState: Bundle) {
         val state = InstanceState(permissionRequested)
-        outState.putParcelable(KEY_INSTANCE_STATE, state)
+        outState.putParcelable(keyInstanceState, state)
     }
 
     fun requestPermission() {
@@ -74,7 +77,7 @@ abstract class LibraryPermissionsPresenter(
             permissionRequested -> onPermissionDenied()
             else -> disposeOnStop(Completable
                     .timer(
-                            PERMISSION_REQUEST_DELAY,
+                            permissionRequestDelay,
                             TimeUnit.MILLISECONDS,
                             schedulersProvider.mainThread())
                     .subscribe { requestPermission() })
@@ -83,10 +86,4 @@ abstract class LibraryPermissionsPresenter(
 
     @Parcelize
     private data class InstanceState(val permissionsRequested: Boolean) : Parcelable
-
-    private companion object {
-
-        private const val PERMISSION_REQUEST_DELAY = 500L
-        private const val KEY_INSTANCE_STATE = "LibraryPermissionsPresenter.INSTANCE_STATE"
-    }
 }
