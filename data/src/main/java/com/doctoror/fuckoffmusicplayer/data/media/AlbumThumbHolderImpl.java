@@ -15,19 +15,21 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media;
 
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
-import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
+import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import io.reactivex.Completable;
 
 /**
  * Holds album art thumb.
@@ -43,21 +45,29 @@ public final class AlbumThumbHolderImpl implements AlbumThumbHolder {
     @NonNull
     private final Context context;
 
+    @NonNull
+    private final SchedulersProvider schedulersProvider;
+
     @Nullable
     private Bitmap albumThumb;
 
-    public AlbumThumbHolderImpl(@NonNull final Context context) {
+    public AlbumThumbHolderImpl(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
         this.context = context;
+        this.schedulersProvider = schedulersProvider;
         read();
     }
 
     @Nullable
+    @Override
     public Bitmap getAlbumThumb() {
         synchronized (THUMB_LOCK) {
             return albumThumb;
         }
     }
 
+    @Override
     public void setAlbumThumb(@Nullable final Bitmap albumThumb) {
         synchronized (THUMB_LOCK) {
             this.albumThumb = albumThumb;
@@ -118,6 +128,8 @@ public final class AlbumThumbHolderImpl implements AlbumThumbHolder {
     }
 
     private void writeAsync() {
-        Handlers.runOnIoThread(this::write);
+        Completable.fromAction(this::write)
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 }

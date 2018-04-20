@@ -19,6 +19,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumMediaIdsProviderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.AlbumThumbHolderImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.CurrentMediaProviderImpl;
@@ -50,8 +51,10 @@ final class MediaModule {
 
     @Provides
     @Singleton
-    AlbumThumbHolder provideAlbumThumbHolder(@NonNull final Context context) {
-        return new AlbumThumbHolderImpl(context);
+    AlbumThumbHolder provideAlbumThumbHolder(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
+        return new AlbumThumbHolderImpl(context, schedulersProvider);
     }
 
     @Provides
