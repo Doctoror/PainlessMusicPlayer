@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.concurrent;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import java.util.concurrent.ExecutorService;
@@ -24,7 +22,10 @@ import java.util.concurrent.Executors;
 
 /**
  * Task handlers that post actions different threads
+ *
+ * @deprecated use ReactiveX
  */
+@Deprecated
 public final class Handlers {
 
     private Handlers() {
@@ -32,11 +33,6 @@ public final class Handlers {
     }
 
     private static final ExecutorService IO = Executors.newSingleThreadExecutor();
-    private static final Handler MAIN = new Handler(Looper.getMainLooper());
-
-    public static void runOnMainThread(@NonNull final Runnable action) {
-        MAIN.post(action);
-    }
 
     public static void runOnIoThread(@NonNull final Runnable action) {
         IO.submit(action);
