@@ -20,7 +20,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.media.session.MediaSessionCompat;
 
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
@@ -28,6 +28,8 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
+
+import io.reactivex.Completable;
 
 /**
  * {@link MediaSessionCompat} holder
@@ -38,6 +40,7 @@ public final class MediaSessionHolderImpl implements MediaSessionHolder {
     private final MediaSessionFactory mediaSessionFactory;
     private final PlaybackData playbackData;
     private final PlaybackReporterFactory playbackReporterFactory;
+    private final SchedulersProvider schedulersProvider;
 
     private volatile int openCount;
 
@@ -47,11 +50,13 @@ public final class MediaSessionHolderImpl implements MediaSessionHolder {
             @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaSessionFactory mediaSessionFactory,
             @NonNull final PlaybackData playbackData,
-            @NonNull final PlaybackReporterFactory playbackReporterFactory) {
+            @NonNull final PlaybackReporterFactory playbackReporterFactory,
+            @NonNull final SchedulersProvider schedulersProvider) {
         this.currentMediaProvider = currentMediaProvider;
         this.mediaSessionFactory = mediaSessionFactory;
         this.playbackData = playbackData;
         this.playbackReporterFactory = playbackReporterFactory;
+        this.schedulersProvider = schedulersProvider;
     }
 
     public void openSession() {
@@ -74,7 +79,10 @@ public final class MediaSessionHolderImpl implements MediaSessionHolder {
 
     private void doOpenSession() {
         this.mediaSession = mediaSessionFactory.newMediaSession();
-        Handlers.runOnIoThread(() -> reportMediaAndState(mediaSession));
+        Completable
+                .fromAction(() -> reportMediaAndState(mediaSession))
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 
     private void doCloseSession() {

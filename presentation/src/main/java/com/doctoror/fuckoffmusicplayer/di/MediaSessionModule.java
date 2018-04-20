@@ -19,6 +19,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionCallback;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionFactoryImpl;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionHolderImpl;
@@ -70,8 +71,13 @@ final class MediaSessionModule {
             @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaSessionFactory mediaSessionFactory,
             @NonNull final PlaybackData playbackData,
-            @NonNull final PlaybackReporterFactory playbackReporterFactory) {
+            @NonNull final PlaybackReporterFactory playbackReporterFactory,
+            @NonNull final SchedulersProvider schedulersProvider) {
         return new MediaSessionHolderImpl(
-                currentMediaProvider, mediaSessionFactory, playbackData, playbackReporterFactory);
+                currentMediaProvider,
+                mediaSessionFactory,
+                playbackData,
+                playbackReporterFactory,
+                schedulersProvider);
     }
 }
