@@ -15,19 +15,21 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.effects;
 
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
-import com.doctoror.fuckoffmusicplayer.data.effects.nano.EffectsProto;
-import com.doctoror.commons.util.Log;
-import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
-import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
-
 import android.content.Context;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
+import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.data.effects.nano.EffectsProto;
+import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
+
 import java.util.Observable;
+
+import io.reactivex.Completable;
 
 public final class AudioEffectsImpl extends Observable implements AudioEffects {
 
@@ -47,13 +49,18 @@ public final class AudioEffectsImpl extends Observable implements AudioEffects {
     @NonNull
     private final EffectsProto.EqualizerSettings mEqualizerSettings;
 
+    private final SchedulersProvider schedulersProvider;
+
     private BassBoost mBassBoost;
     private Equalizer mEqualizer;
 
     private int mSessionId;
 
-    public AudioEffectsImpl(@NonNull final Context context) {
+    public AudioEffectsImpl(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
         mContext = context;
+        this.schedulersProvider = schedulersProvider;
         synchronized (SETTINGS_LOCK) {
             mBassBoostSettings = ProtoUtils.readFromFileNonNull(context, FILE_NAME_BASS_BOOST,
                     new EffectsProto.BassBoostSettings());
@@ -97,7 +104,7 @@ public final class AudioEffectsImpl extends Observable implements AudioEffects {
     @Override
     public void create(final int sessionId) {
         if (mSessionId != sessionId) {
-            relese();
+            release();
             mSessionId = sessionId;
             final boolean bassBoostEnabled;
             final boolean equalizerEnabled;
@@ -118,7 +125,7 @@ public final class AudioEffectsImpl extends Observable implements AudioEffects {
     }
 
     @Override
-    public void relese() {
+    public void release() {
         mSessionId = 0;
         if (mBassBoost != null) {
             mBassBoost.setEnabled(false);
@@ -251,7 +258,10 @@ public final class AudioEffectsImpl extends Observable implements AudioEffects {
     }
 
     private void persistBassBoostSettingsAsync() {
-        Handlers.runOnIoThread(this::persistBassBoostSettingsBlocking);
+        Completable
+                .fromAction(this::persistBassBoostSettingsBlocking)
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 
     private void persistBassBoostSettingsBlocking() {
@@ -261,7 +271,10 @@ public final class AudioEffectsImpl extends Observable implements AudioEffects {
     }
 
     private void persistEqualizerSettingsAsync() {
-        Handlers.runOnIoThread(this::persistEqualizerSettingsBlocking);
+        Completable
+                .fromAction(this::persistEqualizerSettingsBlocking)
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 
     private void persistEqualizerSettingsBlocking() {

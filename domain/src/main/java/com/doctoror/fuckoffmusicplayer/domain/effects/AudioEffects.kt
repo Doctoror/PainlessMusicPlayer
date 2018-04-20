@@ -37,7 +37,7 @@ interface AudioEffects {
 
     fun create(sessionId: Int)
 
-    fun relese()
+    fun release()
 
     fun saveEqualizerSettings(settings: Equalizer.Settings)
 }

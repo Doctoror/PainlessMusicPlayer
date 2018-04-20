@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.di;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.effects.AudioEffectsImpl;
 import com.doctoror.fuckoffmusicplayer.data.player.MediaPlayerFactoryImpl;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
@@ -33,8 +34,10 @@ final class EngineModule {
 
     @Provides
     @Singleton
-    AudioEffects provideAudioEffects(@NonNull final Context context) {
-        return new AudioEffectsImpl(context);
+    AudioEffects provideAudioEffects(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
+        return new AudioEffectsImpl(context, schedulersProvider);
     }
 
     @Provides

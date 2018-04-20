@@ -303,7 +303,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             setState(STATE_IDLE);
         }
 
-        audioEffects.relese();
+        audioEffects.release();
         mediaPlayer.release();
     }
 
@@ -339,7 +339,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         public void onAudioSessionId(final int audioSessionId) {
             errorMessage = null;
             if (audioSessionId == MediaPlayerKt.SESSION_ID_NOT_SET) {
-                audioEffects.relese();
+                audioEffects.release();
             } else {
                 audioEffects.create(audioSessionId);
             }
