@@ -41,6 +41,21 @@ class PlaybackServiceUnitStopTimeoutTest {
     }
 
     @Test
+    fun disposesPreviousStopTimerOnInitialize() {
+        // Given
+        givenSchedulerComputationAndLargeTimeout()
+        underTest.initializeStopTimer()
+
+        val disposable = underTest.disposable
+
+        // When
+        underTest.initializeStopTimer()
+
+        // Then
+        assertTrue(disposable!!.isDisposed)
+    }
+
+    @Test
     fun initializesStopTimer() {
         // Given
         givenSchedulerComputationAndLargeTimeout()

@@ -44,6 +44,7 @@ class PlaybackServiceUnitStopTimeout(
      * Start a timer after which the [stopAction] will be performed.
      */
     fun initializeStopTimer() {
+        abortStopTimer()
         disposable = Observable
                 .timer(timeout, TimeUnit.SECONDS, schedulersProvider.computation())
                 .subscribe { stopAction.run() }
