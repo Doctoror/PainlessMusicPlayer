@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.recentactivity;
 
-final class AlbumItem {
+public final class AlbumItem {
 
     long id;
     String title;

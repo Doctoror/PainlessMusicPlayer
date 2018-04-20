@@ -15,7 +15,12 @@ class RecentActivityFragmentModule {
 
     @Provides
     @FragmentScope
+    fun provideAlbumItemsFactory() = AlbumItemsFactory()
+
+    @Provides
+    @FragmentScope
     fun provideRecentActivityPresenter(
+            albumItemsFactory: AlbumItemsFactory,
             albumsProvider: AlbumsProvider,
             fragment: RecentActivityFragment,
             libraryPermissionProvider: LibraryPermissionsProvider,
@@ -24,6 +29,7 @@ class RecentActivityFragmentModule {
             schedulersProvider: SchedulersProvider,
             viewModel: RecentActivityViewModel
     ) = RecentActivityPresenter(
+            albumItemsFactory,
             albumsProvider,
             fragment,
             libraryPermissionProvider,

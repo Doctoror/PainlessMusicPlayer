@@ -16,6 +16,7 @@ import io.reactivex.functions.BiFunction
 private const val MAX_HISTORY_SECTION_LENGTH = 6
 
 class RecentActivityPresenter(
+        private val albumItemsFactory: AlbumItemsFactory,
         private val albumsProvider: AlbumsProvider,
         private val fragment: RecentActivityFragment,
         private val libraryPermissionProvider: LibraryPermissionsProvider,
@@ -54,7 +55,7 @@ class RecentActivityPresenter(
                     .loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1)
 
             disposeOnStop(Observable.combineLatest(recentlyPlayed, recentlyScanned,
-                    RecyclerAdapterDataFunc(resources))
+                    RecyclerAdapterDataFunc())
                     .subscribeOn(schedulersProvider.io())
                     .observeOn(schedulersProvider.mainThread())
                     .subscribe({ this.onRecentActivityLoaded(it) }, this::onError))
@@ -88,20 +89,20 @@ class RecentActivityPresenter(
         return true
     }
 
-    private class RecyclerAdapterDataFunc(private val res: Resources)
+    private inner class RecyclerAdapterDataFunc
         : BiFunction<Cursor, Cursor, List<Any>> {
 
         override fun apply(rPlayed: Cursor, rAdded: Cursor): List<Any> {
             val data = ArrayList<Any>(MAX_HISTORY_SECTION_LENGTH + 2)
             try {
-                val rPlayedList = AlbumItemsFactory.itemsFromCursor(rPlayed)
+                val rPlayedList = albumItemsFactory.itemsFromCursor(rPlayed)
                 if (!rPlayedList.isEmpty()) {
-                    data.add(RecentActivityHeader(res.getText(R.string.Recently_played_albums)))
+                    data.add(RecentActivityHeader(resources.getText(R.string.Recently_played_albums)))
                     data.addAll(rPlayedList)
                 }
 
-                data.add(RecentActivityHeader(res.getText(R.string.Recently_added)))
-                data.addAll(AlbumItemsFactory.itemsFromCursor(rAdded))
+                data.add(RecentActivityHeader(resources.getText(R.string.Recently_added)))
+                data.addAll(albumItemsFactory.itemsFromCursor(rAdded))
             } finally {
                 rPlayed.close()
                 rAdded.close()

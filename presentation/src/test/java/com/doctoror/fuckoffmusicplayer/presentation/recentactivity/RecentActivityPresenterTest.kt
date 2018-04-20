@@ -36,6 +36,7 @@ import java.io.IOException
 @RunWith(RobolectricTestRunner::class)
 class RecentActivityPresenterTest {
 
+    private val albumItemsFactory = AlbumItemsFactory()
     private val albumsProvider: AlbumsProvider = mock()
     private val fragment: RecentActivityFragment = mock()
     private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
@@ -44,6 +45,7 @@ class RecentActivityPresenterTest {
     private val viewModel = RecentActivityViewModel()
 
     private val underTest = RecentActivityPresenter(
+            albumItemsFactory,
             albumsProvider,
             fragment,
             libraryPermissionProvider,
