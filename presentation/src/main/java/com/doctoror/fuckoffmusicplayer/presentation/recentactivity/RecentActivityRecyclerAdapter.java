@@ -66,8 +66,8 @@ final class RecentActivityRecyclerAdapter
         final Object item = getItem(position);
         if (item instanceof AlbumItem) {
             onAlbumClick(position,
-                    ((AlbumItem) item).id,
-                    ((AlbumItem) item).title);
+                    ((AlbumItem) item).getId(),
+                    ((AlbumItem) item).getTitle());
         }
 
     }
@@ -142,8 +142,8 @@ final class RecentActivityRecyclerAdapter
 
     private void onBindViewHolderAlbum(final AlbumViewHolder holder, final int position) {
         final AlbumItem item = (AlbumItem) getItem(position);
-        holder.text1.setText(item.title);
-        final String artLocation = item.albumArt;
+        holder.text1.setText(item.getTitle());
+        final String artLocation = item.getAlbumArt();
         if (TextUtils.isEmpty(artLocation)) {
             requestManager.clear(holder.image);
             holder.image.setImageResource(R.drawable.album_art_placeholder);

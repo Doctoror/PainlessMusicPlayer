@@ -19,8 +19,7 @@ import android.database.Cursor
 import com.doctoror.fuckoffmusicplayer.domain.albums.COLUMN_ALBUM
 import com.doctoror.fuckoffmusicplayer.domain.albums.COLUMN_ALBUM_ART
 import com.doctoror.fuckoffmusicplayer.domain.albums.COLUMN_ID
-
-import java.util.ArrayList
+import java.util.*
 
 class AlbumItemsFactory {
 
@@ -35,11 +34,8 @@ class AlbumItemsFactory {
         return items
     }
 
-    private fun itemFromCursor(c: Cursor): AlbumItem {
-        val item = AlbumItem()
-        item.id = c.getLong(COLUMN_ID)
-        item.title = c.getString(COLUMN_ALBUM)
-        item.albumArt = c.getString(COLUMN_ALBUM_ART)
-        return item
-    }
+    private fun itemFromCursor(c: Cursor) = AlbumItem(
+            c.getLong(COLUMN_ID),
+            c.getString(COLUMN_ALBUM),
+            c.getString(COLUMN_ALBUM_ART))
 }
