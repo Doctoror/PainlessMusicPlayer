@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.presentation.home;
+package com.doctoror.fuckoffmusicplayer.presentation.recentactivity;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -39,7 +39,7 @@ final class RecentActivityRecyclerAdapter
         extends BaseRecyclerAdapter<Object, RecyclerView.ViewHolder> {
 
     static final int VIEW_TYPE_HEADER = 0;
-    static final int VIEW_TYPE_ALBUM = 1;
+    private static final int VIEW_TYPE_ALBUM = 1;
 
     interface OnAlbumClickListener {
 

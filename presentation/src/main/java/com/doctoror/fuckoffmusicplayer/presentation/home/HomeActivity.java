@@ -38,6 +38,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.playlists.PlaylistsF
 import com.doctoror.fuckoffmusicplayer.presentation.library.tracks.TracksFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationItem;
+import com.doctoror.fuckoffmusicplayer.presentation.recentactivity.RecentActivityFragment;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 

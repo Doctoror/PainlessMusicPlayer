@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.presentation.home
+package com.doctoror.fuckoffmusicplayer.presentation.recentactivity
 
 import android.content.res.Resources
 import android.database.Cursor

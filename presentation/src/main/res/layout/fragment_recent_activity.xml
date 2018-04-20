@@ -20,7 +20,7 @@
     <data>
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.presentation.home.RecentActivityViewModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.recentactivity.RecentActivityViewModel"/>
     </data>
 
     <ViewAnimator

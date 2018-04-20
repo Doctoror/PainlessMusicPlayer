@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.presentation.home;
+package com.doctoror.fuckoffmusicplayer.presentation.recentactivity
 
-final class AlbumItem {
+import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
 
-    long id;
-    String title;
-    String albumArt;
+@Module
+interface RecentActivityFragmentsContributes {
+
+    @FragmentScope
+    @ContributesAndroidInjector(modules = [RecentActivityFragmentModule::class])
+    fun recentActivityFragment(): RecentActivityFragment
 }

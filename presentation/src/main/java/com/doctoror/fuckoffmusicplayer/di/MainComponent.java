@@ -29,6 +29,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.media.MediaManagerService;
 import com.doctoror.fuckoffmusicplayer.presentation.media.browser.MediaBrowserImpl;
 import com.doctoror.fuckoffmusicplayer.presentation.media.browser.MediaBrowserServiceImpl;
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivityIntentHandler;
+import com.doctoror.fuckoffmusicplayer.presentation.recentactivity.RecentActivityFragmentsContributes;
 
 import javax.inject.Singleton;
 
@@ -54,6 +55,7 @@ import dagger.android.AndroidInjector;
         PlaybackModule.class,
         QueueModule.class,
         QueueProvidersModule.class,
+        RecentActivityFragmentsContributes.class,
         ServicesContributes.class
 })
 public interface MainComponent extends AndroidInjector<App> {

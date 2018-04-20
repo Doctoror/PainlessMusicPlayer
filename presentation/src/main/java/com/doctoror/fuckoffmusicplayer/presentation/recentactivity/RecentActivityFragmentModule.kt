@@ -1,4 +1,4 @@
-package com.doctoror.fuckoffmusicplayer.presentation.home
+package com.doctoror.fuckoffmusicplayer.presentation.recentactivity
 
 import android.content.res.Resources
 import com.doctoror.commons.reactivex.SchedulersProvider
