@@ -25,9 +25,9 @@ import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.media.SecurityIoException;
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
@@ -53,7 +53,7 @@ public final class MediaManagerService extends IntentService {
     private static final String ACTION_PLAYLIST_DELETE = "ACTION_PLAYLIST_DELETE";
 
     public static void deleteMedia(@NonNull final Context context,
-            final long id) {
+                                   final long id) {
         final Intent intent = new Intent(context, MediaManagerService.class);
         intent.setAction(ACTION_MEDIA_DELETE);
         intent.putExtra(EXTRA_TARGET_ID, id);
@@ -61,7 +61,7 @@ public final class MediaManagerService extends IntentService {
     }
 
     public static void deleteAlbum(@NonNull final Context context,
-            final long albumId) {
+                                   final long albumId) {
         final Intent intent = new Intent(context, MediaManagerService.class);
         intent.setAction(ACTION_ALBUM_DELETE);
         intent.putExtra(EXTRA_TARGET_ID, albumId);
@@ -69,7 +69,7 @@ public final class MediaManagerService extends IntentService {
     }
 
     public static void deletePlaylist(@NonNull final Context context,
-            final long playlistId) {
+                                      final long playlistId) {
         final Intent intent = new Intent(context, MediaManagerService.class);
         intent.setAction(ACTION_PLAYLIST_DELETE);
         intent.putExtra(EXTRA_TARGET_ID, playlistId);
@@ -84,6 +84,9 @@ public final class MediaManagerService extends IntentService {
 
     @Inject
     RemoveMediasFromCurrentQueueUseCase removeMediasFromCurrentQueueUseCase;
+
+    @Inject
+    SchedulersProvider schedulersProvider;
 
     public MediaManagerService() {
         super(TAG);
@@ -183,6 +186,7 @@ public final class MediaManagerService extends IntentService {
 
     private void showToast(@StringRes final int message) {
         final Context context = getApplicationContext();
-        Handlers.runOnMainThread(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
+        schedulersProvider.mainThread().scheduleDirect(
+                () -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
     }
 }
