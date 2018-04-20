@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.presentation.recentactivity;
+package com.doctoror.fuckoffmusicplayer.presentation.recentactivity
 
-final class RecentActivityHeader {
-
-    private final CharSequence title;
-
-    RecentActivityHeader(final CharSequence title) {
-        this.title = title;
-    }
-
-    public CharSequence getTitle() {
-        return title;
-    }
-}
+data class RecentActivityHeader(val title: CharSequence)
