@@ -90,8 +90,10 @@ final class PlaybackModule {
 
     @Provides
     @Singleton
-    PlaybackParams providePlaybackParams(@NonNull final Context context) {
-        return new PlaybackParamsImpl(context);
+    PlaybackParams providePlaybackParams(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
+        return new PlaybackParamsImpl(context, schedulersProvider);
     }
 
     @Provides

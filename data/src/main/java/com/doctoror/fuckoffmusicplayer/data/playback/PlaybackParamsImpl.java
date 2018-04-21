@@ -20,12 +20,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.playback.nano.PlaybackParamsProto;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatModeKt;
+
+import io.reactivex.Completable;
 
 public final class PlaybackParamsImpl implements PlaybackParams {
 
@@ -40,13 +42,19 @@ public final class PlaybackParamsImpl implements PlaybackParams {
     @NonNull
     private final Context mContext;
 
+    @NonNull
+    private final SchedulersProvider schedulersProvider;
+
     private boolean mShuffleEnabled;
 
     @NonNull
     private RepeatMode mRepeatMode = RepeatMode.QUEUE;
 
-    public PlaybackParamsImpl(@NonNull final Context context) {
+    public PlaybackParamsImpl(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
         mContext = context;
+        this.schedulersProvider = schedulersProvider;
 
         final PlaybackParamsProto.PlaybackParams persistent = read();
         if (persistent != null) {
@@ -99,7 +107,9 @@ public final class PlaybackParamsImpl implements PlaybackParams {
     }
 
     private void persistAsync() {
-        Handlers.runOnIoThread(this::persistBlocking);
+        Completable.fromAction(this::persistBlocking)
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 
     @WorkerThread
