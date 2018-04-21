@@ -199,7 +199,6 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             Log.w(TAG, "Play requested for empty queue");
             return;
         }
-        unitStopTimeout.abortStopTimer();
         Completable.fromAction(() -> unitPlayMediaFromQueue.play(queue, position))
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
@@ -353,6 +352,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
         @Override
         public void onPlaybackStarted() {
+            unitStopTimeout.abortStopTimer();
             errorMessage = null;
             setState(STATE_PLAYING);
             showNotification();
