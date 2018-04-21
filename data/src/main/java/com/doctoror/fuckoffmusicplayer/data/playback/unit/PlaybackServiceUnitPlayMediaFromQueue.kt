@@ -73,7 +73,7 @@ class PlaybackServiceUnitPlayMediaFromQueue(
             currentMedia: Media?,
             targetMedia: Media) {
 
-        mediaPlayer.stop()
+        mediaPlayer.pause()
         playbackData.setPlayQueue(queue)
         playbackData.setPlayQueuePosition(position)
 
