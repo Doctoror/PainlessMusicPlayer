@@ -19,12 +19,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.settings.nano.SettingsProto;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;
 import com.doctoror.fuckoffmusicplayer.domain.settings.ThemeKt;
+
+import io.reactivex.Completable;
 
 /**
  * Application settings
@@ -40,12 +42,18 @@ public final class SettingsImpl implements Settings {
     private final Context context;
 
     @NonNull
+    private final SchedulersProvider schedulersProvider;
+
+    @NonNull
     private Theme theme = Theme.NIGHT;
 
     private boolean scrobbleEnabled = true;
 
-    public SettingsImpl(@NonNull final Context context) {
+    public SettingsImpl(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
         this.context = context;
+        this.schedulersProvider = schedulersProvider;
         final SettingsProto.Settings settings = ProtoUtils.readFromFile(context, FILE_NAME,
                 new SettingsProto.Settings());
         synchronized (lock) {
@@ -92,7 +100,10 @@ public final class SettingsImpl implements Settings {
     }
 
     private void persistAsync() {
-        Handlers.runOnIoThread(this::persist);
+        Completable
+                .fromAction(this::persist)
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 
     @WorkerThread

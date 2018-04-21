@@ -69,7 +69,9 @@ final class AppModule {
 
     @Provides
     @Singleton
-    Settings provideSettings(@NonNull final Context context) {
-        return new SettingsImpl(context);
+    Settings provideSettings(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
+        return new SettingsImpl(context, schedulersProvider);
     }
 }
