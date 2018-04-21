@@ -65,8 +65,10 @@ final class MediaModule {
 
     @Provides
     @Singleton
-    RecentActivityManager provideRecentActivityManager(@NonNull final Context context) {
-        return RecentActivityManagerImpl.getInstance(context);
+    RecentActivityManager provideRecentActivityManager(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
+        return new RecentActivityManagerImpl(context, schedulersProvider);
     }
 
     @Provides

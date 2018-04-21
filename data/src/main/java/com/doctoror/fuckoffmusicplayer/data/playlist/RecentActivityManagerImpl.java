@@ -15,21 +15,22 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playlist;
 
-import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
-import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
-import com.doctoror.fuckoffmusicplayer.data.playlist.nano.RecentPlaylists;
-import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
-
-import org.apache.commons.collections4.queue.CircularFifoQueue;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
+import com.doctoror.fuckoffmusicplayer.data.playlist.nano.RecentPlaylists;
+import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
+import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
+
+import org.apache.commons.collections4.queue.CircularFifoQueue;
+
 import java.util.Collection;
 import java.util.Queue;
+
+import io.reactivex.Completable;
 
 /**
  * Used for storing recent playlists
@@ -39,23 +40,6 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
     private static final int MAX_LENGTH = 10;
 
     private static final String FILE_NAME_RECENT_PLAYLISTS = "recent_playlists_albums";
-
-
-    // Is not a leak since it's an application context
-    @SuppressLint("StaticFieldLeak")
-    private static volatile RecentActivityManagerImpl sInstance;
-
-    @NonNull
-    public static RecentActivityManagerImpl getInstance(@NonNull final Context context) {
-        if (sInstance == null) {
-            synchronized (RecentActivityManagerImpl.class) {
-                if (sInstance == null) {
-                    sInstance = new RecentActivityManagerImpl(context.getApplicationContext());
-                }
-            }
-        }
-        return sInstance;
-    }
 
     @NonNull
     private final Object mLock = new Object();
@@ -69,8 +53,14 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
     @NonNull
     private final Queue<Long> mRecentAlbums = new CircularFifoQueue<>(MAX_LENGTH);
 
-    private RecentActivityManagerImpl(@NonNull final Context context) {
+    @NonNull
+    private final SchedulersProvider schedulersProvider;
+
+    public RecentActivityManagerImpl(
+            @NonNull final Context context,
+            @NonNull final SchedulersProvider schedulersProvider) {
         mContext = context;
+        this.schedulersProvider = schedulersProvider;
         read();
     }
 
@@ -157,7 +147,10 @@ public final class RecentActivityManagerImpl implements RecentActivityManager {
     }
 
     private void persistAsync() {
-        Handlers.runOnIoThread(this::persistBlocking);
+        Completable
+                .fromAction(this::persistBlocking)
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 
     @WorkerThread
