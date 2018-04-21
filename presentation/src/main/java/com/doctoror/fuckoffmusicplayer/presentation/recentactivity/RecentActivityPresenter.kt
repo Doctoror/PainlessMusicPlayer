@@ -2,12 +2,12 @@ package com.doctoror.fuckoffmusicplayer.presentation.recentactivity
 
 import android.content.res.Resources
 import android.database.Cursor
+import android.view.View
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsPresenter
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsProvider
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler
@@ -17,11 +17,10 @@ import io.reactivex.functions.BiFunction
 private const val MAX_HISTORY_SECTION_LENGTH = 6
 
 class RecentActivityPresenter(
+        private val albumClickHandler: AlbumClickHandler,
         private val albumItemsFactory: AlbumItemsFactory,
         private val albumsProvider: AlbumsProvider,
-        private val fragment: RecentActivityFragment,
         private val libraryPermissionProvider: LibraryPermissionsProvider,
-        private val queueProvider: QueueProviderAlbums,
         private val resources: Resources,
         runtimePermissions: RuntimePermissions,
         private val schedulersProvider: SchedulersProvider,
@@ -34,9 +33,13 @@ class RecentActivityPresenter(
     fun onAlbumClick(
             id: Long,
             album: String?,
-            itemViewProvider: AlbumClickHandler.ItemViewProvider) {
-        AlbumClickHandler.onAlbumClick(
-                fragment, queueProvider, id, album, itemViewProvider)
+            itemViewProvider: () -> View?) {
+        albumClickHandler.onAlbumClick(id, album, itemViewProvider)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        albumClickHandler.onStop()
     }
 
     override fun onPermissionDenied() {

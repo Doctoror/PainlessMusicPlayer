@@ -7,6 +7,7 @@ import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsProvider
+import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler
 import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
 import dagger.Module
 import dagger.Provides
@@ -20,22 +21,26 @@ class RecentActivityFragmentModule {
 
     @Provides
     @FragmentScope
+    fun provideAlbumClickHandler(
+            fragment: RecentActivityFragment,
+            queueProvider: QueueProviderAlbums) = AlbumClickHandler(fragment, queueProvider)
+
+    @Provides
+    @FragmentScope
     fun provideRecentActivityPresenter(
+            albumClickHandler: AlbumClickHandler,
             albumItemsFactory: AlbumItemsFactory,
             albumsProvider: AlbumsProvider,
-            fragment: RecentActivityFragment,
             libraryPermissionProvider: LibraryPermissionsProvider,
-            queueProvider: QueueProviderAlbums,
             resources: Resources,
             runtimePermissions: RuntimePermissions,
             schedulersProvider: SchedulersProvider,
             viewModel: RecentActivityViewModel
     ) = RecentActivityPresenter(
+            albumClickHandler,
             albumItemsFactory,
             albumsProvider,
-            fragment,
             libraryPermissionProvider,
-            queueProvider,
             resources,
             runtimePermissions,
             schedulersProvider,

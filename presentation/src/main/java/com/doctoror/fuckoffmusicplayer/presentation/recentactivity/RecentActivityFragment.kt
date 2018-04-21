@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment
-import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SpacesItemDecoration
 import dagger.android.support.AndroidSupportInjection
@@ -76,7 +75,7 @@ class RecentActivityFragment : BaseFragment() {
         val adapter = RecentActivityRecyclerAdapter(requireContext())
 
         adapter.setOnAlbumClickListener { position, id, album ->
-            presenter.onAlbumClick(id, album, AlbumClickHandler.ItemViewProvider {
+            presenter.onAlbumClick(id, album, {
                 ViewUtils.getItemView(binding.recyclerView, position)
             })
         }

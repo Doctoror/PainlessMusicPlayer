@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer.presentation.library.albums;
+package com.doctoror.fuckoffmusicplayer.presentation.library.albums
 
-import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope;
-
-import dagger.Module;
-import dagger.android.ContributesAndroidInjector;
+import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
+import dagger.Module
+import dagger.Provides
 
 @Module
-public interface AlbumsFragmentContributes {
+class AlbumsFragmentModule {
 
+    @Provides
     @FragmentScope
-    @ContributesAndroidInjector(modules = AlbumsFragmentModule.class)
-    AlbumsFragment albumsFragment();
+    fun provideAlbumClickHandler(
+            fragment: AlbumsFragment,
+            queueProvider: QueueProviderAlbums) = AlbumClickHandler(fragment, queueProvider)
 }

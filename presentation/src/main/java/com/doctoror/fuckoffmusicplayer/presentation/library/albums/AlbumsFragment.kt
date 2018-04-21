@@ -32,6 +32,9 @@ import javax.inject.Inject
 class AlbumsFragment : LibraryListFragment() {
 
     @Inject
+    lateinit var albumClickHandler: AlbumClickHandler
+
+    @Inject
     lateinit var albumsProvider: AlbumsProvider
 
     @Inject
@@ -93,7 +96,6 @@ class AlbumsFragment : LibraryListFragment() {
 
     private fun onAlbumClick(position: Int, albumId: Long,
                              albumName: String?) {
-        AlbumClickHandler.onAlbumClick(this,
-                queueProvider, albumId, albumName) { getItemView(position) }
+        albumClickHandler.onAlbumClick(albumId, albumName) { getItemView(position) }
     }
 }
