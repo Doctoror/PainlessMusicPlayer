@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Yaroslav Mytkalyk
+ * Copyright (C) 2018 Yaroslav Mytkalyk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.doctoror.fuckoffmusicplayer;
+package com.doctoror.fuckoffmusicplayer
 
-public final class RuntimePermissions {
+object RuntimePermissions {
 
-    // Request once per-app instance
-    private static boolean permissionRequested;
-
-    private RuntimePermissions() {
-        throw new UnsupportedOperationException();
-    }
-
-    public static boolean arePermissionsRequested() {
-        return permissionRequested;
-    }
-
-    public static void setPermissionsRequested() {
-        permissionRequested = true;
-    }
+    var permissionsRequested: Boolean = false
 }

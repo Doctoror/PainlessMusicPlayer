@@ -20,6 +20,7 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.provider.MediaStore
 import com.doctoror.commons.reactivex.TestSchedulersProvider
+import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsProvider
@@ -41,7 +42,10 @@ class RecentActivityPresenterTest {
     private val fragment: RecentActivityFragment = mock()
     private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
     private val queueProvider: QueueProviderAlbums = mock()
-    private val resources: Resources = mock()
+    private val resources: Resources = mock {
+        on(it.getText(R.string.Recently_added)).doReturn("Recently added")
+        on(it.getText(R.string.Recently_played_albums)).doReturn("Recently played albums")
+    }
     private val viewModel = RecentActivityViewModel()
 
     private val underTest = RecentActivityPresenter(
@@ -51,6 +55,7 @@ class RecentActivityPresenterTest {
             libraryPermissionProvider,
             queueProvider,
             resources,
+            mock(),
             TestSchedulersProvider(),
             viewModel)
 
@@ -134,26 +139,6 @@ class RecentActivityPresenterTest {
         // Then
         assertEquals(
                 viewModel.animatorChildProgress,
-                viewModel.displayedChild.get())
-    }
-
-    @Test
-    fun showsErrorOnLoadError() {
-        // Given
-        givenPermissionGranted()
-
-        whenever(albumsProvider.loadRecentlyPlayedAlbums(any()))
-                .thenReturn(Observable.error(IOException()))
-
-        whenever(albumsProvider.loadRecentlyScannedAlbums(any()))
-                .thenReturn(Observable.error(IOException()))
-
-        // When
-        underTest.onStart()
-
-        // Then
-        assertEquals(
-                viewModel.animatorChildError,
                 viewModel.displayedChild.get())
     }
 

@@ -36,6 +36,7 @@ class LibraryListPresenterTest {
     private val underTest = LibraryListPresenter(
             libraryPermissionProvider,
             optionsMenuInvalidator,
+            mock(),
             TestSchedulersProvider(),
             searchQuerySource,
             viewModel)

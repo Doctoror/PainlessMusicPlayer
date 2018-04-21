@@ -17,20 +17,24 @@ package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.commons.reactivex.TestSchedulersProvider
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LibraryPermissionsPresenterTest {
 
     private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
+    private val runtimePermissions: RuntimePermissions = mock()
 
     private val underTest = Impl(
             libraryPermissionProvider,
+            runtimePermissions,
             TestSchedulersProvider())
 
     private fun givenPermissionDenied() {
@@ -52,6 +56,18 @@ class LibraryPermissionsPresenterTest {
 
         whenever(libraryPermissionProvider.requestPermission())
                 .thenReturn(Observable.just(true))
+    }
+
+    @Test
+    fun permissionsRequestedAssignedFromRuntimePermissions() {
+        whenever(runtimePermissions.permissionsRequested).thenReturn(true)
+
+        val underTest = Impl(
+                libraryPermissionProvider,
+                runtimePermissions,
+                TestSchedulersProvider())
+
+        assertTrue(underTest.permissionRequested)
     }
 
     @Test
@@ -135,8 +151,10 @@ class LibraryPermissionsPresenterTest {
 
     internal class Impl(
             libraryPermissionProvider: LibraryPermissionsProvider,
+            runtimePermissions: RuntimePermissions,
             schedulersProvider: SchedulersProvider)
-        : LibraryPermissionsPresenter(libraryPermissionProvider, schedulersProvider) {
+        : LibraryPermissionsPresenter(
+            libraryPermissionProvider, runtimePermissions, schedulersProvider) {
 
         var permissionDeniedInvocationCount = 0
         var permissionGrantedInvocationCount = 0

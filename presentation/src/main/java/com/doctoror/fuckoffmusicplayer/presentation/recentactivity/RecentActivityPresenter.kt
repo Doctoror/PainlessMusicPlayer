@@ -5,6 +5,7 @@ import android.database.Cursor
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.R
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsPresenter
@@ -22,9 +23,11 @@ class RecentActivityPresenter(
         private val libraryPermissionProvider: LibraryPermissionsProvider,
         private val queueProvider: QueueProviderAlbums,
         private val resources: Resources,
+        runtimePermissions: RuntimePermissions,
         private val schedulersProvider: SchedulersProvider,
         private val viewModel: RecentActivityViewModel)
-    : LibraryPermissionsPresenter(libraryPermissionProvider, schedulersProvider) {
+    : LibraryPermissionsPresenter(
+        libraryPermissionProvider, runtimePermissions, schedulersProvider) {
 
     private val tag = "RecentActivityPresenter"
 

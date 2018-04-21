@@ -35,12 +35,14 @@ import org.robolectric.annotation.Config
 class LibraryPermissionsProviderTest {
 
     private val context: Context = mock()
+    private val runtimePermissions: RuntimePermissions = mock()
     private val rxPermissions: RxPermissions = mock()
     private val rxPermissionsProvider: RxPermissionsProvider = mock {
         on(it.provideRxPermissions()).doReturn(rxPermissions)
     }
 
-    private val underTest = LibraryPermissionsProvider(context, rxPermissionsProvider)
+    private val underTest = LibraryPermissionsProvider(
+            context, runtimePermissions, rxPermissionsProvider)
 
     private fun givenPermissionsDenied() {
         whenever(rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE))
@@ -87,7 +89,7 @@ class LibraryPermissionsProviderTest {
         underTest.requestPermission().test()
 
         // Then
-        assertTrue(RuntimePermissions.arePermissionsRequested())
+        verify(runtimePermissions).permissionsRequested = true
     }
 
     @Test

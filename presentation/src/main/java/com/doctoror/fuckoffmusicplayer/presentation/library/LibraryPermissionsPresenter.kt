@@ -29,13 +29,14 @@ import java.util.concurrent.TimeUnit
 
 abstract class LibraryPermissionsPresenter(
         private val libraryPermissionProvider: LibraryPermissionsProvider,
+        private val runtimePermissions: RuntimePermissions,
         private val schedulersProvider: SchedulersProvider) : BasePresenter() {
 
     private val permissionRequestDelay = 500L
     private val keyInstanceState = "LibraryPermissionsPresenter.INSTANCE_STATE"
 
     @VisibleForTesting
-    internal var permissionRequested = RuntimePermissions.arePermissionsRequested()
+    var permissionRequested = runtimePermissions.permissionsRequested
 
     @OnLifecycleEvent(ON_START)
     fun onStart() {
@@ -46,7 +47,7 @@ abstract class LibraryPermissionsPresenter(
         val state = savedInstanceState.getParcelable<InstanceState>(keyInstanceState)
         if (state != null) {
             permissionRequested = state.permissionsRequested
-                    || RuntimePermissions.arePermissionsRequested()
+                    || runtimePermissions.permissionsRequested
         }
     }
 

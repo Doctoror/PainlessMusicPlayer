@@ -19,6 +19,7 @@ import android.database.Cursor
 import android.support.v7.widget.RecyclerView
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.commons.util.Log
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -29,10 +30,12 @@ typealias LibraryDataSource = (String?) -> Observable<Cursor>
 class LibraryListPresenter(
         private val libraryPermissionProvider: LibraryPermissionsProvider,
         private val optionsMenuInvalidator: OptionsMenuInvalidator,
+        runtimePermissions: RuntimePermissions,
         private val schedulersProvider: SchedulersProvider,
         private val searchQuerySource: Observable<String>,
         private val viewModel: LibraryListViewModel) :
-        LibraryPermissionsPresenter(libraryPermissionProvider, schedulersProvider) {
+        LibraryPermissionsPresenter(
+                libraryPermissionProvider, runtimePermissions, schedulersProvider) {
 
     private val tag = "LibraryListPresenter"
 

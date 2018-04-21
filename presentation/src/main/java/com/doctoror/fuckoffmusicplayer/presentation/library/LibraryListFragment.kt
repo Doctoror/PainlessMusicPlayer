@@ -25,6 +25,7 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import com.doctoror.commons.reactivex.SchedulersProviderImpl
 import com.doctoror.fuckoffmusicplayer.R
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentLibraryListBinding
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment
 import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
@@ -55,6 +56,8 @@ abstract class LibraryListFragment : BaseFragment() {
 
     private lateinit var presenter: LibraryListPresenter
 
+    private val runtimePermissions = RuntimePermissions
+
     private val viewModel = LibraryListViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,11 +78,13 @@ abstract class LibraryListFragment : BaseFragment() {
         val activity = activity ?: throw IllegalStateException("Activity is null")
 
         libraryPermissionsProvider = LibraryPermissionsProvider(activity,
+                runtimePermissions,
                 RxPermissionsProvider(activity))
 
         presenter = LibraryListPresenter(
                 libraryPermissionsProvider,
                 { activity.invalidateOptionsMenu() },
+                runtimePermissions,
                 SchedulersProviderImpl(),
                 searchProcessor.toObservable(),
                 viewModel)

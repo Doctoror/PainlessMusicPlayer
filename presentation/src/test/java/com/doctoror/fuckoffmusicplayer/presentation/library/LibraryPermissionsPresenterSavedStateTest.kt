@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.os.Bundle
 import com.doctoror.commons.reactivex.TestSchedulersProvider
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.parcelable.reCreateFromParcel
 import com.nhaarman.mockito_kotlin.mock
 import org.junit.Assert.assertTrue
@@ -30,13 +31,14 @@ import org.robolectric.annotation.Config
 class LibraryPermissionsPresenterSavedStateTest {
 
     private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
+    private val runtimePermissions: RuntimePermissions = mock()
     private val schedulersProvider = TestSchedulersProvider()
 
     @Test
     fun savesAndRestoresInstanceState() {
         // Given
         val underTestSource = LibraryPermissionsPresenterTest.Impl(
-                libraryPermissionProvider, schedulersProvider)
+                libraryPermissionProvider, runtimePermissions, schedulersProvider)
 
         underTestSource.permissionRequested = true
 
@@ -47,7 +49,7 @@ class LibraryPermissionsPresenterSavedStateTest {
         val savedStateFromParcel = reCreateFromParcel(savedState)
 
         val restored = LibraryPermissionsPresenterTest.Impl(
-                libraryPermissionProvider, schedulersProvider)
+                libraryPermissionProvider, runtimePermissions, schedulersProvider)
 
         restored.restoreInstanceState(savedStateFromParcel)
 

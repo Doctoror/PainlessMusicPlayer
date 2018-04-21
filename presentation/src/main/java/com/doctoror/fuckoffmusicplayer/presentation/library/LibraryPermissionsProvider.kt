@@ -26,6 +26,7 @@ import io.reactivex.Observable
 
 class LibraryPermissionsProvider(
         private val context: Context,
+        private val runtimePermissions: RuntimePermissions,
         private val rxPermissionsProvider: RxPermissionsProvider) {
 
     fun permissionsGranted() = ContextCompat.checkSelfPermission(context,
@@ -33,7 +34,7 @@ class LibraryPermissionsProvider(
 
     @MainThread
     fun requestPermission(): Observable<Boolean> {
-        RuntimePermissions.setPermissionsRequested()
+        runtimePermissions.permissionsRequested = true
         return rxPermissionsProvider
                 .provideRxPermissions()
                 .request(Manifest.permission.READ_EXTERNAL_STORAGE)

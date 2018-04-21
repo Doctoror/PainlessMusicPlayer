@@ -2,6 +2,7 @@ package com.doctoror.fuckoffmusicplayer.presentation.recentactivity
 
 import android.content.res.Resources
 import com.doctoror.commons.reactivex.SchedulersProvider
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
@@ -26,6 +27,7 @@ class RecentActivityFragmentModule {
             libraryPermissionProvider: LibraryPermissionsProvider,
             queueProvider: QueueProviderAlbums,
             resources: Resources,
+            runtimePermissions: RuntimePermissions,
             schedulersProvider: SchedulersProvider,
             viewModel: RecentActivityViewModel
     ) = RecentActivityPresenter(
@@ -35,6 +37,7 @@ class RecentActivityFragmentModule {
             libraryPermissionProvider,
             queueProvider,
             resources,
+            runtimePermissions,
             schedulersProvider,
             viewModel)
 
@@ -51,6 +54,10 @@ class RecentActivityFragmentModule {
     @FragmentScope
     fun provideLibraryPermissionsProvider(
             fragment: RecentActivityFragment,
-            rxPermissionsProvider: RxPermissionsProvider) =
-            LibraryPermissionsProvider(fragment.requireContext(), rxPermissionsProvider)
+            runtimePermissions: RuntimePermissions,
+            rxPermissionsProvider: RxPermissionsProvider
+    ) = LibraryPermissionsProvider(
+            fragment.requireContext(),
+            runtimePermissions,
+            rxPermissionsProvider)
 }

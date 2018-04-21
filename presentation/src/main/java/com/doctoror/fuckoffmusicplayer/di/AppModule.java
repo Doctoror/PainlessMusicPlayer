@@ -22,6 +22,7 @@ import android.support.annotation.NonNull;
 
 import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.commons.reactivex.SchedulersProviderImpl;
+import com.doctoror.fuckoffmusicplayer.RuntimePermissions;
 import com.doctoror.fuckoffmusicplayer.data.settings.SettingsImpl;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings;
 
@@ -59,6 +60,12 @@ final class AppModule {
     @Singleton
     ContentResolver provideContentResolver() {
         return context.getContentResolver();
+    }
+
+    @Provides
+    @Singleton
+    RuntimePermissions provideRuntimePermissions() {
+        return RuntimePermissions.INSTANCE;
     }
 
     @Provides
