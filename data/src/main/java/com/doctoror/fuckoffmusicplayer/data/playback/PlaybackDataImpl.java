@@ -15,9 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
@@ -32,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -57,10 +58,16 @@ public final class PlaybackDataImpl implements PlaybackData {
     @NonNull
     private final RecentActivityManager mRecentActivityManager;
 
-    public PlaybackDataImpl(@NonNull final Context context,
-            @NonNull final RecentActivityManager recentActivityManager) {
+    @NonNull
+    private final SchedulersProvider schedulersProvider;
+
+    public PlaybackDataImpl(
+            @NonNull final Context context,
+            @NonNull final RecentActivityManager recentActivityManager,
+            @NonNull final SchedulersProvider schedulersProvider) {
         mContext = context;
         mRecentActivityManager = recentActivityManager;
+        this.schedulersProvider = schedulersProvider;
         PlaybackDataPersister.restoreFromFile(context, this);
     }
 
@@ -134,14 +141,17 @@ public final class PlaybackDataImpl implements PlaybackData {
 
             mQueueSubject.onNext(newQueue);
 
-            Handlers.runOnIoThread(() -> storeToRecentAlbums(newQueue));
-
             if (!newQueue.isEmpty() && current != null) {
                 final int newPos = newQueue.indexOf(current);
                 if (newPos != -1 && pos != newPos) {
                     setPlayQueuePosition(newPos);
                 }
             }
+
+            Completable
+                    .fromAction(() -> storeToRecentAlbums(newQueue))
+                    .subscribeOn(schedulersProvider.io())
+                    .subscribe();
         }
     }
 
@@ -168,7 +178,10 @@ public final class PlaybackDataImpl implements PlaybackData {
 
     @Override
     public void persistAsync() {
-        PlaybackDataPersister.persistAsync(mContext, this);
+        Completable
+                .fromAction(() -> PlaybackDataPersister.persist(mContext, this))
+                .subscribeOn(schedulersProvider.io())
+                .subscribe();
     }
 
     /**

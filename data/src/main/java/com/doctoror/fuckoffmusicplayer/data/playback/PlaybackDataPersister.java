@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.doctoror.fuckoffmusicplayer.data.concurrent.Handlers;
 import com.doctoror.fuckoffmusicplayer.data.playback.nano.PlaybackDataProto;
 import com.doctoror.fuckoffmusicplayer.data.util.ProtoUtils;
 import com.doctoror.fuckoffmusicplayer.data.util.StringUtils;
@@ -43,10 +42,10 @@ final class PlaybackDataPersister {
 
     private static final Object LOCK = new Object();
 
-    static void persistAsync(@NonNull final Context context,
-                             @NonNull final PlaybackData target) {
+    static void persist(@NonNull final Context context,
+                        @NonNull final PlaybackData target) {
         final PlaybackDataProto.PlaybackData data = toProtoPlaybackData(target);
-        Handlers.runOnIoThread(() -> persist(context, data));
+        persist(context, data);
     }
 
     private static void persist(@NonNull final Context context,

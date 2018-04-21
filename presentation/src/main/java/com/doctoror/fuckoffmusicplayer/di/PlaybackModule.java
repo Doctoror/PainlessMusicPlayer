@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
+import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackDataImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.PlaybackParamsImpl;
@@ -68,9 +69,11 @@ final class PlaybackModule {
 
     @Provides
     @Singleton
-    PlaybackData providePlaybackData(@NonNull final Context context,
-                                     @NonNull final RecentActivityManager recentActivityManager) {
-        return new PlaybackDataImpl(context, recentActivityManager);
+    PlaybackData providePlaybackData(
+            @NonNull final Context context,
+            @NonNull final RecentActivityManager recentActivityManager,
+            @NonNull final SchedulersProvider schedulersProvider) {
+        return new PlaybackDataImpl(context, recentActivityManager, schedulersProvider);
     }
 
     @Provides
