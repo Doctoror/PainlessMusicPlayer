@@ -42,7 +42,7 @@ ext {
     rxJavaVersion = '2.1.10'
     rxPermissionsVersion = '0.9.5@aar'
 
-    supportVersion = '27.1.0'
+    supportVersion = '27.1.1'
 
     testRunnerVersion = '1.0.1'
 
