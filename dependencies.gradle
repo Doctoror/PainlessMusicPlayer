@@ -30,7 +30,7 @@ ext {
     jUnitVersion = '4.12'
 
     mockitoKotlinVersion = '1.5.0'
-    mockitoVersion = '2.17.0'
+    mockitoVersion = '2.18.3'
 
     parcelerVersion = '1.1.10'
     protobufVersion = '3.1.0'
