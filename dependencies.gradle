@@ -23,7 +23,7 @@ ext {
 
     exoPlayerVersion = '2.7.3'
 
-    fastScrollVersion = '1.0.4'
+    fastScrollVersion = '1.1.0'
 
     glideVersion = '4.7.1'
 
