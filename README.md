@@ -1,3 +1,5 @@
+![Logo](Logo/horizontal.png)
+
 ## Description
 
 Painless Music Player is a lightweight music player based on ExoPlayer and MediaStore library
