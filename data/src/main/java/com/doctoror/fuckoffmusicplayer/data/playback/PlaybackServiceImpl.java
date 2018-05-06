@@ -256,6 +256,9 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void playNextInner(final boolean isUserAction) {
+        // Set this state but do not notify listeners so that onPlaybackFinished will not invoke playNext
+        // again
+        state = STATE_LOADING;
         Completable.fromAction(() -> playbackControllerProvider.obtain().playNext(isUserAction))
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
@@ -362,7 +365,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         @Override
         public void onPlaybackFinished() {
             errorMessage = null;
-            if (!isDestroying) {
+            if (!isDestroying && state == STATE_PLAYING) {
                 playNextInner(false);
             }
         }
