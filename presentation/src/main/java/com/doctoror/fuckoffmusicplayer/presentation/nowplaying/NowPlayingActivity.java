@@ -510,8 +510,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 finish();
             }
         } else {
-            final Media media = CollectionUtils
-                    .getItemSafe(mPlaybackData.getQueue(), mPlaybackData.getQueuePosition());
+            final Media media = CollectionUtils.getItemSafe(q, mPlaybackData.getQueuePosition());
             runOnUiThread(() -> bindTrack(media, mPlaybackData.getMediaPosition()));
         }
     };
