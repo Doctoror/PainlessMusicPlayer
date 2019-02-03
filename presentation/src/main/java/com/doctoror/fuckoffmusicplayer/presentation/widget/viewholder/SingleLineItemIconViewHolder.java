@@ -21,19 +21,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * ViewHolder for single line text with icon item
  */
 public final class SingleLineItemIconViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(android.R.id.icon) public ImageView icon;
-    @BindView(android.R.id.text1) public TextView text;
+    public final ImageView icon;
+    public final TextView text;
 
     public SingleLineItemIconViewHolder(@NonNull final View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        icon = itemView.findViewById(android.R.id.icon);
+        text = itemView.findViewById(android.R.id.text1);
     }
 }
