@@ -69,8 +69,6 @@ ext {
             dart                  : "com.f2prateek.dart:dart:$dartVersion",
             dartProcessor         : "com.f2prateek.dart:dart-processor:$dartVersion",
 
-            dataBindingCompiler   : "com.android.databinding:compiler:$gradlePluginVersion",
-
             fastScroll            : "com.l4digital.fastscroll:fastscroll:$fastScrollVersion",
 
             glide                 : "com.github.bumptech.glide:glide:$glideVersion",
