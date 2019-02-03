@@ -23,20 +23,19 @@ import android.widget.TextView;
 
 import com.doctoror.fuckoffmusicplayer.R;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * "Live Playlist" ViewHolder
  */
 final class LivePlaylistViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.icon) public ImageView icon;
-    @BindView(R.id.text) public TextView text;
-    @BindView(R.id.progress) public View progress;
+    public final ImageView icon;
+    public final TextView text;
+    public final View progress;
 
     LivePlaylistViewHolder(@NonNull final View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        icon = itemView.findViewById(R.id.icon);
+        text = itemView.findViewById(R.id.text);
+        progress = itemView.findViewById(R.id.progress);
     }
 }
