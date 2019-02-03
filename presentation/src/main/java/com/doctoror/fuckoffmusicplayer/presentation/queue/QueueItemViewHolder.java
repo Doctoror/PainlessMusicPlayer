@@ -32,43 +32,40 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.presentation.util.ThemeUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.ItemTouchHelperViewHolder;
 
-import butterknife.BindDimen;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * View holder for media in playlist
  */
 final class QueueItemViewHolder extends RecyclerView.ViewHolder implements
         ItemTouchHelperViewHolder {
 
-    @BindView(R.id.btnMenu)
-    ImageView btnMenu;
+    final ImageView btnMenu;
 
-    @BindView(R.id.textTitle)
-    TextView textTitle;
+    final TextView textTitle;
 
-    @BindView(R.id.textArtist)
-    TextView textArtist;
+    final TextView textArtist;
 
-    @BindView(R.id.textDuration)
-    TextView textDuration;
+    final TextView textDuration;
 
     @Nullable
     private final Drawable mDefaultBackground;
     private final float mDefaultElevation;
 
-    @BindDimen(R.dimen.list_drag_selected_item_elevation)
-    float mElevationSelected;
+    final float mElevationSelected;
 
     private Drawable mSelectedBackground;
 
     QueueItemViewHolder(@NonNull final View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        btnMenu = itemView.findViewById(R.id.btnMenu);
+        textTitle = itemView.findViewById(R.id.textTitle);
+        textArtist = itemView.findViewById(R.id.textArtist);
+        textDuration = itemView.findViewById(R.id.textDuration);
 
         mDefaultBackground = itemView.getBackground();
         mDefaultElevation = ViewCompat.getElevation(itemView);
+
+        mElevationSelected = itemView.getResources()
+                .getDimension(R.dimen.list_drag_selected_item_elevation);
     }
 
     @Override
