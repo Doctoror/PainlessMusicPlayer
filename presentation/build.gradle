@@ -130,8 +130,6 @@ dependencies {
     implementation d.dart
     kapt d.dartProcessor
 
-    kapt d.dataBindingCompiler
-
     implementation d.fastScroll
 
     implementation d.glide
