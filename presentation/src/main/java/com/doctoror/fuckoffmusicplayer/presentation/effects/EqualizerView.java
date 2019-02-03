@@ -42,9 +42,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class EqualizerView extends RecyclerView {
 
     public interface OnBandChangeListener {
@@ -73,7 +70,7 @@ public class EqualizerView extends RecyclerView {
     }
 
     public EqualizerView(final Context context, final AttributeSet attrs,
-            final int defStyleAttr) {
+                         final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
@@ -171,12 +168,13 @@ public class EqualizerView extends RecyclerView {
 
     static final class VH extends ViewHolder {
 
-        @BindView(R.id.bandText) TextView bandName;
-        @BindView(R.id.bandSeekBar) SeekBar bandValue;
+        final TextView bandName;
+        final SeekBar bandValue;
 
         VH(@NonNull final View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            bandName = itemView.findViewById(R.id.bandText);
+            bandValue = itemView.findViewById(R.id.bandSeekBar);
         }
     }
 
@@ -189,7 +187,7 @@ public class EqualizerView extends RecyclerView {
         private OnBandChangeListener onBandChangeListener;
 
         AdapterImpl(@NonNull final Context context,
-                @Nullable final List<Item> items) {
+                    @Nullable final List<Item> items) {
             super(context, items);
         }
 
@@ -219,7 +217,7 @@ public class EqualizerView extends RecyclerView {
 
                 @Override
                 public void onProgressChanged(final SeekBar seekBar, final int progress,
-                        final boolean fromUser) {
+                                              final boolean fromUser) {
                     if (fromUser && onBandChangeListener != null) {
                         final int position = vh.getAdapterPosition();
                         final Item item = getItem(position);
