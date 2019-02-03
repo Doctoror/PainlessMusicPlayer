@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Observable
 import org.junit.Assert.assertFalse

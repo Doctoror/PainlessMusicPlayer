@@ -22,8 +22,8 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity
 import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackAndroidService
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

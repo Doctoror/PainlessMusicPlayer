@@ -17,10 +17,10 @@ package com.doctoror.fuckoffmusicplayer.presentation.settings
 
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert.*
 import org.junit.Test
 

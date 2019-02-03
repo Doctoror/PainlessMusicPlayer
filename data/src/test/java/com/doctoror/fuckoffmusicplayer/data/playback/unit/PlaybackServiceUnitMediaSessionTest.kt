@@ -17,8 +17,8 @@ package com.doctoror.fuckoffmusicplayer.data.media.playback.usecase
 
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitMediaSession
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.junit.Test
 
 class PlaybackServiceUnitMediaSessionTest {

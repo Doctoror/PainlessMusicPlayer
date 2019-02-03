@@ -29,7 +29,7 @@ ext {
 
     jUnitVersion = '4.12'
 
-    mockitoKotlinVersion = '1.5.0'
+    mockitoKotlinVersion = '2.1.0'
     mockitoVersion = '2.24.0'
 
     parcelerVersion = '1.1.10'
@@ -100,7 +100,7 @@ ext {
             kotlinReflect: "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
 
             mockito      : "org.mockito:mockito-core:$mockitoVersion",
-            mockitoKotlin: "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
+            mockitoKotlin: "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion",
 
             robolectric  : "org.robolectric:robolectric:$robolectricVersion"
     ]
@@ -125,7 +125,7 @@ ext {
 
             mockito       : "org.mockito:mockito-core:$mockitoVersion",
             mockitoAndroid: "org.mockito:mockito-android:$mockitoVersion",
-            mockitoKotlin : "com.nhaarman:mockito-kotlin:$mockitoKotlinVersion",
+            mockitoKotlin : "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion",
 
             robolectric   : "org.robolectric:robolectric:$robolectricVersion",
 

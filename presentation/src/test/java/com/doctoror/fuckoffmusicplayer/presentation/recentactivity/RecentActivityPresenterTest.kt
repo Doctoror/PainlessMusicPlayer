@@ -24,7 +24,7 @@ import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsProvider
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -49,30 +49,31 @@ class RecentActivityPresenterTest {
     private val viewModel = RecentActivityViewModel()
 
     private val underTest = RecentActivityPresenter(
-            albumItemsFactory,
-            albumsProvider,
-            fragment,
-            libraryPermissionProvider,
-            queueProvider,
-            resources,
-            mock(),
-            TestSchedulersProvider(),
-            viewModel)
+        albumItemsFactory,
+        albumsProvider,
+        fragment,
+        libraryPermissionProvider,
+        queueProvider,
+        resources,
+        mock(),
+        TestSchedulersProvider(),
+        viewModel
+    )
 
     private fun givenPermissionDenied() {
         whenever(libraryPermissionProvider.permissionsGranted())
-                .thenReturn(false)
+            .thenReturn(false)
 
         whenever(libraryPermissionProvider.requestPermission())
-                .thenReturn(Observable.just(false))
+            .thenReturn(Observable.just(false))
     }
 
     private fun givenPermissionGranted() {
         whenever(libraryPermissionProvider.permissionsGranted())
-                .thenReturn(true)
+            .thenReturn(true)
 
         whenever(libraryPermissionProvider.requestPermission())
-                .thenReturn(Observable.just(true))
+            .thenReturn(Observable.just(true))
     }
 
     private fun givenRecyclerAdapterMocked() {
@@ -88,17 +89,22 @@ class RecentActivityPresenterTest {
         on(it.isAfterLast).doReturn(true)
     }
 
-    private fun makeSingleMediaItemCursor() = MatrixCursor(arrayOf(
+    private fun makeSingleMediaItemCursor() = MatrixCursor(
+        arrayOf(
             MediaStore.Audio.Albums._ID,
             MediaStore.Audio.Albums.ALBUM,
             MediaStore.Audio.Albums.ALBUM_ART,
             MediaStore.Audio.Albums.FIRST_YEAR
-    )).apply {
-        addRow(arrayOf(
+        )
+    ).apply {
+        addRow(
+            arrayOf(
                 "1",
                 "Album",
                 "Album Art",
-                "1990"))
+                "1990"
+            )
+        )
     }
 
     @Test
@@ -123,8 +129,9 @@ class RecentActivityPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildPermissionDenied,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildPermissionDenied,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -138,8 +145,9 @@ class RecentActivityPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildProgress,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildProgress,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -148,18 +156,19 @@ class RecentActivityPresenterTest {
         givenPermissionGranted()
 
         whenever(albumsProvider.loadRecentlyPlayedAlbums(any()))
-                .thenReturn(Observable.error(IOException()))
+            .thenReturn(Observable.error(IOException()))
 
         whenever(albumsProvider.loadRecentlyScannedAlbums(any()))
-                .thenReturn(Observable.empty())
+            .thenReturn(Observable.empty())
 
         // When
         underTest.onStart()
 
         // Then
         assertEquals(
-                viewModel.animatorChildError,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildError,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -168,18 +177,19 @@ class RecentActivityPresenterTest {
         givenPermissionGranted()
 
         whenever(albumsProvider.loadRecentlyPlayedAlbums(any()))
-                .thenReturn(Observable.error(IOException()))
+            .thenReturn(Observable.error(IOException()))
 
         whenever(albumsProvider.loadRecentlyScannedAlbums(any()))
-                .thenReturn(Observable.empty())
+            .thenReturn(Observable.empty())
 
         // When
         underTest.onStart()
 
         // Then
         assertEquals(
-                viewModel.animatorChildError,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildError,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -191,18 +201,19 @@ class RecentActivityPresenterTest {
         val emptyCursor = mockEmptyCursor()
 
         whenever(albumsProvider.loadRecentlyPlayedAlbums(any()))
-                .thenReturn(Observable.just(emptyCursor))
+            .thenReturn(Observable.just(emptyCursor))
 
         whenever(albumsProvider.loadRecentlyScannedAlbums(any()))
-                .thenReturn(Observable.just(emptyCursor))
+            .thenReturn(Observable.just(emptyCursor))
 
         // When
         underTest.onStart()
 
         // Then
         assertEquals(
-                viewModel.animatorChildEmpty,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildEmpty,
+            viewModel.displayedChild.get()
+        )
     }
 
 
@@ -214,19 +225,20 @@ class RecentActivityPresenterTest {
 
         val recentlyPlayedCursor = makeSingleMediaItemCursor()
         whenever(albumsProvider.loadRecentlyPlayedAlbums(any()))
-                .thenReturn(Observable.just(recentlyPlayedCursor))
+            .thenReturn(Observable.just(recentlyPlayedCursor))
 
         val emptyCursor = mockEmptyCursor()
         whenever(albumsProvider.loadRecentlyScannedAlbums(any()))
-                .thenReturn(Observable.just(emptyCursor))
+            .thenReturn(Observable.just(emptyCursor))
 
         // When
         underTest.onStart()
 
         // Then
         assertEquals(
-                viewModel.animatorChildContent,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildContent,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -237,19 +249,20 @@ class RecentActivityPresenterTest {
 
         val emptyCursor = mockEmptyCursor()
         whenever(albumsProvider.loadRecentlyPlayedAlbums(any()))
-                .thenReturn(Observable.just(emptyCursor))
+            .thenReturn(Observable.just(emptyCursor))
 
         val recentlyScannedCursor = makeSingleMediaItemCursor()
         whenever(albumsProvider.loadRecentlyScannedAlbums(any()))
-                .thenReturn(Observable.just(recentlyScannedCursor))
+            .thenReturn(Observable.just(recentlyScannedCursor))
 
         // When
         underTest.onStart()
 
         // Then
         assertEquals(
-                viewModel.animatorChildContent,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildContent,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -260,18 +273,19 @@ class RecentActivityPresenterTest {
 
         val recentlyPlayedCursor = makeSingleMediaItemCursor()
         whenever(albumsProvider.loadRecentlyPlayedAlbums(any()))
-                .thenReturn(Observable.just(recentlyPlayedCursor))
+            .thenReturn(Observable.just(recentlyPlayedCursor))
 
         val recentlyScannedCursor = makeSingleMediaItemCursor()
         whenever(albumsProvider.loadRecentlyScannedAlbums(any()))
-                .thenReturn(Observable.just(recentlyScannedCursor))
+            .thenReturn(Observable.just(recentlyScannedCursor))
 
         // When
         underTest.onStart()
 
         // Then
         assertEquals(
-                viewModel.animatorChildContent,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildContent,
+            viewModel.displayedChild.get()
+        )
     }
 }

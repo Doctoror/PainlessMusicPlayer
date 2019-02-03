@@ -21,7 +21,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Test
 import java.lang.IllegalArgumentException
 

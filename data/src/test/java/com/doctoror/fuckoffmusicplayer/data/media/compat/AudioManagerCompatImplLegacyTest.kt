@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.data.media.compat
 
 import android.media.AudioManager
 import com.doctoror.fuckoffmusicplayer.data.media.compat.AudioManagerCompat.Impl.ImplLegacy.AudioFocusChangeListenerLegacyWrapper
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

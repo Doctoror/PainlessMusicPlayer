@@ -19,7 +19,7 @@ import android.database.Cursor
 import android.support.v7.widget.RecyclerView
 import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert.*

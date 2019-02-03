@@ -23,7 +23,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_ERROR
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockitokotlin2.*
 import org.junit.Before
 import org.junit.Test
 
