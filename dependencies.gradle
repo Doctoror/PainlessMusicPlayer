@@ -36,13 +36,13 @@ ext {
     protobufVersion = '3.1.0'
 
     robolectricVersion = '4.1'
-    rxAndroidVersion = '2.0.2'
+    rxAndroidVersion = '2.1.0'
     rxCursorLoaderVersion = '2.1.1'
     rxBindingVersion = '2.1.1'
-    rxJavaVersion = '2.1.12'
+    rxJavaVersion = '2.2.6'
     rxPermissionsVersion = '0.9.5@aar'
 
-    supportVersion = '27.1.1'
+    supportVersion = '28.0.0'
 
     testRunnerVersion = '1.0.1'
 
