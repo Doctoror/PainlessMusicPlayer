@@ -35,7 +35,7 @@ ext {
     parcelerVersion = '1.1.10'
     protobufVersion = '3.1.0'
 
-    robolectricVersion = '3.8'
+    robolectricVersion = '4.1'
     rxAndroidVersion = '2.0.2'
     rxCursorLoaderVersion = '2.1.1'
     rxBindingVersion = '2.1.1'
