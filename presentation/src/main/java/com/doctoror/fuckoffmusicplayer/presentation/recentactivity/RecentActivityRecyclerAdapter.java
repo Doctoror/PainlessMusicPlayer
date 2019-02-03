@@ -32,9 +32,6 @@ import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.BaseRecyclerAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.AlbumViewHolder;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 final class RecentActivityRecyclerAdapter
         extends BaseRecyclerAdapter<Object, RecyclerView.ViewHolder> {
 
@@ -156,12 +153,11 @@ final class RecentActivityRecyclerAdapter
 
     static final class HeaderViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(android.R.id.text1)
-        TextView title;
+        final TextView title;
 
         HeaderViewHolder(final View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            title = itemView.findViewById(android.R.id.text1);
         }
     }
 
