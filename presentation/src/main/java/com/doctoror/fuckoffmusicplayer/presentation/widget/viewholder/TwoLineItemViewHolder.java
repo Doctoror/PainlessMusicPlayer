@@ -20,16 +20,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class TwoLineItemViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(android.R.id.text1) public TextView text1;
-    @BindView(android.R.id.text2) public TextView text2;
+    public final TextView text1;
+    public final TextView text2;
 
     public TwoLineItemViewHolder(@NonNull final View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        text1 = itemView.findViewById(android.R.id.text1);
+        text2 = itemView.findViewById(android.R.id.text2);
     }
 }
