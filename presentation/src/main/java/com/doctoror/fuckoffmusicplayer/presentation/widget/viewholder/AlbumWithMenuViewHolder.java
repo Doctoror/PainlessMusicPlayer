@@ -23,20 +23,19 @@ import android.widget.TextView;
 
 import com.doctoror.fuckoffmusicplayer.R;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 /**
  * "Album" ViewHolder
  */
 public final class AlbumWithMenuViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(android.R.id.text1) public TextView text1;
-    @BindView(android.R.id.icon) public ImageView image;
-    @BindView(R.id.btnMenu) public ImageView btnMenu;
+    public final TextView text1;
+    public final ImageView image;
+    public final ImageView btnMenu;
 
     public AlbumWithMenuViewHolder(@NonNull final View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        text1 = itemView.findViewById(android.R.id.text1);
+        image = itemView.findViewById(android.R.id.icon);
+        btnMenu = itemView.findViewById(R.id.btnMenu);
     }
 }
