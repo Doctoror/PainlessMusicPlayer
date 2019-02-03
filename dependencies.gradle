@@ -25,7 +25,7 @@ ext {
 
     fastScrollVersion = '1.1.0'
 
-    glideVersion = '4.7.1'
+    glideVersion = '4.8.0'
 
     jUnitVersion = '4.12'
 
