@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -29,12 +28,15 @@ import butterknife.ButterKnife;
  */
 final class AlbumListViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(android.R.id.text1) public TextView text1;
-    @BindView(android.R.id.text2) public TextView text2;
-    @BindView(android.R.id.icon) public ImageView image;
+    public final TextView text1;
+    public final TextView text2;
+    public final ImageView image;
 
     AlbumListViewHolder(@NonNull final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        text1 = itemView.findViewById(android.R.id.text1);
+        text2 = itemView.findViewById(android.R.id.text2);
+        image = itemView.findViewById(android.R.id.icon);
     }
 }
