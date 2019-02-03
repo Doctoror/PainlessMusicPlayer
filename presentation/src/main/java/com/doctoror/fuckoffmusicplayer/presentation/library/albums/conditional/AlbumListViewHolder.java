@@ -21,8 +21,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import butterknife.ButterKnife;
-
 /**
  * View holder for albums list
  */
@@ -34,7 +32,6 @@ final class AlbumListViewHolder extends RecyclerView.ViewHolder {
 
     AlbumListViewHolder(@NonNull final View itemView) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
         text1 = itemView.findViewById(android.R.id.text1);
         text2 = itemView.findViewById(android.R.id.text2);
         image = itemView.findViewById(android.R.id.icon);

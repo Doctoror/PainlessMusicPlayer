@@ -71,7 +71,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindInt;
 import dagger.android.support.AndroidSupportInjection;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -101,8 +100,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
 
     private FragmentConditionalAlbumListBinding mBinding;
 
-    @BindInt(R.integer.shortest_anim_time)
-    int mAnimTime;
+    private int mAnimTime;
 
     @Inject
     QueueProviderAlbums mQueueFactory;
@@ -115,6 +113,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         AndroidSupportInjection.inject(this);
 
+        mAnimTime = getResources().getInteger(R.integer.shortest_anim_time);
         mRequestManager = Glide.with(this);
 
         final Activity activity = getActivity();

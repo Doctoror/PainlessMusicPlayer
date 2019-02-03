@@ -40,7 +40,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import com.bumptech.glide.Glide;
@@ -79,9 +78,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import dagger.android.AndroidInjection;
 import io.reactivex.functions.Consumer;
 
@@ -141,21 +137,7 @@ public final class NowPlayingActivity extends BaseActivity {
     private boolean mTransitionPostponed;
     private boolean mTransitionStarted;
 
-    @BindView(R.id.root)
-    View root;
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
-    @BindView(R.id.albumArt)
-    ImageView albumArt;
-
-    @Nullable
-    @BindView(R.id.infoContainer)
-    View infoContainer;
-
-    @BindView(R.id.seekBar)
-    SeekBar seekBar;
+    private ActivityNowplayingBinding mBinding;
 
     @InjectExtra
     boolean hasCoverTransition;
@@ -206,19 +188,19 @@ public final class NowPlayingActivity extends BaseActivity {
 
         final ActivityNowplayingBinding binding = DataBindingUtil.setContentView(
                 this, R.layout.activity_nowplaying);
-        ButterKnife.bind(this);
+        mBinding = binding;
 
-        ViewCompat.setTransitionName(albumArt, TRANSITION_NAME_ALBUM_ART);
-        ViewCompat.setTransitionName(root, TRANSITION_NAME_ROOT);
+        ViewCompat.setTransitionName(binding.albumArt, TRANSITION_NAME_ALBUM_ART);
+        ViewCompat.setTransitionName(binding.root, TRANSITION_NAME_ROOT);
 
         mModel.setBtnPlayRes(R.drawable.ic_play_arrow_white_36dp);
         mModel.setShuffleEnabled(mPlaybackParams.isShuffleEnabled());
         mModel.setRepeatMode(mPlaybackParams.getRepeatMode());
 
         binding.setModel(mModel);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(final SeekBar seekBar, final int i, final boolean b) {
@@ -238,6 +220,12 @@ public final class NowPlayingActivity extends BaseActivity {
             }
         });
 
+        binding.btnPlay.setOnClickListener((v) -> onPlayClick());
+        binding.btnPrev.setOnClickListener((v) -> onPrevClick());
+        binding.btnNext.setOnClickListener((v) -> onNextClick());
+        binding.btnShuffle.setOnClickListener((v) -> onShuffleClick());
+        binding.btnRepeat.setOnClickListener((v) -> onRepeatClick());
+
         mIntentHandler = new NowPlayingActivityIntentHandler(this);
         mIntentHandler.handleIntent(getIntent());
 
@@ -251,8 +239,8 @@ public final class NowPlayingActivity extends BaseActivity {
             supportPostponeEnterTransition();
         }
         if (TextUtils.isEmpty(artUri)) {
-            mRequestManager.clear(albumArt);
-            albumArt.setImageResource(R.drawable.album_art_placeholder);
+            mRequestManager.clear(mBinding.albumArt);
+            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
             onArtProcessed();
         } else {
             RequestBuilder<Drawable> b = mRequestManager
@@ -265,7 +253,7 @@ public final class NowPlayingActivity extends BaseActivity {
                 b = b.apply(requestOptions);
             }
 
-            b.listener(new AlbumArtRequestListener()).into(albumArt);
+            b.listener(new AlbumArtRequestListener()).into(mBinding.albumArt);
         }
     }
 
@@ -287,31 +275,33 @@ public final class NowPlayingActivity extends BaseActivity {
                     //at android.support.v4.app.FragmentActivity.supportStartPostponedEnterTransition(FragmentActivity.java:271)
                 }
             }
-            if (infoContainer != null && infoContainer.getVisibility() != View.VISIBLE) {
+            if (mBinding != null
+                    && mBinding.infoContainer != null
+                    && mBinding.infoContainer.getVisibility() != View.VISIBLE) {
                 if (hasListViewTransition) {
-                    infoContainer.setVisibility(View.VISIBLE);
+                    mBinding.infoContainer.setVisibility(View.VISIBLE);
                 } else {
-                    infoContainer.setTranslationY(infoContainer.getHeight());
-                    infoContainer.animate().setStartDelay(500)
+                    mBinding.infoContainer.setTranslationY(mBinding.infoContainer.getHeight());
+                    mBinding.infoContainer.animate().setStartDelay(500)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationStart(final Animator animation) {
-                                    infoContainer.setVisibility(View.VISIBLE);
+                                    mBinding.infoContainer.setVisibility(View.VISIBLE);
                                 }
                             })
                             .translationY(0f).start();
                 }
             }
-            if (toolbar.getVisibility() != View.VISIBLE) {
+            if (mBinding != null && mBinding.toolbar.getVisibility() != View.VISIBLE) {
                 if (hasListViewTransition) {
-                    toolbar.setVisibility(View.VISIBLE);
+                    mBinding.toolbar.setVisibility(View.VISIBLE);
                 } else {
-                    toolbar.setTranslationY(-toolbar.getHeight());
-                    toolbar.animate().setStartDelay(500)
+                    mBinding.toolbar.setTranslationY(-mBinding.toolbar.getHeight());
+                    mBinding.toolbar.animate().setStartDelay(500)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationStart(final Animator animation) {
-                                    toolbar.setVisibility(View.VISIBLE);
+                                    mBinding.toolbar.setVisibility(View.VISIBLE);
                                 }
                             })
                             .translationY(0f).start();
@@ -361,7 +351,7 @@ public final class NowPlayingActivity extends BaseActivity {
                         .build();
 
                 final Bundle options = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                        albumArt, QueueActivity.TRANSITION_NAME_ALBUM_ART).toBundle();
+                        mBinding.albumArt, QueueActivity.TRANSITION_NAME_ALBUM_ART).toBundle();
 
                 startActivity(intent, options);
                 return true;
@@ -452,8 +442,7 @@ public final class NowPlayingActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.btnPlay)
-    public void onPlayClick() {
+    private void onPlayClick() {
         switch (mState) {
             case STATE_IDLE:
                 mPlaybackServiceControl.playPause();
@@ -477,25 +466,21 @@ public final class NowPlayingActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.btnPrev)
-    public void onPrevClick() {
+    private void onPrevClick() {
         mPlaybackServiceControl.prev();
     }
 
-    @OnClick(R.id.btnNext)
-    public void onNextClick() {
+    private void onNextClick() {
         mPlaybackServiceControl.next();
     }
 
-    @OnClick(R.id.btnShuffle)
-    public void onShuffleClick() {
+    private void onShuffleClick() {
         final boolean newValue = !mPlaybackParams.isShuffleEnabled();
         mPlaybackParams.setShuffleEnabled(newValue);
         mModel.setShuffleEnabled(newValue);
     }
 
     @SuppressLint("WrongConstant")
-    @OnClick(R.id.btnRepeat)
     public void onRepeatClick() {
         final RepeatMode value;
         switch (mPlaybackParams.getRepeatMode()) {
@@ -546,9 +531,9 @@ public final class NowPlayingActivity extends BaseActivity {
                 @NonNull final Object model,
                 @NonNull final Target<Drawable> target,
                 final boolean isFirstResource) {
-            albumArt.setAlpha(0f);
-            albumArt.setImageResource(R.drawable.album_art_placeholder);
-            albumArt.animate().alpha(1f).start();
+            mBinding.albumArt.setAlpha(0f);
+            mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
+            mBinding.albumArt.animate().alpha(1f).start();
             onArtProcessed();
             return true;
         }
