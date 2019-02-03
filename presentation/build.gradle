@@ -150,6 +150,7 @@ dependencies {
     implementation d.supportAppCompat
     implementation d.supportCardView
     implementation d.supportDesign
+    implementation d.supportMediaCompat
     implementation d.supportRecyclerView
     implementation d.constraintLayout
 }

@@ -89,6 +89,7 @@ ext {
             supportAppCompat      : "com.android.support:appcompat-v7:$supportVersion",
             supportCardView       : "com.android.support:cardview-v7:$supportVersion",
             supportDesign         : "com.android.support:design:$supportVersion",
+            supportMediaCompat    : "com.android.support:support-media-compat:$supportVersion",
             supportRecyclerView   : "com.android.support:recyclerview-v7:$supportVersion"
     ]
 
