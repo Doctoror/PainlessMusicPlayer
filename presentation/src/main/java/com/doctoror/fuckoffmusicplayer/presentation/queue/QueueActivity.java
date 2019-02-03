@@ -172,6 +172,7 @@ public final class QueueActivity extends BaseActivity
         final ActivityQueueBinding binding = DataBindingUtil.setContentView(this,
                 R.layout.activity_queue);
         binding.setModel(mModel);
+        mBinding = binding;
 
         binding.fab.setOnClickListener(v -> onPlayClick(v, 0));
 
