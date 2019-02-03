@@ -118,9 +118,6 @@ dependencies {
 
     implementation d.aspectRatioLayout
 
-    implementation d.butterKnife
-    kapt d.butterKnifeCompiler
-
     implementation d.dagger
     implementation d.daggerAndroid
     implementation d.daggerAndroidSupport

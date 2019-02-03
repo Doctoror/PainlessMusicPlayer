@@ -14,8 +14,6 @@ ext {
 
     aspectRatioLayoutVersion = '1.0.3'
 
-    butterKnifeVersion = '8.8.1'
-
     constraintLayoutVersion = '1.1.0'
 
     daggerVersion = '2.16'
@@ -54,9 +52,6 @@ ext {
 
     presentationDependencies = [
             aspectRatioLayout     : "com.github.doctoror.aspectratiolayout:library:$aspectRatioLayoutVersion",
-
-            butterKnife           : "com.jakewharton:butterknife:$butterKnifeVersion",
-            butterKnifeCompiler   : "com.jakewharton:butterknife-compiler:$butterKnifeVersion",
 
             constraintLayout      : "com.android.support.constraint:constraint-layout:$constraintLayoutVersion",
 
