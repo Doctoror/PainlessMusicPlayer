@@ -18,9 +18,7 @@ package com.doctoror.fuckoffmusicplayer.data.playback.unit
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder
-import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import io.reactivex.disposables.CompositeDisposable
 
@@ -28,22 +26,16 @@ import io.reactivex.disposables.CompositeDisposable
  * Monitors position in queue and handles it's changes.
  */
 class PlaybackServiceUnitQueueMonitor(
-        private val albumThumbHolder: AlbumThumbHolder,
-        private val currentMediaProvider: CurrentMediaProvider,
-        private val playbackControllerProvider: PlaybackControllerProvider,
-        private val playbackData: PlaybackData,
-        private val restartAction: Runnable,
-        private val stopAction: Runnable) : ServiceLifecycleObserver {
+    private val albumThumbHolder: AlbumThumbHolder,
+    private val playbackControllerProvider: PlaybackControllerProvider,
+    private val playbackData: PlaybackData,
+    private val stopAction: Runnable
+) : ServiceLifecycleObserver {
 
     private val disposables = CompositeDisposable()
 
-    private var lastCurrentMedia: Media? = null
-
     override fun onCreate() {
         disposables.add(playbackData.queueObservable().subscribe(this::onQueueChanged))
-        disposables.add(playbackData.queuePositionObservable().subscribe {
-            lastCurrentMedia = currentMediaProvider.currentMedia
-        })
     }
 
     override fun onDestroy() {
@@ -57,18 +49,6 @@ class PlaybackServiceUnitQueueMonitor(
         } else {
             val playbackController = playbackControllerProvider.obtain()
             playbackController.setQueue(q)
-
-            // If playing some media and it's position in queue changed
-            if (playbackData.playbackState == STATE_PLAYING) {
-                val current = lastCurrentMedia
-                if (current != null) {
-                    val indexOf = q.indexOf(current)
-                    if (indexOf == -1) {
-                        // This track is not in new queue
-                        restartAction.run()
-                    }
-                }
-            }
         }
     }
 }

@@ -48,11 +48,6 @@ import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporterFactory;
 import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackAndroidService;
 import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackServiceViewImpl;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-import javax.inject.Qualifier;
-
 import dagger.Module;
 import dagger.Provides;
 
@@ -143,17 +138,13 @@ public final class PlaybackServiceModule {
     @ServiceScope
     PlaybackServiceUnitQueueMonitor providePlaybackServiceUnitQueueMonitor(
             @NonNull final AlbumThumbHolder albumThumbHolder,
-            @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final PlaybackControllerProvider playbackControllerProvider,
             @NonNull final PlaybackData playbackData,
-            @NonNull @RestartAction final Runnable restartAction,
             @NonNull final Runnable stopAction) {
         return new PlaybackServiceUnitQueueMonitor(
                 albumThumbHolder,
-                currentMediaProvider,
                 playbackControllerProvider,
                 playbackData,
-                restartAction,
                 stopAction);
     }
 
@@ -241,18 +232,5 @@ public final class PlaybackServiceModule {
     @ServiceScope
     Runnable provideStopAction(@NonNull final PlaybackAndroidService service) {
         return service::stopSelf;
-    }
-
-    @Provides
-    @ServiceScope
-    @RestartAction
-    Runnable provideRestartAction(@NonNull final PlaybackAndroidService service) {
-        return service::restart;
-    }
-
-    @Qualifier
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface RestartAction {
-
     }
 }

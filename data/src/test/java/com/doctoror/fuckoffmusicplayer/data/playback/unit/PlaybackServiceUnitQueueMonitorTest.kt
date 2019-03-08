@@ -18,9 +18,7 @@ package com.doctoror.fuckoffmusicplayer.data.playback.unit
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder
-import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
-import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -38,19 +36,16 @@ class PlaybackServiceUnitQueueMonitorTest {
     private val playbackController: PlaybackController = mock()
 
     private val albumThumbHolder: AlbumThumbHolder = mock()
-    private val currentMediaProvider: CurrentMediaProvider = mock()
     private val playbackControllerProvider: PlaybackControllerProvider = mock()
     private val playbackData: PlaybackData = mock()
-    private val restartAction: Runnable = mock()
     private val stopAction: Runnable = mock()
 
     private val underTest = PlaybackServiceUnitQueueMonitor(
-            albumThumbHolder,
-            currentMediaProvider,
-            playbackControllerProvider,
-            playbackData,
-            restartAction,
-            stopAction)
+        albumThumbHolder,
+        playbackControllerProvider,
+        playbackData,
+        stopAction
+    )
 
     @Before
     fun setup() {
@@ -89,27 +84,5 @@ class PlaybackServiceUnitQueueMonitorTest {
 
         // Then
         verify(playbackController).setQueue(queue)
-    }
-
-    @Test
-    fun restartsWhenTrackIsNoLongerInTheQueue() {
-        // Given
-        val currentMedia = Media()
-
-        whenever(playbackData.playbackState).thenReturn(PlaybackState.STATE_PLAYING)
-        whenever(currentMediaProvider.currentMedia).thenReturn(currentMedia)
-        underTest.onCreate()
-
-        // When
-
-        // Emit some queue and position
-        queueSubject.onNext(listOf(currentMedia))
-        queuePositionSubject.onNext(0)
-
-        // Emit queue where the current media no longer exists
-        queueSubject.onNext(listOf(Media(id = 1)))
-
-        // Then
-        verify(restartAction).run()
     }
 }
