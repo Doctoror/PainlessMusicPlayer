@@ -37,7 +37,7 @@ import io.reactivex.Completable;
  */
 public final class RecentActivityManagerImpl implements RecentActivityManager {
 
-    private static final int MAX_LENGTH = 10;
+    private static final int MAX_LENGTH = 12;
 
     private static final String FILE_NAME_RECENT_PLAYLISTS = "recent_playlists_albums";
 
