@@ -17,6 +17,9 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
 
     <!-- For playback -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <!-- For playback -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <!-- For querying MediaStore -->
