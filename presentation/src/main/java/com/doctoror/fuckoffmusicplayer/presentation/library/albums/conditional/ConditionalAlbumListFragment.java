@@ -30,6 +30,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -40,6 +41,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -98,9 +100,18 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private RequestManager mRequestManager;
     private Cursor mData;
 
-    private FragmentConditionalAlbumListBinding mBinding;
-
     private int mAnimTime;
+
+    private AppBarLayout appBar;
+    private ImageView albumArt;
+    private View albumArtDim;
+
+    private View errorContainer;
+    private View emptyContainer;
+    private View fab;
+    private View progress;
+
+    private RecyclerView recyclerView;
 
     @Inject
     QueueProviderAlbums mQueueFactory;
@@ -135,10 +146,6 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         final FragmentConditionalAlbumListBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_conditional_album_list, container, false);
         binding.setModel(mModel);
-        mBinding = binding;
-
-        binding.fab.setOnClickListener(v -> onFabClick());
-
         return binding.getRoot();
     }
 
@@ -146,13 +153,25 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        albumArt = view.findViewById(R.id.albumArt);
+        albumArtDim = view.findViewById(R.id.albumArtDim);
+
+        appBar = view.findViewById(R.id.appBar);
+        errorContainer = view.findViewById(R.id.errorContainer);
+        emptyContainer = view.findViewById(R.id.emptyContainer);
+        progress = view.findViewById(R.id.progress);
+
+        fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener(v -> onFabClick());
+
         final AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity == null) {
             throw new IllegalStateException("Activity is null");
         }
-        activity.setSupportActionBar(mBinding.toolbar);
+        activity.setSupportActionBar(view.findViewById(R.id.toolbar));
 
-        mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(activity) {
+        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity) {
             @Override
             public void onLayoutChildren(final RecyclerView.Recycler recycler,
                                          final RecyclerView.State state) {
@@ -168,22 +187,25 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void setAppBarCollapsibleIfNeeded() {
-        final View cardHostScrollView = mBinding.root.findViewById(R.id.cardHostScrollView);
-        ViewUtils.setAppBarCollapsibleIfScrollableViewIsLargeEnoughToScroll(
-                mBinding.root,
-                mBinding.appBar,
-                mBinding.recyclerView,
-                ViewUtils.getOverlayTop(
-                        cardHostScrollView != null
-                                ? cardHostScrollView : mBinding.recyclerView));
+        final View root = getView();
+        if (root != null) {
+            final View cardHostScrollView = root.findViewById(R.id.cardHostScrollView);
+            ViewUtils.setAppBarCollapsibleIfScrollableViewIsLargeEnoughToScroll(
+                    root,
+                    root.findViewById(R.id.appBar),
+                    recyclerView,
+                    ViewUtils.getOverlayTop(
+                            cardHostScrollView != null
+                                    ? cardHostScrollView : recyclerView));
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mBinding.fab.setScaleX(1f);
-        mBinding.fab.setScaleY(1f);
-        mBinding.albumArtDim.setAlpha(1f);
+        fab.setScaleX(1f);
+        fab.setScaleY(1f);
+        albumArtDim.setAlpha(1f);
         restartLoader();
     }
 
@@ -225,7 +247,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         if (isAdded()) {
             onQueueLoaded(
                     queue,
-                    ViewUtils.getItemView(mBinding.recyclerView, position),
+                    ViewUtils.getItemView(recyclerView, position),
                     queueName);
         }
     }
@@ -276,16 +298,16 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
             } else {
                 mPlaybackInitializer.setQueueAndPlay(queue, 0);
                 prepareViewsAndExit(() -> NowPlayingActivity.start(activity,
-                        mBinding.albumArt, null));
+                        albumArt, null));
             }
         }
     }
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
-        if (!TransitionUtils.supportsActivityTransitions() || mBinding.fab.getScaleX() == 0f) {
+        if (!TransitionUtils.supportsActivityTransitions() || fab.getScaleX() == 0f) {
             exitAction.run();
         } else {
-            mBinding.albumArtDim
+            albumArtDim
                     .animate()
                     .alpha(0f)
                     .setDuration(mAnimTime)
@@ -348,44 +370,50 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     protected abstract Observable<Cursor> load();
 
     private void showStateError() {
-        mBinding.fab.setVisibility(View.GONE);
-        mBinding.progress.setVisibility(View.GONE);
-        mBinding.recyclerView.setVisibility(View.GONE);
-        mBinding.emptyContainer.setVisibility(View.GONE);
-        mBinding.errorContainer.setVisibility(View.VISIBLE);
+        final View root = getView();
+        if (root != null) {
+            fab.setVisibility(View.GONE);
+            progress.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            emptyContainer.setVisibility(View.GONE);
+            errorContainer.setVisibility(View.VISIBLE);
 
-        final View cardView = mBinding.root.findViewById(R.id.cardView);
-        if (cardView == null) {
-            // Collapse for non-card-view
-            mBinding.appBar.setExpanded(false, false);
-        } else {
-            mBinding.appBar.setExpanded(true, false);
+            final View cardView = root.findViewById(R.id.cardView);
+            if (cardView == null) {
+                // Collapse for non-card-view
+                appBar.setExpanded(false, false);
+            } else {
+                appBar.setExpanded(true, false);
+            }
+            setAppBarCollapsibleIfNeeded();
         }
-        setAppBarCollapsibleIfNeeded();
     }
 
     private void showStateEmpty() {
-        mBinding.fab.setVisibility(View.GONE);
-        mBinding.progress.setVisibility(View.GONE);
-        mBinding.recyclerView.setVisibility(View.GONE);
-        mBinding.emptyContainer.setVisibility(View.VISIBLE);
-        mBinding.errorContainer.setVisibility(View.GONE);
+        final View root = getView();
+        if (root != null) {
+            fab.setVisibility(View.GONE);
+            progress.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            emptyContainer.setVisibility(View.VISIBLE);
+            errorContainer.setVisibility(View.GONE);
 
-        final View cardView = mBinding.root.findViewById(R.id.cardView);
-        if (cardView == null) {
-            // Collapse for non-card-view
-            mBinding.appBar.setExpanded(false, false);
-        } else {
-            mBinding.appBar.setExpanded(true, false);
+            final View cardView = root.findViewById(R.id.cardView);
+            if (cardView == null) {
+                // Collapse for non-card-view
+                appBar.setExpanded(false, false);
+            } else {
+                appBar.setExpanded(true, false);
+            }
+            setAppBarCollapsibleIfNeeded();
         }
-        setAppBarCollapsibleIfNeeded();
     }
 
     private void showStateContent() {
-        mBinding.fab.setVisibility(View.VISIBLE);
-        mBinding.progress.setVisibility(View.GONE);
-        mBinding.recyclerView.setVisibility(View.VISIBLE);
-        mBinding.errorContainer.setVisibility(View.GONE);
+        fab.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        errorContainer.setVisibility(View.GONE);
         setAppBarCollapsibleIfNeeded();
     }
 
@@ -401,10 +429,10 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     }
 
     private void loadAlbumArt(@NonNull final Cursor cursor) {
-        if (mBinding.albumArt != null) {
+        if (albumArt != null) {
             final String pic = findAlbumArt(cursor);
             if (TextUtils.isEmpty(pic)) {
-                mRequestManager.clear(mBinding.albumArt);
+                mRequestManager.clear(albumArt);
                 showPlaceholderAlbumArt();
             } else {
                 mRequestManager
@@ -412,14 +440,14 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                         .apply(requestOptions)
                         .load(pic)
                         .listener(new AlbumArtRequestListener())
-                        .into(mBinding.albumArt);
+                        .into(albumArt);
             }
         }
     }
 
     private void showPlaceholderAlbumArt() {
-        mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
-        mBinding.albumArt.setAlpha(1f);
+        albumArt.setImageResource(R.drawable.album_art_placeholder);
+        albumArt.setAlpha(1f);
 
         final FragmentActivity activity = getActivity();
         if (activity != null) {
