@@ -14,7 +14,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHan
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 
-private const val MAX_HISTORY_SECTION_LENGTH = 6
+private const val MAX_HISTORY_SECTION_LENGTH = 12
 
 class RecentActivityPresenter(
         private val albumClickHandler: AlbumClickHandler,

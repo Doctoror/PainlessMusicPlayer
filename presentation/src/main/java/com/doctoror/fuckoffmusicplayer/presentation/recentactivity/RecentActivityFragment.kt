@@ -75,9 +75,9 @@ class RecentActivityFragment : BaseFragment() {
         val adapter = RecentActivityRecyclerAdapter(requireContext())
 
         adapter.setOnAlbumClickListener { position, id, album ->
-            presenter.onAlbumClick(id, album, {
+            presenter.onAlbumClick(id, album) {
                 ViewUtils.getItemView(binding.recyclerView, position)
-            })
+            }
         }
 
         viewModel.recyclerAdapter.set(adapter)
