@@ -77,17 +77,20 @@ abstract class LibraryListFragment : BaseFragment() {
     private fun createDependencies() {
         val activity = activity ?: throw IllegalStateException("Activity is null")
 
-        libraryPermissionsProvider = LibraryPermissionsProvider(activity,
-                runtimePermissions,
-                RxPermissionsProvider(activity))
+        libraryPermissionsProvider = LibraryPermissionsProvider(
+            activity,
+            runtimePermissions,
+            RxPermissionsProvider(activity)
+        )
 
         presenter = LibraryListPresenter(
-                libraryPermissionsProvider,
-                { activity.invalidateOptionsMenu() },
-                runtimePermissions,
-                SchedulersProviderImpl(),
-                searchProcessor.toObservable(),
-                viewModel)
+            libraryPermissionsProvider,
+            { activity.invalidateOptionsMenu() },
+            runtimePermissions,
+            SchedulersProviderImpl(),
+            searchProcessor.toObservable(),
+            viewModel
+        )
     }
 
     private fun configure() {
@@ -135,28 +138,33 @@ abstract class LibraryListFragment : BaseFragment() {
             searchView.isIconified = searchIconified
 
             RxSearchView
-                    .queryTextChanges(searchView)
-                    .debounce(searchQueryDropTimeoutMs, TimeUnit.MILLISECONDS)
-                    .subscribe { t -> searchProcessor.onNext(t.toString()) }
+                .queryTextChanges(searchView)
+                .debounce(searchQueryDropTimeoutMs, TimeUnit.MILLISECONDS)
+                .subscribe { t -> searchProcessor.onNext(t.toString()) }
 
+            searchView.clearFocus()
+            binding.recyclerView.requestFocus()
         } else {
             menu.findItem(R.id.actionFilter).isVisible = false
         }
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_library_list, container, false)
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_library_list, container, false
+        )
 
         setupRecyclerView(binding.recyclerView)
         initSwipeDirection(binding)
 
         binding.model = viewModel
         binding.root.findViewById<View>(R.id.btnRequest)
-                .setOnClickListener { _ -> presenter.requestPermission() }
+            .setOnClickListener { _ -> presenter.requestPermission() }
 
         return binding.root
     }
@@ -196,13 +204,15 @@ abstract class LibraryListFragment : BaseFragment() {
     protected abstract fun obtainConfig(): Config
 
     data class Config(
-            val canShowEmptyView: Boolean,
-            val dataSource: LibraryDataSource,
-            val emptyMessage: CharSequence,
-            val recyclerAdapter: RecyclerView.Adapter<*>)
+        val canShowEmptyView: Boolean,
+        val dataSource: LibraryDataSource,
+        val emptyMessage: CharSequence,
+        val recyclerAdapter: RecyclerView.Adapter<*>
+    )
 
     @Parcelize
     data class InstanceState(
-            val searchIconified: Boolean,
-            val searchQuery: String?) : Parcelable
+        val searchIconified: Boolean,
+        val searchQuery: String?
+    ) : Parcelable
 }

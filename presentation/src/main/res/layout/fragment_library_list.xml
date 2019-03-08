@@ -60,6 +60,8 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 app:handleColor="?attr/colorAccent"
                 app:bubbleColor="?attr/colorAccent"
                 app:bubbleTextColor="@android:color/white"
