@@ -29,6 +29,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -44,6 +45,7 @@ import android.transition.Transition;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -133,8 +135,6 @@ public final class QueueActivity extends BaseActivity
     @InjectExtra
     boolean hasItemViewTransition;
 
-    private ActivityQueueBinding mBinding;
-
     private String mCoverUri;
     private int mAppbarOffset;
 
@@ -149,6 +149,10 @@ public final class QueueActivity extends BaseActivity
 
     @Inject
     PlaybackInitializer mPlaybackInitializer;
+
+    private ImageView albumArt;
+    private View albumArtDim;
+    private View fab;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -172,14 +176,17 @@ public final class QueueActivity extends BaseActivity
         final ActivityQueueBinding binding = DataBindingUtil.setContentView(this,
                 R.layout.activity_queue);
         binding.setModel(mModel);
-        mBinding = binding;
 
-        binding.fab.setOnClickListener(v -> onPlayClick(v, 0));
+        albumArt = findViewById(R.id.albumArt);
+        albumArtDim = findViewById(R.id.albumArtDim);
 
-        binding.appBar.addOnOffsetChangedListener(
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(v -> onPlayClick(v, 0));
+
+        ((AppBarLayout) findViewById(R.id.appBar)).addOnOffsetChangedListener(
                 (appBarLayout, verticalOffset) -> mAppbarOffset = verticalOffset);
 
-        initAlbumArtAndToolbar(binding);
+        initAlbumArtAndToolbar();
         initRecyclerView();
 
         if (TransitionUtils.supportsActivityTransitions()) {
@@ -200,8 +207,8 @@ public final class QueueActivity extends BaseActivity
                 queue = state.queue;
                 mAdapter.setItems(queue);
 
-                mBinding.fab.setScaleX(1f);
-                mBinding.fab.setScaleY(1f);
+                fab.setScaleX(1f);
+                fab.setScaleY(1f);
             }
         }
     }
@@ -216,17 +223,19 @@ public final class QueueActivity extends BaseActivity
 
     private void setAppBarCollapsibleIfNeeded() {
         final View cardHostScrollView = findViewById(R.id.cardHostScrollView);
+        final RecyclerView recyclerView = findViewById(R.id.recyclerView);
         ViewUtils.setAppBarCollapsibleIfScrollableViewIsLargeEnoughToScroll(
-                mBinding.root,
-                mBinding.appBar,
-                mBinding.recyclerView,
+                findViewById(R.id.root),
+                findViewById(R.id.appBar),
+                recyclerView,
                 ViewUtils.getOverlayTop(cardHostScrollView != null ?
                         cardHostScrollView :
-                        mBinding.recyclerView));
+                        recyclerView));
     }
 
     private void initRecyclerView() {
-        mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(this) {
+        final RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this) {
             @Override
             public void onLayoutChildren(final RecyclerView.Recycler recycler,
                                          final RecyclerView.State state) {
@@ -241,13 +250,13 @@ public final class QueueActivity extends BaseActivity
         }
         final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
                 new ItemTouchHelperImpl(adapter));
-        itemTouchHelper.attachToRecyclerView(mBinding.recyclerView);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void initAlbumArtAndToolbar(@NonNull final ActivityQueueBinding binding) {
-        setSupportActionBar(binding.toolbar);
-        ViewCompat.setTransitionName(binding.getRoot(), QueueActivity.TRANSITION_NAME_ROOT);
-        ViewCompat.setTransitionName(binding.albumArt, QueueActivity.TRANSITION_NAME_ALBUM_ART);
+    private void initAlbumArtAndToolbar() {
+        setSupportActionBar(findViewById(R.id.toolbar));
+        ViewCompat.setTransitionName(findViewById(R.id.root), QueueActivity.TRANSITION_NAME_ROOT);
+        ViewCompat.setTransitionName(albumArt, QueueActivity.TRANSITION_NAME_ALBUM_ART);
 
         String pic = null;
         for (final Media media : queue) {
@@ -259,7 +268,7 @@ public final class QueueActivity extends BaseActivity
         mCoverUri = pic;
 
         if (TextUtils.isEmpty(pic)) {
-            mRequestManager.clear(binding.albumArt);
+            mRequestManager.clear(albumArt);
             showPlaceholderArt();
             onImageSet();
         } else {
@@ -279,12 +288,12 @@ public final class QueueActivity extends BaseActivity
         } else {
             b.apply(requestOptions);
         }
-        b.listener(new AlbumArtRequestListener()).into(mBinding.albumArt);
+        b.listener(new AlbumArtRequestListener()).into(albumArt);
     }
 
     private void showPlaceholderArt() {
-        mBinding.albumArt.setImageResource(R.drawable.album_art_placeholder);
-        mBinding.albumArt.setAlpha(1f);
+        albumArt.setImageResource(R.drawable.album_art_placeholder);
+        albumArt.setAlpha(1f);
     }
 
     private void onImageSet() {
@@ -302,8 +311,8 @@ public final class QueueActivity extends BaseActivity
             onEnterTransitionFinished();
         }
         if (mFabAnchorParams != null) {
-            CoordinatorLayoutUtil.applyAnchorParams(mBinding.fab, mFabAnchorParams);
-            mBinding.fab.post(() -> mBinding.fab.requestLayout());
+            CoordinatorLayoutUtil.applyAnchorParams(fab, mFabAnchorParams);
+            fab.post(() -> fab.requestLayout());
             mFabAnchorParams = null;
         }
         if (isNowPlayingQueue) {
@@ -315,10 +324,10 @@ public final class QueueActivity extends BaseActivity
     @Override
     protected void onStop() {
         super.onStop();
-        mBinding.fab.setScaleX(1f);
-        mBinding.fab.setScaleY(1f);
-        mBinding.albumArtDim.setAlpha(1f);
-        mBinding.albumArt.clearColorFilter();
+        fab.setScaleX(1f);
+        fab.setScaleY(1f);
+        albumArtDim.setAlpha(1f);
+        albumArt.clearColorFilter();
     }
 
     @Override
@@ -370,10 +379,10 @@ public final class QueueActivity extends BaseActivity
      * </pre>
      */
     private void prepareFabForExitTransition() {
-        final ViewGroup.LayoutParams params = mBinding.fab.getLayoutParams();
+        final ViewGroup.LayoutParams params = fab.getLayoutParams();
         if (params instanceof CoordinatorLayout.LayoutParams) {
             ((CoordinatorLayout.LayoutParams) params).setAnchorId(View.NO_ID);
-            mBinding.fab.setLayoutParams(params);
+            fab.setLayoutParams(params);
         }
     }
 
@@ -398,10 +407,10 @@ public final class QueueActivity extends BaseActivity
         final boolean shouldPassCoverView = mAppbarOffset == 0
                 && TextUtils.equals(mCoverUri, media != null ? media.getAlbumArt() : null);
         if (shouldPassCoverView) {
-            prepareViewsAndExit(() -> startNowPlayingActivity(mBinding.albumArt, null));
+            prepareViewsAndExit(() -> startNowPlayingActivity(albumArt, null));
         } else {
-            mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(mBinding.fab);
-            CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(mBinding.fab);
+            mFabAnchorParams = CoordinatorLayoutUtil.getAnchorParams(fab);
+            CoordinatorLayoutUtil.clearAnchorGravityAndApplyMargins(fab);
             startNowPlayingActivity(null, clickedView);
         }
     }
@@ -421,11 +430,11 @@ public final class QueueActivity extends BaseActivity
     }
 
     private void onEnterTransitionFinished() {
-        if (mBinding.fab.getScaleX() != 1f) {
-            mBinding.fab.animate().scaleX(1f).scaleY(1f).setDuration(mShortAnimTime).start();
+        if (fab.getScaleX() != 1f) {
+            fab.animate().scaleX(1f).scaleY(1f).setDuration(mShortAnimTime).start();
         }
-        if (mBinding.albumArtDim.getAlpha() != 1f) {
-            mBinding.albumArtDim.animate().alpha(1f).setDuration(mShortAnimTime).start();
+        if (albumArtDim.getAlpha() != 1f) {
+            albumArtDim.animate().alpha(1f).setDuration(mShortAnimTime).start();
         }
 
         final CardView cardView = findViewById(R.id.cardView);
@@ -442,22 +451,22 @@ public final class QueueActivity extends BaseActivity
 
     private void prepareViewsAndExit(@NonNull final Runnable exitAction) {
         if (!TransitionUtils.supportsActivityTransitions() ||
-                (mBinding.fab.getScaleX() == 0f && mBinding.albumArtDim.getAlpha() == 0f)) {
+                (fab.getScaleX() == 0f && albumArtDim.getAlpha() == 0f)) {
             exitAction.run();
         } else {
             final boolean isLandscape = getResources().getConfiguration().orientation
                     == Configuration.ORIENTATION_LANDSCAPE;
             // Landscape Now Playing has a dim, so dim the ImageView and send it
             if (isLandscape) {
-                mBinding.albumArtDim.setAlpha(0f);
-                mBinding.albumArt.setColorFilter(
+                albumArtDim.setAlpha(0f);
+                albumArt.setColorFilter(
                         ContextCompat.getColor(this, R.color.translucentBackground),
                         PorterDuff.Mode.SRC_ATOP);
             } else {
                 // Portrait NowPlaying does not have a dim. Fade out the dim before animating.
-                mBinding.albumArtDim.animate().alpha(0f).setDuration(mShortAnimTime).start();
+                albumArtDim.animate().alpha(0f).setDuration(mShortAnimTime).start();
             }
-            mBinding.fab.animate().scaleX(0f).scaleY(0f).setDuration(mShortAnimTime)
+            fab.animate().scaleX(0f).scaleY(0f).setDuration(mShortAnimTime)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(final Animator animation) {
