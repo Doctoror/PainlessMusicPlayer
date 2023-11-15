@@ -4,100 +4,108 @@
 
     <permission
         android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"
-        android:protectionLevel="signature"/>
+        android:protectionLevel="signature" />
 
-    <uses-permission
-        android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE"/>
+    <uses-permission android:name="${applicationId}.permission.RECEIVE_PLAYBACK_STATE" />
 
     <!-- Location for better accuracy of daynight theme-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- For reporting nowplaying-->
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
     <!-- For playback -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <!-- For playback -->
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!-- For querying MediaStore -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <!-- For deleting files -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:name=".App"
         android:allowBackup="false"
+        android:extractNativeLibs="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:extractNativeLibs="false"
         tools:ignore="GoogleAppIndexingWarning"
         tools:targetApi="m">
 
-        <meta-data android:name="android.max_aspect" android:value="2.1" />
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
 
-        <meta-data android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc"/>
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
 
-        <meta-data android:name="com.google.android.gms.car.notification.SmallIcon"
+        <meta-data
+            android:name="com.google.android.gms.car.notification.SmallIcon"
             android:resource="@mipmap/ic_launcher" />
 
         <activity
             android:name=".presentation.home.HomeActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
 
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".presentation.library.artistalbums.ArtistAlbumsActivity"
-            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:parentActivityName=".presentation.home.HomeActivity"/>
+            android:parentActivityName=".presentation.home.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
 
         <activity
             android:name=".presentation.library.genrealbums.GenreAlbumsActivity"
-            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:parentActivityName=".presentation.home.HomeActivity"/>
+            android:parentActivityName=".presentation.home.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
 
         <activity
             android:name=".presentation.library.recentalbums.RecentAlbumsActivity"
-            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:label="@string/Recently_played_albums"/>
+            android:label="@string/Recently_played_albums"
+            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
 
         <activity
             android:name=".presentation.queue.QueueActivity"
-            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
-            android:label="@string/Queue"/>
+            android:label="@string/Queue"
+            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus" />
 
         <activity
             android:name=".presentation.effects.AudioEffectsActivity"
-            android:theme="@style/AppTheme"
-            android:label="@string/Effects"/>
+            android:label="@string/Effects"
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".presentation.nowplaying.NowPlayingActivity"
+            android:exported="true"
+            android:label="@string/Now_Playing"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus"
             android:parentActivityName=".presentation.home.HomeActivity"
-            android:label="@string/Now_Playing">
+            android:theme="@style/AppTheme.NoActionBar.TranslucentStatus">
 
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="file"/>
-                <data android:mimeType="audio/*"/>
-                <data android:mimeType="application/ogg"/>
-                <data android:mimeType="application/x-ogg"/>
-                <data android:mimeType="application/itunes"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="file" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="application/ogg" />
+                <data android:mimeType="application/x-ogg" />
+                <data android:mimeType="application/itunes" />
             </intent-filter>
 
             <intent-filter>
@@ -109,9 +117,9 @@
 
         <activity
             android:name=".presentation.settings.SettingsActivity"
-            android:theme="@style/AppTheme"
             android:label="@string/Settings"
-            android:parentActivityName=".presentation.home.HomeActivity"/>
+            android:parentActivityName=".presentation.home.HomeActivity"
+            android:theme="@style/AppTheme" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -125,42 +133,46 @@
 
         </provider>
 
-        <service android:name=".presentation.media.MediaManagerService"/>
+        <service android:name=".presentation.media.MediaManagerService" />
 
-        <service android:name=".presentation.playback.PlaybackAndroidService"
+        <service
+            android:name=".presentation.playback.PlaybackAndroidService"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </service>
 
-        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+        <receiver
+            android:name="android.support.v4.media.session.MediaButtonReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".presentation.appwidget.SingleRowAppWidgetProvider">
+        <receiver
+            android:name=".presentation.appwidget.SingleRowAppWidgetProvider"
+            android:exported="true">
             <intent-filter>
-                <action
-                    android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 
-                <action
-                    android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_MEDIA_CHANGED"/>
+                <action android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_MEDIA_CHANGED" />
 
-                <action
-                    android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED"/>
+                <action android:name="com.doctoror.fuckoffmusicplayer.playback.ACTION_STATE_CHANGED" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/appwidget_info_single_row"/>
+                android:resource="@xml/appwidget_info_single_row" />
         </receiver>
 
-        <service android:name=".presentation.media.browser.MediaBrowserServiceImpl"
-            tools:ignore="ExportedService">
+        <service
+            android:name=".presentation.media.browser.MediaBrowserServiceImpl"
+            android:exported="true">
+
             <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService"/>
+                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
 
