@@ -15,17 +15,19 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media;
 
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
+
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,9 +50,9 @@ public final class MediaStoreMediaProvider implements MediaProvider {
     @Override
     @NonNull
     public Observable<List<Media>> load(@Nullable final String selection,
-            @Nullable final String[] selectionArgs,
-            @Nullable final String orderBy,
-            @Nullable final Integer limit) {
+                                        @Nullable final String[] selectionArgs,
+                                        @Nullable final String orderBy,
+                                        @Nullable final Integer limit) {
         return load(MediaQuery.CONTENT_URI, selection, selectionArgs, orderBy, limit);
     }
 
@@ -66,10 +68,10 @@ public final class MediaStoreMediaProvider implements MediaProvider {
 
     @NonNull
     public Observable<List<Media>> load(@NonNull final Uri contentUri,
-            @Nullable final String selection,
-            @Nullable final String[] selectionArgs,
-            @Nullable final String orderBy,
-            @Nullable final Integer limit) {
+                                        @Nullable final String selection,
+                                        @Nullable final String[] selectionArgs,
+                                        @Nullable final String orderBy,
+                                        @Nullable final Integer limit) {
         return Observable.fromCallable(
                 () -> loadMediaList(contentUri, selection, selectionArgs, orderBy, limit));
     }
@@ -77,10 +79,10 @@ public final class MediaStoreMediaProvider implements MediaProvider {
     @NonNull
     @WorkerThread
     private List<Media> loadMediaList(@NonNull final Uri contentUri,
-            @Nullable final String selection,
-            @Nullable final String[] selectionArgs,
-            @Nullable final String orderBy,
-            @Nullable final Integer limit) {
+                                      @Nullable final String selection,
+                                      @Nullable final String[] selectionArgs,
+                                      @Nullable final String orderBy,
+                                      @Nullable final Integer limit) {
         List<Media> result = null;
 
         final StringBuilder order = new StringBuilder(128);
@@ -121,15 +123,30 @@ public final class MediaStoreMediaProvider implements MediaProvider {
             data = null;
         }
 
+        final long id = c.getLong(MediaQuery.COLUMN_ID);
+
         return new Media(
-                c.getLong(MediaQuery.COLUMN_ID),
+                id,
                 data,
                 c.getString(MediaQuery.COLUMN_TITLE),
                 c.getLong(MediaQuery.COLUMN_DURATION),
                 c.getString(MediaQuery.COLUMN_ARTIST),
                 c.getString(MediaQuery.COLUMN_ALBUM),
                 c.getLong(MediaQuery.COLUMN_ALBUM_ID),
-                c.getString(MediaQuery.COLUMN_ALBUM_ART),
+                getAlbumArtUri(id, c),
                 c.getInt(MediaQuery.COLUMN_TRACK));
+    }
+
+    private static String getAlbumArtUri(
+            final long albumId,
+            @NonNull final Cursor cursor
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return ContentUris.withAppendedId(
+                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                    albumId).toString();
+        } else {
+            return cursor.getString(MediaQuery.COLUMN_ALBUM_ART_LEGACY);
+        }
     }
 }

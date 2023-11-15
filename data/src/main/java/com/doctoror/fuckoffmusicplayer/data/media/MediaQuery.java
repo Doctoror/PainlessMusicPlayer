@@ -15,10 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media;
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
 /**
  * Parameters for querying {@link Media}
@@ -35,9 +36,9 @@ final class MediaQuery {
     static final int COLUMN_ALBUM_ID = 5;
     static final int COLUMN_DURATION = 6;
     static final int COLUMN_DATA = 7;
-    static final int COLUMN_ALBUM_ART = 8;
+    static final int COLUMN_ALBUM_ART_LEGACY = 8;
 
-    static final String[] PROJECTION = {
+    private static final String[] PROJECTION_LEGACY = {
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TRACK,
             MediaStore.Audio.Media.TITLE,
@@ -49,6 +50,27 @@ final class MediaQuery {
             "(SELECT _data FROM album_art WHERE album_art.album_id=audio.album_id) AS "
                     + MediaStore.Audio.Albums.ALBUM_ART
     };
+
+    private static final String[] PROJECTION_API_LEVEL_29 = {
+            MediaStore.Audio.Media._ID,
+            MediaStore.Audio.Media.TRACK,
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.ALBUM,
+            MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.DURATION,
+            MediaStore.Audio.Media.DATA
+    };
+
+    static final String[] PROJECTION;
+
+    static {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            PROJECTION = PROJECTION_API_LEVEL_29;
+        } else {
+            PROJECTION = PROJECTION_LEGACY;
+        }
+    }
 
     private MediaQuery() {
         throw new UnsupportedOperationException();
