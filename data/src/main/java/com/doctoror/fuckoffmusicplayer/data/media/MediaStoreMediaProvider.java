@@ -78,30 +78,26 @@ public final class MediaStoreMediaProvider implements MediaProvider {
 
     @NonNull
     @WorkerThread
-    private List<Media> loadMediaList(@NonNull final Uri contentUri,
+    private List<Media> loadMediaList(@NonNull Uri contentUri,
                                       @Nullable final String selection,
                                       @Nullable final String[] selectionArgs,
                                       @Nullable final String orderBy,
                                       @Nullable final Integer limit) {
         List<Media> result = null;
 
-        final StringBuilder order = new StringBuilder(128);
-        if (orderBy != null) {
-            order.append(orderBy);
-        }
-
         if (limit != null) {
-            if (order.length() == 0) {
-                throw new IllegalArgumentException("Cannot use LIMIT without ORDER BY");
-            }
-            order.append(" LIMIT ").append(limit);
+            contentUri = contentUri
+                    .buildUpon()
+                    .appendQueryParameter("LIMIT", limit.toString())
+                    .build();
         }
 
         final Cursor c = mContentResolver.query(contentUri,
                 MediaQuery.PROJECTION,
                 selection,
                 selectionArgs,
-                order.length() == 0 ? null : order.toString());
+                orderBy
+        );
         if (c != null) {
             result = new ArrayList<>(c.getCount());
             for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {

@@ -17,6 +17,7 @@ package com.doctoror.fuckoffmusicplayer.data.albums;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,7 +65,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @Override
     public Observable<Cursor> loadForArtist(final long artistId) {
-        final RxCursorLoader.Query query = newParamsBuilder()
+        final RxCursorLoader.Query query = newParamsBuilder(null)
                 .setContentUri(MediaStore.Audio.Artists.Albums.getContentUri(
                         MediaStoreVolumeNames.EXTERNAL, artistId))
                 .setSelection(MediaStore.Audio.Media.IS_MUSIC + "!=0")
@@ -76,7 +77,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @Override
     public Observable<Cursor> loadForGenre(final long genreId) {
-        final RxCursorLoader.Query query = newParamsBuilder()
+        final RxCursorLoader.Query query = newParamsBuilder(null)
                 .setSelection(
                         "album_info._id IN (SELECT audio_meta.album_id FROM audio_meta, audio_genres_map "
                                 + "WHERE audio_genres_map.audio_id=audio_meta._id AND audio_genres_map.genre_id="
@@ -99,12 +100,10 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     @NonNull
     private RxCursorLoader.Query newRecentlyPlayedAlbumsQuery(@Nullable final Integer limit) {
         final long[] recentlyPlayedAlbums = mRecentActivityManager.getRecentlyPlayedAlbums();
-        String sortOrder = SelectionUtils.orderByLongField(MediaStore.Audio.Albums._ID,
+        final String sortOrder = SelectionUtils.orderByLongField(MediaStore.Audio.Albums._ID,
                 recentlyPlayedAlbums);
-        if (!TextUtils.isEmpty(sortOrder) && limit != null) {
-            sortOrder += " LIMIT " + limit;
-        }
-        final RxCursorLoader.Query.Builder query = newParamsBuilder();
+
+        final RxCursorLoader.Query.Builder query = newParamsBuilder(limit);
         query
                 .setSelection(SelectionUtils.inSelectionLong(MediaStore.Audio.Albums._ID,
                         recentlyPlayedAlbums))
@@ -152,7 +151,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     }
 
     private Observable<Cursor> loadAlbumsOrderedByIds(@NonNull final Collection<Long> ids) {
-        final RxCursorLoader.Query.Builder query = newParamsBuilder()
+        final RxCursorLoader.Query.Builder query = newParamsBuilder(null)
                 .setSelection(SelectionUtils.inSelection(MediaStore.Audio.Albums._ID, ids))
                 .setSortOrder(SelectionUtils.orderByField(MediaStore.Audio.Albums._ID, ids));
         return RxCursorLoader.create(mContentResolver, query.create());
@@ -166,7 +165,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
      */
     @NonNull
     private static RxCursorLoader.Query newParams(@Nullable final String searchFilter) {
-        return newParamsBuilder()
+        return newParamsBuilder(null)
                 .setSelection(searchFilterToSelection(searchFilter))
                 .create();
     }
@@ -184,9 +183,17 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
      * @return params Builder
      */
     @NonNull
-    private static RxCursorLoader.Query.Builder newParamsBuilder() {
+    private static RxCursorLoader.Query.Builder newParamsBuilder(@Nullable final Integer limit) {
+        Uri contentUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        if (limit != null) {
+            contentUri = contentUri
+                    .buildUpon()
+                    .appendQueryParameter("LIMIT", limit.toString())
+                    .build();
+        }
+
         return new RxCursorLoader.Query.Builder()
-                .setContentUri(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI)
+                .setContentUri(contentUri)
                 .setProjection(new String[]{
                         MediaStore.Audio.Albums._ID,
                         MediaStore.Audio.Albums.ALBUM,
