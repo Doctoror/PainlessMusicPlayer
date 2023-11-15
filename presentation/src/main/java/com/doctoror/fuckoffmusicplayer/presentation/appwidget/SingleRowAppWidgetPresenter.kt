@@ -28,9 +28,10 @@ import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity
 import com.doctoror.fuckoffmusicplayer.presentation.playback.PlaybackServiceIntentFactory
 
 class SingleRowAppWidgetPresenter(
-        private val albumThumbHolder: AlbumThumbHolder,
-        private val currentMediaProvider: CurrentMediaProvider,
-        private val viewModel: SingleRowAppWidgetViewModel) {
+    private val albumThumbHolder: AlbumThumbHolder,
+    private val currentMediaProvider: CurrentMediaProvider,
+    private val viewModel: SingleRowAppWidgetViewModel
+) {
 
     fun bindState(context: Context, state: PlaybackState) {
         bindAppearance(context, state)
@@ -98,16 +99,20 @@ class SingleRowAppWidgetPresenter(
     private fun setCoverAction(context: Context, hasMedia: Boolean) {
         val coverIntent = if (hasMedia) {
             Henson.with(context)
-                    .gotoNowPlayingActivity()
-                    .hasCoverTransition(true)
-                    .hasListViewTransition(false)
-                    .build()
+                .gotoNowPlayingActivity()
+                .hasCoverTransition(true)
+                .hasListViewTransition(false)
+                .build()
         } else {
             Intent(context, HomeActivity::class.java)
         }
 
         viewModel.coverAction = PendingIntent.getActivity(
-                context, 0, coverIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            context,
+            0,
+            coverIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun generatePlayAnythingIntent(context: Context): PendingIntent {
@@ -117,6 +122,10 @@ class SingleRowAppWidgetPresenter(
 
     private fun serviceIntent(context: Context, intent: Intent): PendingIntent {
         return PendingIntent.getService(
-                context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 }

@@ -108,7 +108,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
                 .build();
 
         return PendingIntent.getActivity(context, 4, contentIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     @NonNull
@@ -140,7 +140,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
                                    @NonNull final PlaybackState state) {
         final PendingIntent middleActionIntent = PendingIntent.getService(context, 3,
                 PlaybackServiceIntentFactory.intentPlayPause(context),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         if (state == PlaybackState.STATE_PLAYING) {
             b.addAction(R.drawable.ic_pause_white_24dp, context.getText(R.string.Pause),
@@ -170,7 +170,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
                                       @NonNull final NotificationCompat.Builder b) {
         final PendingIntent prevIntent = PendingIntent.getService(context, 1,
                 PlaybackServiceIntentFactory.intentPrev(context),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         b.addAction(R.drawable.ic_fast_rewind_white_24dp,
                 context.getText(R.string.Previous), prevIntent);
@@ -180,7 +180,7 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
                                       @NonNull final NotificationCompat.Builder b) {
         final PendingIntent nextIntent = PendingIntent.getService(context, 2,
                 PlaybackServiceIntentFactory.intentNext(context),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         b.addAction(R.drawable.ic_fast_forward_white_24dp, context.getText(R.string.Next),
                 nextIntent);

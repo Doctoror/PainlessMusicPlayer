@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media.session;
 
-import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
@@ -25,6 +23,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
 
 public final class MediaSessionFactoryImpl implements MediaSessionFactory {
 
@@ -50,7 +50,7 @@ public final class MediaSessionFactoryImpl implements MediaSessionFactory {
                 context,
                 1,
                 new Intent(context, MediaButtonReceiver.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     @NonNull
@@ -62,7 +62,8 @@ public final class MediaSessionFactoryImpl implements MediaSessionFactory {
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mediaSession.setSessionActivity(PendingIntent.getActivity(context, 1,
-                new Intent(context, sessionActivityClass), PendingIntent.FLAG_UPDATE_CURRENT));
+                new Intent(context, sessionActivityClass),
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         mediaSession.setActive(true);
         return mediaSession;
     }
