@@ -2,10 +2,11 @@ apply plugin: 'com.android.library'
 
 android {
 
+    namespace "com.alex.siriwaveview"
+
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
     compileSdkVersion globalConfiguration["androidCompileSdkVersion"]
-    buildToolsVersion globalConfiguration["androidBuildToolsVersion"]
 
     defaultConfig {
         minSdkVersion globalConfiguration["androidMinSdkVersion"]

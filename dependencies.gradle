@@ -7,10 +7,9 @@ allprojects {
 }
 
 ext {
-    androidBuildToolsVersion = "28.0.3"
     androidMinSdkVersion = 16
     androidTargetSdkVersion = 28
-    androidCompileSdkVersion = 28
+    androidCompileSdkVersion = 33
 
     aspectRatioLayoutVersion = '1.0.3'
 

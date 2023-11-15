@@ -1,14 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
 
 android {
+
+    namespace "com.doctoror.fuckoffmusicplayer"
 
     def globalConfiguration = rootProject.extensions.getByName("ext")
 
     compileSdkVersion globalConfiguration["androidCompileSdkVersion"]
-    buildToolsVersion globalConfiguration["androidBuildToolsVersion"]
 
     defaultConfig {
         applicationId "com.doctoror.fuckoffmusicplayer"
@@ -20,6 +21,7 @@ android {
         versionName "1.0.0"
 
         resConfigs "en"
+        multiDexEnabled true
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -28,18 +30,23 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+        dataBinding = true
+    }
+
     lintOptions {
         checkAllWarnings true
         disable 'IconMissingDensityFolder'
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    androidExtensions {
-        experimental = true
     }
 
     signingConfigs {
@@ -94,10 +101,6 @@ android {
         density {
             enable true
         }
-    }
-
-    dataBinding {
-        enabled = true
     }
 }
 

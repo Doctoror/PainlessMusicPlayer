@@ -102,7 +102,7 @@ class PlaylistsFragment : LibraryListFragment() {
         if (noTracksToast == null) {
             noTracksToast = Toast.makeText(activity, R.string.The_queue_is_empty, Toast.LENGTH_LONG)
         }
-        if (noTracksToast!!.view.windowToken == null) {
+        if (noTracksToast!!.view?.windowToken == null) {
             noTracksToast!!.show()
         }
     }

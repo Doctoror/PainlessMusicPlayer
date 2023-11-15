@@ -34,8 +34,8 @@ final class LivePlaylistViewHolder extends RecyclerView.ViewHolder {
 
     LivePlaylistViewHolder(@NonNull final View itemView) {
         super(itemView);
-        icon = itemView.findViewById(R.id.icon);
-        text = itemView.findViewById(R.id.text);
+        icon = itemView.findViewById(android.R.id.icon);
+        text = itemView.findViewById(android.R.id.text1);
         progress = itemView.findViewById(R.id.progress);
     }
 }

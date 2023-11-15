@@ -35,7 +35,6 @@ import android.widget.TextView;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.doctoror.fuckoffmusicplayer.R;
 
 import java.util.Locale;
 
@@ -189,7 +188,7 @@ public final class BindingAdapters {
         };
 
         final int[] colors = new int[]{
-                ThemeUtils.getColor(context.getTheme(), R.attr.colorAccent),
+                ThemeUtils.getColor(context.getTheme(), android.R.attr.colorAccent),
                 tintNormal
         };
 
