@@ -16,7 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import android.content.ContentResolver;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.data.albums.MediaStoreAlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.data.artists.MediaStoreArtistsProvider;

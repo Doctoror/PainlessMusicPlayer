@@ -17,8 +17,8 @@ package com.doctoror.fuckoffmusicplayer.presentation.library.albums
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
@@ -83,8 +83,11 @@ class AlbumsFragment : LibraryListFragment() {
     }
 
     private fun applyLayoutManager(recyclerView: RecyclerView) {
-        recyclerView.layoutManager = GridLayoutManager(activity,
-                resources.getInteger(R.integer.albums_grid_columns))
+        recyclerView.layoutManager =
+            GridLayoutManager(
+                activity,
+                resources.getInteger(R.integer.albums_grid_columns)
+            )
     }
 
     private fun onAlbumDeleteClick(albumId: Long, name: String?) {

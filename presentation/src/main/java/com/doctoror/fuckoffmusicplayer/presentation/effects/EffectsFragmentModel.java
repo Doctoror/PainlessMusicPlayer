@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.effects;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableInt;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableInt;
 
 public final class EffectsFragmentModel {
 

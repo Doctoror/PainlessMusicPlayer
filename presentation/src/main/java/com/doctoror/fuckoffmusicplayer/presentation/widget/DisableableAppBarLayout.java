@@ -16,11 +16,13 @@
 package com.doctoror.fuckoffmusicplayer.presentation.widget;
 
 import android.content.Context;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
 
 /**
  * {@link AppBarLayout} that can disable collapsing.

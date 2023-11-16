@@ -16,8 +16,9 @@
 package com.doctoror.fuckoffmusicplayer.presentation.effects;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.f2prateek.dart.Dart;

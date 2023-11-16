@@ -15,8 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
-import android.support.annotation.NonNull;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.di.scopes.ActivityScope;
 import com.doctoror.fuckoffmusicplayer.presentation.mvvm.ParcelableObservableInt;

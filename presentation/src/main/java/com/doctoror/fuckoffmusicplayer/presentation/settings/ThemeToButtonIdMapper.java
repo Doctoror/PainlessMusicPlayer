@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.settings;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme;

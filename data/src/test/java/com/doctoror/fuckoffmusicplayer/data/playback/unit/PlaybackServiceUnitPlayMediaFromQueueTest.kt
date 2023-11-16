@@ -21,9 +21,12 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Test
-import java.lang.IllegalArgumentException
 
 class PlaybackServiceUnitPlayMediaFromQueueTest {
 

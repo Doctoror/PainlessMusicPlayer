@@ -18,8 +18,9 @@ package com.doctoror.fuckoffmusicplayer.data.media;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.commons.util.Log;

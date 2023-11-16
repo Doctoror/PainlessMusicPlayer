@@ -16,10 +16,11 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library.artistalbums;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
 
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.f2prateek.dart.Dart;

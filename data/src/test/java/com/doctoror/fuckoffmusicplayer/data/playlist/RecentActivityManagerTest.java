@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playlist;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -23,8 +25,6 @@ import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * {@link RecentActivityManagerImpl} test

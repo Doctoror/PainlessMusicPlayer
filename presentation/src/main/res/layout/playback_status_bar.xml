@@ -25,13 +25,13 @@
             type="com.doctoror.fuckoffmusicplayer.presentation.home.PlaybackStatusBarModel"/>
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="?attr/selectableItemBackground">
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline50percent"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -106,6 +106,6 @@
             tools:text="Artist"
             tools:ignore="RtlSymmetry"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

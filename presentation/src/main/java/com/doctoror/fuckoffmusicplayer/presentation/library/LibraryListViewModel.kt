@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
-import android.databinding.ObservableField
-import android.databinding.ObservableInt
-import android.support.annotation.VisibleForTesting
-import android.support.v7.widget.RecyclerView
+import androidx.annotation.VisibleForTesting
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
+import androidx.recyclerview.widget.RecyclerView
 
 class LibraryListViewModel {
 

@@ -15,20 +15,20 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
+import static org.junit.Assert.assertArrayEquals;
+
+import android.content.Context;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import android.content.Context;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import static org.junit.Assert.*;
 
 /**
  * {@link FileUtils} test

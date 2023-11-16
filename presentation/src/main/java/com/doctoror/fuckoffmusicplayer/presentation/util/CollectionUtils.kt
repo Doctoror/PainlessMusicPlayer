@@ -15,8 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.util
 
-import java.util.*
-
 object CollectionUtils {
 
     /**

@@ -18,9 +18,10 @@ package com.doctoror.fuckoffmusicplayer.presentation.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import androidx.core.view.ViewCompat;
 
 /**
  * Like {@link android.support.design.internal.ScrimInsetsFrameLayout}, but does not affect

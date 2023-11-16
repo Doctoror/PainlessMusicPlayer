@@ -17,7 +17,8 @@ package com.doctoror.fuckoffmusicplayer.di;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.R;

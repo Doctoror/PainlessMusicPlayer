@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.settings
 
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme
 import org.junit.Assert.assertEquals
 import org.junit.Test

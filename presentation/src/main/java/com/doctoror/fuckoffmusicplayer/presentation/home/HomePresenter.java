@@ -15,10 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.home;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.support.annotation.NonNull;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.doctoror.fuckoffmusicplayer.di.scopes.ActivityScope;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;

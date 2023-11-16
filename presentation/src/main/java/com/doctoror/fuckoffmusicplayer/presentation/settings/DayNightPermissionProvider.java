@@ -18,8 +18,9 @@ package com.doctoror.fuckoffmusicplayer.presentation.settings;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import javax.inject.Inject;
 

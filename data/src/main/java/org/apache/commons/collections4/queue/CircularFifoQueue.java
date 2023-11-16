@@ -16,7 +16,9 @@
  */
 package org.apache.commons.collections4.queue;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+
+import org.apache.commons.collections4.BoundedCollection;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -29,8 +31,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-
-import org.apache.commons.collections4.BoundedCollection;
 
 /**
  * CircularFifoQueue is a first-in first-out queue with a fixed size that

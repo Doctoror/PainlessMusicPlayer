@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.mvvm;
 
-import android.databinding.Observable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.databinding.Observable;
 
 public abstract class OnPropertyChangedCallback<T extends Observable>
         extends Observable.OnPropertyChangedCallback {

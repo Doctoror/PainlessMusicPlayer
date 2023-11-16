@@ -16,8 +16,9 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.fuckoffmusicplayer.data.media.session.MediaSessionCallback;

@@ -20,7 +20,11 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.Observable
 import org.junit.Test
 

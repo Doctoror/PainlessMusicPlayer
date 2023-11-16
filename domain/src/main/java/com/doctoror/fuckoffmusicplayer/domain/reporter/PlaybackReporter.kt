@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.reporter
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 

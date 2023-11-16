@@ -15,9 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media;
 
-import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
+import androidx.annotation.NonNull;
 
-import android.support.annotation.NonNull;
+import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
 
 import java.io.IOException;
 

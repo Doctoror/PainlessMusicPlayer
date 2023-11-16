@@ -46,7 +46,7 @@ dependencies {
 
     implementation d.kotlin
 
-    implementation d.rxJava
+    implementation d.media
 
-    implementation d.supportV4
+    implementation d.rxJava
 }

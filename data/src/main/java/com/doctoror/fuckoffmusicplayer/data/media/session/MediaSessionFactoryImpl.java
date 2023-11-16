@@ -20,9 +20,10 @@ import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import androidx.annotation.NonNull;
+import androidx.media.session.MediaButtonReceiver;
 
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionFactory;
 

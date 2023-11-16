@@ -16,8 +16,9 @@
 package com.doctoror.fuckoffmusicplayer.data.reporter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;

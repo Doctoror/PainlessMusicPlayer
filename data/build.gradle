@@ -16,7 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     lintOptions {
@@ -62,10 +62,10 @@ dependencies {
 
     implementation d.kotlin
 
+    implementation d.media
+
     implementation d.protobuf
 
     implementation d.rxCursorLoader
     implementation d.rxJava
-
-    implementation d.supportV4
 }

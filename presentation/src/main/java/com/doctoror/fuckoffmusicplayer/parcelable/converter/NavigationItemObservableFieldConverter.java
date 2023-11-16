@@ -15,10 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.parcelable.converter;
 
-import android.databinding.ObservableField;
 import android.os.Parcel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.ObservableField;
 
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationItem;
 

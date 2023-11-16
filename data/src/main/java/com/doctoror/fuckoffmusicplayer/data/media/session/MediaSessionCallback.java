@@ -15,18 +15,19 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media.session;
 
+import android.os.Bundle;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.SearchPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderMediaBrowser;
-
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.text.TextUtils;
 
 import io.reactivex.schedulers.Schedulers;
 

@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.initializer;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;

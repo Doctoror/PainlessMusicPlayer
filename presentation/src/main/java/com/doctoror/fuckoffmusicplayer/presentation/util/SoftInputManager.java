@@ -16,9 +16,10 @@
 package com.doctoror.fuckoffmusicplayer.presentation.util;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import androidx.annotation.NonNull;
 
 /**
  * Soft input manager

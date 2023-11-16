@@ -18,8 +18,9 @@ package com.doctoror.fuckoffmusicplayer.data.effects;
 import android.content.Context;
 import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.commons.reactivex.SchedulersProvider;
 import com.doctoror.commons.util.Log;

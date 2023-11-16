@@ -15,13 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media;
 
-import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 
 import java.io.IOException;
 

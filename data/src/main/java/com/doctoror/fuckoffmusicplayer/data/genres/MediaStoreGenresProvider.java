@@ -15,16 +15,17 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.genres;
 
-import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
-import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
-import com.doctoror.rxcursorloader.RxCursorLoader;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
+import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider;
+import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import io.reactivex.Observable;
 

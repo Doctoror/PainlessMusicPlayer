@@ -16,7 +16,6 @@
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
-import java.util.*
 
 /**
  * Playback service control

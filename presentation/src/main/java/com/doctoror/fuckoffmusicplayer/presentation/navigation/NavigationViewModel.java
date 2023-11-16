@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.navigation;
 
-import android.databinding.ObservableField;
+import androidx.databinding.ObservableField;
 
 import com.doctoror.fuckoffmusicplayer.di.scopes.ActivityScope;
 import com.doctoror.fuckoffmusicplayer.parcelable.converter.NavigationItemObservableFieldConverter;

@@ -19,10 +19,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.res.Resources
 import android.os.Bundle
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media

@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.util;
 
+import static org.junit.Assert.assertNotNull;
+
 import android.content.res.ColorStateList;
 
 import org.junit.Test;
@@ -22,8 +24,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * {@link ThemeUtils} test

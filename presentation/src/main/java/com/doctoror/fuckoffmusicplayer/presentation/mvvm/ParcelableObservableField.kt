@@ -15,9 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.mvvm
 
-import android.databinding.ObservableField
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.databinding.ObservableField
 
 class ParcelableObservableField<T : Parcelable>(value: T? = null)
     : ObservableField<T>(value), Parcelable {

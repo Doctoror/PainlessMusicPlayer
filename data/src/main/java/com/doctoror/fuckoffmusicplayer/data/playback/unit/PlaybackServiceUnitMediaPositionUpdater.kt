@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData

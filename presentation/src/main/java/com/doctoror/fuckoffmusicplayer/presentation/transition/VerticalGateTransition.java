@@ -20,11 +20,12 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.os.Build;
-import android.support.annotation.IdRes;
 import android.transition.Transition;
 import android.transition.TransitionValues;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.IdRes;
 
 import com.doctoror.fuckoffmusicplayer.R;
 

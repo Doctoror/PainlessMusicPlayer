@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder

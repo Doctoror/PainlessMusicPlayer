@@ -1,8 +1,10 @@
 package com.doctoror.fuckoffmusicplayer.presentation.util
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.util.*
+import java.util.LinkedList
 
 class CollectionUtilsTest {
 

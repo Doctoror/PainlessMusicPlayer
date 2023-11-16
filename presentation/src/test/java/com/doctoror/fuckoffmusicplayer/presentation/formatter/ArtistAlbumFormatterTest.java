@@ -15,6 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.formatter;
 
+import static org.junit.Assert.assertEquals;
+
 import android.content.Context;
 
 import com.doctoror.fuckoffmusicplayer.R;
@@ -24,8 +26,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * {@link ArtistAlbumFormatter} test

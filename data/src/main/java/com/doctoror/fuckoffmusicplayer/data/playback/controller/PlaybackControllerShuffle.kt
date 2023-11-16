@@ -21,7 +21,6 @@ import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
-import java.util.*
 
 class PlaybackControllerShuffle(
         playbackData: PlaybackData,

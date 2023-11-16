@@ -16,10 +16,10 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums
 
 import android.app.Activity
-import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.ActivityOptionsCompat
+import androidx.fragment.app.Fragment
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
@@ -33,8 +33,8 @@ import io.reactivex.schedulers.Schedulers
  * Handles album click from adapter view
  */
 class AlbumClickHandler(
-        private val host: Fragment,
-        private val queueProvider: QueueProviderAlbums) {
+    private val host: Fragment,
+    private val queueProvider: QueueProviderAlbums) {
 
     private var disposable: Disposable? = null
 

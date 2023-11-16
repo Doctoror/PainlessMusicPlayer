@@ -15,14 +15,14 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.initializer;
 
+import androidx.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceControl;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.MediaIdPlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-
-import android.support.annotation.NonNull;
 
 import java.util.List;
 

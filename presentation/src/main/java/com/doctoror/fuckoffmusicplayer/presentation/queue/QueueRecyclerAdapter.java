@@ -16,14 +16,15 @@
 package com.doctoror.fuckoffmusicplayer.presentation.queue;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.UiThread;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;

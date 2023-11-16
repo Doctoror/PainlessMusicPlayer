@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.parcelable.converter
 
-import android.databinding.ObservableField
 import android.os.Parcel
+import androidx.databinding.ObservableField
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationItem
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

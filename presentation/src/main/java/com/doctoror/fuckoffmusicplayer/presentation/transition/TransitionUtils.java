@@ -18,8 +18,9 @@ package com.doctoror.fuckoffmusicplayer.presentation.transition;
 import android.annotation.TargetApi;
 import android.app.SharedElementCallback;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 

@@ -19,7 +19,6 @@ import android.database.Cursor
 import com.doctoror.fuckoffmusicplayer.domain.albums.COLUMN_ALBUM
 import com.doctoror.fuckoffmusicplayer.domain.albums.COLUMN_ALBUM_ART
 import com.doctoror.fuckoffmusicplayer.domain.albums.COLUMN_ID
-import java.util.*
 
 class AlbumItemsFactory {
 

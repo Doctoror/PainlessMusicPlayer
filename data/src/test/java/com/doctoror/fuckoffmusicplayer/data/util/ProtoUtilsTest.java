@@ -15,6 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import android.content.Context;
 
 import com.doctoror.fuckoffmusicplayer.data.settings.nano.SettingsProto;
@@ -30,10 +34,6 @@ import org.robolectric.annotation.Config;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 /**
  * {@link ProtoUtils} test

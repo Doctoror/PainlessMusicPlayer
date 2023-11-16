@@ -15,11 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
-import com.doctoror.fuckoffmusicplayer.data.util.RandomHolder;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * {@link RandomHolder} test

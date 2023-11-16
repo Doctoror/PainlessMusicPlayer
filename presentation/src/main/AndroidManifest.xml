@@ -20,12 +20,16 @@
     <!-- For playback -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
     <!-- For querying MediaStore -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <!-- For deleting files -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <application
@@ -122,7 +126,7 @@
             android:theme="@style/AppTheme" />
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider.album_thumbs"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -144,7 +148,7 @@
         </service>
 
         <receiver
-            android:name="android.support.v4.media.session.MediaButtonReceiver"
+            android:name="androidx.media.session.MediaButtonReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />

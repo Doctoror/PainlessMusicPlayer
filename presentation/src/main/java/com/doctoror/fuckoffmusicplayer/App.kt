@@ -16,17 +16,14 @@
 package com.doctoror.fuckoffmusicplayer
 
 import android.os.StrictMode
-import android.support.v7.app.AppCompatDelegate
-
+import androidx.appcompat.app.AppCompatDelegate
 import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.di.DaggerHolder
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings
 import com.doctoror.fuckoffmusicplayer.presentation.settings.DayNightModeMapper
-
-import javax.inject.Inject
-
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
+import javax.inject.Inject
 
 class App : DaggerApplication() {
 

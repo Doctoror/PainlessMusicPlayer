@@ -17,7 +17,7 @@ package com.doctoror.fuckoffmusicplayer.presentation.appwidget
 
 import android.app.PendingIntent
 import android.graphics.Bitmap
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import com.doctoror.fuckoffmusicplayer.R
 
 class SingleRowAppWidgetViewModel {

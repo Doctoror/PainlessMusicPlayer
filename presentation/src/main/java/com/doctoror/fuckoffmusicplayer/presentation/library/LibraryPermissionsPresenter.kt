@@ -15,11 +15,11 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
-import android.arch.lifecycle.Lifecycle.Event.ON_START
-import android.arch.lifecycle.OnLifecycleEvent
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.Lifecycle.Event.ON_START
+import androidx.lifecycle.OnLifecycleEvent
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.base.BasePresenter

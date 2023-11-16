@@ -18,11 +18,12 @@ package com.doctoror.fuckoffmusicplayer.presentation.library.artists;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.artists.ArtistsProviderKt;

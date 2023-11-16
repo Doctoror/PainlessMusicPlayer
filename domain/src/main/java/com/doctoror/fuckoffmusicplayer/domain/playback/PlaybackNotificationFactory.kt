@@ -15,11 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media
-
 import android.app.Notification
 import android.content.Context
 import android.support.v4.media.session.MediaSessionCompat
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media
+
+const val CHANNEL_ID_PLAYBACK_STATUS = "playback_status"
 
 interface PlaybackNotificationFactory {
 

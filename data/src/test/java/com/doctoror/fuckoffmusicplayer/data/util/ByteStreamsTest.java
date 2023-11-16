@@ -15,13 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-
-import static org.junit.Assert.*;
 
 /**
  * {@link ByteStreams} test

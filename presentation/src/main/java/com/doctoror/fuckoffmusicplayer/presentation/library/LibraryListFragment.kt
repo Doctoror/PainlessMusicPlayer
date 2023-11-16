@@ -16,13 +16,13 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.annotation.SuppressLint
-import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
 import android.view.*
+import androidx.appcompat.widget.SearchView
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.doctoror.commons.reactivex.SchedulersProviderImpl
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
@@ -33,8 +33,9 @@ import com.doctoror.fuckoffmusicplayer.presentation.util.SearchViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.util.SoftInputManager
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener
-import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.BehaviorProcessor
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.parcel.Parcelize
 import java.util.concurrent.TimeUnit
 
@@ -45,6 +46,8 @@ abstract class LibraryListFragment : BaseFragment() {
 
     private val searchQueryDropTimeoutMs = 400L
     private val keyInstanceState = "LibraryListFragment.INSTANCE_STATE"
+
+    private val menuSubscriptionsDisposables = CompositeDisposable()
 
     private val searchProcessor = BehaviorProcessor.create<String>()
 
@@ -137,10 +140,25 @@ abstract class LibraryListFragment : BaseFragment() {
             searchView.setOnSearchClickListener { _ -> searchIconified = false }
             searchView.isIconified = searchIconified
 
-            RxSearchView
-                .queryTextChanges(searchView)
+            val qtcSubject = PublishSubject.create<String>()
+
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    // nothing
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    qtcSubject.onNext(newText)
+                    return true
+                }
+            })
+
+            menuSubscriptionsDisposables.clear()
+            menuSubscriptionsDisposables.add(qtcSubject
                 .debounce(searchQueryDropTimeoutMs, TimeUnit.MILLISECONDS)
-                .subscribe { t -> searchProcessor.onNext(t.toString()) }
+                .subscribe { t -> searchProcessor.onNext(t.toString()) })
 
             searchView.clearFocus()
             binding.recyclerView.requestFocus()
@@ -186,7 +204,8 @@ abstract class LibraryListFragment : BaseFragment() {
     }
 
     protected open fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView.layoutManager =
+            LinearLayoutManager(activity)
     }
 
     override fun onStop() {
@@ -198,6 +217,7 @@ abstract class LibraryListFragment : BaseFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        menuSubscriptionsDisposables.clear() //TODO check if correct lifecycle
         lifecycle.removeObserver(presenter)
     }
 

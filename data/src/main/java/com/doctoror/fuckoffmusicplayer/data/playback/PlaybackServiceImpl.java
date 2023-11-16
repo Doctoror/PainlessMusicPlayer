@@ -15,10 +15,17 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback;
 
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_ERROR;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_IDLE;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_LOADING;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PAUSED;
+import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING;
+
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleOwner;
@@ -50,12 +57,6 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_ERROR;
-import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_IDLE;
-import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_LOADING;
-import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PAUSED;
-import static com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING;
 
 public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements PlaybackService {
 

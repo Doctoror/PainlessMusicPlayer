@@ -15,10 +15,10 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.player;
 
+import androidx.annotation.NonNull;
+
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerFactory;
-
-import android.support.annotation.NonNull;
 
 public final class MediaPlayerFactoryImpl implements MediaPlayerFactory {
 

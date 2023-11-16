@@ -16,7 +16,8 @@
 package com.doctoror.fuckoffmusicplayer.di;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 /**
  * Dagger2 {@link MainComponent} holder

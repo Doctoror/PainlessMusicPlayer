@@ -18,7 +18,11 @@ package com.doctoror.fuckoffmusicplayer.data.playback.unit
 import android.content.Context
 import android.media.AudioManager
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
-import com.doctoror.fuckoffmusicplayer.data.media.compat.*
+import com.doctoror.fuckoffmusicplayer.data.media.compat.AudioAttributesCompat
+import com.doctoror.fuckoffmusicplayer.data.media.compat.AudioFocusRequestCompat
+import com.doctoror.fuckoffmusicplayer.data.media.compat.AudioManagerCompat
+import com.doctoror.fuckoffmusicplayer.data.media.compat.CONTENT_TYPE_MUSIC
+import com.doctoror.fuckoffmusicplayer.data.media.compat.USAGE_MEDIA
 
 class PlaybackServiceUnitAudioFocus(private val context: Context) : ServiceLifecycleObserver {
 

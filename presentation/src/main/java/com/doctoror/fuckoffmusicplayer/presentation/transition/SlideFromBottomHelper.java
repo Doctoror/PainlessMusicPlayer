@@ -17,9 +17,10 @@ package com.doctoror.fuckoffmusicplayer.presentation.transition;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewParent;
+
+import androidx.annotation.NonNull;
 
 /**
  * Helpers for animating sliding View from bottom

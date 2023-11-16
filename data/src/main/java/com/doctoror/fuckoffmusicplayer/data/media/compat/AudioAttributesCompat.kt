@@ -15,7 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media.compat
 
-import android.support.annotation.IntDef
+import androidx.annotation.IntDef
 import kotlin.annotation.AnnotationRetention.SOURCE
 
 const val USAGE_MEDIA = 1

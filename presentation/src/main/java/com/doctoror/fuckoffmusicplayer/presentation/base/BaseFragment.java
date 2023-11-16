@@ -15,9 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.base;
 
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;

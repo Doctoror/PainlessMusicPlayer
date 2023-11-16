@@ -15,11 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.util;
 
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 
 /**
  * {@link SearchView} utils
@@ -33,13 +34,13 @@ public final class SearchViewUtils {
     public static void setSearchIcon(@NonNull final SearchView searchView,
             @DrawableRes final int icon) {
         View iconView = searchView
-                .findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
+                .findViewById(androidx.appcompat.R.id.search_mag_icon);
         if (iconView instanceof ImageView) {
             ((ImageView) iconView).setImageResource(icon);
         }
 
         iconView = searchView
-                .findViewById(android.support.v7.appcompat.R.id.search_button);
+                .findViewById(androidx.appcompat.R.id.search_button);
         if (iconView instanceof ImageView) {
             ((ImageView) iconView).setImageResource(icon);
         }

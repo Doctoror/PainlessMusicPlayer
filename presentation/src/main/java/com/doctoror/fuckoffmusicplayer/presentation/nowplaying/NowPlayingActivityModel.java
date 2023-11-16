@@ -15,12 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.nowplaying;
 
-import android.databinding.BaseObservable;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableInt;
-import android.databinding.ObservableLong;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableInt;
+import androidx.databinding.ObservableLong;
 
 import com.doctoror.fuckoffmusicplayer.domain.playback.RepeatMode;
 

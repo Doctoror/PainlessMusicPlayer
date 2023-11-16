@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.presentation.rxpermissions
 
 import android.app.Activity
-import android.support.annotation.MainThread
+import androidx.annotation.MainThread
 import com.tbruyelle.rxpermissions2.RxPermissions
 
 class RxPermissionsProvider(private val activity: Activity) {

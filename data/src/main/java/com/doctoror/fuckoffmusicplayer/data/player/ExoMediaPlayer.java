@@ -15,48 +15,37 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.player;
 
+import static com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerKt.SESSION_ID_NOT_SET;
+
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer;
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerListener;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.util.Locale;
-
-import static com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayerKt.SESSION_ID_NOT_SET;
 
 final class ExoMediaPlayer implements MediaPlayer {
 
     private static final String TAG = "ExoMediaPlayer";
 
-    private SimpleExoPlayer exoPlayer;
+    private ExoPlayer exoPlayer;
     private DataSource.Factory dataSourceFactory;
 
     private MediaPlayerListener mediaPlayerListener;
-    private MediaSource mediaSource;
 
     private Uri loadingMediaUri;
     private Uri loadedMediaUri;
@@ -72,12 +61,8 @@ final class ExoMediaPlayer implements MediaPlayer {
 
     @Override
     public void init(@NonNull final Context context) {
-        final TrackSelector trackSelector = new DefaultTrackSelector();
-
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(
-                new DefaultRenderersFactory(context), trackSelector, new DefaultLoadControl());
+        exoPlayer = new ExoPlayer.Builder(context).build();
         exoPlayer.addListener(mEventListener);
-        exoPlayer.addAudioDebugListener(mAudioRendererEventListener);
 
         dataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Painless Music Player"));
@@ -85,16 +70,13 @@ final class ExoMediaPlayer implements MediaPlayer {
 
     @Override
     public void load(@NonNull final Uri uri) {
-        if (mediaSource != null) {
-            mediaSource.releaseSource();
-        }
         if (mediaPlayerListener != null) {
             mediaPlayerListener.onLoading();
         }
-        mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
 
         loadingMediaUri = uri;
-        exoPlayer.prepare(mediaSource);
+        exoPlayer.setMediaItem(MediaItem.fromUri(uri));
+        exoPlayer.prepare();
     }
 
     @Override
@@ -126,9 +108,6 @@ final class ExoMediaPlayer implements MediaPlayer {
     @Override
     public void stop() {
         exoPlayer.stop();
-        if (mediaSource != null) {
-            mediaSource.releaseSource();
-        }
     }
 
     @Override
@@ -143,16 +122,6 @@ final class ExoMediaPlayer implements MediaPlayer {
         public void onAudioEnabled(final DecoderCounters counters) {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onAudioEnabled");
-            }
-        }
-
-        @Override
-        public void onAudioSessionId(final int audioSessionId) {
-            if (Log.logDEnabled()) {
-                Log.d(TAG, "onAudioSessionId: " + audioSessionId);
-            }
-            if (mediaPlayerListener != null) {
-                mediaPlayerListener.onAudioSessionId(audioSessionId);
             }
         }
 
@@ -174,12 +143,9 @@ final class ExoMediaPlayer implements MediaPlayer {
         }
 
         @Override
-        public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs,
-                                        long elapsedSinceLastFeedMs) {
+        public void onAudioSinkError(Exception audioSinkError) {
             if (Log.logDEnabled()) {
-                Log.d(TAG, String.format(Locale.US,
-                        "onAudioSinkUnderrun, bufferSize = '%d', bufferSizeMs = '%d', elapsedSinceLastFeedMs = '%d",
-                        bufferSize, bufferSizeMs, elapsedSinceLastFeedMs));
+                Log.d(TAG, "onAudioSinkError" + audioSinkError.getMessage());
             }
         }
 
@@ -194,20 +160,15 @@ final class ExoMediaPlayer implements MediaPlayer {
         }
     };
 
-    private final Player.EventListener mEventListener = new Player.EventListener() {
+    private final Player.Listener mEventListener = new Player.Listener() {
 
         @Override
-        public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+        public void onAudioSessionIdChanged(final int audioSessionId) {
             if (Log.logDEnabled()) {
-                Log.d(TAG, "onTimelineChanged()");
+                Log.d(TAG, "onAudioSessionId: " + audioSessionId);
             }
-        }
-
-        @Override
-        public void onTracksChanged(final TrackGroupArray trackGroups,
-                                    final TrackSelectionArray trackSelections) {
-            if (Log.logDEnabled()) {
-                Log.d(TAG, "onTracksChanged()");
+            if (mediaPlayerListener != null) {
+                mediaPlayerListener.onAudioSessionId(audioSessionId);
             }
         }
 
@@ -242,7 +203,7 @@ final class ExoMediaPlayer implements MediaPlayer {
         }
 
         @Override
-        public void onPlayerError(final ExoPlaybackException error) {
+        public void onPlayerError(PlaybackException error) {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onPlayerError: " + (error == null ? "null" : error));
             }
@@ -276,13 +237,6 @@ final class ExoMediaPlayer implements MediaPlayer {
         public void onPlaybackParametersChanged(final PlaybackParameters playbackParameters) {
             if (Log.logDEnabled()) {
                 Log.d(TAG, "onPlaybackParametersChanged: " + playbackParameters);
-            }
-        }
-
-        @Override
-        public void onSeekProcessed() {
-            if (Log.logDEnabled()) {
-                Log.d(TAG, "onSeekProcessed");
             }
         }
     };

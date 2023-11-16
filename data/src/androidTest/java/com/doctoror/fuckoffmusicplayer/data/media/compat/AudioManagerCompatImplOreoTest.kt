@@ -22,7 +22,10 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.*
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 
 /**
  * Cannot be run with Robolectric. It cannot mock [AudioFocusRequest].

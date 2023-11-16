@@ -2,8 +2,9 @@ package com.doctoror.fuckoffmusicplayer.presentation.library.genrealbums;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider;
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional.ConditionalAlbumListFragment;

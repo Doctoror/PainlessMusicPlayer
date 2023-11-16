@@ -1,11 +1,12 @@
 package com.doctoror.fuckoffmusicplayer.presentation.playback;
 
 import android.app.Service;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;

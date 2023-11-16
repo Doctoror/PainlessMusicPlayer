@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library.genres
 
 import android.os.Bundle
-import android.support.v4.app.ActivityOptionsCompat
+import androidx.core.app.ActivityOptionsCompat
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.genres.GenresProvider
 import com.doctoror.fuckoffmusicplayer.presentation.Henson

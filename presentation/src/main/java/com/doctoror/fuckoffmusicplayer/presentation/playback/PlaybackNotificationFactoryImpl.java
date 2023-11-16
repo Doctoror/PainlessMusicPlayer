@@ -9,12 +9,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.text.TextUtils;
 import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -114,7 +115,8 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     @NonNull
     private static NotificationCompat.Style createNotificationStyle(
             @NonNull final MediaSessionCompat mediaSession) {
-        return new android.support.v4.media.app.NotificationCompat.MediaStyle()
+        return new androidx.media.app.NotificationCompat
+                .MediaStyle()
                 .setMediaSession(mediaSession.getSessionToken())
                 .setShowActionsInCompactView(1, 2);
     }

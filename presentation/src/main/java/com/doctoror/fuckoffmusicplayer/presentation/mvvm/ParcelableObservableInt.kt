@@ -15,9 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.mvvm
 
-import android.databinding.ObservableInt
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.databinding.ObservableInt
 
 class ParcelableObservableInt(value: Int = 0) : ObservableInt(value), Parcelable {
 

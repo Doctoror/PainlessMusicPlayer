@@ -15,6 +15,9 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.base;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import android.annotation.SuppressLint;
 
 import org.junit.Test;
@@ -23,9 +26,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import io.reactivex.disposables.Disposable;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * {@link BaseFragment} test

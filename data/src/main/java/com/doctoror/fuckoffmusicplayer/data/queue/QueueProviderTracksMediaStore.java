@@ -15,24 +15,25 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.queue;
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
-import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
-import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreVolumeNames;
-import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
-import com.doctoror.fuckoffmusicplayer.data.util.SelectionUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
-import com.doctoror.fuckoffmusicplayer.data.util.StringUtils;
-
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+
+import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
+import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreVolumeNames;
+import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
+import com.doctoror.fuckoffmusicplayer.data.util.SelectionUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
+import com.doctoror.fuckoffmusicplayer.data.util.StringUtils;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderTracks;
 
 import java.util.ArrayList;
 import java.util.List;

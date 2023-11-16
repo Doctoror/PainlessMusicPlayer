@@ -15,13 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.recentactivity
 
-import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment
@@ -87,7 +87,8 @@ class RecentActivityFragment : BaseFragment() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         val columns = resources.getInteger(R.integer.recent_activity_grid_columns)
-        val lm = GridLayoutManager(activity, columns)
+        val lm =
+            GridLayoutManager(activity, columns)
         lm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 val adapter = recyclerView.adapter ?: return 1

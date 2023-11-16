@@ -16,7 +16,7 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.database.Cursor
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions

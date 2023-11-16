@@ -15,12 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.util;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * {@link SelectionUtils} test

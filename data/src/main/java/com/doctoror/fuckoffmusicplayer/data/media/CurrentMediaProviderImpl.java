@@ -1,7 +1,7 @@
 package com.doctoror.fuckoffmusicplayer.data.media;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;

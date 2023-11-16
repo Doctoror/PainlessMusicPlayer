@@ -15,10 +15,13 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.media;
 
+import static org.junit.Assert.assertFalse;
+
 import android.content.ContentResolver;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
@@ -31,8 +34,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.io.File;
-
-import static org.junit.Assert.assertFalse;
 
 /**
  * {@link MediaManagerMediaStore} test

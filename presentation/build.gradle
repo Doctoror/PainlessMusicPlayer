@@ -93,7 +93,6 @@ android {
             proguardFile 'proguard-rules.pro'
             proguardFile 'proguard-rx-java.pro'
             proguardFile 'proguard-support-design.pro'
-            proguardFile 'proguard-support-v7-appcompat.pro'
         }
     }
 
@@ -138,6 +137,8 @@ dependencies {
     kapt d.hensonProcessor
 
     implementation d.kotlin
+
+    implementation d.media
 
     implementation d.parceler
     kapt d.parcelerProcessor

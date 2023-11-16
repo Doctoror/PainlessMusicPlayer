@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.lifecycle.ServiceLifecycleObserver
 
 class PlaybackServiceUnitAudioNoisyManagement(

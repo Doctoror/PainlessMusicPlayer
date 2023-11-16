@@ -15,9 +15,10 @@
  */
 package com.doctoror.commons.util;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Like android {@link android.util.Log}, but can be controlled what will be logged

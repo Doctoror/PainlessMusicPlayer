@@ -20,8 +20,9 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
+
+import androidx.annotation.NonNull;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.reporter.AppWidgetPlaybackStateReporter;

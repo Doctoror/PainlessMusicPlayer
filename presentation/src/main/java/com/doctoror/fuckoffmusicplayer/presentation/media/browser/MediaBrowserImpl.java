@@ -19,14 +19,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
 import android.support.v4.media.MediaBrowserCompat.MediaItem;
-import android.support.v4.media.MediaBrowserServiceCompat.BrowserRoot;
-import android.support.v4.media.MediaBrowserServiceCompat.Result;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+import androidx.media.MediaBrowserServiceCompat.BrowserRoot;
+import androidx.media.MediaBrowserServiceCompat.Result;
 
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.media.browser.MediaBrowserConstants;

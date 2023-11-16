@@ -15,8 +15,8 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.settings;
 
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableInt;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableInt;
 
 import com.doctoror.fuckoffmusicplayer.di.scopes.ActivityScope;
 

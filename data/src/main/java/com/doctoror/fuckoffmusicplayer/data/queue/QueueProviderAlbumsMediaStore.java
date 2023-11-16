@@ -15,17 +15,18 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.queue;
 
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.doctoror.fuckoffmusicplayer.data.media.MediaStoreMediaProvider;
 import com.doctoror.fuckoffmusicplayer.data.tracks.MediaStoreTracksProvider;
-import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.data.util.SqlUtils;
-
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
+import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueConfig;
+import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 
 import java.util.ArrayList;
 import java.util.List;
