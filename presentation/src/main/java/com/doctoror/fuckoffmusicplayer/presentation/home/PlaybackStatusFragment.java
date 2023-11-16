@@ -25,7 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import com.bumptech.glide.Glide;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.PlaybackStatusBarBinding;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
@@ -34,6 +33,7 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 import com.doctoror.fuckoffmusicplayer.presentation.util.BindingAdapters;
 
 import java.util.List;
@@ -48,6 +48,9 @@ import dagger.android.support.AndroidSupportInjection;
 public final class PlaybackStatusFragment extends BaseFragment {
 
     private final PlaybackStatusBarModel model = new PlaybackStatusBarModel();
+
+    @Inject
+    AlbumArtIntoTargetApplier albumArtIntoTargetApplier;
 
     @Inject
     PlaybackData playbackData;
@@ -68,7 +71,7 @@ public final class PlaybackStatusFragment extends BaseFragment {
             @Nullable final Bundle savedInstanceState) {
         final PlaybackStatusBarBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.playback_status_bar, container, false,
-                BindingAdapters.glideBindingComponent(Glide.with(this)));
+                BindingAdapters.albumArtIntoTargetApplierComponent(albumArtIntoTargetApplier));
         binding.setModel(model);
         binding.btnPlay.setOnClickListener(v -> onBtnPlayClick());
         binding.getRoot().setOnClickListener(this::onRootClick);

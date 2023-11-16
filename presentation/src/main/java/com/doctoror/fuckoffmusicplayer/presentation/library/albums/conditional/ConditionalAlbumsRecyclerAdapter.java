@@ -17,18 +17,15 @@ package com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 
 /**
@@ -42,21 +39,17 @@ final class ConditionalAlbumsRecyclerAdapter
         void onAlbumClick(int position, long albumId, @Nullable String albumName);
     }
 
-    private final RequestOptions requestOptions = new RequestOptions()
-            .error(R.drawable.album_art_placeholder)
-            .diskCacheStrategy(DiskCacheStrategy.NONE);
-
     private final LayoutInflater mLayoutInflater;
 
-    private final RequestManager mRequestManager;
+    private final AlbumArtIntoTargetApplier mAlbumArtIntoTargetApplier;
 
     private OnAlbumClickListener mOnAlbumClickListener;
 
     ConditionalAlbumsRecyclerAdapter(
             @NonNull final Context context,
-            @NonNull final RequestManager requestManager) {
+            @NonNull final AlbumArtIntoTargetApplier albumArtIntoTargetApplier) {
         mLayoutInflater = LayoutInflater.from(context);
-        mRequestManager = requestManager;
+        mAlbumArtIntoTargetApplier = albumArtIntoTargetApplier;
     }
 
     void setOnAlbumClickListener(@Nullable final OnAlbumClickListener onAlbumClickListener) {
@@ -86,16 +79,11 @@ final class ConditionalAlbumsRecyclerAdapter
             @NonNull final Cursor cursor) {
         viewHolder.text1.setText(cursor.getString(AlbumsProviderKt.COLUMN_ALBUM));
         viewHolder.text2.setText(cursor.getString(AlbumsProviderKt.COLUMN_FIRST_YEAR));
-        final String artLocation = cursor.getString(AlbumsProviderKt.COLUMN_ALBUM_ART);
-        if (TextUtils.isEmpty(artLocation)) {
-            mRequestManager.clear(viewHolder.image);
-            viewHolder.image.setImageResource(R.drawable.album_art_placeholder);
-        } else {
-            mRequestManager
-                    .load(artLocation)
-                    .apply(requestOptions)
-                    .into(viewHolder.image);
-        }
+        mAlbumArtIntoTargetApplier.apply(
+                cursor.getString(AlbumsProviderKt.COLUMN_ALBUM_ART),
+                viewHolder.image,
+                null
+        );
     }
 
     @NonNull

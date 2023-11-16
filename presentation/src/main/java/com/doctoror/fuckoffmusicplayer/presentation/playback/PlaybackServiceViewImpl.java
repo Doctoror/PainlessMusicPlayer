@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackServiceView;
@@ -33,11 +34,15 @@ public class PlaybackServiceViewImpl implements PlaybackServiceView {
     }
 
     @Override
-    public void startForeground(@NonNull final Media media, @NonNull final PlaybackState state) {
+    public void startForeground(
+            @NonNull final AlbumArtFetcher albumArtFetcher,
+            @NonNull final Media media,
+            @NonNull final PlaybackState state
+    ) {
         final MediaSessionCompat mediaSession = mediaSessionHolder.getMediaSession();
         if (mediaSession != null) {
             service.startForeground(NOTIFICATION_ID, playbackNotificationFactory.create(
-                    service, media, state, mediaSession));
+                    service, albumArtFetcher, media, state, mediaSession));
         }
     }
 

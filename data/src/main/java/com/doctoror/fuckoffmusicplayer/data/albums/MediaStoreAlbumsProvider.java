@@ -15,9 +15,15 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.albums;
 
+import static com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt.COLUMN_ALBUM_ART;
+import static com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt.COLUMN_ID;
+
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
@@ -37,6 +43,7 @@ import java.util.Set;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.functions.Function;
 
 /**
  * MediaStore {@link AlbumsProvider}
@@ -61,7 +68,10 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     public Observable<Cursor> load(
             @Nullable final String searchFilter,
             @NonNull final Scheduler scheduler) {
-        return RxCursorLoader.observable(mContentResolver, newParams(searchFilter), scheduler);
+        final RxCursorLoader.Query query = newParams(searchFilter);
+        return transformForLegacyAlbumArtHack(
+                RxCursorLoader.observable(mContentResolver, query, scheduler)
+        );
     }
 
     @Override
@@ -69,11 +79,12 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
         final RxCursorLoader.Query query = newParamsBuilder(null)
                 .setContentUri(MediaStore.Audio.Artists.Albums.getContentUri(
                         MediaStoreVolumeNames.EXTERNAL, artistId))
-                .setSelection(MediaStore.Audio.Media.IS_MUSIC + "!=0")
                 .setSortOrder(MediaStore.Audio.Albums.FIRST_YEAR)
                 .create();
 
-        return RxCursorLoader.create(mContentResolver, query);
+        return transformForLegacyAlbumArtHack(
+                RxCursorLoader.create(mContentResolver, query)
+        );
     }
 
     @Override
@@ -85,7 +96,9 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                                 + genreId + ')')
                 .create();
 
-        return RxCursorLoader.create(mContentResolver, query);
+        return transformForLegacyAlbumArtHack(
+                RxCursorLoader.create(mContentResolver, query)
+        );
     }
 
     @Override
@@ -95,7 +108,10 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
 
     @Override
     public Observable<Cursor> loadRecentlyPlayedAlbums(@Nullable final Integer limit) {
-        return RxCursorLoader.create(mContentResolver, newRecentlyPlayedAlbumsQuery(limit));
+        final RxCursorLoader.Query query = newRecentlyPlayedAlbumsQuery(limit);
+        return transformForLegacyAlbumArtHack(
+                RxCursorLoader.create(mContentResolver, query)
+        );
     }
 
     @NonNull
@@ -124,7 +140,8 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setSortOrder(MediaStore.Audio.Media.DATE_ADDED + " DESC")
                 .create();
 
-        return RxCursorLoader.create(mContentResolver, recentTracksQuery)
+        return transformForLegacyAlbumArtHack(
+                RxCursorLoader.create(mContentResolver, recentTracksQuery))
                 .map(c -> albumIds(c, limit != null ? limit : Integer.MAX_VALUE))
                 .flatMap(this::loadAlbumsOrderedByIds);
     }
@@ -152,10 +169,35 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     }
 
     private Observable<Cursor> loadAlbumsOrderedByIds(@NonNull final Collection<Long> ids) {
-        final RxCursorLoader.Query.Builder query = newParamsBuilder(null)
+        final RxCursorLoader.Query query = newParamsBuilder(null)
                 .setSelection(SelectionUtils.inSelection(MediaStore.Audio.Albums._ID, ids))
-                .setSortOrder(SelectionUtils.orderByField(MediaStore.Audio.Albums._ID, ids));
-        return RxCursorLoader.create(mContentResolver, query.create());
+                .setSortOrder(SelectionUtils.orderByField(MediaStore.Audio.Albums._ID, ids))
+                .create();
+        return transformForLegacyAlbumArtHack(
+                RxCursorLoader.create(mContentResolver, query));
+    }
+
+    private Observable<Cursor> transformForLegacyAlbumArtHack(final Observable<Cursor> albums) {
+        return albums.map(new Function<Cursor, Cursor>() {
+
+            @Override
+            public Cursor apply(Cursor cursor) {
+                return new CursorWrapper(cursor) {
+
+                    @Override
+                    public String getString(int columnIndex) {
+                        if (columnIndex == COLUMN_ALBUM_ART) {
+                            return ContentUris.withAppendedId(
+                                    MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                                    cursor.getLong(COLUMN_ID)
+                            ).toString();
+                        }
+
+                        return super.getString(columnIndex);
+                    }
+                };
+            }
+        });
     }
 
     /**
@@ -193,14 +235,25 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                     .build();
         }
 
+        final String projection[];
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            projection = new String[]{
+                    MediaStore.Audio.Albums._ID,
+                    MediaStore.Audio.Albums.ALBUM,
+                    MediaStore.Audio.Albums.FIRST_YEAR
+            };
+        } else {
+            projection = new String[]{
+                    MediaStore.Audio.Albums._ID,
+                    MediaStore.Audio.Albums.ALBUM,
+                    MediaStore.Audio.Albums.FIRST_YEAR,
+                    MediaStore.Audio.Albums.ALBUM_ART
+            };
+        }
+
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(contentUri)
-                .setProjection(new String[]{
-                        MediaStore.Audio.Albums._ID,
-                        MediaStore.Audio.Albums.ALBUM,
-                        MediaStore.Audio.Albums.ALBUM_ART,
-                        MediaStore.Audio.Albums.FIRST_YEAR
-                })
+                .setProjection(projection)
                 .setSortOrder(SORT_ORDER);
     }
 }

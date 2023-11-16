@@ -29,12 +29,11 @@ import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.arch.core.util.Function;
 
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProviderKt;
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 import com.doctoror.fuckoffmusicplayer.presentation.util.DrawableUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.AlbumWithMenuViewHolder;
@@ -46,13 +45,9 @@ import com.l4digital.fastscroll.FastScroller;
 final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMenuViewHolder>
         implements FastScroller.SectionIndexer {
 
-    private final RequestOptions requestOptions = new RequestOptions()
-            .error(R.drawable.album_art_placeholder)
-            .diskCacheStrategy(DiskCacheStrategy.NONE);
+    private final Function<Void, AlbumArtIntoTargetApplier> albumArtIntoTargetApplierSource;
 
     private final LayoutInflater mLayoutInflater;
-
-    private final RequestManager mRequestManager;
 
     interface OnAlbumClickListener {
 
@@ -65,9 +60,9 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
 
     AlbumsRecyclerAdapter(
             @NonNull final Context context,
-            @NonNull final RequestManager requestManager) {
+            @NonNull final Function<Void, AlbumArtIntoTargetApplier> albumArtIntoTargetApplierSource) {
         mLayoutInflater = LayoutInflater.from(context);
-        mRequestManager = requestManager;
+        this.albumArtIntoTargetApplierSource = albumArtIntoTargetApplierSource;
     }
 
     void setOnAlbumClickListener(@Nullable final OnAlbumClickListener onAlbumClickListener) {
@@ -127,16 +122,11 @@ final class AlbumsRecyclerAdapter extends CursorRecyclerViewAdapter<AlbumWithMen
             @NonNull final AlbumWithMenuViewHolder viewHolder,
             @NonNull final Cursor cursor) {
         viewHolder.text1.setText(cursor.getString(AlbumsProviderKt.COLUMN_ALBUM));
-        final String artLocation = cursor.getString(AlbumsProviderKt.COLUMN_ALBUM_ART);
-        if (TextUtils.isEmpty(artLocation)) {
-            mRequestManager.clear(viewHolder.image);
-            viewHolder.image.setImageResource(R.drawable.album_art_placeholder);
-        } else {
-            mRequestManager
-                    .load(artLocation)
-                    .apply(requestOptions)
-                    .into(viewHolder.image);
-        }
+        albumArtIntoTargetApplierSource.apply(null).apply(
+                cursor.getString(AlbumsProviderKt.COLUMN_ALBUM_ART),
+                viewHolder.image,
+                null
+        );
     }
 
     @NonNull

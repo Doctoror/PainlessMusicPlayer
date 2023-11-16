@@ -31,6 +31,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitRep
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitStopTimeout;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock;
 import com.doctoror.fuckoffmusicplayer.di.scopes.ServiceScope;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
@@ -178,6 +179,7 @@ public final class PlaybackServiceModule {
     @ServiceScope
     PlaybackService providePlaybackService(
             @NonNull final PlaybackAndroidService service,
+            @NonNull final AlbumArtFetcher albumArtFetcher,
             @NonNull final AudioEffects audioEffects,
             @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaPlayer mediaPlayer,
@@ -198,6 +200,7 @@ public final class PlaybackServiceModule {
             @NonNull final Runnable stopAction) {
         return new PlaybackServiceImpl(
                 service,
+                albumArtFetcher,
                 audioEffects,
                 currentMediaProvider,
                 mediaPlayer,

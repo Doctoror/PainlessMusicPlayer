@@ -22,8 +22,8 @@ import io.reactivex.Scheduler
 
 const val COLUMN_ID = 0
 const val COLUMN_ALBUM = 1
-const val COLUMN_ALBUM_ART = 2
-const val COLUMN_FIRST_YEAR = 3
+const val COLUMN_FIRST_YEAR = 2
+const val COLUMN_ALBUM_ART = 3
 
 interface AlbumsProvider {
 

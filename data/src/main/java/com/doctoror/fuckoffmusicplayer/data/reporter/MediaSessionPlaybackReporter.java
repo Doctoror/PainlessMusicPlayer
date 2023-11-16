@@ -27,18 +27,15 @@ import android.util.DisplayMetrics;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetchException;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.domain.reporter.PlaybackReporter;
 
 import java.io.File;
-import java.util.concurrent.ExecutionException;
 
 /**
  * {@link PlaybackReporter} that reports to {@link MediaSessionCompat}
@@ -48,22 +45,19 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
     private static final String TAG = "MediaSessionPlaybackReporter";
 
     private final DisplayMetrics mDisplayMetrics;
+    private final AlbumArtFetcher mAlbumArtFetcher;
     private final AlbumThumbHolder mAlbumThumbHolder;
     private final MediaSessionCompat mMediaSession;
-    private final RequestManager mGlide;
-
-    private final RequestOptions requestOptions = new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .centerCrop();
 
     MediaSessionPlaybackReporter(
             @NonNull final Context context,
+            @NonNull final AlbumArtFetcher albumArtFetcher,
             @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final MediaSessionCompat mediaSession) {
         mDisplayMetrics = context.getResources().getDisplayMetrics();
+        mAlbumArtFetcher = albumArtFetcher;
         mAlbumThumbHolder = albumThumbHolder;
         mMediaSession = mediaSession;
-        mGlide = Glide.with(context);
     }
 
     @Override
@@ -86,29 +80,26 @@ public final class MediaSessionPlaybackReporter implements PlaybackReporter {
             Bitmap artBitmapLarge = null;
             // Load bitmap because of https://code.google.com/p/android/issues/detail?id=194874
             try {
-                //noinspection SuspiciousNameCombination
-                artBitmapLarge = mGlide
-                        .asBitmap()
-                        .apply(requestOptions)
-                        .load(art)
+                artBitmapLarge = mAlbumArtFetcher.fetch(
+                        art,
                         // Optimized for lock screen
-                        .submit(mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels)
-                        .get();
-            } catch (ExecutionException | InterruptedException e) {
+                        mDisplayMetrics.widthPixels,
+                        mDisplayMetrics.heightPixels
+                );
+            } catch (AlbumArtFetchException e) {
                 Log.w(TAG, "Failed loading art image", e);
             }
             // Small bitmap for app widget, if any
             final int dp84 = (int) (84f * mDisplayMetrics.density);
 
             try {
-                artBitmapSmall = mGlide
-                        .asBitmap()
-                        .apply(requestOptions)
-                        .load(art)
+                artBitmapSmall = mAlbumArtFetcher.fetch(
+                        art,
                         // Optimized for medium appwidget
-                        .submit(dp84, dp84)
-                        .get();
-            } catch (ExecutionException | InterruptedException e) {
+                        dp84,
+                        dp84
+                );
+            } catch (AlbumArtFetchException e) {
                 Log.w(TAG, "Failed loading art image", e);
             }
             if (artBitmapLarge != null) {

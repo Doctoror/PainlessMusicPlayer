@@ -17,37 +17,33 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetchException;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackNotificationFactory;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public final class PlaybackNotificationFactoryImpl implements PlaybackNotificationFactory {
 
     private static final String TAG = "PlaybackNotification";
     private static final String CHANNEL_ID = "NowPlaying";
 
-    private final RequestOptions requestOptions = new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.NONE);
-
     @NonNull
     @Override
     public Notification create(
             @NonNull final Context context,
+            @NonNull final AlbumArtFetcher albumArtFetcher,
             @NonNull final Media media,
             @NonNull final PlaybackState state,
             @NonNull final MediaSessionCompat mediaSession) {
         ensureChannelExists(context);
 
-        final Bitmap art = loadAlbumArt(context, media);
+        final Bitmap art = loadAlbumArt(context, albumArtFetcher, media);
         final PendingIntent contentIntent = createContentIntent(context);
         final NotificationCompat.Style style = createNotificationStyle(mediaSession);
 
@@ -77,19 +73,19 @@ public final class PlaybackNotificationFactoryImpl implements PlaybackNotificati
     @NonNull
     private Bitmap loadAlbumArt(
             @NonNull final Context context,
+            @NonNull final AlbumArtFetcher albumArtFetcher,
             @NonNull final Media media) {
         Bitmap art = null;
         final String artLocation = media.getAlbumArt();
         if (!TextUtils.isEmpty(artLocation)) {
             final int dp128 = (int) (context.getResources().getDisplayMetrics().density * 128);
             try {
-                art = Glide.with(context)
-                        .asBitmap()
-                        .apply(requestOptions)
-                        .load(artLocation)
-                        .submit(dp128, dp128)
-                        .get();
-            } catch (InterruptedException | ExecutionException e) {
+                art = albumArtFetcher.fetch(
+                        artLocation,
+                        dp128,
+                        dp128
+                );
+            } catch (AlbumArtFetchException e) {
                 Log.w(TAG, e);
             }
         }

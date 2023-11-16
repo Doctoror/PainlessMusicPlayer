@@ -25,10 +25,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,15 +42,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.databinding.DataBindingUtil;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
@@ -73,6 +62,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
 
@@ -119,15 +109,6 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private final NowPlayingActivityModel mModel = new NowPlayingActivityModel();
 
-    private final RequestOptions requestOptions = new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.NONE);
-
-    private final RequestOptions requestOptionsDontAnimate = new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .dontAnimate();
-
-    private RequestManager mRequestManager;
-
     @SuppressWarnings("FieldCanBeLocal") // Ensure not collected
     private NavigationController mNavigationController;
 
@@ -144,6 +125,9 @@ public final class NowPlayingActivity extends BaseActivity {
 
     @InjectExtra
     boolean hasListViewTransition;
+
+    @Inject
+    AlbumArtIntoTargetApplier mAlbumArtIntoTargetApplier;
 
     @Inject
     ArtistAlbumFormatter mArtistAlbumFormatter;
@@ -182,8 +166,6 @@ public final class NowPlayingActivity extends BaseActivity {
         if (TransitionUtils.supportsActivityTransitions()) {
             NowPlayingActivityLollipop.applyTransitions(this);
         }
-
-        mRequestManager = Glide.with(this);
 
         mTransitionPostponed = false;
         mTransitionStarted = false;
@@ -247,23 +229,12 @@ public final class NowPlayingActivity extends BaseActivity {
             mTransitionPostponed = true;
             supportPostponeEnterTransition();
         }
-        if (TextUtils.isEmpty(artUri)) {
-            mRequestManager.clear(albumArt);
-            albumArt.setImageResource(R.drawable.album_art_placeholder);
-            onArtProcessed();
-        } else {
-            RequestBuilder<Drawable> b = mRequestManager
-                    .asDrawable()
-                    .load(artUri);
 
-            if (hasCoverTransition || hasListViewTransition) {
-                b = b.apply(requestOptionsDontAnimate);
-            } else {
-                b = b.apply(requestOptions);
-            }
-
-            b.listener(new AlbumArtRequestListener()).into(albumArt);
-        }
+        mAlbumArtIntoTargetApplier.apply(
+                artUri,
+                albumArt,
+                new AlbumArtRequestListener()
+        );
     }
 
     private void onArtProcessed() {
@@ -531,30 +502,19 @@ public final class NowPlayingActivity extends BaseActivity {
 
     private final Consumer<Long> mMediaPositionConsumer = this::bindProgress;
 
-    private final class AlbumArtRequestListener implements RequestListener<Drawable> {
+    private final class AlbumArtRequestListener implements AlbumArtIntoTargetApplier.Listener {
 
         @Override
-        public boolean onLoadFailed(
-                @Nullable final GlideException e,
-                @NonNull final Object model,
-                @NonNull final Target<Drawable> target,
-                final boolean isFirstResource) {
+        public void onFailure() {
             albumArt.setAlpha(0f);
             albumArt.setImageResource(R.drawable.album_art_placeholder);
             albumArt.animate().alpha(1f).start();
             onArtProcessed();
-            return true;
         }
 
         @Override
-        public boolean onResourceReady(
-                @NonNull final Drawable resource,
-                @NonNull final Object model,
-                @NonNull final Target<Drawable> target,
-                @NonNull final DataSource dataSource,
-                final boolean isFirstResource) {
+        public void onSuccess() {
             onArtProcessed();
-            return false;
         }
     }
 

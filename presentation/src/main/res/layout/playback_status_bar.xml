@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
    Copyright 2017 Yaroslav Mytkalyk
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,29 +13,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="model"
-            type="com.doctoror.fuckoffmusicplayer.presentation.home.PlaybackStatusBarModel"/>
+            type="com.doctoror.fuckoffmusicplayer.presentation.home.PlaybackStatusBarModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="?attr/selectableItemBackground">
+        android:background="?attr/selectableItemBackground"
+        android:orientation="horizontal">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline50percent"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.5"/>
+            app:layout_constraintGuide_percent="0.5" />
 
         <ImageView
             android:id="@+id/albumArt"
@@ -45,66 +44,65 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:scaleType="centerCrop"
+            app:imageUri="@{model.imageUri}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:placeholder="@{@drawable/album_art_placeholder}"
-            app:imageUri="@{model.imageUri}"
-            tools:src="@drawable/album_art_placeholder"
-            tools:ignore="ContentDescription"/>
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/album_art_placeholder" />
 
         <ImageButton
             android:id="@+id/btnPlay"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginRight="6dp"
             android:layout_marginEnd="6dp"
+            android:layout_marginRight="6dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcRes="@{model.btnPlayRes}"
             app:tintAttr="@{android.R.attr.textColorPrimary}"
-            tools:src="@drawable/ic_play_arrow_white_24dp"
-            tools:ignore="ContentDescription"/>
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/ic_play_arrow_white_24dp" />
 
         <TextView
             android:id="@+id/textTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingStart="10dp"
-            android:paddingTop="12dp"
-            android:lines="1"
             android:ellipsize="end"
+            android:lines="1"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="12dp"
             android:textColor="?android:attr/textColorPrimary"
-            android:textSize="16sp"
             android:textIsSelectable="false"
-            app:layout_constraintStart_toEndOf="@id/albumArt"
-            app:layout_constraintEnd_toStartOf="@id/btnPlay"
+            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@id/guideline50percent"
+            app:layout_constraintEnd_toStartOf="@id/btnPlay"
+            app:layout_constraintStart_toEndOf="@id/albumArt"
             app:text="@{model.title}"
-            tools:text="Title"
-            tools:ignore="RtlSymmetry"/>
+            tools:ignore="RtlSymmetry"
+            tools:text="Title" />
 
         <TextView
             android:id="@+id/textArtist"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingStart="10dp"
-            android:paddingBottom="12dp"
-            android:lines="1"
             android:ellipsize="end"
+            android:lines="1"
+            android:paddingStart="10dp"
+            android:paddingLeft="10dp"
+            android:paddingBottom="12dp"
             android:textColor="?android:attr/textColorSecondary"
-            android:textSize="14sp"
             android:textIsSelectable="false"
-            app:layout_constraintTop_toTopOf="@id/guideline50percent"
-            app:layout_constraintStart_toEndOf="@id/albumArt"
+            android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@id/btnPlay"
+            app:layout_constraintStart_toEndOf="@id/albumArt"
+            app:layout_constraintTop_toTopOf="@id/guideline50percent"
             app:text="@{model.artist}"
-            tools:text="Artist"
-            tools:ignore="RtlSymmetry"/>
+            tools:ignore="RtlSymmetry"
+            tools:text="Artist" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -25,12 +25,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentRecentActivityBinding
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SpacesItemDecoration
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
 class RecentActivityFragment : BaseFragment() {
+
+    @Inject
+    lateinit var albumArtIntoTargetApplier: AlbumArtIntoTargetApplier
 
     @Inject
     lateinit var presenter: RecentActivityPresenter
@@ -61,18 +65,21 @@ class RecentActivityFragment : BaseFragment() {
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?): View {
-        val binding = DataBindingUtil.inflate<FragmentRecentActivityBinding>(inflater,
-                R.layout.fragment_recent_activity, container, false)
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = DataBindingUtil.inflate<FragmentRecentActivityBinding>(
+            inflater,
+            R.layout.fragment_recent_activity, container, false
+        )
         setupRecyclerView(binding.recyclerView)
         binding.model = viewModel
         binding.root.findViewById<View>(R.id.btnRequest).setOnClickListener {
             presenter.requestPermission()
         }
 
-        val adapter = RecentActivityRecyclerAdapter(requireContext())
+        val adapter = RecentActivityRecyclerAdapter(requireContext(), albumArtIntoTargetApplier)
 
         adapter.setOnAlbumClickListener { position, id, album ->
             presenter.onAlbumClick(id, album) {
@@ -100,7 +107,10 @@ class RecentActivityFragment : BaseFragment() {
         }
 
         recyclerView.layoutManager = lm
-        recyclerView.addItemDecoration(SpacesItemDecoration(
-                resources.getDimensionPixelSize(R.dimen.recent_activity_grid_spacing)))
+        recyclerView.addItemDecoration(
+            SpacesItemDecoration(
+                resources.getDimensionPixelSize(R.dimen.recent_activity_grid_spacing)
+            )
+        )
     }
 }

@@ -21,7 +21,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -48,15 +47,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils;
 import com.doctoror.fuckoffmusicplayer.databinding.ActivityQueueBinding;
@@ -72,6 +62,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.transition.SlideFromBottomHe
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionListenerAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 import com.doctoror.fuckoffmusicplayer.presentation.util.CoordinatorLayoutUtil;
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.ItemTouchHelperViewHolder;
@@ -103,16 +94,7 @@ public final class QueueActivity extends BaseActivity
 
     private static final String EXTRA_STATE = "EXTRA_STATE";
 
-    private final RequestOptions requestOptions = new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.NONE);
-
-    private final RequestOptions dontAnimateOptions = new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .dontAnimate();
-
     private final QueueActivityModel mModel = new QueueActivityModel();
-
-    private RequestManager mRequestManager;
 
     private QueueRecyclerAdapter mAdapter;
     private CoordinatorLayoutUtil.AnchorParams mFabAnchorParams;
@@ -143,6 +125,9 @@ public final class QueueActivity extends BaseActivity
     private Toast mToastRemovedFromQueue;
 
     @Inject
+    AlbumArtIntoTargetApplier albumArtIntoTargetApplier;
+
+    @Inject
     CurrentMediaProvider currentMediaProvider;
 
     @Inject
@@ -160,7 +145,6 @@ public final class QueueActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         Dart.inject(this);
         AndroidInjection.inject(this);
-        mRequestManager = Glide.with(this);
 
         mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         mMediumAnimTime = getResources().getInteger(android.R.integer.config_mediumAnimTime);
@@ -268,33 +252,32 @@ public final class QueueActivity extends BaseActivity
         }
         mCoverUri = pic;
 
-        if (TextUtils.isEmpty(pic)) {
-            mRequestManager.clear(albumArt);
-            showPlaceholderArt();
-            onImageSet();
-        } else {
-            loadAlbumArt(pic);
-        }
+        loadAlbumArt(pic);
     }
 
     @SuppressLint("CheckResult")
     private void loadAlbumArt(@NonNull final String uri) {
-        final RequestBuilder<Drawable> b = mRequestManager
-                .asDrawable()
-                .load(uri);
-
         if (hasCoverTransition || hasItemViewTransition) {
             supportPostponeEnterTransition();
-            b.apply(dontAnimateOptions);
-        } else {
-            b.apply(requestOptions);
         }
-        b.listener(new AlbumArtRequestListener()).into(albumArt);
-    }
 
-    private void showPlaceholderArt() {
-        albumArt.setImageResource(R.drawable.album_art_placeholder);
-        albumArt.setAlpha(1f);
+        albumArtIntoTargetApplier.apply(
+                uri,
+                albumArt,
+                new AlbumArtIntoTargetApplier.Listener() {
+
+                    @Override
+                    public void onSuccess() {
+                        onImageSet();
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        mCoverUri = null;
+                        albumArt.setAlpha(1f);
+                    }
+                }
+        );
     }
 
     private void onImageSet() {
@@ -498,32 +481,6 @@ public final class QueueActivity extends BaseActivity
 
         List<Media> queue;
         CoordinatorLayoutUtil.AnchorParams fabAnchorParams;
-    }
-
-    private final class AlbumArtRequestListener implements RequestListener<Drawable> {
-
-        @Override
-        public boolean onLoadFailed(
-                @Nullable final GlideException e,
-                @NonNull final Object model,
-                @NonNull final Target<Drawable> target,
-                final boolean isFirstResource) {
-            mCoverUri = null;
-            showPlaceholderArt();
-            onImageSet();
-            return true;
-        }
-
-        @Override
-        public boolean onResourceReady(
-                @NonNull final Drawable resource,
-                @NonNull final Object model,
-                @NonNull final Target<Drawable> target,
-                @NonNull final DataSource dataSource,
-                final boolean isFirstResource) {
-            onImageSet();
-            return false;
-        }
     }
 
     private final class TrackListenerImpl implements QueueRecyclerAdapter.TrackListener {

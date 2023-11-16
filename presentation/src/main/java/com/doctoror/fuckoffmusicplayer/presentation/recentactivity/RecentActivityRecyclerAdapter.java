@@ -16,7 +16,6 @@
 package com.doctoror.fuckoffmusicplayer.presentation.recentactivity;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -25,11 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.doctoror.fuckoffmusicplayer.R;
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.BaseRecyclerAdapter;
 import com.doctoror.fuckoffmusicplayer.presentation.widget.viewholder.AlbumViewHolder;
 
@@ -44,16 +40,16 @@ final class RecentActivityRecyclerAdapter
         void onAlbumClick(int position, long id, @Nullable String album);
     }
 
-    private final RequestOptions requestOptions = new RequestOptions()
-            .error(R.drawable.album_art_placeholder)
-            .diskCacheStrategy(DiskCacheStrategy.NONE);
+    private final AlbumArtIntoTargetApplier albumArtIntoTargetApplier;
 
-    private final RequestManager requestManager;
     private OnAlbumClickListener onAlbumClickListener;
 
-    RecentActivityRecyclerAdapter(@NonNull final Context context) {
+    RecentActivityRecyclerAdapter(
+            @NonNull final Context context,
+            @NonNull final AlbumArtIntoTargetApplier albumArtIntoTargetApplier
+    ) {
         super(context);
-        requestManager = Glide.with(context);
+        this.albumArtIntoTargetApplier = albumArtIntoTargetApplier;
     }
 
     void setOnAlbumClickListener(@NonNull final OnAlbumClickListener l) {
@@ -141,15 +137,11 @@ final class RecentActivityRecyclerAdapter
     private void onBindViewHolderAlbum(final AlbumViewHolder holder, final int position) {
         final AlbumItem item = (AlbumItem) getItem(position);
         holder.text1.setText(item.getTitle());
-        final String artLocation = item.getAlbumArt();
-        if (TextUtils.isEmpty(artLocation)) {
-            requestManager.clear(holder.image);
-            holder.image.setImageResource(R.drawable.album_art_placeholder);
-        } else {
-            requestManager.load(artLocation)
-                    .apply(requestOptions)
-                    .into(holder.image);
-        }
+        albumArtIntoTargetApplier.apply(
+                item.getAlbumArt(),
+                holder.image,
+                null
+        );
     }
 
     static final class HeaderViewHolder extends RecyclerView.ViewHolder {

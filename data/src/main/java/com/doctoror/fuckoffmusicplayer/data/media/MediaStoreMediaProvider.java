@@ -120,17 +120,17 @@ public final class MediaStoreMediaProvider implements MediaProvider {
             data = null;
         }
 
-        final long id = c.getLong(MediaQuery.COLUMN_ID);
+        final long albumId = c.getLong(MediaQuery.COLUMN_ALBUM_ID);
 
         return new Media(
-                id,
+                c.getLong(MediaQuery.COLUMN_ID),
                 data,
                 c.getString(MediaQuery.COLUMN_TITLE),
                 c.getLong(MediaQuery.COLUMN_DURATION),
                 c.getString(MediaQuery.COLUMN_ARTIST),
                 c.getString(MediaQuery.COLUMN_ALBUM),
-                c.getLong(MediaQuery.COLUMN_ALBUM_ID),
-                getAlbumArtUri(id, c),
+                albumId,
+                getAlbumArtUri(albumId, c),
                 c.getInt(MediaQuery.COLUMN_TRACK));
     }
 

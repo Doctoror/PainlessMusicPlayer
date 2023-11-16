@@ -41,6 +41,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitQue
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitReporter;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitStopTimeout;
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitWakeLock;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher;
 import com.doctoror.fuckoffmusicplayer.domain.effects.AudioEffects;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
@@ -62,6 +63,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     private static final String TAG = "PlaybackServiceImpl";
 
+    private final AlbumArtFetcher albumArtFetcher;
     private final AudioEffects audioEffects;
     private final Context context;
     private final CurrentMediaProvider currentMediaProvider;
@@ -91,6 +93,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     public PlaybackServiceImpl(
             @NonNull final Context context,
+            @NonNull final AlbumArtFetcher albumArtFetcher,
             @NonNull final AudioEffects audioEffects,
             @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final MediaPlayer mediaPlayer,
@@ -110,6 +113,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             @NonNull final PlaybackServiceView playbackServiceView,
             @NonNull final Runnable stopAction) {
         this.context = context;
+        this.albumArtFetcher = albumArtFetcher;
         this.audioEffects = audioEffects;
         this.currentMediaProvider = currentMediaProvider;
         this.mediaPlayer = mediaPlayer;
@@ -285,7 +289,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             final MediaSessionCompat mediaSession = getMediaSession();
             if (mediaSession != null) {
                 Schedulers.io().scheduleDirect(
-                        () -> playbackServiceView.startForeground(media, state));
+                        () -> playbackServiceView.startForeground(albumArtFetcher, media, state));
             }
         }
     }

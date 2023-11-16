@@ -33,10 +33,6 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingComponent;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-
 import java.util.Locale;
 
 /**
@@ -51,41 +47,32 @@ public final class BindingAdapters {
     }
 
     @NonNull
-    public static DataBindingComponent glideBindingComponent(
-            @NonNull final RequestManager requestManager) {
-        return new GlideBindingComponent(requestManager);
+    public static DataBindingComponent albumArtIntoTargetApplierComponent(
+            @NonNull final AlbumArtIntoTargetApplier albumArtIntoTargetApplier) {
+        return new AlbumArtIntoTargetApplierComponent(albumArtIntoTargetApplier);
     }
 
-    public static final class GlideBindingComponent implements DataBindingComponent {
+    public static final class AlbumArtIntoTargetApplierComponent implements DataBindingComponent {
 
-        private final RequestManager requestManager;
+        private final AlbumArtIntoTargetApplier albumArtIntoTargetApplier;
 
-        GlideBindingComponent(@NonNull final RequestManager requestManager) {
-            this.requestManager = requestManager;
+        AlbumArtIntoTargetApplierComponent(@NonNull final AlbumArtIntoTargetApplier albumArtIntoTargetApplier) {
+            this.albumArtIntoTargetApplier = albumArtIntoTargetApplier;
         }
 
-        @BindingAdapter({"placeholder", "imageUri"})
+        @BindingAdapter({"imageUri"})
         public void setImageUri(
                 @NonNull final ImageView imageView,
-                @Nullable final Drawable placeholder,
                 @Nullable final String imageUri) {
-            if (imageUri == null) {
-                requestManager.clear(imageView);
-                imageView.setImageDrawable(placeholder);
-            } else {
-                final RequestOptions requestOptions = new RequestOptions()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .error(placeholder);
-
-                requestManager
-                        .load(imageUri)
-                        .apply(requestOptions)
-                        .into(imageView);
-            }
+            albumArtIntoTargetApplier.apply(
+                    imageUri,
+                    imageView,
+                    null
+            );
         }
 
         @Override
-        public GlideBindingComponent getGlideBindingComponent() {
+        public AlbumArtIntoTargetApplierComponent getAlbumArtIntoTargetApplierComponent() {
             return this;
         }
     }

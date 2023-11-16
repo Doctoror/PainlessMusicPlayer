@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -44,14 +43,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.doctoror.commons.util.Log;
 import com.doctoror.fuckoffmusicplayer.R;
 import com.doctoror.fuckoffmusicplayer.databinding.FragmentConditionalAlbumListBinding;
@@ -67,6 +58,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.CardVerticalGateTransition;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.VerticalGateTransition;
+import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -89,16 +81,11 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
 
     private final ConditionalAlbumListModel mModel = new ConditionalAlbumListModel();
 
-    private final RequestOptions requestOptions = new RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .dontAnimate();
-
     private ConditionalAlbumsRecyclerAdapter mAdapter;
 
     private Disposable mDisposableDataOld;
     private Disposable mDisposableData;
 
-    private RequestManager mRequestManager;
     private Cursor mData;
 
     private int mAnimTime;
@@ -115,6 +102,9 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private RecyclerView recyclerView;
 
     @Inject
+    AlbumArtIntoTargetApplier albumArtIntoTargetApplier;
+
+    @Inject
     QueueProviderAlbums mQueueFactory;
 
     @Inject
@@ -126,14 +116,13 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         AndroidSupportInjection.inject(this);
 
         mAnimTime = getResources().getInteger(R.integer.shortest_anim_time);
-        mRequestManager = Glide.with(this);
 
         final Activity activity = getActivity();
         if (activity == null) {
             throw new IllegalStateException("Activity is null");
         }
 
-        mAdapter = new ConditionalAlbumsRecyclerAdapter(activity, mRequestManager);
+        mAdapter = new ConditionalAlbumsRecyclerAdapter(activity, albumArtIntoTargetApplier);
         mAdapter.setOnAlbumClickListener(this::onListItemClick);
         mModel.setRecyclerAdpter(mAdapter);
     }
@@ -432,27 +421,11 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private void loadAlbumArt(@NonNull final Cursor cursor) {
         if (albumArt != null) {
             final String pic = findAlbumArt(cursor);
-            if (TextUtils.isEmpty(pic)) {
-                mRequestManager.clear(albumArt);
-                showPlaceholderAlbumArt();
-            } else {
-                mRequestManager
-                        .asDrawable()
-                        .apply(requestOptions)
-                        .load(pic)
-                        .listener(new AlbumArtRequestListener())
-                        .into(albumArt);
-            }
-        }
-    }
-
-    private void showPlaceholderAlbumArt() {
-        albumArt.setImageResource(R.drawable.album_art_placeholder);
-        albumArt.setAlpha(1f);
-
-        final FragmentActivity activity = getActivity();
-        if (activity != null) {
-            activity.supportStartPostponedEnterTransition();
+            albumArtIntoTargetApplier.apply(
+                    pic,
+                    albumArt,
+                    new AlbumArtRequestListener()
+            );
         }
     }
 
@@ -467,30 +440,22 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
         return null;
     }
 
-    private final class AlbumArtRequestListener implements RequestListener<Drawable> {
+    private final class AlbumArtRequestListener implements AlbumArtIntoTargetApplier.Listener {
 
         @Override
-        public boolean onLoadFailed(
-                @Nullable final GlideException e,
-                @NonNull final Object model,
-                @NonNull final Target<Drawable> target,
-                final boolean isFirstResource) {
-            showPlaceholderAlbumArt();
-            return true;
-        }
-
-        @Override
-        public boolean onResourceReady(
-                @NonNull final Drawable resource,
-                @NonNull final Object model,
-                @NonNull final Target<Drawable> target,
-                @NonNull final DataSource dataSource,
-                final boolean isFirstResource) {
+        public void onFailure() {
             final FragmentActivity activity = getActivity();
             if (activity != null) {
                 activity.supportStartPostponedEnterTransition();
             }
-            return false;
+        }
+
+        @Override
+        public void onSuccess() {
+            final FragmentActivity activity = getActivity();
+            if (activity != null) {
+                activity.supportStartPostponedEnterTransition();
+            }
         }
     }
 

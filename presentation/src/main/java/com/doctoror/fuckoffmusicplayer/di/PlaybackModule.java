@@ -28,6 +28,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.initializer.MediaIdPlayback
 import com.doctoror.fuckoffmusicplayer.data.playback.initializer.PlaybackInitializerImpl;
 import com.doctoror.fuckoffmusicplayer.data.playback.initializer.SearchPlaybackInitializerImpl;
 import com.doctoror.fuckoffmusicplayer.data.reporter.PlaybackReporterFactoryImpl;
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaProvider;
@@ -101,12 +102,19 @@ final class PlaybackModule {
     @Singleton
     PlaybackReporterFactory providePlaybackReporterFactory(
             @NonNull final Context context,
+            @NonNull final AlbumArtFetcher albumArtFetcher,
             @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final CurrentMediaProvider currentMediaProvider,
             @NonNull final Settings settings,
             @NonNull final PlaybackData playbackData) {
         return new PlaybackReporterFactoryImpl(
-                context, albumThumbHolder, currentMediaProvider, settings, playbackData);
+                context,
+                albumArtFetcher,
+                albumThumbHolder,
+                currentMediaProvider,
+                settings,
+                playbackData
+        );
     }
 
     @Provides

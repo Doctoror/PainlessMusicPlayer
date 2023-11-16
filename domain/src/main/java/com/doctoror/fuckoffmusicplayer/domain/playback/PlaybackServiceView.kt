@@ -15,11 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.domain.playback
 
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 interface PlaybackServiceView {
 
-    fun startForeground(media: Media, state: PlaybackState)
+    fun startForeground(albumArtFetcher: AlbumArtFetcher, media: Media, state: PlaybackState)
 
     /**
      * Shows a playback error and returns the shown error message.

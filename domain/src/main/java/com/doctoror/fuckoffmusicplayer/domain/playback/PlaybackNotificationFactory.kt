@@ -18,6 +18,7 @@ package com.doctoror.fuckoffmusicplayer.domain.playback
 import android.app.Notification
 import android.content.Context
 import android.support.v4.media.session.MediaSessionCompat
+import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 const val CHANNEL_ID_PLAYBACK_STATUS = "playback_status"
@@ -25,8 +26,10 @@ const val CHANNEL_ID_PLAYBACK_STATUS = "playback_status"
 interface PlaybackNotificationFactory {
 
     fun create(
-            context: Context,
-            media: Media,
-            state: PlaybackState,
-            mediaSession: MediaSessionCompat): Notification
+        context: Context,
+        albumArtFetcher: AlbumArtFetcher,
+        media: Media,
+        state: PlaybackState,
+        mediaSession: MediaSessionCompat
+    ): Notification
 }
