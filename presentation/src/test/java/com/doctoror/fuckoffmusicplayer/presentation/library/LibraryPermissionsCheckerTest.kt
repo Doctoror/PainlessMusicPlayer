@@ -3,25 +3,22 @@ package com.doctoror.fuckoffmusicplayer.presentation.library
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import com.doctoror.fuckoffmusicplayer.RuntimePermissions
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import android.os.Build
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, sdk = [Build.VERSION_CODES.S])
 @RunWith(RobolectricTestRunner::class)
 class LibraryPermissionsCheckerTest {
 
     private val context: Context = mock()
-    private val runtimePermissions: RuntimePermissions = mock()
-
     private val underTest = LibraryPermissionsChecker(context)
 
     @Test

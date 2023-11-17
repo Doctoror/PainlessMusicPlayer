@@ -35,10 +35,7 @@ import org.robolectric.annotation.Config;
 
 import java.io.File;
 
-/**
- * {@link MediaManagerMediaStore} test
- */
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, sdk = Build.VERSION_CODES.TIRAMISU)
 @RunWith(RobolectricTestRunner.class)
 public final class MediaManagerMediaStoreTest {
 

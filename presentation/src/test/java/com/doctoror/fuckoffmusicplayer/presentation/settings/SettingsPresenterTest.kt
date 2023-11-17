@@ -17,10 +17,10 @@ package com.doctoror.fuckoffmusicplayer.presentation.settings
 
 import com.doctoror.fuckoffmusicplayer.domain.settings.Settings
 import com.doctoror.fuckoffmusicplayer.domain.settings.Theme
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -163,6 +163,7 @@ class SettingsPresenterTest {
         // Given
         val buttonId = 1
         val theme = Theme.NIGHT
+        whenever(settings.theme).thenReturn(Theme.NIGHT)
         whenever(themeToButtonIdMapper.buttonIdToTheme(buttonId)).thenReturn(theme)
 
         // When

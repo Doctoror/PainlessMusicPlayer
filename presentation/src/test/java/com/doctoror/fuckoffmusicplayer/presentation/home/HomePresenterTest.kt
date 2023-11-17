@@ -20,8 +20,8 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationItem
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationViewModel
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
 import org.junit.Test

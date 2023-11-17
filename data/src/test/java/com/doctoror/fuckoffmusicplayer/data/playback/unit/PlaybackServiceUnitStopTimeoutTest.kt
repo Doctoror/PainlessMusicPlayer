@@ -16,15 +16,15 @@
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
 import com.doctoror.commons.reactivex.SchedulersProvider
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.schedulers.Schedulers
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class PlaybackServiceUnitStopTimeoutTest {
 

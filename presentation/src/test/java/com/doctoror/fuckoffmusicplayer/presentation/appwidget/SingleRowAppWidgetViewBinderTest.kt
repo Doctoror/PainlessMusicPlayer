@@ -18,8 +18,8 @@ package com.doctoror.fuckoffmusicplayer.presentation.appwidget
 import android.graphics.Bitmap
 import android.widget.RemoteViews
 import com.doctoror.fuckoffmusicplayer.R
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.junit.Test
 
 class SingleRowAppWidgetViewBinderTest {

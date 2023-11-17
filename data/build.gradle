@@ -15,8 +15,6 @@ android {
 
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     lintOptions {
@@ -24,12 +22,12 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     buildTypes {
@@ -38,7 +36,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
@@ -48,11 +45,7 @@ dependencies {
     def d = rootProject.ext.dataDependencies
     def td = rootProject.ext.dataTestDependencies
 
-    androidTestImplementation td.mockitoAndroid
-    androidTestImplementation td.testRunner
-
     testImplementation td.junit
-    testImplementation td.mockito
     testImplementation td.mockitoKotlin
     testImplementation td.robolectric
 

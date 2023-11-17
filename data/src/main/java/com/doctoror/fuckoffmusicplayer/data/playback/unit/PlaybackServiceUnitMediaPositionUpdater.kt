@@ -22,7 +22,6 @@ import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState.STATE_PLAYING
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
 
@@ -51,7 +50,7 @@ class PlaybackServiceUnitMediaPositionUpdater(
     fun initializeMediaPositionUpdater() {
         positionUpdater?.dispose()
         positionUpdater = Observable
-            .interval(positionUpdateInterval, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+            .interval(positionUpdateInterval, TimeUnit.SECONDS, schedulers.mainThread())
             .subscribe { _ -> updateMediaPosition() }
     }
 

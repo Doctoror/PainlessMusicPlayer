@@ -25,7 +25,7 @@ import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsRequester
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler
-import com.nhaarman.mockitokotlin2.*
+import org.mockito.kotlin.*
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
 import org.junit.Test

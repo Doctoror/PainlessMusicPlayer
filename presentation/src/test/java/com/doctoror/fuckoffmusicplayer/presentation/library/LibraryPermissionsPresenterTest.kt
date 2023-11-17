@@ -18,10 +18,10 @@ package com.doctoror.fuckoffmusicplayer.presentation.library
 import com.doctoror.commons.reactivex.SchedulersProvider
 import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.times
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

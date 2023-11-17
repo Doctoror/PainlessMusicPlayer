@@ -19,18 +19,18 @@ import android.database.Cursor
 import androidx.recyclerview.widget.RecyclerView
 import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.presentation.widget.CursorRecyclerViewAdapter
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.mockito.kotlin.verifyNoInteractions
 import java.io.IOException
 
 class LibraryListPresenterTest {
@@ -160,7 +160,7 @@ class LibraryListPresenterTest {
         searchQuerySource.onNext("")
 
         // Then
-        verifyZeroInteractions(dataSource)
+        verifyNoInteractions(dataSource)
     }
 
     @Test

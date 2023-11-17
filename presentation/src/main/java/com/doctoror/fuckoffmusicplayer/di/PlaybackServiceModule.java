@@ -141,11 +141,13 @@ public final class PlaybackServiceModule {
             @NonNull final AlbumThumbHolder albumThumbHolder,
             @NonNull final PlaybackControllerProvider playbackControllerProvider,
             @NonNull final PlaybackData playbackData,
+            @NonNull final SchedulersProvider schedulersProvider,
             @NonNull final Runnable stopAction) {
         return new PlaybackServiceUnitQueueMonitor(
                 albumThumbHolder,
                 playbackControllerProvider,
                 playbackData,
+                schedulersProvider,
                 stopAction);
     }
 

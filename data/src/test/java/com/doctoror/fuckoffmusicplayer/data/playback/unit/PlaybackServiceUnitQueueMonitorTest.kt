@@ -15,18 +15,19 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackController
 import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControllerProvider
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.subjects.PublishSubject
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class PlaybackServiceUnitQueueMonitorTest {
 
@@ -44,6 +45,7 @@ class PlaybackServiceUnitQueueMonitorTest {
         albumThumbHolder,
         playbackControllerProvider,
         playbackData,
+        TestSchedulersProvider(),
         stopAction
     )
 

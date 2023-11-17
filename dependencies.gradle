@@ -22,11 +22,11 @@ ext {
 
     glideVersion = '4.16.0'
 
-    jUnitVersion = '4.12'
+    jUnitVersion = '4.13.2'
 
     mediaVersion = '1.1.0'
-    mockitoKotlinVersion = '2.1.0'
-    mockitoVersion = '2.24.0'
+    mockitoVersion = '5.7.0'
+    mockitoKotlinVersion = '5.1.0'
 
     parcelerVersion = '1.1.12'
     protobufVersion = '3.1.0'
@@ -93,7 +93,7 @@ ext {
             kotlinReflect: "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version",
 
             mockito      : "org.mockito:mockito-core:$mockitoVersion",
-            mockitoKotlin: "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion",
+            mockitoKotlin: "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion",
 
             robolectric  : "org.robolectric:robolectric:$robolectricVersion"
     ]
@@ -116,14 +116,8 @@ ext {
 
     dataTestDependencies = [
             junit         : "junit:junit:$jUnitVersion",
-
-            mockito       : "org.mockito:mockito-core:$mockitoVersion",
-            mockitoAndroid: "org.mockito:mockito-android:$mockitoVersion",
-            mockitoKotlin : "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion",
-
+            mockitoKotlin : "org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion",
             robolectric   : "org.robolectric:robolectric:$robolectricVersion",
-
-            testRunner    : 'androidx.test.ext:junit:1.1.1'
     ]
 
     domainDependencies = [

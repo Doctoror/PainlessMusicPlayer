@@ -20,7 +20,6 @@ import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
-import io.reactivex.android.schedulers.AndroidSchedulers
 
 class PlaybackServiceUnitPlayCurrentOrNewQueue(
     private val playbackData: PlaybackData,
@@ -40,7 +39,7 @@ class PlaybackServiceUnitPlayCurrentOrNewQueue(
             queueProviderRecentlyScanned.recentlyScannedQueue()
                 .take(1)
                 .subscribeOn(schedulersProvider.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(schedulersProvider.mainThread())
                 .subscribe(
                     { q ->
                         if (q.isEmpty()) {

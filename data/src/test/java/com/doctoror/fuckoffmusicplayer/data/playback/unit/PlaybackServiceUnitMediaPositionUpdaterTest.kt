@@ -19,17 +19,17 @@ import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackState
 import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.schedulers.Schedulers
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 class PlaybackServiceUnitMediaPositionUpdaterTest {
 
@@ -40,11 +40,12 @@ class PlaybackServiceUnitMediaPositionUpdaterTest {
         /*
           * Observable.interval causes trampoline to loop forever, thus computation is used.
           */
-        override fun computation() = Schedulers.computation()
+        override fun mainThread() = Schedulers.computation()
     }
 
     private val underTest = PlaybackServiceUnitMediaPositionUpdater(
-            mediaPlayer, playbackData, schedulersProvider)
+        mediaPlayer, playbackData, schedulersProvider
+    )
 
     @Test
     fun subscribesOnInitialize() {

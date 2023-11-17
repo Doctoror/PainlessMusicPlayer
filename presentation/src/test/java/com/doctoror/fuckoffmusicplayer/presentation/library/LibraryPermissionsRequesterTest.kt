@@ -16,9 +16,10 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.Manifest
+import android.os.Build
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
-import com.nhaarman.mockitokotlin2.*
+import org.mockito.kotlin.*
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Observable
 import org.junit.Test
@@ -26,7 +27,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, sdk = [Build.VERSION_CODES.S])
 @RunWith(RobolectricTestRunner::class)
 class LibraryPermissionsRequesterTest {
 

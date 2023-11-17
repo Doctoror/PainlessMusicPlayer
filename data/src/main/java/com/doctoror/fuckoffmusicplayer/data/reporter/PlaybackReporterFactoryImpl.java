@@ -20,7 +20,6 @@ import android.support.v4.media.session.MediaSessionCompat;
 
 import androidx.annotation.NonNull;
 
-import com.doctoror.fuckoffmusicplayer.data.albums.AlbumArtFetcherImpl;
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumArtFetcher;
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;

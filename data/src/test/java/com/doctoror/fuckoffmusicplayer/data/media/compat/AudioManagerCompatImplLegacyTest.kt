@@ -17,11 +17,11 @@ package com.doctoror.fuckoffmusicplayer.data.media.compat
 
 import android.media.AudioManager
 import com.doctoror.fuckoffmusicplayer.data.media.compat.AudioManagerCompat.Impl.ImplLegacy.AudioFocusChangeListenerLegacyWrapper
-import com.nhaarman.mockitokotlin2.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.kotlin.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -32,15 +32,17 @@ class AudioManagerCompatImplLegacyTest {
     private val onAudioFocusChangeListener = { _: Int -> }
 
     private val audioAttributes = AudioAttributesCompat(
-            usage = USAGE_MEDIA,
-            contentType = CONTENT_TYPE_MUSIC,
-            legacyStreamType = AudioManager.STREAM_MUSIC)
+        usage = USAGE_MEDIA,
+        contentType = CONTENT_TYPE_MUSIC,
+        legacyStreamType = AudioManager.STREAM_MUSIC
+    )
 
     private val audioFocusRequest = AudioFocusRequestCompat(
-            audioAttributes = audioAttributes,
-            acceptsDelayedFocusGain = false,
-            onAudioFocusChangeListener = onAudioFocusChangeListener,
-            willPauseWhenDucked = false)
+        audioAttributes = audioAttributes,
+        acceptsDelayedFocusGain = false,
+        onAudioFocusChangeListener = onAudioFocusChangeListener,
+        willPauseWhenDucked = false
+    )
 
     private val audioManager: AudioManager = mock()
 
@@ -56,9 +58,9 @@ class AudioManagerCompatImplLegacyTest {
 
         @Suppress("DEPRECATION")
         verify(audioManager).requestAudioFocus(
-                captor.capture(),
-                eq(audioAttributes.legacyStreamType),
-                eq(AudioManager.AUDIOFOCUS_GAIN)
+            captor.capture(),
+            eq(audioAttributes.legacyStreamType),
+            eq(AudioManager.AUDIOFOCUS_GAIN)
         )
 
         val listenerArgument = captor.value as AudioFocusChangeListenerLegacyWrapper
