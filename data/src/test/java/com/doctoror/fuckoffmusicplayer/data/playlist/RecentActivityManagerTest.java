@@ -38,7 +38,7 @@ public final class RecentActivityManagerTest {
     @Test
     public void testStoreAlbum() {
         final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
-                RuntimeEnvironment.systemContext,
+                RuntimeEnvironment.getApplication(),
                 new TestSchedulersProvider()
         );
         rpm.clear();
@@ -52,7 +52,7 @@ public final class RecentActivityManagerTest {
     @Test
     public void testStoreAlbums() {
         final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
-                RuntimeEnvironment.systemContext,
+                RuntimeEnvironment.getApplication(),
                 new TestSchedulersProvider()
         );
         rpm.clear();
@@ -66,7 +66,7 @@ public final class RecentActivityManagerTest {
     @Test
     public void testOrderingByOne() {
         final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
-                RuntimeEnvironment.systemContext,
+                RuntimeEnvironment.getApplication(),
                 new TestSchedulersProvider()
         );
         rpm.clear();
@@ -85,7 +85,7 @@ public final class RecentActivityManagerTest {
     @Test
     public void testOrderingByBatch() {
         final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
-                RuntimeEnvironment.systemContext,
+                RuntimeEnvironment.getApplication(),
                 new TestSchedulersProvider()
         );
         rpm.clear();
@@ -101,7 +101,7 @@ public final class RecentActivityManagerTest {
     @Test
     public void testAppendingDuplicate() {
         final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
-                RuntimeEnvironment.systemContext,
+                RuntimeEnvironment.getApplication(),
                 new TestSchedulersProvider()
         );
         rpm.clear();
@@ -125,7 +125,7 @@ public final class RecentActivityManagerTest {
     @Test
     public void testAppendingTheSameValue() {
         final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
-                RuntimeEnvironment.systemContext,
+                RuntimeEnvironment.getApplication(),
                 new TestSchedulersProvider()
         );
         rpm.clear();
@@ -146,7 +146,7 @@ public final class RecentActivityManagerTest {
     @Test
     public void testAppendingTheSameValueOnEnd() {
         final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
-                RuntimeEnvironment.systemContext,
+                RuntimeEnvironment.getApplication(),
                 new TestSchedulersProvider()
         );
         rpm.clear();
