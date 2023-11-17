@@ -20,6 +20,7 @@ import com.doctoror.fuckoffmusicplayer.data.playback.controller.PlaybackControll
 import com.doctoror.fuckoffmusicplayer.domain.media.AlbumThumbHolder
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
 /**
@@ -35,7 +36,11 @@ class PlaybackServiceUnitQueueMonitor(
     private val disposables = CompositeDisposable()
 
     override fun onCreate() {
-        disposables.add(playbackData.queueObservable().subscribe(this::onQueueChanged))
+        disposables.add(
+            playbackData.queueObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onQueueChanged)
+        )
     }
 
     override fun onDestroy() {

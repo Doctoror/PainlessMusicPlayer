@@ -67,5 +67,6 @@ dependencies {
     implementation d.protobuf
 
     implementation d.rxCursorLoader
+    implementation d.rxAndroid
     implementation d.rxJava
 }

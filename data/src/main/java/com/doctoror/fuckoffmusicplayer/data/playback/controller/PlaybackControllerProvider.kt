@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.controller
 
+import androidx.annotation.MainThread
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams
@@ -35,6 +36,7 @@ class PlaybackControllerProvider(
      *
      * This value is cached and refreshed each time a new invocation is called for different [PlaybackParams].
      */
+    @MainThread
     fun obtain(): PlaybackController {
         var created = false
         var returnValue: PlaybackController? = playbackController

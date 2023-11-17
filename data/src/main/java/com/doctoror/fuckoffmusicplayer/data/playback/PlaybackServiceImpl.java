@@ -56,7 +56,6 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
 
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 
 public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements PlaybackService {
@@ -184,9 +183,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
     }
 
     private void playCurrentOrNewQueue() {
-        Completable.fromAction(unitPlayCurrentOrNewQueue::playCurrentOrNewQueue)
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+        unitPlayCurrentOrNewQueue.playCurrentOrNewQueue();
     }
 
     private void playCurrent() {
@@ -204,9 +201,8 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
             Log.w(TAG, "Play requested for empty queue");
             return;
         }
-        Completable.fromAction(() -> unitPlayMediaFromQueue.play(queue, position))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+
+        unitPlayMediaFromQueue.play(queue, position);
     }
 
     @Override
@@ -234,9 +230,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
 
     @Override
     public void playPrev() {
-        Completable.fromAction(() -> playbackControllerProvider.obtain().playPrev())
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+        playbackControllerProvider.obtain().playPrev();
     }
 
     @Override
@@ -264,9 +258,7 @@ public final class PlaybackServiceImpl extends ServiceLifecycleOwner implements 
         // Set this state but do not notify listeners so that onPlaybackFinished will not invoke playNext
         // again
         state = STATE_LOADING;
-        Completable.fromAction(() -> playbackControllerProvider.obtain().playNext(isUserAction))
-                .subscribeOn(Schedulers.computation())
-                .subscribe();
+        playbackControllerProvider.obtain().playNext(isUserAction);
     }
 
     @Override

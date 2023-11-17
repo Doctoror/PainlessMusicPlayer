@@ -25,8 +25,9 @@ import java.util.concurrent.TimeUnit
  * Used for delayed stop action invocation.
  */
 class PlaybackServiceUnitStopTimeout(
-        private val stopAction: Runnable,
-        private val schedulersProvider: SchedulersProvider) {
+    private val stopAction: Runnable,
+    private val schedulersProvider: SchedulersProvider
+) {
 
     /**
      * The timeout after which [stopAction] should be performed, in seconds.
@@ -46,8 +47,8 @@ class PlaybackServiceUnitStopTimeout(
     fun initializeStopTimer() {
         abortStopTimer()
         disposable = Observable
-                .timer(timeout, TimeUnit.SECONDS, schedulersProvider.computation())
-                .subscribe { stopAction.run() }
+            .timer(timeout, TimeUnit.SECONDS, schedulersProvider.mainThread())
+            .subscribe { stopAction.run() }
     }
 
     /**

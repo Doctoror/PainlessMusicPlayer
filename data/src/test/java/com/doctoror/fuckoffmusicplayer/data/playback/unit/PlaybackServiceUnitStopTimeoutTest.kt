@@ -35,12 +35,12 @@ class PlaybackServiceUnitStopTimeoutTest {
 
     private fun givenSchedulerComputationAndLargeTimeout() {
         underTest.timeout = Long.MAX_VALUE
-        whenever(schedulersProvider.computation()).thenReturn(Schedulers.computation())
+        whenever(schedulersProvider.mainThread()).thenReturn(Schedulers.computation())
     }
 
     private fun givenSchedulerTrampolineAndNoTimeout() {
         underTest.timeout = 0
-        whenever(schedulersProvider.computation()).thenReturn(Schedulers.trampoline())
+        whenever(schedulersProvider.mainThread()).thenReturn(Schedulers.trampoline())
     }
 
     @Test

@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.unit
 
+import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import com.doctoror.fuckoffmusicplayer.data.util.CollectionUtils
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider
@@ -26,11 +27,12 @@ import com.doctoror.fuckoffmusicplayer.domain.player.MediaPlayer
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 class PlaybackServiceUnitPlayMediaFromQueue(
-        private val currentMediaProvider: CurrentMediaProvider,
-        private val mediaPlayer: MediaPlayer,
-        private val playbackData: PlaybackData,
-        private val unitAudioFocus: PlaybackServiceUnitAudioFocus,
-        private val unitReporter: PlaybackServiceUnitReporter) {
+    private val currentMediaProvider: CurrentMediaProvider,
+    private val mediaPlayer: MediaPlayer,
+    private val playbackData: PlaybackData,
+    private val unitAudioFocus: PlaybackServiceUnitAudioFocus,
+    private val unitReporter: PlaybackServiceUnitReporter
+) {
 
     @VisibleForTesting
     val remainingDurationForPlayWhereStopped = 100
@@ -41,9 +43,11 @@ class PlaybackServiceUnitPlayMediaFromQueue(
      * If queue position points to the same media, will continue playback.
      * If queue position points to different media, will replace current media and start playback of new media
      */
+    @MainThread
     fun play(
-            queue: List<Media>?,
-            position: Int) {
+        queue: List<Media>?,
+        position: Int
+    ) {
         if (queue == null || queue.isEmpty()) {
             throw IllegalArgumentException("Play queue is null or empty")
         }
@@ -53,34 +57,38 @@ class PlaybackServiceUnitPlayMediaFromQueue(
         val targetMedia = resolveTargetMedia(queue, position)
 
         if (queue == playbackData.queue &&
-                isTheSameMediaPaused(currentState, currentMedia, targetMedia)) {
+            isTheSameMediaPaused(currentState, currentMedia, targetMedia)
+        ) {
             requestFocusAndPlay()
             return
         }
 
         changeMediaAndPlay(
-                queue,
-                currentState,
-                position,
-                currentMedia,
-                targetMedia)
+            queue,
+            currentState,
+            position,
+            currentMedia,
+            targetMedia
+        )
     }
 
     private fun changeMediaAndPlay(
-            queue: List<Media>,
-            currentState: PlaybackState,
-            position: Int,
-            currentMedia: Media?,
-            targetMedia: Media) {
+        queue: List<Media>,
+        currentState: PlaybackState,
+        position: Int,
+        currentMedia: Media?,
+        targetMedia: Media
+    ) {
 
         mediaPlayer.stop()
         playbackData.setPlayQueue(queue)
         playbackData.setPlayQueuePosition(position)
 
         val seekPosition = resolveSeekPosition(
-                currentState = currentState,
-                currentMedia = currentMedia,
-                targetMedia = targetMedia)
+            currentState = currentState,
+            currentMedia = currentMedia,
+            targetMedia = targetMedia
+        )
 
         playbackData.setMediaPosition(seekPosition)
         playbackData.persistAsync()
@@ -99,8 +107,9 @@ class PlaybackServiceUnitPlayMediaFromQueue(
     }
 
     private fun resolveTargetMedia(
-            queue: List<Media>,
-            position: Int): Media {
+        queue: List<Media>,
+        position: Int
+    ): Media {
         var media = CollectionUtils.getItemSafe(queue, position)
         if (media == null) {
             media = queue[0]
@@ -109,17 +118,19 @@ class PlaybackServiceUnitPlayMediaFromQueue(
     }
 
     private fun isTheSameMediaPaused(
-            currentState: PlaybackState,
-            currentMedia: Media?,
-            targetMedia: Media) =
-            currentState == STATE_PAUSED
-                    && currentMedia != null
-                    && targetMedia.id == currentMedia.id
+        currentState: PlaybackState,
+        currentMedia: Media?,
+        targetMedia: Media
+    ) =
+        currentState == STATE_PAUSED
+                && currentMedia != null
+                && targetMedia.id == currentMedia.id
 
     private fun resolveSeekPosition(
-            currentState: PlaybackState,
-            currentMedia: Media?,
-            targetMedia: Media): Long {
+        currentState: PlaybackState,
+        currentMedia: Media?,
+        targetMedia: Media
+    ): Long {
         var seekPosition: Long = 0
         // If restoring from stopped state, set seek position to what it was
         if (currentState == STATE_IDLE && targetMedia == currentMedia) {

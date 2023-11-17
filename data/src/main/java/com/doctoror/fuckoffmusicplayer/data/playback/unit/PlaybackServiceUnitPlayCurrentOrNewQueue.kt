@@ -20,13 +20,15 @@ import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.initializer.PlaybackInitializer
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderRecentlyScanned
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 class PlaybackServiceUnitPlayCurrentOrNewQueue(
-        private val playbackData: PlaybackData,
-        private val playbackInitializer: PlaybackInitializer,
-        private val psUnitPlayMediaFromQueue: PlaybackServiceUnitPlayMediaFromQueue,
-        private val queueProviderRecentlyScanned: QueueProviderRecentlyScanned,
-        private val schedulersProvider: SchedulersProvider) {
+    private val playbackData: PlaybackData,
+    private val playbackInitializer: PlaybackInitializer,
+    private val psUnitPlayMediaFromQueue: PlaybackServiceUnitPlayMediaFromQueue,
+    private val queueProviderRecentlyScanned: QueueProviderRecentlyScanned,
+    private val schedulersProvider: SchedulersProvider
+) {
 
     private val tag = "PlayCurrentOrNewQueueUseCase"
 
@@ -36,17 +38,18 @@ class PlaybackServiceUnitPlayCurrentOrNewQueue(
             psUnitPlayMediaFromQueue.play(queue, playbackData.queuePosition)
         } else {
             queueProviderRecentlyScanned.recentlyScannedQueue()
-                    .take(1)
-                    .subscribeOn(schedulersProvider.io())
-                    .subscribe(
-                            { q ->
-                                if (q.isEmpty()) {
-                                    Log.w(tag, "Recently scanned queue is empty")
-                                } else {
-                                    playbackInitializer.setQueueAndPlay(q, 0)
-                                }
-                            },
-                            { t -> Log.w(tag, "Failed to load recently scanned", t) })
+                .take(1)
+                .subscribeOn(schedulersProvider.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { q ->
+                        if (q.isEmpty()) {
+                            Log.w(tag, "Recently scanned queue is empty")
+                        } else {
+                            playbackInitializer.setQueueAndPlay(q, 0)
+                        }
+                    },
+                    { t -> Log.w(tag, "Failed to load recently scanned", t) })
         }
     }
 }

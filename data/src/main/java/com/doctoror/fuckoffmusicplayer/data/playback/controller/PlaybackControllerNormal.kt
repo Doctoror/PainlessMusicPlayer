@@ -15,6 +15,7 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.controller
 
+import androidx.annotation.MainThread
 import com.doctoror.fuckoffmusicplayer.data.playback.unit.PlaybackServiceUnitPlayMediaFromQueue
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackParams
@@ -31,6 +32,7 @@ open class PlaybackControllerNormal(
 
     private var queue: List<Media>? = null
 
+    @MainThread
     override fun playPrev() {
         synchronized(lock) {
             val localQueue = queue
@@ -45,6 +47,7 @@ open class PlaybackControllerNormal(
         }
     }
 
+    @MainThread
     override fun playNext(isUserAction: Boolean) {
         synchronized(lock) {
             val localQueue = queue
@@ -69,10 +72,12 @@ open class PlaybackControllerNormal(
         }
     }
 
+    @MainThread
     private fun dispatchPlay(list: List<Media>?, position: Int) {
         play(list, position)
     }
 
+    @MainThread
     protected open fun play(list: List<Media>?, position: Int) {
         playMediaFromQueueUseCase.play(list, position)
     }

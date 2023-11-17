@@ -110,6 +110,7 @@ ext {
             protobuf      : "com.google.protobuf.nano:protobuf-javanano:$protobufVersion",
 
             rxCursorLoader: "com.github.doctoror.rxcursorloader:library:$rxCursorLoaderVersion",
+            rxAndroid     : "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion",
             rxJava        : "io.reactivex.rxjava2:rxjava:$rxJavaVersion",
     ]
 

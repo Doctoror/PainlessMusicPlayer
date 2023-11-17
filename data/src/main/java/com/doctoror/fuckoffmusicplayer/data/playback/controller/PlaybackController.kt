@@ -15,13 +15,17 @@
  */
 package com.doctoror.fuckoffmusicplayer.data.playback.controller
 
+import androidx.annotation.MainThread
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media
 
 interface PlaybackController {
 
+    @MainThread
     fun playNext(isUserAction: Boolean)
 
+    @MainThread
     fun playPrev()
 
+    @MainThread
     fun setQueue(queue: List<Media>?)
 }

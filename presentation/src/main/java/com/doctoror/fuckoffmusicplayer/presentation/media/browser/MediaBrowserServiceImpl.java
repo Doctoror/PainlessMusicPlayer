@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.media.MediaBrowserServiceCompat;
 
 import com.doctoror.commons.util.Log;
+import com.doctoror.fuckoffmusicplayer.di.DaggerHolder;
 import com.doctoror.fuckoffmusicplayer.domain.media.session.MediaSessionHolder;
 
 import java.util.List;
@@ -49,6 +50,8 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
     @Override
     public void onCreate() {
         super.onCreate();
+        DaggerHolder.getInstance(this).mainComponent().inject(this);
+
         mPackageValidator = new PackageValidator(this);
         mMediaBrowser = new MediaBrowserImpl(this);
 
@@ -69,7 +72,7 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
     @Nullable
     @Override
     public BrowserRoot onGetRoot(@NonNull final String clientPackageName,
-            final int clientUid, final Bundle rootHints) {
+                                 final int clientUid, final Bundle rootHints) {
         if (Log.logDEnabled()) {
             Log.d(TAG, "OnGetRoot: clientPackageName=" + clientPackageName
                     + "; clientUid=" + clientUid + " ; rootHints=" + rootHints);
@@ -88,7 +91,7 @@ public final class MediaBrowserServiceImpl extends MediaBrowserServiceCompat {
 
     @Override
     public void onLoadChildren(@NonNull final String parentId,
-            @NonNull final Result<List<MediaItem>> result) {
+                               @NonNull final Result<List<MediaItem>> result) {
         if (Log.logDEnabled()) {
             Log.d(TAG, "OnLoadChildren: parentMediaId=" + parentId);
         }
