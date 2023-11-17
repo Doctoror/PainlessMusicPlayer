@@ -62,6 +62,7 @@ public final class EffectsFragment extends Fragment {
         final FragmentEffectsBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_effects, container, false);
         binding.setModel(model);
+        binding.switchBassBoost.setEnabled(audioEffects.getSessionId() != 0);
         binding.switchBassBoost.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> setBassBoostEnabled(isChecked));
         RxSeekBar.userChanges(binding.seekBarBassBoost).subscribe(new Consumer<Integer>() {
