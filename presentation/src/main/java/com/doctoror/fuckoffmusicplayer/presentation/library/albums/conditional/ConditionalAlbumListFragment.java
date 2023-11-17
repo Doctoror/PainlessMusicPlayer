@@ -15,14 +15,12 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.library.albums.conditional;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,6 +50,7 @@ import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums;
 import com.doctoror.fuckoffmusicplayer.presentation.Henson;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.base.BaseFragment;
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker;
 import com.doctoror.fuckoffmusicplayer.presentation.nowplaying.NowPlayingActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.CardVerticalGateTransition;
@@ -103,6 +101,9 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
 
     @Inject
     AlbumArtIntoTargetApplier albumArtIntoTargetApplier;
+
+    @Inject
+    LibraryPermissionsChecker libraryPermissionsChecker;
 
     @Inject
     QueueProviderAlbums mQueueFactory;
@@ -313,8 +314,7 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
     private void restartLoader() {
         final Context context = getContext();
         if (context != null) {
-            if (ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (libraryPermissionsChecker.permissionsGranted()) {
                 mDisposableDataOld = mDisposableData;
                 mDisposableData = disposeOnStop(load()
                         .subscribeOn(Schedulers.io())

@@ -28,14 +28,20 @@ typealias OptionsMenuInvalidator = () -> Unit
 typealias LibraryDataSource = (String?) -> Observable<Cursor>
 
 class LibraryListPresenter(
-        private val libraryPermissionProvider: LibraryPermissionsProvider,
-        private val optionsMenuInvalidator: OptionsMenuInvalidator,
-        runtimePermissions: RuntimePermissions,
-        private val schedulersProvider: SchedulersProvider,
-        private val searchQuerySource: Observable<String>,
-        private val viewModel: LibraryListViewModel) :
-        LibraryPermissionsPresenter(
-                libraryPermissionProvider, runtimePermissions, schedulersProvider) {
+    private val libraryPermissionsChecker: LibraryPermissionsChecker,
+    libraryPermissionRequester: LibraryPermissionsRequester,
+    private val optionsMenuInvalidator: OptionsMenuInvalidator,
+    runtimePermissions: RuntimePermissions,
+    private val schedulersProvider: SchedulersProvider,
+    private val searchQuerySource: Observable<String>,
+    private val viewModel: LibraryListViewModel
+) :
+    LibraryPermissionsPresenter(
+        libraryPermissionsChecker,
+        libraryPermissionRequester,
+        runtimePermissions,
+        schedulersProvider
+    ) {
 
     private val tag = "LibraryListPresenter"
 
@@ -71,14 +77,16 @@ class LibraryListPresenter(
     }
 
     private fun restartLoader(searchFilter: String?) {
-        if (libraryPermissionProvider.permissionsGranted()) {
+        if (libraryPermissionsChecker.permissionsGranted()) {
             val dataSource = this.dataSource
-                    ?: throw IllegalStateException("LibraryDataSource not set")
+                ?: throw IllegalStateException("LibraryDataSource not set")
             disposablePrevious = disposable
-            disposable = disposeOnStop(dataSource.invoke(searchFilter)
+            disposable = disposeOnStop(
+                dataSource.invoke(searchFilter)
                     .subscribeOn(schedulersProvider.io())
                     .observeOn(schedulersProvider.mainThread())
-                    .subscribe(this::onNextSearchResult, this::onSearchResultLoadFailed))
+                    .subscribe(this::onNextSearchResult, this::onSearchResultLoadFailed)
+            )
         } else {
             Log.w(tag, "restartLoader is called, but READ_EXTERNAL_STORAGE is not granted")
         }
@@ -108,7 +116,7 @@ class LibraryListPresenter(
     private fun obtainCursorRecyclerAdapterOrThrow():
             CursorRecyclerViewAdapter<out RecyclerView.ViewHolder> {
         val adapter = viewModel.recyclerAdapter.get()
-                ?: throw IllegalStateException("RecyclerView.Adapter not set on ViewModel")
+            ?: throw IllegalStateException("RecyclerView.Adapter not set on ViewModel")
 
         @Suppress("FoldInitializerAndIfToElvis")
         if (adapter !is CursorRecyclerViewAdapter<out RecyclerView.ViewHolder>) {

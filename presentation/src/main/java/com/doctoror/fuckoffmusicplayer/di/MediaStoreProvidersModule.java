@@ -38,6 +38,7 @@ import com.doctoror.fuckoffmusicplayer.domain.media.AlbumMediaIdsProvider;
 import com.doctoror.fuckoffmusicplayer.domain.media.MediaManager;
 import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.fuckoffmusicplayer.domain.tracks.TracksProvider;
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker;
 import com.doctoror.fuckoffmusicplayer.presentation.util.AlbumArtIntoTargetApplier;
 
 import javax.inject.Singleton;
@@ -75,6 +76,11 @@ final class MediaStoreProvidersModule {
     @Provides
     GenresProvider provideGenresProvider(@NonNull final ContentResolver resolver) {
         return new MediaStoreGenresProvider(resolver);
+    }
+
+    @Provides
+    LibraryPermissionsChecker libraryPermissionsChecker(@NonNull final Context context) {
+        return new LibraryPermissionsChecker(context);
     }
 
     @Provides

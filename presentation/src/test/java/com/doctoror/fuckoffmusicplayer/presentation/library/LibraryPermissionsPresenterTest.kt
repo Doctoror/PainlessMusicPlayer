@@ -29,7 +29,7 @@ import org.junit.Test
 
 class LibraryPermissionsPresenterTest {
 
-    private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
+    private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
     private val runtimePermissions: RuntimePermissions = mock()
 
     private val underTest = Impl(
@@ -150,9 +150,9 @@ class LibraryPermissionsPresenterTest {
     }
 
     internal class Impl(
-            libraryPermissionProvider: LibraryPermissionsProvider,
-            runtimePermissions: RuntimePermissions,
-            schedulersProvider: SchedulersProvider)
+        libraryPermissionProvider: LibraryPermissionsRequester,
+        runtimePermissions: RuntimePermissions,
+        schedulersProvider: SchedulersProvider)
         : LibraryPermissionsPresenter(
             libraryPermissionProvider, runtimePermissions, schedulersProvider) {
 

@@ -15,7 +15,6 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.nowplaying;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
@@ -23,7 +22,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,7 +36,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.databinding.DataBindingUtil;
 
@@ -59,6 +56,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.base.BaseActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.effects.AudioEffectsActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.formatter.ArtistAlbumFormatter;
 import com.doctoror.fuckoffmusicplayer.presentation.home.HomeActivity;
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker;
 import com.doctoror.fuckoffmusicplayer.presentation.navigation.NavigationController;
 import com.doctoror.fuckoffmusicplayer.presentation.queue.QueueActivity;
 import com.doctoror.fuckoffmusicplayer.presentation.transition.TransitionUtils;
@@ -133,6 +131,9 @@ public final class NowPlayingActivity extends BaseActivity {
     ArtistAlbumFormatter mArtistAlbumFormatter;
 
     @Inject
+    LibraryPermissionsChecker mLibraryPermissionsChecker;
+
+    @Inject
     PlaybackData mPlaybackData;
 
     @Inject
@@ -155,8 +156,7 @@ public final class NowPlayingActivity extends BaseActivity {
         Dart.inject(this);
         AndroidInjection.inject(this);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (!mLibraryPermissionsChecker.permissionsGranted()) {
             final Intent intent = Intent.makeMainActivity(
                     new ComponentName(this, HomeActivity.class));
             startActivity(intent);

@@ -6,7 +6,8 @@ import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.di.scopes.FragmentScope
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsProvider
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsRequester
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler
 import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
 import dagger.Module
@@ -22,29 +23,33 @@ class RecentActivityFragmentModule {
     @Provides
     @FragmentScope
     fun provideAlbumClickHandler(
-            fragment: RecentActivityFragment,
-            queueProvider: QueueProviderAlbums) = AlbumClickHandler(fragment, queueProvider)
+        fragment: RecentActivityFragment,
+        queueProvider: QueueProviderAlbums
+    ) = AlbumClickHandler(fragment, queueProvider)
 
     @Provides
     @FragmentScope
     fun provideRecentActivityPresenter(
-            albumClickHandler: AlbumClickHandler,
-            albumItemsFactory: AlbumItemsFactory,
-            albumsProvider: AlbumsProvider,
-            libraryPermissionProvider: LibraryPermissionsProvider,
-            resources: Resources,
-            runtimePermissions: RuntimePermissions,
-            schedulersProvider: SchedulersProvider,
-            viewModel: RecentActivityViewModel
+        albumClickHandler: AlbumClickHandler,
+        albumItemsFactory: AlbumItemsFactory,
+        albumsProvider: AlbumsProvider,
+        libraryPermissionsChecker: LibraryPermissionsChecker,
+        libraryPermissionRequester: LibraryPermissionsRequester,
+        resources: Resources,
+        runtimePermissions: RuntimePermissions,
+        schedulersProvider: SchedulersProvider,
+        viewModel: RecentActivityViewModel
     ) = RecentActivityPresenter(
-            albumClickHandler,
-            albumItemsFactory,
-            albumsProvider,
-            libraryPermissionProvider,
-            resources,
-            runtimePermissions,
-            schedulersProvider,
-            viewModel)
+        albumClickHandler,
+        albumItemsFactory,
+        albumsProvider,
+        libraryPermissionsChecker,
+        libraryPermissionRequester,
+        resources,
+        runtimePermissions,
+        schedulersProvider,
+        viewModel
+    )
 
     @Provides
     @FragmentScope
@@ -53,16 +58,15 @@ class RecentActivityFragmentModule {
     @Provides
     @FragmentScope
     fun provideRxPermissionsProvider(fragment: RecentActivityFragment) =
-            RxPermissionsProvider(fragment.requireActivity())
+        RxPermissionsProvider(fragment.requireActivity())
 
     @Provides
     @FragmentScope
     fun provideLibraryPermissionsProvider(
-            fragment: RecentActivityFragment,
-            runtimePermissions: RuntimePermissions,
-            rxPermissionsProvider: RxPermissionsProvider
-    ) = LibraryPermissionsProvider(
-            fragment.requireContext(),
-            runtimePermissions,
-            rxPermissionsProvider)
+        runtimePermissions: RuntimePermissions,
+        rxPermissionsProvider: RxPermissionsProvider
+    ) = LibraryPermissionsRequester(
+        runtimePermissions,
+        rxPermissionsProvider
+    )
 }

@@ -35,7 +35,7 @@ import java.io.IOException
 
 class LibraryListPresenterTest {
 
-    private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
+    private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
     private val optionsMenuInvalidator: OptionsMenuInvalidator = mock()
     private val searchQuerySource = PublishSubject.create<String>()
     private val viewModel = LibraryListViewModel()

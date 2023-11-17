@@ -23,7 +23,7 @@ import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
 import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsProvider
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsRequester
 import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
@@ -40,7 +40,7 @@ class RecentActivityPresenterTest {
     private val albumItemsFactory = AlbumItemsFactory()
     private val albumsProvider: AlbumsProvider = mock()
     private val fragment: RecentActivityFragment = mock()
-    private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
+    private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
     private val queueProvider: QueueProviderAlbums = mock()
     private val resources: Resources = mock {
         on(it.getText(R.string.Recently_added)).doReturn("Recently added")

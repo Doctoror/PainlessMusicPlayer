@@ -8,8 +8,9 @@ import com.doctoror.commons.util.Log
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsPresenter
-import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsProvider
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsRequester
 import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -17,23 +18,29 @@ import io.reactivex.functions.BiFunction
 private const val MAX_HISTORY_SECTION_LENGTH = 12
 
 class RecentActivityPresenter(
-        private val albumClickHandler: AlbumClickHandler,
-        private val albumItemsFactory: AlbumItemsFactory,
-        private val albumsProvider: AlbumsProvider,
-        private val libraryPermissionProvider: LibraryPermissionsProvider,
-        private val resources: Resources,
-        runtimePermissions: RuntimePermissions,
-        private val schedulersProvider: SchedulersProvider,
-        private val viewModel: RecentActivityViewModel)
-    : LibraryPermissionsPresenter(
-        libraryPermissionProvider, runtimePermissions, schedulersProvider) {
+    private val albumClickHandler: AlbumClickHandler,
+    private val albumItemsFactory: AlbumItemsFactory,
+    private val albumsProvider: AlbumsProvider,
+    private val libraryPermissionsChecker: LibraryPermissionsChecker,
+    libraryPermissionRequester: LibraryPermissionsRequester,
+    private val resources: Resources,
+    runtimePermissions: RuntimePermissions,
+    private val schedulersProvider: SchedulersProvider,
+    private val viewModel: RecentActivityViewModel
+) : LibraryPermissionsPresenter(
+    libraryPermissionsChecker,
+    libraryPermissionRequester,
+    runtimePermissions,
+    schedulersProvider
+) {
 
     private val tag = "RecentActivityPresenter"
 
     fun onAlbumClick(
-            id: Long,
-            album: String?,
-            itemViewProvider: () -> View?) {
+        id: Long,
+        album: String?,
+        itemViewProvider: () -> View?
+    ) {
         albumClickHandler.onAlbumClick(id, album, itemViewProvider)
     }
 
@@ -52,19 +59,23 @@ class RecentActivityPresenter(
     }
 
     private fun load() {
-        if (libraryPermissionProvider.permissionsGranted()) {
+        if (libraryPermissionsChecker.permissionsGranted()) {
 
             val recentlyPlayed = albumsProvider
-                    .loadRecentlyPlayedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1)
+                .loadRecentlyPlayedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1)
 
             val recentlyScanned = albumsProvider
-                    .loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1)
+                .loadRecentlyScannedAlbums(MAX_HISTORY_SECTION_LENGTH).take(1)
 
-            disposeOnStop(Observable.combineLatest(recentlyPlayed, recentlyScanned,
-                    RecyclerAdapterDataFunc())
+            disposeOnStop(
+                Observable.combineLatest(
+                    recentlyPlayed, recentlyScanned,
+                    RecyclerAdapterDataFunc()
+                )
                     .subscribeOn(schedulersProvider.io())
                     .observeOn(schedulersProvider.mainThread())
-                    .subscribe({ this.onRecentActivityLoaded(it) }, this::onError))
+                    .subscribe({ this.onRecentActivityLoaded(it) }, this::onError)
+            )
         } else {
             Log.w(tag, "load() is called, READ_EXTERNAL_STORAGE is not granted")
         }
@@ -77,7 +88,7 @@ class RecentActivityPresenter(
 
     private fun onRecentActivityLoaded(data: List<Any>) {
         val recyclerAdapter = viewModel.recyclerAdapter.get() as? RecentActivityRecyclerAdapter
-                ?: throw IllegalStateException("recyclerAdapter is either not set or not a RecentActivityRecyclerAdapter")
+            ?: throw IllegalStateException("recyclerAdapter is either not set or not a RecentActivityRecyclerAdapter")
         recyclerAdapter.setItems(data)
         if (data.isEmpty() || dataIsOnlyHeaders(data)) {
             viewModel.showViewEmpty()

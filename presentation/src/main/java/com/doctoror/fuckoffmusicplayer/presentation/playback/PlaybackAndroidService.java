@@ -15,25 +15,23 @@
  */
 package com.doctoror.fuckoffmusicplayer.presentation.playback;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.view.KeyEvent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import androidx.core.content.ContextCompat;
 
 import com.doctoror.fuckoffmusicplayer.domain.media.CurrentMediaProvider;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackData;
 import com.doctoror.fuckoffmusicplayer.domain.playback.PlaybackService;
 import com.doctoror.fuckoffmusicplayer.domain.queue.Media;
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker;
 
 import java.util.List;
 
@@ -78,6 +76,9 @@ public final class PlaybackAndroidService extends Service {
     CurrentMediaProvider currentMediaProvider;
 
     @Inject
+    LibraryPermissionsChecker libraryPermissionsChecker;
+
+    @Inject
     PlaybackData playbackData;
 
     @Inject
@@ -110,8 +111,7 @@ public final class PlaybackAndroidService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (!libraryPermissionsChecker.permissionsGranted()) {
             stopSelf();
             return START_NOT_STICKY;
         }

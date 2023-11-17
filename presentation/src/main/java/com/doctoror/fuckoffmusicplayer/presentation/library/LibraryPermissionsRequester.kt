@@ -16,29 +16,23 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.MainThread
-import androidx.core.content.ContextCompat
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
 import io.reactivex.Observable
 
-class LibraryPermissionsProvider(
-        private val context: Context,
-        private val runtimePermissions: RuntimePermissions,
-        private val rxPermissionsProvider: RxPermissionsProvider) {
-
-    fun permissionsGranted() = ContextCompat.checkSelfPermission(context, getPermission()) ==
-            PackageManager.PERMISSION_GRANTED
+class LibraryPermissionsRequester(
+    private val runtimePermissions: RuntimePermissions,
+    private val rxPermissionsProvider: RxPermissionsProvider
+) {
 
     @MainThread
     fun requestPermission(): Observable<Boolean> {
         runtimePermissions.permissionsRequested = true
         return rxPermissionsProvider
-                .provideRxPermissions()
-                .request(getPermission())
+            .provideRxPermissions()
+            .request(getPermission())
     }
 
     private fun getPermission() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

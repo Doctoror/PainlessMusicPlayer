@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner::class)
-class LibraryPermissionsProviderTest {
+class LibraryPermissionsRequesterTest {
 
     private val context: Context = mock()
     private val runtimePermissions: RuntimePermissions = mock()
@@ -41,7 +41,7 @@ class LibraryPermissionsProviderTest {
         on(it.provideRxPermissions()).doReturn(rxPermissions)
     }
 
-    private val underTest = LibraryPermissionsProvider(
+    private val underTest = LibraryPermissionsRequester(
             context, runtimePermissions, rxPermissionsProvider)
 
     private fun givenPermissionsDenied() {

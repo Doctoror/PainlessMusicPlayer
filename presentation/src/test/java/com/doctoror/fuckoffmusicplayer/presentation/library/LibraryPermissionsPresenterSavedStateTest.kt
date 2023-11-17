@@ -30,7 +30,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class LibraryPermissionsPresenterSavedStateTest {
 
-    private val libraryPermissionProvider: LibraryPermissionsProvider = mock()
+    private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
     private val runtimePermissions: RuntimePermissions = mock()
     private val schedulersProvider = TestSchedulersProvider()
 

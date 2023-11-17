@@ -55,7 +55,9 @@ abstract class LibraryListFragment : BaseFragment() {
 
     private lateinit var binding: FragmentLibraryListBinding
 
-    private lateinit var libraryPermissionsProvider: LibraryPermissionsProvider
+    private lateinit var libraryPermissionsChecker: LibraryPermissionsChecker
+
+    private lateinit var libraryPermissionsRequester: LibraryPermissionsRequester
 
     private lateinit var presenter: LibraryListPresenter
 
@@ -80,14 +82,16 @@ abstract class LibraryListFragment : BaseFragment() {
     private fun createDependencies() {
         val activity = activity ?: throw IllegalStateException("Activity is null")
 
-        libraryPermissionsProvider = LibraryPermissionsProvider(
-            activity,
+        libraryPermissionsChecker = LibraryPermissionsChecker(activity)
+
+        libraryPermissionsRequester = LibraryPermissionsRequester(
             runtimePermissions,
             RxPermissionsProvider(activity)
         )
 
         presenter = LibraryListPresenter(
-            libraryPermissionsProvider,
+            libraryPermissionsChecker,
+            libraryPermissionsRequester,
             { activity.invalidateOptionsMenu() },
             runtimePermissions,
             SchedulersProviderImpl(),
@@ -127,7 +131,7 @@ abstract class LibraryListFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_library_list, menu)
-        if (libraryPermissionsProvider.permissionsGranted()) {
+        if (libraryPermissionsChecker.permissionsGranted()) {
             val searchView = menu.findItem(R.id.actionFilter).actionView as SearchView
             SearchViewUtils.setSearchIcon(searchView, R.drawable.ic_filter_list_white_24dp)
             searchView.queryHint = getText(R.string.Filter)

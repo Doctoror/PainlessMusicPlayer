@@ -28,9 +28,11 @@ import kotlinx.android.parcel.Parcelize
 import java.util.concurrent.TimeUnit
 
 abstract class LibraryPermissionsPresenter(
-        private val libraryPermissionProvider: LibraryPermissionsProvider,
-        private val runtimePermissions: RuntimePermissions,
-        private val schedulersProvider: SchedulersProvider) : BasePresenter() {
+    private val libraryPermissionChecker: LibraryPermissionsChecker,
+    private val libraryPermissionProvider: LibraryPermissionsRequester,
+    private val runtimePermissions: RuntimePermissions,
+    private val schedulersProvider: SchedulersProvider
+) : BasePresenter() {
 
     private val permissionRequestDelay = 500L
     private val keyInstanceState = "LibraryPermissionsPresenter.INSTANCE_STATE"
@@ -59,13 +61,13 @@ abstract class LibraryPermissionsPresenter(
     fun requestPermission() {
         permissionRequested = true
         libraryPermissionProvider.requestPermission()
-                .subscribe { granted ->
-                    if (granted) {
-                        onPermissionGranted()
-                    } else {
-                        onPermissionDenied()
-                    }
+            .subscribe { granted ->
+                if (granted) {
+                    onPermissionGranted()
+                } else {
+                    onPermissionDenied()
                 }
+            }
     }
 
     protected abstract fun onPermissionDenied()
@@ -74,14 +76,15 @@ abstract class LibraryPermissionsPresenter(
 
     private fun requestPermissionIfNeeded() {
         when {
-            libraryPermissionProvider.permissionsGranted() -> onPermissionGranted()
+            libraryPermissionChecker.permissionsGranted() -> onPermissionGranted()
             permissionRequested -> onPermissionDenied()
             else -> disposeOnStop(Completable
-                    .timer(
-                            permissionRequestDelay,
-                            TimeUnit.MILLISECONDS,
-                            schedulersProvider.mainThread())
-                    .subscribe { requestPermission() })
+                .timer(
+                    permissionRequestDelay,
+                    TimeUnit.MILLISECONDS,
+                    schedulersProvider.mainThread()
+                )
+                .subscribe { requestPermission() })
         }
     }
 
