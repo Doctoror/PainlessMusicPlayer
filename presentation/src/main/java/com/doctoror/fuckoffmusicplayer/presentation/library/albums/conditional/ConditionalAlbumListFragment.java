@@ -376,6 +376,10 @@ public abstract class ConditionalAlbumListFragment extends BaseFragment {
                 appBar.setExpanded(true, false);
             }
             setAppBarCollapsibleIfNeeded();
+            final FragmentActivity activity = getActivity();
+            if (activity != null) {
+                activity.supportStartPostponedEnterTransition();
+            }
         }
     }
 
