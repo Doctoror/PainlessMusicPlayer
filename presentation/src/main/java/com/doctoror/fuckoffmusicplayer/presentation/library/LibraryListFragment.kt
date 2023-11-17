@@ -35,6 +35,7 @@ import com.doctoror.fuckoffmusicplayer.presentation.util.ViewUtils
 import com.doctoror.fuckoffmusicplayer.presentation.widget.SwipeDirectionTouchListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.processors.BehaviorProcessor
+import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.parcel.Parcelize
 import java.util.concurrent.TimeUnit
@@ -144,7 +145,7 @@ abstract class LibraryListFragment : BaseFragment() {
             searchView.setOnSearchClickListener { _ -> searchIconified = false }
             searchView.isIconified = searchIconified
 
-            val qtcSubject = PublishSubject.create<String>()
+            val qtcSubject = BehaviorSubject.createDefault(searchProcessor.value ?: "")
 
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
@@ -212,6 +213,11 @@ abstract class LibraryListFragment : BaseFragment() {
             LinearLayoutManager(activity)
     }
 
+    override fun onPause() {
+        super.onPause()
+        menuSubscriptionsDisposables.clear()
+    }
+
     override fun onStop() {
         super.onStop()
         activity?.let {
@@ -221,7 +227,6 @@ abstract class LibraryListFragment : BaseFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        menuSubscriptionsDisposables.clear() //TODO check if correct lifecycle
         lifecycle.removeObserver(presenter)
     }
 

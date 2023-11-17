@@ -73,7 +73,9 @@ class LibraryListPresenter(
     override fun onPermissionGranted() {
         viewModel.showViewProgress()
         optionsMenuInvalidator.invoke()
-        disposeOnStop(searchQuerySource.subscribe(this::restartLoader))
+        disposeOnStop(searchQuerySource
+            .distinctUntilChanged()
+            .subscribe(this::restartLoader))
     }
 
     private fun restartLoader(searchFilter: String?) {
