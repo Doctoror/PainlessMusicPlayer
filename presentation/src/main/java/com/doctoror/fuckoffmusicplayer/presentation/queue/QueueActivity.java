@@ -273,8 +273,7 @@ public final class QueueActivity extends BaseActivity
 
                     @Override
                     public void onFailure() {
-                        mCoverUri = null;
-                        albumArt.setAlpha(1f);
+                        onImageSet();
                     }
                 }
         );
