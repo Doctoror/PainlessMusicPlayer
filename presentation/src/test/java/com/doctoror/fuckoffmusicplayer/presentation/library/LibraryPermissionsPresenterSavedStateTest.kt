@@ -30,6 +30,7 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class LibraryPermissionsPresenterSavedStateTest {
 
+    private val libraryPermissionChecker: LibraryPermissionsChecker = mock()
     private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
     private val runtimePermissions: RuntimePermissions = mock()
     private val schedulersProvider = TestSchedulersProvider()
@@ -38,7 +39,11 @@ class LibraryPermissionsPresenterSavedStateTest {
     fun savesAndRestoresInstanceState() {
         // Given
         val underTestSource = LibraryPermissionsPresenterTest.Impl(
-                libraryPermissionProvider, runtimePermissions, schedulersProvider)
+            libraryPermissionChecker,
+            libraryPermissionProvider,
+            runtimePermissions,
+            schedulersProvider
+        )
 
         underTestSource.permissionRequested = true
 
@@ -49,7 +54,11 @@ class LibraryPermissionsPresenterSavedStateTest {
         val savedStateFromParcel = reCreateFromParcel(savedState)
 
         val restored = LibraryPermissionsPresenterTest.Impl(
-                libraryPermissionProvider, runtimePermissions, schedulersProvider)
+            libraryPermissionChecker,
+            libraryPermissionProvider,
+            runtimePermissions,
+            schedulersProvider
+        )
 
         restored.restoreInstanceState(savedStateFromParcel)
 

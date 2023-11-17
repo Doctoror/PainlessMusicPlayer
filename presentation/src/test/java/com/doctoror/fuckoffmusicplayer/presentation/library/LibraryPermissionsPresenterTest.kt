@@ -29,33 +29,36 @@ import org.junit.Test
 
 class LibraryPermissionsPresenterTest {
 
-    private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
+    private val libraryPermissionChecker: LibraryPermissionsChecker = mock()
+    private val libraryPermissionRequester: LibraryPermissionsRequester = mock()
     private val runtimePermissions: RuntimePermissions = mock()
 
     private val underTest = Impl(
-            libraryPermissionProvider,
-            runtimePermissions,
-            TestSchedulersProvider())
+        libraryPermissionChecker,
+        libraryPermissionRequester,
+        runtimePermissions,
+        TestSchedulersProvider()
+    )
 
     private fun givenPermissionDenied() {
-        whenever(libraryPermissionProvider.permissionsGranted())
-                .thenReturn(false)
+        whenever(libraryPermissionChecker.permissionsGranted())
+            .thenReturn(false)
 
-        whenever(libraryPermissionProvider.requestPermission())
-                .thenReturn(Observable.just(false))
+        whenever(libraryPermissionRequester.requestPermission())
+            .thenReturn(Observable.just(false))
     }
 
     private fun givenPermissionGranted() {
-        whenever(libraryPermissionProvider.permissionsGranted())
-                .thenReturn(true)
+        whenever(libraryPermissionChecker.permissionsGranted())
+            .thenReturn(true)
     }
 
     private fun givenPermissionDeniedButGrantedOnRequest() {
-        whenever(libraryPermissionProvider.permissionsGranted())
-                .thenReturn(false)
+        whenever(libraryPermissionChecker.permissionsGranted())
+            .thenReturn(false)
 
-        whenever(libraryPermissionProvider.requestPermission())
-                .thenReturn(Observable.just(true))
+        whenever(libraryPermissionRequester.requestPermission())
+            .thenReturn(Observable.just(true))
     }
 
     @Test
@@ -63,9 +66,11 @@ class LibraryPermissionsPresenterTest {
         whenever(runtimePermissions.permissionsRequested).thenReturn(true)
 
         val underTest = Impl(
-                libraryPermissionProvider,
-                runtimePermissions,
-                TestSchedulersProvider())
+            libraryPermissionChecker,
+            libraryPermissionRequester,
+            runtimePermissions,
+            TestSchedulersProvider()
+        )
 
         assertTrue(underTest.permissionRequested)
     }
@@ -79,7 +84,7 @@ class LibraryPermissionsPresenterTest {
         underTest.onStart()
 
         // Then
-        verify(libraryPermissionProvider).requestPermission()
+        verify(libraryPermissionRequester).requestPermission()
     }
 
     @Test
@@ -144,17 +149,22 @@ class LibraryPermissionsPresenterTest {
         underTest.onStart()
 
         // Then
-        verify(libraryPermissionProvider, times(1)).requestPermission()
+        verify(libraryPermissionRequester, times(1)).requestPermission()
         assertEquals(2, underTest.permissionDeniedInvocationCount)
         assertEquals(0, underTest.permissionGrantedInvocationCount)
     }
 
     internal class Impl(
+        libraryPermissionChecker: LibraryPermissionsChecker,
         libraryPermissionProvider: LibraryPermissionsRequester,
         runtimePermissions: RuntimePermissions,
-        schedulersProvider: SchedulersProvider)
-        : LibraryPermissionsPresenter(
-            libraryPermissionProvider, runtimePermissions, schedulersProvider) {
+        schedulersProvider: SchedulersProvider
+    ) : LibraryPermissionsPresenter(
+        libraryPermissionChecker,
+        libraryPermissionProvider,
+        runtimePermissions,
+        schedulersProvider
+    ) {
 
         var permissionDeniedInvocationCount = 0
         var permissionGrantedInvocationCount = 0

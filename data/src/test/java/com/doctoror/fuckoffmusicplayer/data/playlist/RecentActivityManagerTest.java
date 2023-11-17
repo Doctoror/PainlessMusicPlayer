@@ -17,6 +17,8 @@ package com.doctoror.fuckoffmusicplayer.data.playlist;
 
 import static org.junit.Assert.assertEquals;
 
+import com.doctoror.commons.reactivex.TestSchedulersProvider;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -35,8 +37,10 @@ public final class RecentActivityManagerTest {
 
     @Test
     public void testStoreAlbum() {
-        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
-                RuntimeEnvironment.systemContext);
+        final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
+                RuntimeEnvironment.systemContext,
+                new TestSchedulersProvider()
+        );
         rpm.clear();
         rpm.onAlbumPlayed(666);
 
@@ -47,8 +51,10 @@ public final class RecentActivityManagerTest {
 
     @Test
     public void testStoreAlbums() {
-        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
-                RuntimeEnvironment.systemContext);
+        final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
+                RuntimeEnvironment.systemContext,
+                new TestSchedulersProvider()
+        );
         rpm.clear();
         rpm.storeAlbumsSync(Collections.singletonList(666L));
 
@@ -59,8 +65,10 @@ public final class RecentActivityManagerTest {
 
     @Test
     public void testOrderingByOne() {
-        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
-                RuntimeEnvironment.systemContext);
+        final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
+                RuntimeEnvironment.systemContext,
+                new TestSchedulersProvider()
+        );
         rpm.clear();
 
         rpm.onAlbumPlayed(666);
@@ -76,8 +84,10 @@ public final class RecentActivityManagerTest {
 
     @Test
     public void testOrderingByBatch() {
-        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
-                RuntimeEnvironment.systemContext);
+        final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
+                RuntimeEnvironment.systemContext,
+                new TestSchedulersProvider()
+        );
         rpm.clear();
         rpm.storeAlbumsSync(Arrays.asList(666L, 777L, 888L));
 
@@ -90,8 +100,10 @@ public final class RecentActivityManagerTest {
 
     @Test
     public void testAppendingDuplicate() {
-        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
-                RuntimeEnvironment.systemContext);
+        final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
+                RuntimeEnvironment.systemContext,
+                new TestSchedulersProvider()
+        );
         rpm.clear();
         // Add initial values
         rpm.storeAlbumsSync(Arrays.asList(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L));
@@ -112,8 +124,10 @@ public final class RecentActivityManagerTest {
 
     @Test
     public void testAppendingTheSameValue() {
-        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
-                RuntimeEnvironment.systemContext);
+        final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
+                RuntimeEnvironment.systemContext,
+                new TestSchedulersProvider()
+        );
         rpm.clear();
         // Add initial values
         rpm.storeAlbumsSync(Arrays.asList(1L, 1L, 1L, 1L));
@@ -131,8 +145,10 @@ public final class RecentActivityManagerTest {
 
     @Test
     public void testAppendingTheSameValueOnEnd() {
-        final RecentActivityManagerImpl rpm = RecentActivityManagerImpl.getInstance(
-                RuntimeEnvironment.systemContext);
+        final RecentActivityManagerImpl rpm = new RecentActivityManagerImpl(
+                RuntimeEnvironment.systemContext,
+                new TestSchedulersProvider()
+        );
         rpm.clear();
         // Add initial values
         rpm.storeAlbumsSync(Arrays.asList(1L, 2L, 2L, 2L));

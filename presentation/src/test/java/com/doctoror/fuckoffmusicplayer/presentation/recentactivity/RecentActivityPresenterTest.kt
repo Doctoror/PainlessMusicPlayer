@@ -22,8 +22,9 @@ import android.provider.MediaStore
 import com.doctoror.commons.reactivex.TestSchedulersProvider
 import com.doctoror.fuckoffmusicplayer.R
 import com.doctoror.fuckoffmusicplayer.domain.albums.AlbumsProvider
-import com.doctoror.fuckoffmusicplayer.domain.queue.QueueProviderAlbums
+import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsChecker
 import com.doctoror.fuckoffmusicplayer.presentation.library.LibraryPermissionsRequester
+import com.doctoror.fuckoffmusicplayer.presentation.library.albums.AlbumClickHandler
 import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Observable
 import org.junit.Assert.assertEquals
@@ -37,11 +38,11 @@ import java.io.IOException
 @RunWith(RobolectricTestRunner::class)
 class RecentActivityPresenterTest {
 
+    private val albumClickHandler: AlbumClickHandler = mock()
     private val albumItemsFactory = AlbumItemsFactory()
     private val albumsProvider: AlbumsProvider = mock()
-    private val fragment: RecentActivityFragment = mock()
-    private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
-    private val queueProvider: QueueProviderAlbums = mock()
+    private val libraryPermissionsChecker: LibraryPermissionsChecker = mock()
+    private val libraryPermissionsRequester: LibraryPermissionsRequester = mock()
     private val resources: Resources = mock {
         on(it.getText(R.string.Recently_added)).doReturn("Recently added")
         on(it.getText(R.string.Recently_played_albums)).doReturn("Recently played albums")
@@ -49,11 +50,11 @@ class RecentActivityPresenterTest {
     private val viewModel = RecentActivityViewModel()
 
     private val underTest = RecentActivityPresenter(
+        albumClickHandler,
         albumItemsFactory,
         albumsProvider,
-        fragment,
-        libraryPermissionProvider,
-        queueProvider,
+        libraryPermissionsChecker,
+        libraryPermissionsRequester,
         resources,
         mock(),
         TestSchedulersProvider(),
@@ -61,18 +62,18 @@ class RecentActivityPresenterTest {
     )
 
     private fun givenPermissionDenied() {
-        whenever(libraryPermissionProvider.permissionsGranted())
+        whenever(libraryPermissionsChecker.permissionsGranted())
             .thenReturn(false)
 
-        whenever(libraryPermissionProvider.requestPermission())
+        whenever(libraryPermissionsRequester.requestPermission())
             .thenReturn(Observable.just(false))
     }
 
     private fun givenPermissionGranted() {
-        whenever(libraryPermissionProvider.permissionsGranted())
+        whenever(libraryPermissionsChecker.permissionsGranted())
             .thenReturn(true)
 
-        whenever(libraryPermissionProvider.requestPermission())
+        whenever(libraryPermissionsRequester.requestPermission())
             .thenReturn(Observable.just(true))
     }
 
@@ -116,7 +117,7 @@ class RecentActivityPresenterTest {
         underTest.onStart()
 
         // Then
-        verify(libraryPermissionProvider).requestPermission()
+        verify(libraryPermissionsRequester).requestPermission()
     }
 
     @Test

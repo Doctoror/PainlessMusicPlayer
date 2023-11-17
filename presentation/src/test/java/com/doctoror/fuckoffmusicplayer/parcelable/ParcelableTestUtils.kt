@@ -18,13 +18,13 @@ package com.doctoror.fuckoffmusicplayer.parcelable
 import android.os.Parcel
 import android.os.Parcelable
 
-fun <T : Parcelable> reCreateFromParcel(value: T): T {
+inline fun <reified T : Parcelable> reCreateFromParcel(value: T): T {
     val parcel = Parcel.obtain()
     parcel.writeParcelable(value, 0);
 
     parcel.setDataPosition(0)
-    val restored = parcel.readParcelable<T>(value.javaClass.classLoader)
+    val restored = parcel.readParcelable(value.javaClass.classLoader, T::class.java)
     parcel.recycle()
 
-    return restored
+    return restored!!
 }

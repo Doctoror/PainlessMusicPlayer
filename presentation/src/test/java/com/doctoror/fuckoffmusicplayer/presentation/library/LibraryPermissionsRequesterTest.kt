@@ -16,15 +16,11 @@
 package com.doctoror.fuckoffmusicplayer.presentation.library
 
 import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import com.doctoror.fuckoffmusicplayer.RuntimePermissions
 import com.doctoror.fuckoffmusicplayer.presentation.rxpermissions.RxPermissionsProvider
 import com.nhaarman.mockitokotlin2.*
 import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.Observable
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -34,50 +30,22 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class LibraryPermissionsRequesterTest {
 
-    private val context: Context = mock()
     private val runtimePermissions: RuntimePermissions = mock()
     private val rxPermissions: RxPermissions = mock()
     private val rxPermissionsProvider: RxPermissionsProvider = mock {
         on(it.provideRxPermissions()).doReturn(rxPermissions)
     }
 
-    private val underTest = LibraryPermissionsRequester(
-            context, runtimePermissions, rxPermissionsProvider)
+    private val underTest = LibraryPermissionsRequester(runtimePermissions, rxPermissionsProvider)
 
     private fun givenPermissionsDenied() {
         whenever(rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE))
-                .thenReturn(Observable.just(false))
+            .thenReturn(Observable.just(false))
     }
 
     private fun givenPermissionsGranted() {
         whenever(rxPermissions.request(Manifest.permission.READ_EXTERNAL_STORAGE))
-                .thenReturn(Observable.just(true))
-    }
-
-    @Test
-    fun detectsPermissionDenied() {
-        // Given
-        whenever(context.checkPermission(eq(Manifest.permission.READ_EXTERNAL_STORAGE), any(), any()))
-                .thenReturn(PackageManager.PERMISSION_DENIED)
-
-        // When
-        val result = underTest.permissionsGranted()
-
-        // Then
-        assertFalse(result)
-    }
-
-    @Test
-    fun detectsPermissionGranted() {
-        // Given
-        whenever(context.checkPermission(eq(Manifest.permission.READ_EXTERNAL_STORAGE), any(), any()))
-                .thenReturn(PackageManager.PERMISSION_GRANTED)
-
-        // When
-        val result = underTest.permissionsGranted()
-
-        // Then
-        assertTrue(result)
+            .thenReturn(Observable.just(true))
     }
 
     @Test

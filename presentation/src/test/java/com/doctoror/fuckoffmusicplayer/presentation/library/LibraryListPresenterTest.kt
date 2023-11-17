@@ -35,33 +35,36 @@ import java.io.IOException
 
 class LibraryListPresenterTest {
 
+    private val libraryPermissionChecker: LibraryPermissionsChecker = mock()
     private val libraryPermissionProvider: LibraryPermissionsRequester = mock()
     private val optionsMenuInvalidator: OptionsMenuInvalidator = mock()
     private val searchQuerySource = PublishSubject.create<String>()
     private val viewModel = LibraryListViewModel()
 
     private val underTest = LibraryListPresenter(
-            libraryPermissionProvider,
-            optionsMenuInvalidator,
-            mock(),
-            TestSchedulersProvider(),
-            searchQuerySource,
-            viewModel)
+        libraryPermissionChecker,
+        libraryPermissionProvider,
+        optionsMenuInvalidator,
+        mock(),
+        TestSchedulersProvider(),
+        searchQuerySource,
+        viewModel
+    )
 
     private fun givenPermissionDenied() {
-        whenever(libraryPermissionProvider.permissionsGranted())
-                .thenReturn(false)
+        whenever(libraryPermissionChecker.permissionsGranted())
+            .thenReturn(false)
 
         whenever(libraryPermissionProvider.requestPermission())
-                .thenReturn(Observable.just(false))
+            .thenReturn(Observable.just(false))
     }
 
     private fun givenPermissionGranted() {
-        whenever(libraryPermissionProvider.permissionsGranted())
-                .thenReturn(true)
+        whenever(libraryPermissionChecker.permissionsGranted())
+            .thenReturn(true)
 
         whenever(libraryPermissionProvider.requestPermission())
-                .thenReturn(Observable.just(true))
+            .thenReturn(Observable.just(true))
     }
 
     private fun givenDataSourceReturns(toReturn: Observable<Cursor>): LibraryDataSource {
@@ -99,8 +102,9 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildPermissionDenied,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildPermissionDenied,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -113,8 +117,9 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildProgress,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildProgress,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -188,8 +193,9 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildError,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildError,
+            viewModel.displayedChild.get()
+        )
 
         verify(viewModel.recyclerAdapter.get() as CursorRecyclerViewAdapter).changeCursor(null)
     }
@@ -226,8 +232,9 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildEmpty,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildEmpty,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -246,8 +253,9 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildContent,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildContent,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test
@@ -267,8 +275,9 @@ class LibraryListPresenterTest {
 
         // Then
         assertEquals(
-                viewModel.animatorChildContent,
-                viewModel.displayedChild.get())
+            viewModel.animatorChildContent,
+            viewModel.displayedChild.get()
+        )
     }
 
     @Test(expected = IllegalStateException::class)

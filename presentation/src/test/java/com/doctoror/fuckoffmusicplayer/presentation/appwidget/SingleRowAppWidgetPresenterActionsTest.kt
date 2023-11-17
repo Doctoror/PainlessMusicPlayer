@@ -50,7 +50,7 @@ class SingleRowAppWidgetPresenterActionsTest {
 
         // Then
         val shadow = shadowOf(viewModel.coverAction)
-        assertEquals(HomeActivity::class.java.name, shadow.savedIntent.component.className)
+        assertEquals(HomeActivity::class.java.name, shadow.savedIntent.component!!.className)
     }
 
     @Test
@@ -63,7 +63,7 @@ class SingleRowAppWidgetPresenterActionsTest {
 
         // Then
         val shadow = shadowOf(viewModel.coverAction)
-        assertEquals(NowPlayingActivity::class.java.name, shadow.savedIntent.component.className)
+        assertEquals(NowPlayingActivity::class.java.name, shadow.savedIntent.component!!.className)
     }
 
     @Test

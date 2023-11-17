@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
 
 abstract class LibraryPermissionsPresenter(
     private val libraryPermissionChecker: LibraryPermissionsChecker,
-    private val libraryPermissionProvider: LibraryPermissionsRequester,
+    private val libraryPermissionRequester: LibraryPermissionsRequester,
     private val runtimePermissions: RuntimePermissions,
     private val schedulersProvider: SchedulersProvider
 ) : BasePresenter() {
@@ -60,7 +60,7 @@ abstract class LibraryPermissionsPresenter(
 
     fun requestPermission() {
         permissionRequested = true
-        libraryPermissionProvider.requestPermission()
+        libraryPermissionRequester.requestPermission()
             .subscribe { granted ->
                 if (granted) {
                     onPermissionGranted()
