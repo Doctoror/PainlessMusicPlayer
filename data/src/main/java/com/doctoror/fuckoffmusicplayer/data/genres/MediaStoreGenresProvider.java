@@ -53,6 +53,17 @@ public final class MediaStoreGenresProvider implements GenresProvider {
 
     @NonNull
     private static RxCursorLoader.Query newQuery(@Nullable final String searchFilter) {
+        final StringBuilder selection = new StringBuilder(128);
+        selection.append(MediaStore.Audio.Genres._ID);
+        selection.append(" != 0");
+        if (!TextUtils.isEmpty(searchFilter)) {
+            selection
+                    .append(" AND ")
+                    .append(MediaStore.Audio.Genres.NAME)
+                    .append(" LIKE ")
+                    .append(SqlUtils.escapeAndWrapForLikeArgument(searchFilter));
+        }
+
         return new RxCursorLoader.Query.Builder()
                 .setContentUri(MediaStore.Audio.Genres.EXTERNAL_CONTENT_URI)
                 .setProjection(new String[]{
@@ -60,8 +71,7 @@ public final class MediaStoreGenresProvider implements GenresProvider {
                         MediaStore.Audio.Genres.NAME
                 })
                 .setSortOrder(MediaStore.Audio.Genres.NAME)
-                .setSelection(TextUtils.isEmpty(searchFilter) ? null : MediaStore.Audio.Genres.NAME
-                        + " LIKE " + SqlUtils.escapeAndWrapForLikeArgument(searchFilter))
+                .setSelection(selection.toString())
                 .create();
     }
 }
