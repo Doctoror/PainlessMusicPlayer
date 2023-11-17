@@ -1,3 +1,6 @@
+# Current state
+Migrated to support Android 13, however, delete functionality is not yet migrated and only works on older versions of Android.
+
 ## Description
 
 Painless Music Player is a lightweight music player based on ExoPlayer and MediaStore library
@@ -46,14 +49,13 @@ It still needs some DI reorganizing, better MVVM architecture and tests. It need
 
 ## Screenshots
 
-![screenshot](/screenshots/recent_activity.png?raw=true)
-![screenshot](/screenshots/now_playing.png?raw=true)
-![screenshot](/screenshots/navigation_drawer.png?raw=true)
-![screenshot](/screenshots/albums.png?raw=true)
-![screenshot](/screenshots/effects.png?raw=true)
-![screenshot](/screenshots/notification.png?raw=true)
-![screenshot](/screenshots/lock_screen.png?raw=true)
-![screenshot](/screenshots/settings.png?raw=true)
+<img src="/screenshots/recent_activity.png?raw=true" width="200"/>  <img src="/screenshots/now_playing.png?raw=true" width="200"/>
+
+<img src="/screenshots/navigation_drawer.png?raw=true" width="200"/>  <img src="/screenshots/albums.png?raw=true" width="200"/>
+
+<img src="/screenshots/effects.png?raw=true" width="200"/>  <img src="/screenshots/notification.png?raw=true" width="200"/>
+
+<img src="/screenshots/lock_screen.png?raw=true" width="200"/>  <img src="/screenshots/settings.png?raw=true" width="200"/>
 
 ## License
 
