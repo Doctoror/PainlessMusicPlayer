@@ -25,6 +25,7 @@ import android.database.CursorWrapper;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Audio.Media;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -38,12 +39,15 @@ import com.doctoror.fuckoffmusicplayer.domain.playlist.RecentActivityManager;
 import com.doctoror.rxcursorloader.RxCursorLoader;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * MediaStore {@link AlbumsProvider}
@@ -58,8 +62,9 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     @NonNull
     private final RecentActivityManager mRecentActivityManager;
 
-    public MediaStoreAlbumsProvider(@NonNull final ContentResolver contentResolver,
-                                    @NonNull final RecentActivityManager recentActivityManager) {
+    public MediaStoreAlbumsProvider(
+            @NonNull final ContentResolver contentResolver,
+            @NonNull final RecentActivityManager recentActivityManager) {
         mContentResolver = contentResolver;
         mRecentActivityManager = recentActivityManager;
     }
@@ -69,9 +74,9 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
             @Nullable final String searchFilter,
             @NonNull final Scheduler scheduler) {
         final RxCursorLoader.Query query = newParams(searchFilter);
-        return transformForLegacyAlbumArtHack(
-                RxCursorLoader.observable(mContentResolver, query, scheduler)
-        );
+        return RxCursorLoader
+                .observable(mContentResolver, query, scheduler)
+                .map(transformForLegacyAlbumArtHack());
     }
 
     @Override
@@ -82,23 +87,64 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setSortOrder(MediaStore.Audio.Albums.FIRST_YEAR)
                 .create();
 
-        return transformForLegacyAlbumArtHack(
-                RxCursorLoader.create(mContentResolver, query)
+        return RxCursorLoader
+                .observable(mContentResolver, query, Schedulers.io())
+                .map(transformForLegacyAlbumArtHack());
+    }
+
+    @NonNull
+    @Override
+    public Observable<Cursor> loadForGenre(final long genreId) {
+        return trackIdsForGenre(genreId)
+                .switchMap(trackIds -> albumIdsForTrackIds(trackIds))
+                .switchMap(albumIds -> loadAlbumsOrderedByIds(albumIds));
+    }
+
+    private ObservableTransformer<Cursor, long[]> trackIdsTransformer() {
+        return upstream -> upstream.map((Function<Cursor, long[]>) cursor -> {
+                    final long[] tracks = new long[cursor.getCount()];
+                    int counter = 0;
+                    for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                        tracks[counter++] = cursor.getLong(0);
+                    }
+                    return tracks;
+                }
         );
     }
 
-    @Override
-    public Observable<Cursor> loadForGenre(final long genreId) {
-        final RxCursorLoader.Query query = newParamsBuilder(null)
-                .setSelection(
-                        "album_info._id IN (SELECT audio_meta.album_id FROM audio_meta, audio_genres_map "
-                                + "WHERE audio_genres_map.audio_id=audio_meta._id AND audio_genres_map.genre_id="
-                                + genreId + ')')
-                .create();
+    private Observable<long[]> trackIdsForGenre(final long genreId) {
+        return RxCursorLoader.create(mContentResolver,
+                new RxCursorLoader
+                        .Query
+                        .Builder()
+                        .setContentUri(
+                                MediaStore.Audio.Genres.Members.getContentUri(
+                                        MediaStoreVolumeNames.EXTERNAL,
+                                        genreId
+                                )
+                        )
+                        .setProjection(new String[]{MediaStore.Audio.Genres.Members.AUDIO_ID})
+                        .create()
+        ).compose(trackIdsTransformer());
+    }
 
-        return transformForLegacyAlbumArtHack(
-                RxCursorLoader.create(mContentResolver, query)
-        );
+    @NonNull
+    private Observable<Set<Long>> albumIdsForTrackIds(final long[] trackIds) {
+        return RxCursorLoader.create(mContentResolver,
+                new RxCursorLoader
+                        .Query
+                        .Builder()
+                        .setContentUri(Media.EXTERNAL_CONTENT_URI)
+                        .setProjection(new String[]{MediaStore.Audio.Genres.Members.ALBUM_ID})
+                        .setSelection(SelectionUtils.inSelectionLong(Media._ID, trackIds))
+                        .create()
+        ).map((Function<Cursor, Set<Long>>) cursor -> {
+            final Set<Long> ids = new HashSet<>();
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                ids.add(cursor.getLong(0));
+            }
+            return ids;
+        });
     }
 
     @Override
@@ -109,9 +155,9 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
     @Override
     public Observable<Cursor> loadRecentlyPlayedAlbums(@Nullable final Integer limit) {
         final RxCursorLoader.Query query = newRecentlyPlayedAlbumsQuery(limit);
-        return transformForLegacyAlbumArtHack(
-                RxCursorLoader.create(mContentResolver, query)
-        );
+        return RxCursorLoader
+                .observable(mContentResolver, query, Schedulers.io())
+                .map(transformForLegacyAlbumArtHack());
     }
 
     @NonNull
@@ -140,10 +186,11 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setSortOrder(MediaStore.Audio.Media.DATE_ADDED + " DESC")
                 .create();
 
-        return transformForLegacyAlbumArtHack(
-                RxCursorLoader.create(mContentResolver, recentTracksQuery))
-                .map(c -> albumIds(c, limit != null ? limit : Integer.MAX_VALUE))
-                .flatMap(this::loadAlbumsOrderedByIds);
+        return
+                RxCursorLoader
+                        .observable(mContentResolver, recentTracksQuery, Schedulers.io())
+                        .map(c -> albumIds(c, limit != null ? limit : Integer.MAX_VALUE))
+                        .flatMap(this::loadAlbumsOrderedByIds);
     }
 
     @NonNull
@@ -173,12 +220,14 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                 .setSelection(SelectionUtils.inSelection(MediaStore.Audio.Albums._ID, ids))
                 .setSortOrder(SelectionUtils.orderByField(MediaStore.Audio.Albums._ID, ids))
                 .create();
-        return transformForLegacyAlbumArtHack(
-                RxCursorLoader.create(mContentResolver, query));
+
+        return RxCursorLoader
+                .observable(mContentResolver, query, Schedulers.io())
+                .map(transformForLegacyAlbumArtHack());
     }
 
-    private Observable<Cursor> transformForLegacyAlbumArtHack(final Observable<Cursor> albums) {
-        return albums.map(new Function<Cursor, Cursor>() {
+    private Function<Cursor, Cursor> transformForLegacyAlbumArtHack() {
+        return new Function<Cursor, Cursor>() {
 
             @Override
             public Cursor apply(Cursor cursor) {
@@ -197,7 +246,7 @@ public final class MediaStoreAlbumsProvider implements AlbumsProvider {
                     }
                 };
             }
-        });
+        };
     }
 
     /**
