@@ -20,6 +20,8 @@ class AlbumArtIntoTargetApplier(private val albumArtFetcher: AlbumArtFetcher) {
         target: ImageView,
         listener: Listener?
     ) {
+        target.tag = uri
+
         if (uri.isNullOrBlank()) {
             target.setImageResource(PLACEHOLDER)
             listener?.onSuccess()
@@ -28,10 +30,10 @@ class AlbumArtIntoTargetApplier(private val albumArtFetcher: AlbumArtFetcher) {
 
         if (target.width != 0 && target.height != 0) {
             onSizeAvailable(uri, target, listener)
-        }
-
-        DoOnGlobalLayout(target).doOnGlobalLayout {
-            onSizeAvailable(uri, target, listener)
+        } else {
+            DoOnGlobalLayout(target).doOnGlobalLayout {
+                onSizeAvailable(uri, target, listener)
+            }
         }
     }
 
@@ -53,14 +55,18 @@ class AlbumArtIntoTargetApplier(private val albumArtFetcher: AlbumArtFetcher) {
             .subscribe(object : SingleObserver<Bitmap> {
                 override fun onSubscribe(d: Disposable) {}
                 override fun onSuccess(bitmap: Bitmap) {
-                    target.setImageBitmap(bitmap)
-                    listener?.onSuccess()
+                    if (target.tag == uri) {
+                        target.setImageBitmap(bitmap)
+                        listener?.onSuccess()
+                    }
                 }
 
                 override fun onError(e: Throwable) {
                     Log.w("AlbumArtIntoTargetApplier", "onError", e)
-                    target.setImageResource(PLACEHOLDER)
-                    listener?.onFailure()
+                    if (target.tag == uri) {
+                        target.setImageResource(PLACEHOLDER)
+                        listener?.onFailure()
+                    }
                 }
             })
     }
